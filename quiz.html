@@ -565,7 +565,8 @@
             });
         }
 
-        window.addEventListener('DOMContentLoaded', loadMythBusters);
+        // Script is at bottom of body — DOM is already ready. Call directly.
+        loadMythBusters();
 
         // ========== SHUFFLE HELPER ==========
         function shuffle(arr) {
