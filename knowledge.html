@@ -511,29 +511,30 @@
             }
         };
 
-        // ============================================================
-        // MERGE ADMIN OVERRIDES FROM localStorage
-        // Articles edited/created in admin.html are stored in apollo_admin_articles.
-        // If an admin article overrides a built-in (overridesId set), replace it.
-        // Otherwise add it as a new pillar article.
-        (function mergeAdminArticles() {
+        async function initKnowledgeHub() {
             try {
-                const adminArticles = JSON.parse(localStorage.getItem('apollo_admin_articles') || '[]');
-                adminArticles.forEach(a => {
-                    if (!a.body || a.status === 'draft') return; // skip drafts / empty
+                const res = await fetch('api/content.php?type=knowledge_articles');
+                const serverArticles = await res.json();
+
+                serverArticles.forEach(a => {
                     const targetId = a.overridesId || a.id;
-                    const existing = articles[targetId];
                     articles[targetId] = {
-                        title: a.title || (existing && existing.title) || '',
-                        tag: a.pillar + ' · Updated',
-                        subtitle: a.subtitle || (existing && existing.subtitle) || '',
-                        toc: (existing && existing.toc) || [],
-                        related: (existing && existing.related) || [],
+                        title: a.title,
+                        tag: a.pillar + (a.overridesId ? ' · Updated' : ' · New'),
+                        subtitle: a.subtitle,
+                        toc: a.structured ? a.structured.sections.map(s => ({ id: s.heading.toLowerCase().replace(/\s+/g, '-'), label: s.heading })) : [],
+                        related: [],
                         content: a.body
                     };
                 });
-            } catch (e) { /* silently fail */ }
-        })();
+
+                if (window.location.hash) {
+                    const id = window.location.hash.replace('#', '');
+                    if (articles[id]) showArticle(id);
+                }
+            } catch (e) { console.error("Sync failed", e); }
+        }
+        window.addEventListener('DOMContentLoaded', initKnowledgeHub);
 
         function showHub() {
             document.getElementById('hub-layout').classList.remove('hidden');

@@ -37,10 +37,21 @@ function writeContent(array $data): bool {
 }
 
 // ── AUTH ────────────────────────────────────────────────────────────────────
-function isAuthorized(array $input): bool {
-    $tokenHeader = $_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '';
-    $tokenBody   = $input['admin_token'] ?? '';
-    return in_array(ADMIN_TOKEN, [$tokenHeader, $tokenBody], true);
+function isAuthorized(): bool {
+    // Default password
+    $savedPass = 'apollo2024';
+    
+    // Try to get password from settings.json if it exists
+    if (file_exists(SETTINGS_FILE)) {
+        $st = json_decode(file_get_contents(SETTINGS_FILE), true);
+        if (isset($st['admin_pass'])) $savedPass = $st['admin_pass'];
+    }
+
+    $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+    // Accept 'admin_pass' (new) or 'admin_token' (old) for compatibility
+    $provided = $input['admin_pass'] ?? $input['admin_token'] ?? $_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '';
+    
+    return $provided === $savedPass;
 }
 
 // ── HANDLE: GET ─────────────────────────────────────────────────────────────

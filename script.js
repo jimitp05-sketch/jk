@@ -254,40 +254,80 @@ document.addEventListener('DOMContentLoaded', () => {
    ═══════════════════════════════════════════════════ */
 
 // ── SITE SETTINGS — loaded from /api/settings.php ─────────────────────────
-// Falls back to hardcoded defaults so the page still works without the back-end.
 let WA_NUM = '919999999999';
 let WA_MSG = 'Hello%2C%20I%20would%20like%20to%20consult%20Dr.%20Jay%20Kothari';
 let ICU_PHONE = '18605001066';
+
+function applySettings(s) {
+    if (s.wa_number) WA_NUM = s.wa_number;
+    if (s.wa_message) WA_MSG = s.wa_message;
+    if (s.icu_phone) ICU_PHONE = s.icu_phone;
+
+    // Patch speed dial and any other contact links
+    const emgCalls = document.querySelectorAll('.sd-emergency, .icu-link-phone');
+    const waChats = document.querySelectorAll('.sd-whatsapp, .wa-link-btn');
+
+    emgCalls.forEach(el => {
+        el.href = `tel:${ICU_PHONE}`;
+    });
+    waChats.forEach(el => {
+        el.href = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(WA_MSG)}`;
+    });
+
+    // Patch site name
+    if (s.site_name) {
+        document.querySelectorAll('.nav-logo, .footer-doctor-name').forEach(el => {
+            if (el.classList.contains('nav-logo')) {
+                const parts = s.site_name.split(' ');
+                if (parts.length > 2) {
+                    el.innerHTML = `${parts[0]} ${parts[1]} <span class="glow-text">${parts.slice(2).join(' ')}</span>`;
+                } else if (parts.length === 2) {
+                    el.innerHTML = `${parts[0]} <span class="glow-text">${parts[1]}</span>`;
+                } else {
+                    el.textContent = s.site_name;
+                }
+            } else {
+                el.textContent = s.site_name;
+            }
+        });
+    }
+
+    // Patch hero
+    if (s.hero_title) {
+        const h1 = document.querySelector('.hero h1');
+        if (h1) h1.innerHTML = s.hero_title.replace('Seconds', '<span class="glow-text">Seconds</span>');
+    }
+    if (s.hero_tagline) {
+        const p = document.querySelector('.hero-tagline');
+        if (p) p.textContent = s.hero_tagline;
+    }
+    if (s.hero_empathy) {
+        const p = document.querySelector('.hero-empathy');
+        if (p) p.textContent = s.hero_empathy;
+    }
+}
 
 (function loadSettings() {
     fetch('/api/settings.php')
         .then(r => r.ok ? r.json() : Promise.reject())
         .then(s => {
-            if (s.wa_number) WA_NUM = s.wa_number;
-            if (s.wa_message) WA_MSG = encodeURIComponent(s.wa_message);
-            if (s.icu_phone) ICU_PHONE = s.icu_phone;
-            // Patch any Speed Dial links already in DOM
-            const emgCall = document.querySelector('.sd-emergency');
-            const waChat = document.querySelector('.sd-whatsapp');
-            if (emgCall) emgCall.href = `tel:${ICU_PHONE}`;
-            if (waChat) waChat.href = `https://wa.me/${WA_NUM}?text=${WA_MSG}`;
+            applySettings(s);
         })
-        .catch(() => { }); // silently fall back to defaults
+        .catch(() => { }); // defaults are hardcoded in variables
 })();
 
 // ── UNIFIED SPEED DIAL FAB ────────────────────────────────
-// Single popup: tap the main button → 3 actions slide up
-(function () {
+(function createSpeedDial() {
     const fab = document.createElement('div');
     fab.id = 'speed-dial';
     fab.className = 'sd-wrap';
     fab.innerHTML = `
       <div class="sd-actions">
-        <a href="tel:18605001066" class="sd-btn sd-emergency" aria-label="ICU Emergency">
+        <a href="tel:${ICU_PHONE}" class="sd-btn sd-emergency" aria-label="ICU Emergency">
           <span class="sd-icon">🚨</span>
           <span class="sd-label">ICU Emergency</span>
         </a>
-        <a href="https://wa.me/${WA_NUM}?text=Hello%2C%20I%20would%20like%20to%20consult%20Dr.%20Jay%20Kothari"
+        <a href="https://wa.me/${WA_NUM}?text=${WA_MSG}"
            class="sd-btn sd-whatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
           <span class="sd-icon">💬</span>
           <span class="sd-label">WhatsApp Chat</span>
@@ -304,16 +344,13 @@ let ICU_PHONE = '18605001066';
     `;
     document.body.appendChild(fab);
 
-    // Show after small delay
     setTimeout(() => fab.classList.add('sd-visible'), 800);
 
-    // Toggle open/close
     document.getElementById('sd-main-btn').addEventListener('click', e => {
         e.stopPropagation();
         fab.classList.toggle('sd-open');
     });
 
-    // Close on outside click
     document.addEventListener('click', e => {
         if (!fab.contains(e.target)) fab.classList.remove('sd-open');
     });

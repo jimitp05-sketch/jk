@@ -1073,8 +1073,7 @@
                             </div>
                         </div>
                         <div class="editor-actions">
-                            <button class="btn-save-draft" onclick="saveArticle('draft')">Save as Draft</button>
-                            <button class="btn-publish" onclick="saveArticle('published')">Publish Article</button>
+                            <button class="btn-publish" onclick="saveArticle()">💾 Save Article to Server</button>
                             <button class="action-btn action-btn-reject" style="margin-left:auto;"
                                 onclick="clearEditor()">Clear</button>
                         </div>
@@ -1180,18 +1179,39 @@
                             <input type="text" id="st-wa-message"
                                 placeholder="Hello, I would like to consult Dr. Jay Kothari" />
                         </div>
-                        <div class="editor-field">
-                            <label>Site / Doctor Name</label>
-                            <input type="text" id="st-site-name" placeholder="Dr. Jay Kothari" />
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Site Name / Doctor Name</label>
+                            <input type="text" id="st-site-name" placeholder="Dr. Jay Kothari">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Hero Title</label>
+                            <input type="text" id="st-hero-title" placeholder="When Seconds Define Survival.">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Hero Tagline</label>
+                            <textarea id="st-hero-tagline" placeholder="Gujarat's frontline of critical care..."
+                                style="min-height:80px;"></textarea>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Hero Empathy Message</label>
+                            <input type="text" id="st-hero-empathy"
+                                placeholder="We know you're scared. You're in the right place.">
                         </div>
                         <div
-                            style="margin-top:8px;padding:12px 16px;background:#FFF9E6;border:1px solid #F3D272;border-radius:8px;font-size:0.82rem;color:#7A5C00;">
-                            ⚠️ <strong>Admin Token Required:</strong> Enter your admin token below to authorize the
-                            save.
-                        </div>
-                        <div class="editor-field" style="margin-top:12px;">
-                            <label>Admin Token</label>
-                            <input type="password" id="st-token" placeholder="apollo_admin_2026" />
+                            style="margin: 24px 0 12px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+                            <h3 style="margin-bottom:12px;">👤 Admin Login Credentials</h3>
+                            <div class="editor-grid">
+                                <div class="editor-field">
+                                    <label>Login Username</label>
+                                    <input type="text" id="st-admin-user" placeholder="admin" />
+                                </div>
+                                <div class="editor-field">
+                                    <label>Current/New Password</label>
+                                    <input type="password" id="st-admin-pass" placeholder="••••••••" />
+                                </div>
+                            </div>
+                            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">💡 Changing these will
+                                require you to log in again with the new details.</p>
                         </div>
                         <div class="editor-actions" style="margin-top:16px;">
                             <button class="btn-publish" onclick="saveSettings()">💾 Save Settings to Server</button>
@@ -1325,12 +1345,15 @@
                         </div>
                         <div class="editor-field"><label>DOI / URL</label><input type="text" id="rp-doi"
                                 placeholder="https://doi.org/…" /></div>
-                        <div class="editor-field"><label>Key Finding / Abstract (1–2 sentences)</label><textarea
-                                id="rp-abstract" rows="2"
-                                placeholder="Prone positioning ≥16h/day reduced 28-day mortality from 32.8% to 16%…"></textarea>
+                        <div class="editor-field"><label>Clinical Takeaway</label>
+                            <textarea id="rp-takeaway" rows="2" placeholder="Summary of the study findings…"></textarea>
+                        </div>
+                        <div class="editor-field"><label>Dr. Kothari's Practice (Bedside Context)</label>
+                            <textarea id="rp-practice" rows="2"
+                                placeholder="How you apply this evidence in your ICU…"></textarea>
                         </div>
                         <div class="editor-actions" style="margin-top:8px;">
-                            <button class="btn-publish" onclick="saveResearchPaper()">💾 Save Paper</button>
+                            <button class="btn-publish" onclick="saveResearchPaper()">💾 Save Paper to Server</button>
                             <button class="btn-save-draft" onclick="clearResearchForm()">Clear</button>
                         </div>
                     </div>
@@ -1366,15 +1389,27 @@
         const ADMIN_USER = 'admin';
         const ADMIN_PASS = 'apollo2024';
 
-        function doLogin() {
-            const u = document.getElementById('admin-user').value;
-            const p = document.getElementById('admin-pass').value;
-            if (u === ADMIN_USER && p === ADMIN_PASS) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('admin-layout').style.display = 'block';
-                loadAll();
-            } else {
-                document.getElementById('login-error').style.display = 'block';
+        async function doLogin() {
+            const u = document.getElementById('admin-user').value.trim();
+            const p = document.getElementById('admin-pass').value.trim();
+            const err = document.getElementById('login-error');
+            if (!u || !p) { err.textContent = 'Enter username and password'; err.style.display = 'block'; return; }
+
+            try {
+                const res = await fetch(`api/settings.php?action=check_auth&admin_pass=${encodeURIComponent(p)}`);
+                const result = await res.json();
+                if (result.success) {
+                    localStorage.setItem('apollo_admin_logged', 'true');
+                    localStorage.setItem('apollo_admin_temp_pass', p);
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('admin-layout').style.display = 'flex';
+                    loadAll();
+                } else {
+                    err.textContent = 'Invalid credentials'; err.style.display = 'block';
+                }
+            } catch (e) {
+                err.innerHTML = 'Server error. <br><small>1. Ensure you are running a local PHP server (XAMPP/WAMP).<br>2. Check if api/settings.php exists.</small>';
+                err.style.display = 'block';
             }
         }
         document.getElementById('admin-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
@@ -1390,60 +1425,61 @@
         // ============================================================
         // SITE SETTINGS — reads/writes via /api/settings.php
         // ============================================================
-        function loadCurrentSettings() {
-            const st = document.getElementById('settings-status');
-            st.style.display = 'block';
-            st.style.color = '#555';
-            st.textContent = 'Loading current settings…';
-            fetch('/api/settings.php')
-                .then(r => r.ok ? r.json() : Promise.reject('Network error'))
-                .then(s => {
-                    document.getElementById('st-wa-number').value = s.wa_number || '';
-                    document.getElementById('st-icu-phone').value = s.icu_phone || '';
-                    document.getElementById('st-wa-message').value = s.wa_message || '';
-                    document.getElementById('st-site-name').value = s.site_name || '';
-                    st.style.color = '#16A34A';
-                    st.textContent = '✅ Current settings loaded.';
-                })
-                .catch(() => {
-                    st.style.color = '#C0392B';
-                    st.textContent = '⚠️ Could not load settings from server. Check that api/settings.php is deployed.';
-                });
+        async function loadCurrentSettings() {
+            try {
+                const res = await fetch('api/settings.php');
+                const s = await res.json();
+
+                document.getElementById('st-wa-number').value = s.wa_number || '';
+                document.getElementById('st-icu-phone').value = s.icu_phone || '';
+                document.getElementById('st-wa-message').value = s.wa_message || '';
+                document.getElementById('st-site-name').value = s.site_name || '';
+                document.getElementById('st-hero-title').value = s.hero_title || '';
+                document.getElementById('st-hero-tagline').value = s.hero_tagline || '';
+                document.getElementById('st-hero-empathy').value = s.hero_empathy || '';
+                document.getElementById('st-admin-user').value = s.admin_user || 'admin';
+
+                // We don't pre-fill the password for security reasons (it would show up as dots),
+                // but we'll show a placeholder indicating it's not required to save.
+                document.getElementById('st-admin-pass').placeholder = '•••••••• (Leave blank to keep same)';
+                document.getElementById('st-admin-pass').value = '';
+
+            } catch (err) { console.error('Failed to load settings'); }
         }
 
-        function saveSettings() {
-            const token = document.getElementById('st-token').value.trim();
-            if (!token) { alert('Please enter your Admin Token.'); return; }
-            const payload = {
-                admin_token: token,
-                wa_number: document.getElementById('st-wa-number').value.trim(),
-                icu_phone: document.getElementById('st-icu-phone').value.trim(),
-                wa_message: document.getElementById('st-wa-message').value.trim(),
-                site_name: document.getElementById('st-site-name').value.trim()
+        async function saveSettings() {
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            const body = {
+                admin_pass: pass,
+                wa_number: document.getElementById('st-wa-number').value,
+                wa_message: document.getElementById('st-wa-message').value,
+                icu_phone: document.getElementById('st-icu-phone').value,
+                site_name: document.getElementById('st-site-name').value,
+                hero_title: document.getElementById('st-hero-title').value,
+                hero_tagline: document.getElementById('st-hero-tagline').value,
+                hero_empathy: document.getElementById('st-hero-empathy').value,
+                admin_user: document.getElementById('st-admin-user').value
             };
-            const st = document.getElementById('settings-status');
-            st.style.display = 'block';
-            st.style.color = '#555';
-            st.textContent = 'Saving…';
-            fetch('/api/settings.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.success) {
-                        st.style.color = '#16A34A';
-                        st.textContent = '✅ Settings saved! The live website will use the new values on next page load.';
-                    } else {
-                        st.style.color = '#C0392B';
-                        st.textContent = '❌ ' + (res.error || 'Save failed.');
-                    }
-                })
-                .catch(() => {
-                    st.style.color = '#C0392B';
-                    st.textContent = '❌ Network error. Make sure api/settings.php is deployed on the server.';
+            const newPass = document.getElementById('st-admin-pass').value;
+            if (newPass) body.new_admin_pass = newPass;
+
+            try {
+                const res = await fetch('/api/settings.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
                 });
+                const data = await res.json();
+                if (data.success) {
+                    alert('Settings updated successfully!');
+                    if (newPass) localStorage.setItem('apollo_admin_temp_pass', newPass);
+                    loadCurrentSettings();
+                } else {
+                }
+            } catch (err) {
+                statusEl.textContent = '❌ Connection error.';
+                statusEl.className = 'status-error';
+            }
         }
 
         // ============================================================
@@ -1474,8 +1510,9 @@
         const saveBookings = d => localStorage.setItem('apollo_booking_requests', JSON.stringify(d));
         const getPendingReviews = () => { try { return JSON.parse(localStorage.getItem('apollo_pending_reviews') || '[]'); } catch { return []; } };
         const savePendingReviews = d => localStorage.setItem('apollo_pending_reviews', JSON.stringify(d));
-        const getAdminArticles = () => { try { return JSON.parse(localStorage.getItem('apollo_admin_articles') || '[]'); } catch { return []; } };
-        const saveAdminArticles = d => localStorage.setItem('apollo_admin_articles', JSON.stringify(d));
+        // DEPRECATED: localStorage helpers. Now using server-side CMS.
+        const getAdminArticles = () => { console.warn('getAdminArticles is deprecated. Use fetch instead.'); return []; };
+        const saveAdminArticles = () => { console.warn('saveAdminArticles is deprecated. Use fetch instead.'); };
         const getAdminPhotos = () => { try { return JSON.parse(localStorage.getItem('apollo_admin_photos') || '[]'); } catch { return []; } };
         const saveAdminPhotos = d => localStorage.setItem('apollo_admin_photos', JSON.stringify(d));
 
@@ -1625,11 +1662,7 @@
         ];
 
         function renderKnowledge() {
-            const extras = getAdminArticles();
-            // Suppress built-in articles that have been overridden by admin edits
-            const overriddenIds = extras.map(e => e.overridesId).filter(Boolean);
-            const visibleBuiltIn = BUILT_IN_ARTICLES.filter(a => !overriddenIds.includes(a.id));
-            const all = [...visibleBuiltIn, ...extras];
+            const all = currentArticles;
             document.getElementById('knowledge-table').innerHTML = all.map(a => `<tr>
       <td style="max-width:320px;"><strong style="font-size:0.9rem;">${a.title}</strong></td>
       <td><span style="font-size:0.8rem;color:var(--accent-secondary);">${a.pillar}</span></td>
@@ -1748,29 +1781,46 @@
         // ============================================================
         // ARTICLE CRUD
         // ============================================================
-        function saveArticle(status) {
+        async function saveArticle() {
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            if (!pass) return; // Silent return if no pass
+
             const id = document.getElementById('editor-id').value || ('art-' + Date.now());
             const title = document.getElementById('editor-title').value.trim();
             const pillar = document.getElementById('editor-pillar').value;
             const subtitle = document.getElementById('editor-subtitle').value.trim();
             const author = document.getElementById('editor-author').value;
+            const status = document.getElementById('editor-status').value || 'published';
             const overridesId = document.getElementById('editor-overrides-id').value || '';
             const structured = getStructuredData();
+
             if (!title || !structured.sections.length || !structured.sections[0].heading) {
                 alert('Title and at least one section with a heading are required.'); return;
             }
+
             const body = buildArticleHTML(structured);
-            const articles = getAdminArticles();
-            const existing = articles.findIndex(a => a.id === id);
-            const article = { id, title, pillar, subtitle, body, author, status, overridesId, structured, savedAt: new Date().toISOString() };
-            if (existing >= 0) articles[existing] = article; else articles.push(article);
-            saveAdminArticles(articles);
-            clearEditor();
-            switchPanel('knowledge');
+            const newArt = { id, title, pillar, subtitle, body, author, status, overridesId, structured, savedAt: new Date().toISOString() };
+
+            let updatedList = [...currentArticles];
+            const idx = updatedList.findIndex(a => a.id === id);
+            if (idx > -1) updatedList[idx] = newArt; else updatedList.push(newArt);
+
+            try {
+                const res = await fetch('/api/content.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_pass: pass, type: 'knowledge_articles', items: updatedList })
+                });
+                if ((await res.json()).success) {
+                    clearEditor();
+                    renderKnowledge();
+                    switchPanel('knowledge');
+                }
+            } catch (err) { alert('Error saving.'); }
         }
 
         function editArticle(id) {
-            const article = getAdminArticles().find(a => a.id === id);
+            const article = currentArticles.find(a => a.id === id);
             if (!article) return;
             document.getElementById('editor-id').value = article.id;
             document.getElementById('editor-title').value = article.title;
@@ -1970,10 +2020,21 @@
             switchPanel('editor');
         }
 
-        function deleteArticle(id) {
+        async function deleteArticle(id) {
             if (!confirm('Delete this article?')) return;
-            saveAdminArticles(getAdminArticles().filter(a => a.id !== id));
-            renderKnowledge();
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            if (!pass) return;
+
+            const updatedList = currentArticles.filter(a => a.id !== id);
+
+            try {
+                const res = await fetch('/api/content.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_pass: pass, type: 'knowledge_articles', items: updatedList })
+                });
+                if ((await res.json()).success) { renderKnowledge(); }
+            } catch (err) { alert('Error deleting.'); }
         }
 
         function clearEditor() {
@@ -2119,107 +2180,159 @@
         }
 
         // ============================================================
-        // MYTH BUSTER CRUD
+        // MYTH BUSTER CRUD — Server side via /api/content.php
         // ============================================================
-        const DEFAULT_MYTHS = [
-            { id: 1, statement: '"If you\'re on a ventilator, you\'re in a coma and feel nothing."', fact: 'Many ventilated patients are conscious and aware. Sedation levels are carefully titrated — over-sedation increases ICU delirium. Light sedation protocols (ABCDEF bundle) are now standard.', source: 'Evidence-based ICU practice' },
-            { id: 2, statement: '"More IV fluids always help a shocked patient recover faster."', fact: 'Fluid overload is directly associated with increased ICU mortality. Modern protocols use dynamic fluid assessments (PPV, PLR). De-resuscitation is now a key ICU skill.', source: 'SSC Guidelines 2021' },
-            { id: 3, statement: '"ECMO is a last resort — once on ECMO, patients rarely survive."', fact: 'With careful patient selection, VV-ECMO survival for severe ARDS reaches 50–70%. CESAR and EOLIA trials demonstrated significant benefits. ECMO is a bridge to recovery.', source: 'ELSO Registry Data 2023' },
-            { id: 4, statement: '"Sepsis only affects elderly or immunocompromised patients."', fact: 'Sepsis can affect anyone — even a 25-year-old with a dental infection. It caused 11 million deaths in 2017 globally. Young, healthy people can deteriorate within hours.', source: 'Lancet Global Health 2020' },
-            { id: 5, statement: '"Once organs start failing, nothing more can be done."', fact: 'Modern ICU medicine can support multiple organ systems simultaneously — CRRT, ECMO, vasopressors, enteral nutrition. Many patients with 3–4 organ failure make full recoveries.', source: 'Multi-organ support therapy 2023' },
-            { id: 6, statement: '"Eating is not important in the ICU — patients are getting fluids."', fact: 'ICU nutrition is a life-saving therapy. Early enteral feeding (within 24–48hrs) reduces infections, ICU-acquired weakness, and mortality.', source: 'ESPEN ICU Guidelines 2023' },
-            { id: 7, statement: '"Higher doses of antibiotics are always better for severe infections."', fact: 'Antibiotic stewardship — right drug, right dose, right duration — is more effective than "more". Overuse drives AMR. De-escalation once cultures return is critical.', source: 'WHO AMR Action Plan' },
-            { id: 8, statement: '"Once a patient leaves the ICU, they\'re fully recovered."', fact: 'Post-Intensive Care Syndrome (PICS) affects up to 50% of ICU survivors — physical weakness, cognitive decline, anxiety, PTSD for months to years.', source: 'SCCM PICS Task Force' }
-        ];
-        const getMyths = () => { try { const d = JSON.parse(localStorage.getItem('apollo_admin_myths') || 'null'); return d && d.length ? d : DEFAULT_MYTHS; } catch { return DEFAULT_MYTHS; } };
-        const saveMyths = d => localStorage.setItem('apollo_admin_myths', JSON.stringify(d));
+        let currentMyths = [];
 
-        function renderMyths() {
-            const myths = getMyths();
-            document.getElementById('myth-count').textContent = myths.length + ' cards';
-            document.getElementById('myth-table-body').innerHTML = myths.map(m => `
-              <div style="border-bottom:1px solid var(--border-subtle);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;">
-                <div>
-                  <div style="font-size:0.84rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;">⚠️ ${m.statement}</div>
-                  <div style="font-size:0.78rem;color:var(--text-secondary);">✅ ${m.fact.substring(0, 100)}…</div>
-                  <div style="font-size:0.72rem;color:var(--accent-secondary);margin-top:4px;">— ${m.source}</div>
-                </div>
-                <div class="action-btns">
-                  <button class="action-btn action-btn-edit" onclick="editMyth(${m.id})">Edit</button>
-                  <button class="action-btn action-btn-delete" onclick="deleteMyth(${m.id})">Delete</button>
-                </div>
-              </div>`).join('');
+        async function renderMyths() {
+            try {
+                const res = await fetch('/api/content.php?type=myth_busters');
+                const serverData = await res.json();
+
+                // If server is empty, fallback to DEFAULT_MYTHS
+                currentMyths = (serverData && serverData.length) ? serverData : DEFAULT_MYTHS;
+
+                document.getElementById('myth-count').textContent = currentMyths.length + ' cards';
+                document.getElementById('myth-table-body').innerHTML = currentMyths.map(m => `
+                  <div style="border-bottom:1px solid var(--border-subtle);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;">
+                    <div>
+                      <div style="font-size:0.84rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;">⚠️ ${m.statement}</div>
+                      <div style="font-size:0.78rem;color:var(--text-secondary);">✅ ${m.fact.substring(0, 100)}…</div>
+                      <div style="font-size:0.72rem;color:var(--accent-secondary);margin-top:4px;">— ${m.source}</div>
+                    </div>
+                    <div class="action-btns">
+                      <button class="action-btn action-btn-edit myth-edit-btn" data-id="${m.id}">Edit</button>
+                      <button class="action-btn action-btn-delete myth-delete-btn" data-id="${m.id}">Delete</button>
+                    </div>
+                  </div>`).join('');
+            } catch (err) {
+                console.error('Error loading myths:', err);
+            }
         }
+
+        // Delegate edit/delete clicks
+        document.getElementById('myth-table-body').addEventListener('click', e => {
+            const id = e.target.getAttribute('data-id');
+            if (!id) return;
+            if (e.target.classList.contains('myth-edit-btn')) editMyth(parseInt(id));
+            if (e.target.classList.contains('myth-delete-btn')) deleteMyth(parseInt(id));
+        });
+
         function editMyth(id) {
-            const m = getMyths().find(x => x.id === id);
+            const m = currentMyths.find(x => x.id === id);
             if (!m) return;
             document.getElementById('myth-edit-id').value = id;
             document.getElementById('myth-statement').value = m.statement;
             document.getElementById('myth-fact').value = m.fact;
             document.getElementById('myth-source').value = m.source;
             document.querySelector('#panel-myths .editor-card h3').textContent = '✏️ Edit Myth Card';
+            // Scroll to top of panel
+            document.getElementById('panel-myths').scrollTop = 0;
         }
-        function saveMythCard() {
+
+        async function saveMythCard() {
             const stmt = document.getElementById('myth-statement').value.trim();
             const fact = document.getElementById('myth-fact').value.trim();
             const source = document.getElementById('myth-source').value.trim();
-            if (!stmt || !fact) { alert('Myth statement and fact are required.'); return; }
-            const myths = getMyths();
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+
+            if (!stmt || !fact) { alert('Required fields missing.'); return; }
+            if (!pass) return;
+
             const editId = parseInt(document.getElementById('myth-edit-id').value);
+            let updatedList = [...currentMyths];
+
             if (editId) {
-                const idx = myths.findIndex(m => m.id === editId);
-                if (idx > -1) myths[idx] = { ...myths[idx], statement: stmt, fact, source };
+                const idx = updatedList.findIndex(m => m.id === editId);
+                if (idx > -1) updatedList[idx] = { id: editId, statement: stmt, fact, source };
             } else {
-                myths.push({ id: Date.now(), statement: stmt, fact, source });
+                updatedList.push({ id: Date.now(), statement: stmt, fact, source });
             }
-            saveMyths(myths);
-            clearMythForm();
-            renderMyths();
+
+            try {
+                const res = await fetch('/api/content.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_pass: pass, type: 'myth_busters', items: updatedList })
+                });
+                if ((await res.json()).success) { clearMythForm(); renderMyths(); }
+            } catch (err) { alert('Error saving.'); }
         }
-        function deleteMyth(id) {
-            if (!confirm('Delete this myth card?')) return;
-            saveMyths(getMyths().filter(m => m.id !== id));
-            renderMyths();
+
+        async function deleteMyth(id) {
+            if (!confirm(`Delete this card?`)) return;
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            const updatedList = currentMyths.filter(x => x.id !== id);
+
+            try {
+                const res = await fetch('/api/content.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_pass: pass, type: 'myth_busters', items: updatedList })
+                });
+                if ((await res.json()).success) { renderMyths(); }
+            } catch (err) { alert('Error deleting.'); }
         }
+
         function clearMythForm() {
             ['myth-edit-id', 'myth-statement', 'myth-fact', 'myth-source'].forEach(id => document.getElementById(id).value = '');
             document.querySelector('#panel-myths .editor-card h3').textContent = '➕ Add / Edit Myth Card';
         }
 
+
         // ============================================================
         // QUIZ QUESTION CRUD
         // ============================================================
-        const getQuizBank = () => { try { const d = JSON.parse(localStorage.getItem('apollo_quiz_questions') || 'null'); if (d && d.length) return d; } catch { } return null; };
-        const saveQuizBank = d => localStorage.setItem('apollo_quiz_questions', JSON.stringify(d));
+        // ============================================================
+        // QUIZ QUESTION CRUD — Server side
+        // ============================================================
+        let currentQuizBank = [];
 
-        function renderQuizEditor() {
-            // Get from localStorage or show empty (first load = no custom bank set)
-            const bank = getQuizBank();
-            const tbody = document.getElementById('quiz-q-table');
-            const countEl = document.getElementById('quiz-q-count');
-            if (!bank) {
-                countEl.textContent = '50 built-in questions (not yet customised)';
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted);">Using the 50 default questions from quiz.html. Add a question above to start customising, or click "Reset to 50 Defaults" to load them into the editor.</td></tr>`;
-                return;
+        async function renderQuizEditor() {
+            try {
+                const res = await fetch('/api/content.php?type=quiz_questions');
+                const serverData = await res.json();
+
+                const tbody = document.getElementById('quiz-q-table');
+                const countEl = document.getElementById('quiz-q-count');
+
+                if (!serverData || serverData.length === 0) {
+                    countEl.textContent = 'Built-in questions (not yet customised)';
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted);">Using the default questions. Add a question above or click "Reset to 50 Defaults" to start customising on the server.</td></tr>`;
+                    currentQuizBank = []; // or you could load QUESTION_BANK here
+                    return;
+                }
+
+                currentQuizBank = serverData;
+                countEl.textContent = currentQuizBank.length + ' questions';
+                tbody.innerHTML = currentQuizBank.map((q, i) => {
+                    const letters = ['A', 'B', 'C', 'D'];
+                    return `<tr>
+                      <td style="width:40px;">${i + 1}</td>
+                      <td style="font-size:0.84rem;">${q.q.substring(0, 80)}${q.q.length > 80 ? '…' : ''}</td>
+                      <td><span class="status-badge badge-published">${letters[q.correct]}: ${q.options[q.correct]?.substring?.(0, 30) ?? ''}…</span></td>
+                      <td><div class="action-btns">
+                        <button class="action-btn action-btn-edit quiz-edit-btn" data-idx="${i}">Edit</button>
+                        <button class="action-btn action-btn-delete quiz-delete-btn" data-idx="${i}">Delete</button>
+                      </div></td>
+                    </tr>`;
+                }).join('');
+            } catch (err) {
+                console.error('Error loading quiz bank:', err);
             }
-            countEl.textContent = bank.length + ' questions';
-            tbody.innerHTML = bank.map((q, i) => {
-                const letters = ['A', 'B', 'C', 'D'];
-                return `<tr>
-                  <td style="width:40px;">${i + 1}</td>
-                  <td style="font-size:0.84rem;">${q.q.substring(0, 80)}${q.q.length > 80 ? '…' : ''}</td>
-                  <td><span class="status-badge badge-published">${letters[q.correct]}: ${q.options[q.correct]?.substring?.(0, 30) ?? ''}…</span></td>
-                  <td><div class="action-btns">
-                    <button class="action-btn action-btn-edit" onclick="editQuizQ(${i})">Edit</button>
-                    <button class="action-btn action-btn-delete" onclick="deleteQuizQ(${i})">Delete</button>
-                  </div></td>
-                </tr>`;
-            }).join('');
         }
+
+        // Delegate quiz clicks
+        document.getElementById('quiz-q-table').addEventListener('click', e => {
+            const idx = e.target.getAttribute('data-idx');
+            if (idx === null) return;
+            if (e.target.classList.contains('quiz-edit-btn')) editQuizQ(parseInt(idx));
+            if (e.target.classList.contains('quiz-delete-btn')) deleteQuizQ(parseInt(idx));
+        });
+
         function editQuizQ(idx) {
-            const bank = getQuizBank();
-            if (!bank) return;
-            const q = bank[idx];
+            const q = currentQuizBank[idx];
+            if (!q) return;
             document.getElementById('q-edit-id').value = idx;
             document.getElementById('q-question').value = q.q;
             document.getElementById('q-a').value = q.options[0] || '';
@@ -2228,74 +2341,125 @@
             document.getElementById('q-d').value = q.options[3] || '';
             document.getElementById('q-correct').value = q.correct;
             document.getElementById('q-explanation').value = q.explanation || '';
+            document.getElementById('panel-quizeditor').scrollTop = 0;
         }
-        function saveQuizQuestion() {
+
+        async function saveQuizQuestion() {
             const quest = document.getElementById('q-question').value.trim();
             const optA = document.getElementById('q-a').value.trim();
             const optB = document.getElementById('q-b').value.trim();
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+
             if (!quest || !optA || !optB) { alert('Question and at least options A & B are required.'); return; }
+            if (!pass) return;
+
             const options = [optA, optB, document.getElementById('q-c').value.trim(), document.getElementById('q-d').value.trim()].filter(Boolean);
             const correct = parseInt(document.getElementById('q-correct').value);
             const explanation = document.getElementById('q-explanation').value.trim();
             const editIdx = document.getElementById('q-edit-id').value;
-            let bank = getQuizBank() || [];
+
+            let updatedBank = [...currentQuizBank];
             if (editIdx !== '') {
-                bank[parseInt(editIdx)] = { q: quest, options, correct, explanation };
+                updatedBank[parseInt(editIdx)] = { q: quest, options, correct, explanation };
             } else {
-                bank.push({ q: quest, options, correct, explanation });
+                updatedBank.push({ q: quest, options, correct, explanation });
             }
-            saveQuizBank(bank);
-            clearQuizForm();
-            renderQuizEditor();
-            alert('✅ Question saved! Quiz will now use this custom bank.');
+
+            try {
+                const res = await fetch('/api/content.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: updatedBank })
+                });
+                if ((await res.json()).success) { clearQuizForm(); renderQuizEditor(); }
+            } catch (err) { alert('Error saving.'); }
         }
-        function deleteQuizQ(idx) {
-            if (!confirm('Delete this question?')) return;
-            const bank = getQuizBank() || [];
-            bank.splice(idx, 1);
-            saveQuizBank(bank);
-            renderQuizEditor();
+
+        async function deleteQuizQ(idx) {
+            if (!confirm(`Delete this question?`)) return;
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            let updatedBank = currentQuizBank.filter((_, i) => i !== idx);
+
+            try {
+                const res = await fetch('/api/content.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: updatedBank })
+                });
+                if ((await res.json()).success) { renderQuizEditor(); }
+            } catch (err) { alert('Error deleting.'); }
         }
+
         function clearQuizForm() {
             ['q-edit-id', 'q-question', 'q-a', 'q-b', 'q-c', 'q-d', 'q-explanation'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('q-correct').value = '0';
         }
-        function resetQuizToDefault() {
-            if (!confirm('This will clear the custom quiz bank and reload all 50 default questions. Continue?')) return;
-            localStorage.removeItem('apollo_quiz_questions');
-            renderQuizEditor();
-            alert('↺ Reset done. Quiz is back to the 50 built-in questions.');
+
+        async function resetQuizToDefault() {
+            if (!confirm('This will load the 50 default questions to the server. Continue?')) return;
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            if (!pass) return;
+
+            const defaults = [
+                { q: "What does ECMO stand for?", options: ["Extracorporeal Membrane Oxygenation", "Extended Cardiac Monitoring Operation", "Emergency Cardiac Muscle Oxygenation", "External Cardio-Metabolic Oxygenator"], correct: 0, explanation: "ECMO temporarily replaces heart/lung function by circulating blood outside the body through an artificial lung." },
+                { q: "According to Sepsis-3, what defines septic shock?", options: ["Fever >38°C", "Vasopressor requirement AND lactate >2 mmol/L despite fluids", "WBC >12,000", "RR >20 breaths/min"], correct: 1, explanation: "Sepsis-3 defines septic shock as sepsis requiring vasopressors to maintain MAP ≥65 mmHg AND lactate >2 mmol/L." },
+                { q: "What tidal volume is recommended for lung-protective ventilation in ARDS?", options: ["10–12 mL/kg IBW", "8–10 mL/kg IBW", "6 mL/kg IBW", "4 mL/kg IBW"], correct: 2, explanation: "ARMA trial showed 6 mL/kg IBW reduces 28-day ARDS mortality by 22%." }
+            ];
+
+            try {
+                const res = await fetch('/api/content.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: defaults })
+                });
+                if ((await res.json()).success) { renderQuizEditor(); alert('↺ Reset done.'); }
+            } catch (err) { alert('Error resetting.'); }
         }
 
+
         // ============================================================
-        // RESEARCH PAPERS CRUD
+        // RESEARCH PAPERS CRUD — Server side
         // ============================================================
-        const DEFAULT_RESEARCH = [
-            { id: 1, title: 'Prone Positioning in Severe ARDS (PROSEVA)', journal: 'NEJM', year: 2013, topic: 'ARDS & Ventilation', doi: 'https://doi.org/10.1056/NEJMoa1214103', abstract: 'Prone positioning ≥16h/day reduced 28-day mortality from 32.8% to 16% in severe ARDS patients.' },
-            { id: 2, title: 'VV-ECMO for Severe ARDS (EOLIA)', journal: 'NEJM', year: 2018, topic: 'ECMO', doi: 'https://doi.org/10.1056/NEJMoa1800385', abstract: 'Early VV-ECMO reduced the composite primary endpoint; trial stopped early. Rescue ECMO crossover was 28%.' },
-            { id: 3, title: 'Lung-Protective Ventilation (ARDSNet/ARMA)', journal: 'NEJM', year: 2000, topic: 'ARDS & Ventilation', doi: 'https://doi.org/10.1056/NEJM200005043421801', abstract: '6 mL/kg IBW tidal volumes reduced 28-day mortality by 22% vs 12 mL/kg in ARDS.' },
-            { id: 4, title: 'Surviving Sepsis Campaign 2021 Guidelines', journal: 'Intensive Care Medicine', year: 2021, topic: 'Sepsis & Infection', doi: 'https://doi.org/10.1007/s00134-021-06506-y', abstract: 'Comprehensive guideline update on sepsis/septic shock management including Hour-1 Bundle and antimicrobial stewardship.' }
+        let currentResearchList = [];
+
+        async function renderResearch() {
+            try {
+                const res = await fetch('/api/content.php?type=research_papers');
+                const serverData = await res.json();
+
+                // Fallback to defaults if server is empty
+                currentResearchList = (serverData && serverData.length) ? serverData : DEFAULT_RESEARCH_SEED;
+
+                document.getElementById('rp-count').textContent = currentResearchList.length + ' papers';
+                document.getElementById('rp-table').innerHTML = currentResearchList.map(p => `<tr>
+                  <td style="font-weight:700;font-size:0.84rem;">${p.title}</td>
+                  <td style="font-size:0.78rem;color:var(--text-muted);">${p.journal}</td>
+                  <td>${p.year}</td>
+                  <td><span class="status-badge badge-published" style="font-size:0.66rem;">${p.topic}</span></td>
+                  <td><div class="action-btns">
+                    ${p.doi ? `<a href="${p.doi}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View ↗</a>` : ''}
+                    <button class="action-btn action-btn-edit res-edit-btn" data-id="${p.id}">Edit</button>
+                    <button class="action-btn action-btn-delete res-del-btn" data-id="${p.id}">Delete</button>
+                  </div></td>
+                </tr>`).join('');
+            } catch (err) { console.error('Error loading research:', err); }
+        }
+
+        // Delegate research clicks
+        document.getElementById('rp-table').addEventListener('click', e => {
+            const id = e.target.getAttribute('data-id');
+            if (!id) return;
+            if (e.target.classList.contains('res-edit-btn')) editResearch(parseInt(id));
+            if (e.target.classList.contains('res-del-btn')) deleteResearch(parseInt(id));
+        });
+
+        const DEFAULT_RESEARCH_SEED = [
+            { id: 1, title: 'Prone Positioning in Severe ARDS (PROSEVA)', journal: 'NEJM', year: 2013, topic: 'ARDS & Ventilation', doi: 'https://doi.org/10.1056/NEJMoa1214103', takeaway: 'Prone positioning ≥16h/day reduced 28-day mortality from 32.8% to 16% in severe ARDS patients.', practice: 'We implement prone positioning early for all severe ARDS patients at Apollo, maintaining it for at least 16 hours/day per PROSEVA protocol.' },
+            { id: 2, title: 'VV-ECMO for Severe ARDS (EOLIA)', journal: 'NEJM', year: 2018, topic: 'ECMO', doi: 'https://doi.org/10.1056/NEJMoa1800385', takeaway: 'Early VV-ECMO reduced the composite primary endpoint; trial stopped early. Rescue ECMO crossover was 28%.', practice: 'EOLIA guides our ECMO initiation. We convene the ECMO team when P/F ratio drops below 50 mmHg despite optimal care.' }
         ];
-        const getResearch = () => { try { const d = JSON.parse(localStorage.getItem('apollo_admin_research') || 'null'); return d && d.length ? d : DEFAULT_RESEARCH; } catch { return DEFAULT_RESEARCH; } };
-        const saveResearch = d => localStorage.setItem('apollo_admin_research', JSON.stringify(d));
 
-        function renderResearch() {
-            const papers = getResearch();
-            document.getElementById('rp-count').textContent = papers.length + ' papers';
-            document.getElementById('rp-table').innerHTML = papers.map(p => `<tr>
-              <td style="font-weight:700;font-size:0.84rem;">${p.title}</td>
-              <td style="font-size:0.78rem;color:var(--text-muted);">${p.journal}</td>
-              <td>${p.year}</td>
-              <td><span class="status-badge badge-published" style="font-size:0.66rem;">${p.topic}</span></td>
-              <td><div class="action-btns">
-                ${p.doi ? `<a href="${p.doi}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View ↗</a>` : ''}
-                <button class="action-btn action-btn-edit" onclick="editResearch(${p.id})">Edit</button>
-                <button class="action-btn action-btn-delete" onclick="deleteResearch(${p.id})">Delete</button>
-              </div></td>
-            </tr>`).join('');
-        }
         function editResearch(id) {
-            const p = getResearch().find(x => x.id === id);
+            const p = currentResearchList.find(x => x.id === id);
             if (!p) return;
             document.getElementById('rp-edit-id').value = id;
             document.getElementById('rp-title').value = p.title;
@@ -2303,32 +2467,66 @@
             document.getElementById('rp-year').value = p.year;
             document.getElementById('rp-topic').value = p.topic;
             document.getElementById('rp-doi').value = p.doi || '';
-            document.getElementById('rp-abstract').value = p.abstract || '';
+            document.getElementById('rp-takeaway').value = p.takeaway || '';
+            document.getElementById('rp-practice').value = p.practice || '';
+            document.getElementById('panel-research').scrollTop = 0;
         }
-        function saveResearchPaper() {
+
+        async function saveResearchPaper() {
             const title = document.getElementById('rp-title').value.trim();
             const journal = document.getElementById('rp-journal').value.trim();
             const year = parseInt(document.getElementById('rp-year').value);
-            if (!title || !journal || !year) { alert('Title, journal and year are required.'); return; }
-            const papers = getResearch();
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+
+            if (!title || !journal || !year) { alert('Required fields missing.'); return; }
+            if (!pass) return;
+
             const editId = parseInt(document.getElementById('rp-edit-id').value);
-            const newPaper = { id: editId || Date.now(), title, journal, year, topic: document.getElementById('rp-topic').value, doi: document.getElementById('rp-doi').value.trim(), abstract: document.getElementById('rp-abstract').value.trim() };
+            const newPaper = {
+                id: editId || Date.now(), title, journal, year,
+                topic: document.getElementById('rp-topic').value,
+                doi: document.getElementById('rp-doi').value.trim(),
+                takeaway: document.getElementById('rp-takeaway').value.trim(),
+                practice: document.getElementById('rp-practice').value.trim()
+            };
+
+            let updatedList = [...currentResearchList];
             if (editId) {
-                const idx = papers.findIndex(p => p.id === editId);
-                if (idx > -1) papers[idx] = newPaper; else papers.push(newPaper);
-            } else { papers.push(newPaper); }
-            saveResearch(papers);
-            clearResearchForm();
-            renderResearch();
+                const idx = updatedList.findIndex(p => p.id === editId);
+                if (idx > -1) updatedList[idx] = newPaper;
+            } else {
+                updatedList.push(newPaper);
+            }
+
+            try {
+                const res = await fetch('/api/content.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_pass: pass, type: 'research_papers', items: updatedList })
+                });
+                if ((await res.json()).success) { clearResearchForm(); renderResearch(); }
+            } catch (err) { alert('Error saving.'); }
         }
-        function deleteResearch(id) {
-            if (!confirm('Delete this paper?')) return;
-            saveResearch(getResearch().filter(p => p.id !== id));
-            renderResearch();
+
+        async function deleteResearch(id) {
+            if (!confirm(`Delete this research paper?`)) return;
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            const updatedList = currentResearchList.filter(x => x.id !== id);
+
+            try {
+                const res = await fetch('/api/content.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_pass: pass, type: 'research_papers', items: updatedList })
+                });
+                if ((await res.json()).success) { renderResearch(); }
+            } catch (err) { alert('Error deleting.'); }
         }
+
         function clearResearchForm() {
-            ['rp-edit-id', 'rp-title', 'rp-journal', 'rp-year', 'rp-doi', 'rp-abstract'].forEach(id => document.getElementById(id).value = '');
+            ['rp-edit-id', 'rp-title', 'rp-journal', 'rp-year', 'rp-doi', 'rp-takeaway', 'rp-practice'].forEach(id => document.getElementById(id).value = '');
         }
+
 
         // ============================================================
         // INIT

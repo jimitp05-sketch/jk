@@ -257,6 +257,31 @@
             </div>
 
             <script>
+                async function initResearch() {
+                    try {
+                        const res = await fetch('api/content.php?type=research_papers');
+                        const papers = await res.json();
+                        const grid = document.getElementById('tab-papers');
+
+                        grid.innerHTML = papers.map((p, i) => `
+                            <div class="glass-card research-item reveal ${i > 0 ? 'reveal-delay-' + Math.min(i, 3) : ''}" data-topic="${p.topic || 'icu'}">
+                                <div>
+                                    <div class="research-topic">${p.journal}</div>
+                                    <h3>${p.title}</h3>
+                                    <p class="research-authors">${p.authors}</p>
+                                </div>
+                                <div class="research-takeaway"><strong>Clinical Takeaway:</strong> ${p.takeaway}</div>
+                                <blockquote class="dr-position">
+                                    <strong>Dr. Kothari's Practice:</strong> ${p.position}
+                                </blockquote>
+                                <a href="${p.url}" target="_blank" rel="noopener" class="read-more">View Paper →</a>
+                            </div>
+                        `).join('');
+
+                    } catch (e) { console.error("Failed to load research papers", e); }
+                }
+                window.addEventListener('DOMContentLoaded', initResearch);
+
                 function showResearchTab(tab, btn) {
                     document.getElementById('tab-papers').style.display = tab === 'papers' ? 'grid' : 'none';
                     document.getElementById('tab-family').style.display = tab === 'family' ? 'grid' : 'none';
