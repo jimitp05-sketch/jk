@@ -3893,86 +3893,191 @@ button {
     }
 }
 
-
-/* ── WHATSAPP FLOATING BUTTON ──────────────────────── */
-.wa-float-wrap {
+/* ── SPEED DIAL FAB (Unified 3-in-1 Popup) ─────────── */
+.sd-wrap {
     position: fixed;
     bottom: 28px;
     right: 24px;
-    z-index: 1050;
+    z-index: 1060;
     display: flex;
     flex-direction: column;
-    gap: 10px;
     align-items: flex-end;
+    gap: 12px;
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
     pointer-events: none;
-    transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+    transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-.wa-float-wrap.wa-float-visible {
+.sd-wrap.sd-visible {
     opacity: 1;
     transform: translateY(0);
     pointer-events: all;
 }
 
-.wa-float-btn {
+/* Main "+" trigger button */
+.sd-main {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--indigo, #2B3280), var(--teal, #0078D4));
+    color: #fff;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 6px 24px rgba(43, 50, 128, 0.45);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    flex-shrink: 0;
+}
+
+.sd-main:hover {
+    transform: scale(1.1);
+    box-shadow: 0 10px 32px rgba(43, 50, 128, 0.55);
+}
+
+/* Rotate "+" to "×" when open */
+.sd-wrap.sd-open .sd-main-icon {
+    transform: rotate(45deg);
+}
+
+.sd-main-icon {
+    display: inline-block;
+    transition: transform 0.25s ease;
+    font-style: normal;
+}
+
+/* Pulse ring on main button */
+.sd-pulse {
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 2px solid rgba(43, 50, 128, 0.4);
+    animation: sd-ring 2s ease-out infinite;
+}
+
+@keyframes sd-ring {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1.55);
+        opacity: 0;
+    }
+}
+
+/* Actions container */
+.sd-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform-origin: bottom right;
+}
+
+.sd-wrap.sd-open .sd-actions {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+/* Each action button */
+.sd-btn {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #25D366;
-    color: #fff;
-    padding: 12px 18px;
-    border-radius: var(--radius-full);
+    padding: 11px 18px;
+    border-radius: 999px;
     font-size: 0.88rem;
     font-weight: 700;
-    box-shadow: 0 6px 24px rgba(37, 211, 102, 0.45);
-    transition: var(--t-base);
     text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: none;
 }
 
-.wa-float-btn:hover {
-    transform: translateY(-3px) scale(1.04);
-    box-shadow: 0 10px 36px rgba(37, 211, 102, 0.55);
-    color: #fff;
+.sd-btn:hover {
+    transform: translateX(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
-.wa-float-book {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--grad-primary);
-    color: #fff;
-    padding: 10px 16px;
-    border-radius: var(--radius-full);
-    font-size: 0.82rem;
-    font-weight: 700;
-    box-shadow: 0 4px 16px var(--glow-indigo);
-    transition: var(--t-base);
-    text-decoration: none;
+.sd-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
 }
 
-.wa-float-book:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px var(--glow-indigo);
+.sd-label {
+    font-size: 0.85rem;
+}
+
+/* Emergency — Red */
+.sd-emergency {
+    background: #DC2626;
     color: #fff;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+}
+
+.sd-emergency:hover {
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.5);
+}
+
+/* WhatsApp — Green */
+.sd-whatsapp {
+    background: #25D366;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+}
+
+.sd-whatsapp:hover {
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.5);
+}
+
+/* Book OPD — Indigo */
+.sd-book {
+    background: linear-gradient(135deg, #2B3280, #0078D4);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(43, 50, 128, 0.4);
+}
+
+.sd-book:hover {
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(43, 50, 128, 0.5);
 }
 
 @media (max-width: 480px) {
-    .wa-float-wrap {
+    .sd-wrap {
         bottom: 16px;
         right: 14px;
     }
 
-    .wa-float-btn span {
+    .sd-label {
         display: none;
     }
 
-    .wa-float-btn {
-        padding: 13px;
+    .sd-btn {
+        padding: 12px 14px;
         border-radius: 50%;
     }
+
+    .sd-main {
+        width: 52px;
+        height: 52px;
+    }
 }
+
 
 /* ── PAGE FADE TRANSITIONS ─────────────────────────── */
 @keyframes pageFadeIn {

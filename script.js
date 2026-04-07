@@ -255,47 +255,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const WA_NUM = '919999999999';
 
-// ── EMERGENCY POPUP (Bottom-Right Cluster) ────────────────
+// ── UNIFIED SPEED DIAL FAB ────────────────────────────────
+// Single popup: tap the main button → 3 actions slide up
 (function () {
-    const emg = document.createElement('div');
-    emg.id = 'emergency-popup';
-    emg.className = 'emg-wrap';
-    emg.innerHTML = `
-      <button class="emg-toggle" aria-label="Emergency contacts" onclick="this.parentElement.classList.toggle('emg-open')">
-        <span class="emg-pulse"></span>🚨
-      </button>
-      <div class="emg-panel">
-        <p class="emg-label">ICU Emergency</p>
-        <a href="tel:18605001066" class="emg-call">📞 1860-500-1066</a>
-        <a href="https://wa.me/${WA_NUM}?text=Emergency%20ICU%20enquiry%20for%20Dr.%20Jay%20Kothari"
-           target="_blank" rel="noopener" class="emg-wa">📲 WhatsApp Emergency</a>
+    const fab = document.createElement('div');
+    fab.id = 'speed-dial';
+    fab.className = 'sd-wrap';
+    fab.innerHTML = `
+      <div class="sd-actions">
+        <a href="tel:18605001066" class="sd-btn sd-emergency" aria-label="ICU Emergency">
+          <span class="sd-icon">🚨</span>
+          <span class="sd-label">ICU Emergency</span>
+        </a>
+        <a href="https://wa.me/${WA_NUM}?text=Hello%2C%20I%20would%20like%20to%20consult%20Dr.%20Jay%20Kothari"
+           class="sd-btn sd-whatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+          <span class="sd-icon">💬</span>
+          <span class="sd-label">WhatsApp Chat</span>
+        </a>
+        <a href="booking.html" class="sd-btn sd-book" aria-label="Book OPD">
+          <span class="sd-icon">📅</span>
+          <span class="sd-label">Book OPD</span>
+        </a>
       </div>
+      <button class="sd-main" id="sd-main-btn" aria-label="Open quick actions">
+        <span class="sd-main-icon">＋</span>
+        <span class="sd-pulse"></span>
+      </button>
     `;
-    document.body.appendChild(emg);
-    // Auto-close on outside click
+    document.body.appendChild(fab);
+
+    // Show after small delay
+    setTimeout(() => fab.classList.add('sd-visible'), 800);
+
+    // Toggle open/close
+    document.getElementById('sd-main-btn').addEventListener('click', e => {
+        e.stopPropagation();
+        fab.classList.toggle('sd-open');
+    });
+
+    // Close on outside click
     document.addEventListener('click', e => {
-        if (!emg.contains(e.target)) emg.classList.remove('emg-open');
+        if (!fab.contains(e.target)) fab.classList.remove('sd-open');
     });
 })();
 
 
-// ── WHATSAPP FLOATING BUTTON ―――――――――――――――――――――――――――
-(function () {
-    const float = document.createElement('div');
-    float.className = 'wa-float-wrap';
-    float.innerHTML = `
-      <a href="https://wa.me/${WA_NUM}?text=Hello%2C%20I%20would%20like%20to%20consult%20Dr.%20Jay%20Kothari"
-         class="wa-float-btn" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
-          <path fill="#fff" d="M16 2C8.27 2 2 8.27 2 16c0 2.44.65 4.74 1.79 6.73L2 30l7.46-1.76A13.93 13.93 0 0016 30c7.73 0 14-6.27 14-14S23.73 2 16 2zm6.27 18.87c-.34-.17-2.02-1-2.34-1.11-.32-.11-.55-.17-.78.17s-.9 1.11-1.1 1.34c-.2.23-.4.26-.74.09-.34-.17-1.44-.53-2.74-1.69-1.01-.9-1.69-2.01-1.89-2.35-.2-.34 0-.52.15-.68l.5-.58c.16-.18.2-.34.3-.56.1-.23.05-.43-.02-.6-.09-.17-.78-1.88-1.07-2.58-.28-.68-.57-.59-.78-.6h-.67c-.23 0-.6.09-.91.43-.31.34-1.2 1.17-1.2 2.85s1.23 3.31 1.4 3.54c.17.23 2.42 3.7 5.87 5.19.82.35 1.46.56 1.96.72.82.26 1.57.22 2.16.13.66-.1 2.02-.82 2.31-1.62.29-.8.29-1.49.2-1.62-.08-.13-.3-.2-.64-.37z"/>
-        </svg>
-        <span>Chat with Us</span>
-      </a>
-      <a href="booking.html" class="wa-float-book">📅 Book OPD</a>
-    `;
-    document.body.appendChild(float);
-    setTimeout(() => float.classList.add('wa-float-visible'), 1500);
-})();
 
 // ── PAGE FADE TRANSITIONS ―――――――――――――――――――――――――――――
 (function () {
