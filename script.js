@@ -255,26 +255,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const WA_NUM = '919999999999';
 
-// ── EMERGENCY STRIP ───────────────────────────────────
+// ── EMERGENCY POPUP (Bottom-Right Cluster) ────────────────
 (function () {
-    const strip = document.createElement('div');
-    strip.id = 'emergency-strip';
-    strip.innerHTML = `
-      <span class="es-pulse"></span>
-      <span>🚨 <strong>ICU Emergency:</strong> <a href="tel:18605001066">1860-500-1066</a></span>
-      <span class="es-divider">|</span>
-      <a href="https://wa.me/${WA_NUM}?text=Emergency%20ICU%20enquiry%20for%20Dr.%20Jay%20Kothari" target="_blank" rel="noopener">
-        📲 WhatsApp Dr. Kothari's Team →
-      </a>
+    const emg = document.createElement('div');
+    emg.id = 'emergency-popup';
+    emg.className = 'emg-wrap';
+    emg.innerHTML = `
+      <button class="emg-toggle" aria-label="Emergency contacts" onclick="this.parentElement.classList.toggle('emg-open')">
+        <span class="emg-pulse"></span>🚨
+      </button>
+      <div class="emg-panel">
+        <p class="emg-label">ICU Emergency</p>
+        <a href="tel:18605001066" class="emg-call">📞 1860-500-1066</a>
+        <a href="https://wa.me/${WA_NUM}?text=Emergency%20ICU%20enquiry%20for%20Dr.%20Jay%20Kothari"
+           target="_blank" rel="noopener" class="emg-wa">📲 WhatsApp Emergency</a>
+      </div>
     `;
-    document.body.insertBefore(strip, document.body.firstChild);
-    const stripH = strip.getBoundingClientRect().height || 40;
-    const nav = document.getElementById('navbar');
-    if (nav) nav.style.top = stripH + 'px';
-    document.querySelectorAll('.hero, .page-hero').forEach(h => {
-        h.style.paddingTop = (parseInt(getComputedStyle(h).paddingTop) + stripH) + 'px';
+    document.body.appendChild(emg);
+    // Auto-close on outside click
+    document.addEventListener('click', e => {
+        if (!emg.contains(e.target)) emg.classList.remove('emg-open');
     });
 })();
+
 
 // ── WHATSAPP FLOATING BUTTON ―――――――――――――――――――――――――――
 (function () {
