@@ -325,18 +325,20 @@
 
                 function renderPapers(filterSlug) {
                     const grid = document.getElementById('tab-papers');
+                    // Make sure the grid is visible (in case tab was switched)
+                    grid.style.display = 'grid';
+
                     const filtered = filterSlug === 'all'
                         ? allResearchPapers
                         : allResearchPapers.filter(p => topicMatches(p.topic, filterSlug));
 
                     if (filtered.length === 0) {
-                        grid.innerHTML = `<div class="glass-card reveal" style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-muted);">No papers found for this topic yet. Add them in the Admin panel.</div>`;
-                        if (window.revealNew) window.revealNew();
+                        grid.innerHTML = `<div class="glass-card" style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-muted);">No papers found for this topic yet. Add them in the Admin panel.</div>`;
                         return;
                     }
 
                     grid.innerHTML = filtered.map((p, i) => `
-                        <div class="glass-card research-item reveal ${i > 0 ? 'reveal-delay-' + Math.min(i, 3) : ''}" data-topic="${(p.topic || '').toLowerCase()}">
+                        <div class="glass-card research-item" data-topic="${(p.topic || '').toLowerCase()}">
                             <div>
                                 <div class="research-topic">${p.topic ? p.topic + ' · ' : ''}${p.journal || ''} ${p.year || ''}</div>
                                 <h3>${p.title || ''}</h3>
@@ -349,8 +351,8 @@
                             </div>
                         </div>
                     `).join('');
-
-                    if (window.revealNew) window.revealNew();
+                    // No reveal class on dynamic cards — they'd stay invisible waiting for IntersectionObserver
+                    // which never fires on elements injected after page load
                 }
 
                 function setupFilterListeners() {
