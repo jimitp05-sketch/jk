@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,42 +7,126 @@
     <title>Admin Panel — Dr. Jay Kothari</title>
     <link rel="stylesheet" href="styles.css" />
     <style>
-        body {
-            background: #F1F3FA;
+        /* ═══════════════════════════════════════════════
+           ADMIN PANEL — DARK CYBER GLASSMORPHISM v2.2
+           ═══════════════════════════════════════════════ */
+        :root {
+            --ad-bg: #080b14;
+            --ad-surface: rgba(255, 255, 255, 0.04);
+            --ad-surface-hover: rgba(255, 255, 255, 0.07);
+            --ad-border: rgba(255, 255, 255, 0.08);
+            --ad-border-bright: rgba(100, 130, 255, 0.3);
+            --ad-indigo: #4f65f0;
+            --ad-teal: #22d3ee;
+            --ad-green: #34d399;
+            --ad-red: #f87171;
+            --ad-amber: #fbbf24;
+            --ad-text: #e2e8f0;
+            --ad-text-muted: #7b8bad;
+            --ad-sidebar-w: 230px;
+            --ad-top-h: 58px;
+            --ad-radius: 12px;
+            --ad-transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* === LOGIN SCREEN === */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--ad-bg);
+            color: var(--ad-text);
+            font-family: 'Manrope', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ── TOAST ── */
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(18, 24, 38, 0.96);
+            border: 1px solid var(--ad-border-bright);
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 0.86rem;
+            font-weight: 600;
+            color: var(--ad-text);
+            backdrop-filter: blur(16px);
+            transform: translateX(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: auto;
+            max-width: 320px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.toast-success {
+            border-color: rgba(52, 211, 153, 0.5);
+        }
+
+        .toast.toast-error {
+            border-color: rgba(248, 113, 113, 0.5);
+        }
+
+        .toast.toast-info {
+            border-color: rgba(79, 101, 240, 0.4);
+        }
+
+        /* ── LOGIN ── */
         .login-screen {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--gradient-hero);
+            background: radial-gradient(ellipse at 30% 50%, rgba(79, 101, 240, 0.12) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(34, 211, 238, 0.08) 0%, transparent 50%), var(--ad-bg);
             padding: 24px;
         }
 
         .login-card {
-            background: #fff;
-            border-radius: var(--radius-xl);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--ad-border);
+            border-radius: 20px;
             padding: 48px 40px;
             max-width: 420px;
             width: 100%;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
             text-align: center;
         }
 
         .login-logo {
             font-size: 1.5rem;
             font-weight: 800;
-            letter-spacing: -1px;
-            color: var(--text-primary);
-            margin-bottom: 8px;
+            color: var(--ad-text);
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .login-logo span {
+            color: var(--ad-indigo);
         }
 
         .login-label {
             font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-bottom: 30px;
+            color: var(--ad-text-muted);
+            margin-bottom: 32px;
         }
 
         .login-field {
@@ -52,111 +136,99 @@
 
         .login-field label {
             display: block;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--ad-text-muted);
             margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         .login-field input {
             width: 100%;
-            padding: 12px 14px;
-            border: 1.5px solid var(--border-medium);
-            border-radius: var(--radius-sm);
-            font-family: var(--font-body);
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--ad-border);
+            border-radius: 10px;
+            color: var(--ad-text);
             font-size: 0.92rem;
-            color: var(--text-primary);
+            font-family: inherit;
+            transition: var(--ad-transition);
         }
 
         .login-field input:focus {
             outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(45, 53, 130, 0.1);
+            border-color: var(--ad-indigo);
+            background: rgba(79, 101, 240, 0.08);
+            box-shadow: 0 0 0 3px rgba(79, 101, 240, 0.15);
         }
 
         .login-btn {
             width: 100%;
             padding: 13px;
-            background: var(--accent-primary);
+            background: linear-gradient(135deg, #4f65f0, #2b3acc);
             color: #fff;
             border: none;
-            border-radius: var(--radius-md);
-            font-weight: 700;
+            border-radius: 10px;
+            font-weight: 800;
             font-size: 0.95rem;
             cursor: pointer;
-            margin-top: 8px;
-            transition: var(--transition-base);
+            margin-top: 10px;
+            font-family: inherit;
+            transition: var(--ad-transition);
+            letter-spacing: 0.3px;
         }
 
         .login-btn:hover {
-            background: #1e256a;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(79, 101, 240, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
         }
 
         .login-error {
-            margin-top: 12px;
+            margin-top: 14px;
             font-size: 0.82rem;
-            color: #C0392B;
+            color: var(--ad-red);
             display: none;
+            background: rgba(248, 113, 113, 0.08);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+            border-radius: 8px;
+            padding: 10px 14px;
         }
 
-        .platform-tabs-wrap {
-            position: sticky;
-            top: 60px;
-            /* Aligned with scrolled navbar height */
-            z-index: 900;
-            background: rgba(245, 247, 252, 0.96);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-light);
-            margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            width: 100%;
-        }
-
-        .platform-tabs {
-            max-width: var(--max-w);
-            margin: 0 auto;
-            padding: 0 28px;
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .platform-tabs::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* === ADMIN LAYOUT === */
+        /* ── LAYOUT ── */
         .admin-layout {
             display: none;
             min-height: 100vh;
+            flex-direction: column;
         }
 
         .admin-top {
-            background: #fff;
-            border-bottom: 1px solid var(--border-subtle);
-            padding: 0 28px;
+            background: rgba(12, 17, 30, 0.9);
+            border-bottom: 1px solid var(--ad-border);
+            padding: 0 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 60px;
+            height: var(--ad-top-h);
             position: sticky;
             top: 0;
             z-index: 200;
-            box-shadow: 0 2px 8px rgba(11, 15, 26, 0.06);
+            backdrop-filter: blur(20px);
         }
 
         .admin-top-logo {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: -0.5px;
+            color: var(--ad-text);
+            letter-spacing: -0.3px;
         }
 
         .admin-top-logo span {
-            color: var(--accent-primary);
+            color: var(--ad-indigo);
         }
 
         .admin-top-right {
@@ -165,69 +237,95 @@
             gap: 16px;
         }
 
-        .admin-view-site {
-            font-size: 0.83rem;
+        .admin-view-site,
+        .admin-logout {
+            font-size: 0.82rem;
             font-weight: 600;
-            color: var(--accent-secondary);
+            cursor: pointer;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            transition: var(--ad-transition);
+        }
+
+        .admin-view-site {
+            color: var(--ad-teal);
+            border: 1px solid rgba(34, 211, 238, 0.25);
+        }
+
+        .admin-view-site:hover {
+            background: rgba(34, 211, 238, 0.1);
         }
 
         .admin-logout {
-            font-size: 0.83rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
+            color: var(--ad-text-muted);
+            border: 1px solid var(--ad-border);
+        }
+
+        .admin-logout:hover {
+            color: var(--ad-red);
+            border-color: rgba(248, 113, 113, 0.4);
+            background: rgba(248, 113, 113, 0.06);
         }
 
         .admin-body {
             display: flex;
+            min-height: calc(100vh - var(--ad-top-h));
         }
 
-        /* === SIDEBAR === */
+        /* ── SIDEBAR ── */
         .admin-sidebar {
-            width: 220px;
+            width: var(--ad-sidebar-w);
             flex-shrink: 0;
-            background: #fff;
-            border-right: 1px solid var(--border-subtle);
-            min-height: calc(100vh - 60px);
-            padding: 20px 0;
+            background: rgba(10, 14, 26, 0.7);
+            border-right: 1px solid var(--ad-border);
+            min-height: calc(100vh - var(--ad-top-h));
+            padding: 16px 0;
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: var(--ad-top-h);
+            height: calc(100vh - var(--ad-top-h));
+            overflow-y: auto;
         }
 
         .admin-nav-group {
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .admin-nav-label {
-            font-size: 0.66rem;
-            font-weight: 700;
+            font-size: 0.62rem;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: var(--text-muted);
-            padding: 10px 20px 6px;
+            color: var(--ad-text-muted);
+            padding: 12px 18px 6px;
+            opacity: 0.6;
         }
 
         .admin-nav-link {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 10px 20px;
-            font-size: 0.87rem;
+            padding: 9px 18px;
+            font-size: 0.84rem;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: var(--ad-text-muted);
             cursor: pointer;
-            transition: var(--transition-fast);
-            border-left: 3px solid transparent;
+            transition: var(--ad-transition);
+            border-left: 2px solid transparent;
+            user-select: none;
         }
 
         .admin-nav-link:hover {
-            background: rgba(45, 53, 130, 0.05);
-            color: var(--accent-primary);
-            border-left-color: var(--accent-primary);
+            background: var(--ad-surface-hover);
+            color: var(--ad-text);
+            border-left-color: rgba(79, 101, 240, 0.5);
         }
 
         .admin-nav-link.active {
-            background: rgba(45, 53, 130, 0.07);
-            color: var(--accent-primary);
-            border-left-color: var(--accent-primary);
+            background: rgba(79, 101, 240, 0.12);
+            color: #fff;
+            border-left-color: var(--ad-indigo);
         }
 
         .admin-nav-link .nav-icon {
@@ -237,17 +335,18 @@
 
         .admin-badge {
             margin-left: auto;
-            background: #C0392B;
+            background: var(--ad-red);
             color: #fff;
-            font-size: 0.66rem;
-            font-weight: 700;
+            font-size: 0.62rem;
+            font-weight: 800;
             padding: 2px 6px;
             border-radius: 99px;
             min-width: 18px;
             text-align: center;
+            display: none;
         }
 
-        /* === MAIN CONTENT === */
+        /* ── MAIN ── */
         .admin-main {
             flex: 1;
             padding: 28px;
@@ -260,25 +359,43 @@
 
         .admin-panel.active {
             display: block;
+            animation: panelIn 0.3s ease;
+        }
+
+        @keyframes panelIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .panel-header {
             margin-bottom: 28px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
         }
 
         .panel-header h1 {
             font-size: 1.5rem;
-            color: var(--text-primary);
+            font-weight: 800;
+            color: var(--ad-text);
             letter-spacing: -0.5px;
         }
 
         .panel-header p {
-            font-size: 0.88rem;
-            color: var(--text-muted);
+            font-size: 0.84rem;
+            color: var(--ad-text-muted);
             margin-top: 4px;
         }
 
-        /* STAT CARDS */
+        /* ── STAT CARDS ── */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -287,47 +404,64 @@
         }
 
         .admin-stat {
-            background: #fff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            box-shadow: var(--card-shadow);
+            background: var(--ad-surface);
+            border: 1px solid var(--ad-border);
+            border-radius: var(--ad-radius);
+            padding: 20px 22px;
+            transition: var(--ad-transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--ad-indigo), var(--ad-teal));
+        }
+
+        .admin-stat:hover {
+            border-color: var(--ad-border-bright);
+            background: var(--ad-surface-hover);
         }
 
         .admin-stat-num {
-            font-family: var(--font-heading);
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 900;
-            color: var(--accent-primary);
+            color: var(--ad-indigo);
+            line-height: 1;
         }
 
         .admin-stat-label {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-top: 4px;
+            font-size: 0.76rem;
+            color: var(--ad-text-muted);
+            margin-top: 6px;
+            font-weight: 600;
         }
 
-        /* TABLES */
+        /* ── TABLE ── */
         .admin-table-wrap {
-            background: #fff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
+            background: var(--ad-surface);
+            border: 1px solid var(--ad-border);
+            border-radius: var(--ad-radius);
             overflow: hidden;
-            box-shadow: var(--card-shadow);
         }
 
         .table-header {
             padding: 16px 20px;
-            border-bottom: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--ad-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .table-title {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--ad-text);
         }
 
         table {
@@ -336,23 +470,27 @@
         }
 
         th {
-            padding: 12px 16px;
+            padding: 11px 16px;
             text-align: left;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--ad-text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
-            background: var(--bg-section);
-            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--ad-border);
         }
 
         td {
             padding: 13px 16px;
-            font-size: 0.87rem;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.84rem;
+            color: var(--ad-text-muted);
+            border-bottom: 1px solid var(--ad-border);
             vertical-align: middle;
+        }
+
+        td strong {
+            color: var(--ad-text);
         }
 
         tr:last-child td {
@@ -360,116 +498,122 @@
         }
 
         tr:hover td {
-            background: rgba(45, 53, 130, 0.02);
+            background: rgba(79, 101, 240, 0.04);
         }
 
-        /* BADGES */
+        /* ── BADGES ── */
         .status-badge {
             display: inline-flex;
             padding: 3px 10px;
             border-radius: 99px;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: 700;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
         .badge-pending {
-            background: rgba(155, 89, 43, 0.1);
-            color: #92400E;
+            background: rgba(251, 191, 36, 0.12);
+            color: var(--ad-amber);
+            border: 1px solid rgba(251, 191, 36, 0.25);
         }
 
-        .badge-approved {
-            background: rgba(26, 122, 74, 0.1);
-            color: #1A7A4A;
+        .badge-approved,
+        .badge-published {
+            background: rgba(52, 211, 153, 0.1);
+            color: var(--ad-green);
+            border: 1px solid rgba(52, 211, 153, 0.25);
         }
 
         .badge-rejected {
-            background: rgba(192, 57, 43, 0.1);
-            color: #C0392B;
-        }
-
-        .badge-published {
-            background: rgba(45, 53, 130, 0.1);
-            color: var(--accent-primary);
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--ad-red);
+            border: 1px solid rgba(248, 113, 113, 0.25);
         }
 
         .badge-draft {
-            background: rgba(126, 132, 163, 0.1);
-            color: var(--text-muted);
+            background: rgba(123, 139, 173, 0.1);
+            color: var(--ad-text-muted);
+            border: 1px solid var(--ad-border);
         }
 
-        /* ACTION BUTTONS */
+        /* ── ACTION BUTTONS ── */
         .action-btns {
             display: flex;
             gap: 6px;
+            flex-wrap: wrap;
         }
 
         .action-btn {
             padding: 5px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 0.76rem;
+            border-radius: 7px;
+            font-size: 0.74rem;
             font-weight: 700;
             cursor: pointer;
-            border: 1.5px solid;
-            transition: var(--transition-fast);
+            border: 1px solid;
+            transition: var(--ad-transition);
+            font-family: inherit;
+            background: transparent;
         }
 
         .action-btn-approve {
-            border-color: rgba(26, 122, 74, 0.4);
-            color: #1A7A4A;
-            background: rgba(26, 122, 74, 0.06);
+            border-color: rgba(52, 211, 153, 0.35);
+            color: var(--ad-green);
         }
 
         .action-btn-approve:hover {
-            background: rgba(26, 122, 74, 0.15);
+            background: rgba(52, 211, 153, 0.12);
         }
 
         .action-btn-reject {
-            border-color: rgba(192, 57, 43, 0.3);
-            color: #C0392B;
-            background: rgba(192, 57, 43, 0.04);
+            border-color: rgba(248, 113, 113, 0.35);
+            color: var(--ad-red);
         }
 
         .action-btn-reject:hover {
-            background: rgba(192, 57, 43, 0.12);
+            background: rgba(248, 113, 113, 0.1);
         }
 
         .action-btn-edit {
-            border-color: var(--border-accent);
-            color: var(--accent-primary);
-            background: rgba(45, 53, 130, 0.04);
+            border-color: rgba(79, 101, 240, 0.35);
+            color: var(--ad-indigo);
         }
 
         .action-btn-edit:hover {
-            background: rgba(45, 53, 130, 0.12);
+            background: rgba(79, 101, 240, 0.1);
         }
 
         .action-btn-delete {
-            border-color: rgba(192, 57, 43, 0.3);
-            color: #C0392B;
-            background: rgba(192, 57, 43, 0.04);
+            border-color: rgba(248, 113, 113, 0.3);
+            color: var(--ad-red);
         }
 
         .action-btn-delete:hover {
-            background: rgba(192, 57, 43, 0.12);
+            background: rgba(248, 113, 113, 0.08);
         }
 
-        /* === KNOWLEDGE EDITOR === */
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ── EDITOR CARD ── */
         .editor-card {
-            background: #fff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
+            background: var(--ad-surface);
+            border: 1px solid var(--ad-border);
+            border-radius: var(--ad-radius);
             padding: 28px;
-            box-shadow: var(--card-shadow);
             margin-top: 24px;
         }
 
         .editor-card h3 {
             font-size: 1rem;
             font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 18px;
+            color: var(--ad-text);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .editor-field {
@@ -478,12 +622,12 @@
 
         .editor-field label {
             display: block;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             font-weight: 700;
-            color: var(--text-muted);
-            margin-bottom: 6px;
+            color: var(--ad-text-muted);
+            margin-bottom: 7px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
 
         .editor-field input,
@@ -491,51 +635,33 @@
         .editor-field textarea {
             width: 100%;
             padding: 11px 14px;
-            border: 1.5px solid var(--border-medium);
-            border-radius: var(--radius-sm);
-            font-family: var(--font-body);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--ad-border);
+            border-radius: 9px;
+            color: var(--ad-text);
+            font-family: inherit;
             font-size: 0.9rem;
-            color: var(--text-primary);
+            transition: var(--ad-transition);
         }
 
         .editor-field input:focus,
         .editor-field select:focus,
         .editor-field textarea:focus {
             outline: none;
-            border-color: var(--accent-primary);
+            border-color: var(--ad-indigo);
+            background: rgba(79, 101, 240, 0.08);
+            box-shadow: 0 0 0 3px rgba(79, 101, 240, 0.12);
+        }
+
+        .editor-field select option {
+            background: #1a2035;
+            color: var(--ad-text);
         }
 
         .editor-field textarea {
             resize: vertical;
-            min-height: 180px;
+            min-height: 100px;
             line-height: 1.7;
-        }
-
-        .editor-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn-save-draft {
-            padding: 11px 24px;
-            background: var(--bg-section);
-            color: var(--text-secondary);
-            border: 1.5px solid var(--border-medium);
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            font-size: 0.88rem;
-            cursor: pointer;
-        }
-
-        .btn-publish {
-            padding: 11px 24px;
-            background: var(--accent-primary);
-            color: #fff;
-            border: none;
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            font-size: 0.88rem;
-            cursor: pointer;
         }
 
         .editor-grid {
@@ -544,79 +670,65 @@
             gap: 14px;
         }
 
-        /* === CALENDAR IN ADMIN === */
-        .admin-calendar-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
+        .editor-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            align-items: center;
         }
 
-        .admin-cal-card {
-            background: #fff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            padding: 24px;
-            box-shadow: var(--card-shadow);
-        }
-
-        .admin-cal-card h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 18px;
-        }
-
-        .mini-cal-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-        }
-
-        .mini-cal-day {
-            text-align: center;
-            padding: 7px 4px;
-            font-size: 0.82rem;
-            border-radius: 6px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: background var(--transition-fast);
-        }
-
-        .mini-cal-day.label {
-            font-size: 0.66rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            cursor: default;
-            padding: 6px 4px;
-        }
-
-        .mini-cal-day.has-booking {
-            background: rgba(45, 53, 130, 0.1);
-            color: var(--accent-primary);
-            font-weight: 700;
-        }
-
-        .mini-cal-day.today {
-            background: var(--accent-primary);
+        /* ── PRIMARY/SECONDARY BUTTONS ── */
+        .btn-publish {
+            padding: 10px 22px;
+            background: linear-gradient(135deg, var(--ad-indigo), #2b3acc);
             color: #fff;
+            border: none;
+            border-radius: 9px;
             font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: var(--ad-transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .mini-cal-day.sunday {
-            color: #C0392B;
-            opacity: 0.5;
+        .btn-publish:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(79, 101, 240, 0.4);
         }
 
-        .mini-cal-day.empty {
-            cursor: default;
+        .btn-publish:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
         }
 
-        /* === SECTION BUILDER === */
+        .btn-save-draft {
+            padding: 10px 22px;
+            background: transparent;
+            color: var(--ad-text-muted);
+            border: 1px solid var(--ad-border);
+            border-radius: 9px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: var(--ad-transition);
+        }
+
+        .btn-save-draft:hover {
+            background: var(--ad-surface-hover);
+            color: var(--ad-text);
+        }
+
+        /* ── SECTION BUILDER ── */
         .section-card {
-            background: var(--bg-section);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--ad-border);
+            border-radius: 9px;
             padding: 16px 18px;
             margin-bottom: 10px;
         }
@@ -625,10 +737,10 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 0.75rem;
+            margin-bottom: 14px;
+            font-size: 0.72rem;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--ad-text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -649,41 +761,128 @@
         }
 
         .stat-input-group {
-            background: var(--bg-section);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--ad-border);
+            border-radius: 8px;
             padding: 12px;
         }
 
         .stat-input-group small {
             display: block;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--ad-text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
 
         .stat-input-group input {
             width: 100%;
             padding: 7px 10px;
-            border: 1.5px solid var(--border-medium);
-            border-radius: var(--radius-sm);
-            font-family: var(--font-body);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--ad-border);
+            border-radius: 7px;
+            color: var(--ad-text);
+            font-family: inherit;
             font-size: 0.83rem;
-            color: var(--text-primary);
-            background: #fff;
             margin-bottom: 8px;
         }
 
         .stat-input-group input:focus {
             outline: none;
-            border-color: var(--accent-primary);
+            border-color: var(--ad-indigo);
         }
 
         .stat-input-group input:last-child {
             margin-bottom: 0;
+        }
+
+        /* ── CALENDAR ── */
+        .admin-calendar-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .admin-cal-card {
+            background: var(--ad-surface);
+            border: 1px solid var(--ad-border);
+            border-radius: var(--ad-radius);
+            padding: 24px;
+        }
+
+        .admin-cal-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ad-text);
+            margin-bottom: 18px;
+        }
+
+        .mini-cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+        }
+
+        .mini-cal-day {
+            text-align: center;
+            padding: 7px 4px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--ad-text-muted);
+            transition: var(--ad-transition);
+        }
+
+        .mini-cal-day.label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--ad-text-muted);
+            text-transform: uppercase;
+            cursor: default;
+            opacity: 0.5;
+        }
+
+        .mini-cal-day:not(.label):not(.empty):hover {
+            background: rgba(79, 101, 240, 0.15);
+            color: var(--ad-text);
+        }
+
+        .mini-cal-day.has-booking {
+            background: rgba(79, 101, 240, 0.15);
+            color: var(--ad-indigo);
+            font-weight: 700;
+        }
+
+        .mini-cal-day.today {
+            background: var(--ad-indigo);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .mini-cal-day.sunday {
+            color: var(--ad-red);
+            opacity: 0.6;
+        }
+
+        .mini-cal-day.empty {
+            cursor: default;
+        }
+
+        .cal-nav-btn {
+            background: var(--ad-surface);
+            border: 1px solid var(--ad-border);
+            color: var(--ad-text);
+            padding: 5px 10px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--ad-transition);
+        }
+
+        .cal-nav-btn:hover {
+            background: var(--ad-surface-hover);
         }
 
         .booking-list-item {
@@ -691,7 +890,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            border-bottom: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--ad-border);
         }
 
         .booking-list-item:last-child {
@@ -701,28 +900,28 @@
         .booking-time {
             font-size: 0.8rem;
             font-weight: 700;
-            color: var(--accent-primary);
+            color: var(--ad-indigo);
             min-width: 60px;
         }
 
         .booking-patient {
-            font-size: 0.88rem;
-            color: var(--text-primary);
+            font-size: 0.86rem;
+            color: var(--ad-text);
         }
 
         .booking-reason-sm {
-            font-size: 0.76rem;
-            color: var(--text-muted);
+            font-size: 0.74rem;
+            color: var(--ad-text-muted);
         }
 
         .empty-bookings {
             text-align: center;
             padding: 24px;
-            color: var(--text-muted);
-            font-size: 0.86rem;
+            color: var(--ad-text-muted);
+            font-size: 0.84rem;
         }
 
-        /* PHOTO REVIEW GRID */
+        /* ── PHOTO GRID ── */
         .photo-review-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -731,18 +930,17 @@
         }
 
         .photo-review-item {
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
+            background: var(--ad-surface);
+            border: 1px solid var(--ad-border);
+            border-radius: var(--ad-radius);
             overflow: hidden;
-            background: #fff;
-            box-shadow: var(--card-shadow);
         }
 
         .photo-review-img {
             width: 100%;
             height: 140px;
             object-fit: cover;
-            background: var(--bg-section);
+            background: rgba(255, 255, 255, 0.03);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -756,12 +954,12 @@
         .photo-review-name {
             font-size: 0.84rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--ad-text);
         }
 
         .photo-review-date {
-            font-size: 0.74rem;
-            color: var(--text-muted);
+            font-size: 0.72rem;
+            color: var(--ad-text-muted);
             margin-bottom: 10px;
         }
 
@@ -770,7 +968,112 @@
             gap: 6px;
         }
 
-        @media (max-width:900px) {
+        /* ── SETTINGS PANEL ── */
+        .settings-section {
+            background: var(--ad-surface);
+            border: 1px solid var(--ad-border);
+            border-radius: var(--ad-radius);
+            padding: 24px 28px;
+            margin-bottom: 20px;
+        }
+
+        .settings-section h3 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--ad-text);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--ad-border);
+        }
+
+        #settings-status {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.84rem;
+            font-weight: 600;
+        }
+
+        .status-ok {
+            background: rgba(52, 211, 153, 0.1);
+            color: var(--ad-green);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+
+        .status-error {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--ad-red);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+        }
+
+        /* ── API STATUS INDICATOR ── */
+        .api-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 99px;
+        }
+
+        .api-status.ok {
+            background: rgba(52, 211, 153, 0.1);
+            color: var(--ad-green);
+        }
+
+        .api-status.err {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--ad-red);
+        }
+
+        .api-status::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ── PLATFORM TABS (quiz.html tab strip) ── */
+        .platform-tabs-wrap {
+            display: none;
+        }
+
+        /* ── SPINNER ── */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
             .admin-sidebar {
                 display: none;
             }
@@ -779,11 +1082,12 @@
                 grid-template-columns: 1fr 1fr;
             }
 
-            .admin-calendar-grid {
+            .admin-calendar-grid,
+            .editor-grid {
                 grid-template-columns: 1fr;
             }
 
-            .editor-grid {
+            .stats-builder {
                 grid-template-columns: 1fr;
             }
         }
@@ -792,10 +1096,13 @@
 
 <body>
 
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
     <!-- === LOGIN === -->
     <div class="login-screen" id="login-screen">
         <div class="login-card">
-            <div class="login-logo">Dr. Jay <span style="color:var(--accent-primary);">Kothari</span></div>
+            <div class="login-logo">Dr. Jay <span>Kothari</span></div>
             <div class="login-label">Admin Panel · Restricted Access</div>
             <div class="login-field">
                 <label for="admin-user">Username</label>
@@ -805,11 +1112,11 @@
                 <label for="admin-pass">Password</label>
                 <input type="password" id="admin-pass" placeholder="••••••••" autocomplete="current-password" />
             </div>
-            <button class="login-btn" onclick="doLogin()">Sign In →</button>
-            <div class="login-error" id="login-error">Incorrect credentials. Try again.</div>
-            <div style="margin-top:18px; font-size:0.74rem; color:var(--text-muted);">Default: <code>admin</code> /
-                <code>apollo2024</code>
-            </div>
+            <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In →</button>
+            <div class="login-error" id="login-error"></div>
+            <div style="margin-top:18px; font-size:0.74rem; color:var(--ad-text-muted);">Default: <code
+                    style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;">admin</code> / <code
+                    style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;">apollo2024</code></div>
         </div>
     </div>
 
@@ -818,10 +1125,10 @@
         <!-- TOP BAR -->
         <div class="admin-top">
             <div class="admin-top-logo">Dr. Jay <span>Kothari</span> <span
-                    style="color:var(--text-muted);font-weight:400;font-size:0.8rem;margin-left:8px;">Admin Panel</span>
-            </div>
+                    style="color:var(--ad-text-muted);font-weight:400;font-size:0.78rem;margin-left:8px;">Admin
+                    Panel</span></div>
             <div class="admin-top-right">
-                <a href="research.html">Research</a><a href="quiz.html">ICU Intel ⚡</a>
+                <span class="api-status ok" id="api-status-pill" title="API connection status">API Live</span>
                 <a href="index.html" class="admin-view-site" target="_blank">View Site ↗</a>
                 <span class="admin-logout" onclick="doLogout()">Sign Out</span>
             </div>
@@ -866,9 +1173,15 @@
                     </div>
                 </div>
                 <div class="admin-nav-group">
-                    <div class="admin-nav-label">Configuration</div>
+                    <div class="admin-nav-label">Site Controls</div>
+                    <div class="admin-nav-link" data-panel="hero" onclick="switchPanel('hero')"><span
+                            class="nav-icon">🏠</span>Hero &amp; Content</div>
                     <div class="admin-nav-link" data-panel="settings" onclick="switchPanel('settings')"><span
-                            class="nav-icon">⚙️</span>Site Settings</div>
+                            class="nav-icon">⚙️</span>Settings &amp; Credentials</div>
+                    <div class="admin-nav-link" data-panel="export" onclick="switchPanel('export')"><span
+                            class="nav-icon">📦</span>Export / Import</div>
+                    <div class="admin-nav-link" data-panel="apihealth" onclick="switchPanel('apihealth')"><span
+                            class="nav-icon">📶</span>API Diagnostics</div>
                 </div>
             </div>
 
@@ -1402,6 +1715,169 @@
                             </thead>
                             <tbody id="rp-table"></tbody>
                         </table>
+                    </div>
+                </div>
+
+                <!-- HERO & CONTENT CONTROLS -->
+                <div class="admin-panel" id="panel-hero">
+                    <div class="panel-header">
+                        <div>
+                            <h1>🏠 Hero &amp; Content Controls</h1>
+                            <p>Edit the homepage hero, ticker, speed dial buttons, and live stats.</p>
+                        </div>
+                    </div>
+                    <div class="editor-card" style="margin-top:0;">
+                        <h3>🦸 Hero Section</h3>
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>Doctor Name (Site Title)</label><input type="text"
+                                    id="hc-site-name" placeholder="Dr. Jay Kothari" /></div>
+                            <div class="editor-field"><label>Hero Badge Text</label><input type="text"
+                                    id="hc-hero-badge" placeholder="Gujarat's Leading Critical Care Specialist" /></div>
+                        </div>
+                        <div class="editor-field"><label>Hero Headline</label><input type="text" id="hc-hero-title"
+                                placeholder="When Seconds Define Survival." /></div>
+                        <div class="editor-field"><label>Hero Tagline</label><textarea id="hc-hero-tagline" rows="2"
+                                placeholder="Gujarat's frontline of critical care..."></textarea></div>
+                        <div class="editor-field"><label>Empathy Message</label><input type="text" id="hc-hero-empathy"
+                                placeholder="We know you're scared. You're in the right place." /></div>
+                    </div>
+                    <div class="editor-card">
+                        <h3>📊 Homepage Stats Band</h3>
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>Stat 1 — Number</label><input type="text" id="hc-stat1-num"
+                                    placeholder="500+" /></div>
+                            <div class="editor-field"><label>Stat 1 — Label</label><input type="text" id="hc-stat1-lbl"
+                                    placeholder="Lives Saved" /></div>
+                            <div class="editor-field"><label>Stat 2 — Number</label><input type="text" id="hc-stat2-num"
+                                    placeholder="15+" /></div>
+                            <div class="editor-field"><label>Stat 2 — Label</label><input type="text" id="hc-stat2-lbl"
+                                    placeholder="Years Experience" /></div>
+                            <div class="editor-field"><label>Stat 3 — Number</label><input type="text" id="hc-stat3-num"
+                                    placeholder="24/7" /></div>
+                            <div class="editor-field"><label>Stat 3 — Label</label><input type="text" id="hc-stat3-lbl"
+                                    placeholder="ICU Coverage" /></div>
+                            <div class="editor-field"><label>Stat 4 — Number</label><input type="text" id="hc-stat4-num"
+                                    placeholder="98%" /></div>
+                            <div class="editor-field"><label>Stat 4 — Label</label><input type="text" id="hc-stat4-lbl"
+                                    placeholder="Patient Satisfaction" /></div>
+                        </div>
+                    </div>
+                    <div class="editor-card">
+                        <h3>📢 Announcement Ticker</h3>
+                        <div class="editor-field"><label>Ticker Text</label><input type="text" id="hc-ticker"
+                                placeholder="🏆 Apollo Hospitals Ahmedabad ICU · Now accepting OPD consultations" />
+                        </div>
+                        <label
+                            style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.84rem;color:var(--ad-text-muted);"><input
+                                type="checkbox" id="hc-ticker-on" style="width:auto;accent-color:var(--ad-indigo);" />
+                            Show ticker on homepage</label>
+                    </div>
+                    <div class="editor-card">
+                        <h3>📲 Speed Dial / Contact Buttons</h3>
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>WhatsApp Number (no +)</label><input type="text"
+                                    id="hc-wa-number" placeholder="919999999999" /></div>
+                            <div class="editor-field"><label>WhatsApp Pre-filled Message</label><input type="text"
+                                    id="hc-wa-msg" placeholder="Hello Dr. Jay Kothari, I would like a consultation" />
+                            </div>
+                            <div class="editor-field"><label>Emergency ICU Phone</label><input type="text"
+                                    id="hc-icu-phone" placeholder="18605001066" /></div>
+                            <div class="editor-field"><label>OPD Booking Link</label><input type="text" id="hc-opd-link"
+                                    placeholder="https://booking.apollohospitals.com/..." /></div>
+                        </div>
+                    </div>
+                    <div class="editor-actions" style="margin-top:4px;">
+                        <button class="btn-publish" onclick="saveHeroContent()">💾 Save to Server</button>
+                        <button class="btn-save-draft" onclick="loadHeroContent()">↺ Reload</button>
+                    </div>
+                    <div id="hero-status" style="margin-top:12px;display:none;"></div>
+                </div>
+
+                <!-- EXPORT / IMPORT -->
+                <div class="admin-panel" id="panel-export">
+                    <div class="panel-header">
+                        <div>
+                            <h1>📦 Export / Import</h1>
+                            <p>Download CMS content as JSON or upload a backup to restore.</p>
+                        </div>
+                    </div>
+                    <div class="editor-card" style="margin-top:0;">
+                        <h3>⬇️ Export Content</h3>
+                        <p style="font-size:0.84rem;color:var(--ad-text-muted);margin-bottom:18px;">Download current
+                            server data for any section.</p>
+                        <div class="action-btns">
+                            <button class="btn-publish" onclick="exportSection('myth_busters')">Myths JSON</button>
+                            <button class="btn-publish" onclick="exportSection('quiz_questions')">Quiz JSON</button>
+                            <button class="btn-publish" onclick="exportSection('research_papers')">Research
+                                JSON</button>
+                            <button class="btn-publish" onclick="exportSection('knowledge_articles')">Knowledge
+                                JSON</button>
+                            <button class="btn-save-draft" onclick="exportAll()">⬇️ Export ALL</button>
+                        </div>
+                    </div>
+                    <div class="editor-card">
+                        <h3>⬆️ Import / Restore</h3>
+                        <p style="font-size:0.84rem;color:var(--ad-text-muted);margin-bottom:18px;">Upload a JSON file
+                            to <strong style="color:var(--ad-red);">overwrite</strong> the selected section.</p>
+                        <div class="editor-field"><label>Content Type</label>
+                            <select id="import-type">
+                                <option value="myth_busters">Myth Buster Cards</option>
+                                <option value="quiz_questions">Quiz Questions</option>
+                                <option value="research_papers">Research Papers</option>
+                                <option value="knowledge_articles">Knowledge Articles</option>
+                            </select>
+                        </div>
+                        <div class="editor-field"><label>Select JSON File</label><input type="file" id="import-file"
+                                accept=".json" style="color:var(--ad-text);" /></div>
+                        <button class="btn-publish" style="background:linear-gradient(135deg,#b45309,#92400e);"
+                            onclick="importContent()">⬆️ Import &amp; Overwrite</button>
+                        <div id="import-status" style="margin-top:12px;display:none;"></div>
+                    </div>
+                    <div class="editor-card">
+                        <h3>🗂️ Booking Data Export</h3>
+                        <div class="action-btns">
+                            <button class="btn-publish" onclick="exportBookingsCSV()">⬇️ CSV</button>
+                            <button class="btn-save-draft" onclick="exportBookingsJSON()">⬇️ JSON</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API DIAGNOSTICS -->
+                <div class="admin-panel" id="panel-apihealth">
+                    <div class="panel-header">
+                        <div>
+                            <h1>📶 API Diagnostics</h1>
+                            <p>Live endpoint checks for all backend PHP files.</p>
+                        </div>
+                        <button class="btn-save-draft" onclick="runAllChecks()">↺ Refresh All</button>
+                    </div>
+                    <div id="api-check-results" style="display:grid;gap:14px;"></div>
+                    <div class="editor-card" style="margin-top:24px;">
+                        <h3>🔧 Manual API Tester</h3>
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>Endpoint</label>
+                                <select id="test-endpoint">
+                                    <option value="./api/content.php">content.php (GET all)</option>
+                                    <option value="./api/content.php?type=myth_busters">myth_busters</option>
+                                    <option value="./api/content.php?type=quiz_questions">quiz_questions</option>
+                                    <option value="./api/content.php?type=research_papers">research_papers</option>
+                                    <option value="./api/content.php?type=knowledge_articles">knowledge_articles
+                                    </option>
+                                    <option value="./api/settings.php">settings.php</option>
+                                </select>
+                            </div>
+                            <div class="editor-field"><label>Method</label><select id="test-method">
+                                    <option>GET</option>
+                                    <option>POST</option>
+                                </select></div>
+                        </div>
+                        <div class="editor-field"><label>POST Body (JSON)</label><textarea id="test-body" rows="3"
+                                placeholder='{"admin_pass":"apollo2024","type":"myth_busters","items":[]}'></textarea>
+                        </div>
+                        <div class="editor-actions"><button class="btn-publish" onclick="runManualTest()">▶ Run
+                                Test</button></div>
+                        <pre id="test-result"
+                            style="margin-top:14px;background:rgba(0,0,0,0.4);border:1px solid var(--ad-border);border-radius:8px;padding:14px;font-size:0.76rem;color:var(--ad-teal);overflow-x:auto;white-space:pre-wrap;display:none;"></pre>
                     </div>
                 </div>
 
@@ -2576,11 +3052,428 @@
         // INIT
         // ============================================================
         function loadAll() {
-
             renderDashboard();
             renderAdminCal();
             updateBadges();
+            checkApiStatus();
+            loadHeroContent();
         }
+
+        // ============================================================
+        // SWITCH PANEL — extended for new panels
+        // ============================================================
+        const _origSwitchPanel = switchPanel;
+        switchPanel = function (name) {
+            document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.admin-nav-link').forEach(l => l.classList.remove('active'));
+            const panel = document.getElementById('panel-' + name);
+            if (!panel) return;
+            panel.classList.add('active');
+            document.querySelector(`[data-panel="${name}"]`)?.classList.add('active');
+            if (name === 'requests') renderRequests();
+            if (name === 'calendar') renderAdminCal();
+            if (name === 'knowledge') renderKnowledge();
+            if (name === 'settings') loadCurrentSettings();
+            if (name === 'reviews') renderReviews();
+            if (name === 'photos') renderPhotos();
+            if (name === 'myths') renderMyths();
+            if (name === 'quizeditor') renderQuizEditor();
+            if (name === 'research') renderResearch();
+            if (name === 'hero') loadHeroContent();
+            if (name === 'apihealth') runAllChecks();
+        };
+
+        // ============================================================
+        // TOAST SYSTEM
+        // ============================================================
+        function toast(msg, type = 'info', duration = 3500) {
+            const tc = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+            t.className = `toast toast-${type}`;
+            t.textContent = `${icons[type] || ''} ${msg}`;
+            tc.appendChild(t);
+            requestAnimationFrame(() => { requestAnimationFrame(() => t.classList.add('show')); });
+            setTimeout(() => {
+                t.classList.remove('show');
+                setTimeout(() => t.remove(), 400);
+            }, duration);
+        }
+
+        // Override doLogin to use new styling + toast
+        document.getElementById('admin-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+        document.getElementById('admin-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('admin-pass').focus(); });
+
+        const _origDoLogin = doLogin;
+        doLogin = async function () {
+            const btn = document.getElementById('login-btn');
+            const err = document.getElementById('login-error');
+            const u = document.getElementById('admin-user').value.trim();
+            const p = document.getElementById('admin-pass').value.trim();
+            err.style.display = 'none';
+            if (!u || !p) { err.textContent = 'Enter username and password'; err.style.display = 'block'; return; }
+            btn.textContent = 'Signing in…'; btn.disabled = true;
+            try {
+                const r = await fetch('./api/settings.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'check_auth', admin_pass: p })
+                });
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                const d = await r.json();
+                if (d.success) {
+                    localStorage.setItem('apollo_admin_logged', 'true');
+                    localStorage.setItem('apollo_admin_temp_pass', p);
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('admin-layout').style.display = 'flex';
+                    loadAll();
+                    toast('Welcome back, Dr. Kothari!', 'success');
+                } else {
+                    err.textContent = 'Invalid credentials'; err.style.display = 'block';
+                }
+            } catch (e) {
+                err.innerHTML = `Server error: ${e.message}<br><small>Check that <b>api/settings.php</b> is uploaded to Hostinger.</small>`;
+                err.style.display = 'block';
+            }
+            btn.textContent = 'Sign In →'; btn.disabled = false;
+        };
+
+        // ============================================================
+        // API STATUS CHECK
+        // ============================================================
+        async function checkApiStatus() {
+            const pill = document.getElementById('api-status-pill');
+            try {
+                const r = await fetch('./api/content.php?type=myth_busters');
+                const d = await r.json();
+                if (d.success !== undefined) {
+                    pill.textContent = 'API Live'; pill.className = 'api-status ok';
+                } else { throw new Error('bad response'); }
+            } catch {
+                pill.textContent = 'API Error'; pill.className = 'api-status err';
+            }
+        }
+
+        // ============================================================
+        // API DIAGNOSTICS PANEL
+        // ============================================================
+        const ENDPOINTS_TO_CHECK = [
+            { label: 'content.php — myth_busters', url: './api/content.php?type=myth_busters' },
+            { label: 'content.php — quiz_questions', url: './api/content.php?type=quiz_questions' },
+            { label: 'content.php — research_papers', url: './api/content.php?type=research_papers' },
+            { label: 'content.php — knowledge_articles', url: './api/content.php?type=knowledge_articles' },
+            { label: 'settings.php — GET', url: './api/settings.php' },
+        ];
+
+        async function runAllChecks() {
+            const el = document.getElementById('api-check-results');
+            el.innerHTML = '<div style="color:var(--ad-text-muted);padding:12px;">Running checks…</div>';
+            const results = await Promise.all(ENDPOINTS_TO_CHECK.map(async ep => {
+                const t0 = Date.now();
+                try {
+                    const r = await fetch(ep.url);
+                    const d = await r.json();
+                    const ms = Date.now() - t0;
+                    const ok = r.ok && (d.success !== undefined || typeof d === 'object');
+                    return { label: ep.label, ok, status: r.status, ms, preview: JSON.stringify(d).substring(0, 120) };
+                } catch (e) {
+                    return { label: ep.label, ok: false, status: 'ERR', ms: Date.now() - t0, preview: e.message };
+                }
+            }));
+            el.innerHTML = results.map(r => `
+                <div class="admin-stat" style="border-left-color:${r.ok ? 'var(--ad-green)' : 'var(--ad-red)'}">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                        <span style="font-weight:700;color:var(--ad-text);font-size:0.86rem;">${r.label}</span>
+                        <span class="status-badge badge-${r.ok ? 'approved' : 'rejected'}">${r.ok ? '✓ OK' : '✕ FAIL'} · ${r.status} · ${r.ms}ms</span>
+                    </div>
+                    <div style="font-size:0.72rem;color:var(--ad-text-muted);font-family:monospace;background:rgba(0,0,0,0.3);padding:6px 10px;border-radius:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.preview}</div>
+                </div>`).join('');
+            checkApiStatus();
+        }
+
+        async function runManualTest() {
+            const url = document.getElementById('test-endpoint').value;
+            const method = document.getElementById('test-method').value;
+            const body = document.getElementById('test-body').value.trim();
+            const resultEl = document.getElementById('test-result');
+            resultEl.style.display = 'block';
+            resultEl.textContent = 'Loading…';
+            try {
+                const opts = { method };
+                if (method === 'POST' && body) { opts.headers = { 'Content-Type': 'application/json' }; opts.body = body; }
+                const r = await fetch(url, opts);
+                const d = await r.json();
+                resultEl.textContent = `HTTP ${r.status} ${r.statusText}\n\n${JSON.stringify(d, null, 2)}`;
+            } catch (e) {
+                resultEl.textContent = `Error: ${e.message}`;
+            }
+        }
+
+        // ============================================================
+        // HERO CONTENT CONTROLS
+        // ============================================================
+        async function loadHeroContent() {
+            try {
+                const r = await fetch('./api/settings.php');
+                if (!r.ok) return;
+                const s = await r.json();
+                const g = id => document.getElementById(id);
+                g('hc-site-name').value = s.site_name || '';
+                g('hc-hero-title').value = s.hero_title || '';
+                g('hc-hero-tagline').value = s.hero_tagline || '';
+                g('hc-hero-empathy').value = s.hero_empathy || '';
+                g('hc-hero-badge').value = s.hero_badge || '';
+                g('hc-wa-number').value = s.wa_number || '';
+                g('hc-wa-msg').value = s.wa_message || '';
+                g('hc-icu-phone').value = s.icu_phone || '';
+                g('hc-opd-link').value = s.opd_link || '';
+                g('hc-ticker').value = s.ticker_text || '';
+                g('hc-ticker-on').checked = !!s.ticker_on;
+                g('hc-stat1-num').value = s.stat1_num || '';
+                g('hc-stat1-lbl').value = s.stat1_lbl || '';
+                g('hc-stat2-num').value = s.stat2_num || '';
+                g('hc-stat2-lbl').value = s.stat2_lbl || '';
+                g('hc-stat3-num').value = s.stat3_num || '';
+                g('hc-stat3-lbl').value = s.stat3_lbl || '';
+                g('hc-stat4-num').value = s.stat4_num || '';
+                g('hc-stat4-lbl').value = s.stat4_lbl || '';
+            } catch { }
+        }
+
+        async function saveHeroContent() {
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            if (!pass) { toast('Not authenticated', 'error'); return; }
+            const g = id => document.getElementById(id).value;
+            const body = {
+                admin_pass: pass,
+                site_name: g('hc-site-name'), hero_title: g('hc-hero-title'),
+                hero_tagline: g('hc-hero-tagline'), hero_empathy: g('hc-hero-empathy'),
+                hero_badge: g('hc-hero-badge'), wa_number: g('hc-wa-number'),
+                wa_message: g('hc-wa-msg'), icu_phone: g('hc-icu-phone'),
+                opd_link: g('hc-opd-link'), ticker_text: g('hc-ticker'),
+                ticker_on: document.getElementById('hc-ticker-on').checked,
+                stat1_num: g('hc-stat1-num'), stat1_lbl: g('hc-stat1-lbl'),
+                stat2_num: g('hc-stat2-num'), stat2_lbl: g('hc-stat2-lbl'),
+                stat3_num: g('hc-stat3-num'), stat3_lbl: g('hc-stat3-lbl'),
+                stat4_num: g('hc-stat4-num'), stat4_lbl: g('hc-stat4-lbl'),
+            };
+            try {
+                const r = await fetch('./api/settings.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const d = await r.json();
+                if (d.success) toast('Hero content saved!', 'success');
+                else toast('Save failed: ' + (d.error || 'Unknown error'), 'error');
+            } catch (e) { toast('Connection error: ' + e.message, 'error'); }
+        }
+
+        // ============================================================
+        // EXPORT / IMPORT
+        // ============================================================
+        async function exportSection(type) {
+            try {
+                const r = await fetch(`./api/content.php?type=${type}`);
+                const d = await r.json();
+                const data = d.data ?? d;
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `apollo_${type}_${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                toast(`Exported ${type}`, 'success');
+            } catch (e) { toast('Export failed: ' + e.message, 'error'); }
+        }
+
+        async function exportAll() {
+            try {
+                const r = await fetch('./api/content.php');
+                const d = await r.json();
+                const data = d.data ?? d;
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `apollo_all_content_${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                toast('Full export downloaded!', 'success');
+            } catch (e) { toast('Export failed: ' + e.message, 'error'); }
+        }
+
+        async function importContent() {
+            const type = document.getElementById('import-type').value;
+            const file = document.getElementById('import-file').files[0];
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            const status = document.getElementById('import-status');
+            if (!file) { toast('Select a JSON file first', 'error'); return; }
+            if (!pass) { toast('Not authenticated', 'error'); return; }
+            if (!confirm(`⚠️ This will OVERWRITE all ${type} on the server. Continue?`)) return;
+            try {
+                const text = await file.text();
+                const items = JSON.parse(text);
+                if (!Array.isArray(items)) throw new Error('File must contain a JSON array');
+                const r = await fetch('./api/content.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_pass: pass, type, items })
+                });
+                const d = await r.json();
+                if (d.success) {
+                    status.textContent = `✅ Imported ${d.data?.count ?? items.length} items into ${type}`;
+                    status.className = 'status-ok'; status.style.display = 'block';
+                    toast('Import successful!', 'success');
+                } else throw new Error(d.error);
+            } catch (e) {
+                status.textContent = '❌ ' + e.message; status.className = 'status-error'; status.style.display = 'block';
+                toast('Import failed: ' + e.message, 'error');
+            }
+        }
+
+        function exportBookingsCSV() {
+            const bookings = getBookings();
+            if (!bookings.length) { toast('No bookings to export', 'info'); return; }
+            const headers = ['Name', 'Phone', 'Date', 'Slot', 'Reason', 'Status'];
+            const rows = bookings.map(b => [b.name, b.phone, b.dateLabel, b.slot, b.reason, b.status].map(v => `"${(v || '').replace(/"/g, '""')}"`).join(','));
+            const csv = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `bookings_${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+            toast('Bookings exported as CSV!', 'success');
+        }
+
+        function exportBookingsJSON() {
+            const bookings = getBookings();
+            const blob = new Blob([JSON.stringify(bookings, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `bookings_${new Date().toISOString().slice(0, 10)}.json`; a.click();
+            toast('Bookings exported as JSON!', 'success');
+        }
+
+        // Improve all save functions to use toasts instead of alert()
+        const _origSaveMyth = saveMythCard;
+        saveMythCard = async function () {
+            const stmt = document.getElementById('myth-statement').value.trim();
+            const fact = document.getElementById('myth-fact').value.trim();
+            const source = document.getElementById('myth-source').value.trim();
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            if (!stmt || !fact) { toast('Statement and Fact are required', 'error'); return; }
+            if (!pass) { toast('Not authenticated', 'error'); return; }
+            const editId = parseInt(document.getElementById('myth-edit-id').value);
+            let updatedList = [...currentMyths];
+            if (editId) {
+                const idx = updatedList.findIndex(m => m.id === editId);
+                if (idx > -1) updatedList[idx] = { id: editId, statement: stmt, fact, source };
+            } else { updatedList.push({ id: Date.now(), statement: stmt, fact, source }); }
+            try {
+                const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ admin_pass: pass, type: 'myth_busters', items: updatedList }) });
+                const d = await res.json();
+                if (d.success) { toast('Myth card saved!', 'success'); clearMythForm(); renderMyths(); }
+                else toast('Save failed: ' + (d.error || '?'), 'error');
+            } catch (e) { toast('Connection error', 'error'); }
+        };
+
+        const _origSaveQuiz = saveQuizQuestion;
+        saveQuizQuestion = async function () {
+            const quest = document.getElementById('q-question').value.trim();
+            const optA = document.getElementById('q-a').value.trim();
+            const optB = document.getElementById('q-b').value.trim();
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            if (!quest || !optA || !optB) { toast('Question and Options A & B are required', 'error'); return; }
+            if (!pass) { toast('Not authenticated', 'error'); return; }
+            const options = [optA, optB, document.getElementById('q-c').value.trim(), document.getElementById('q-d').value.trim()].filter(Boolean);
+            const correct = parseInt(document.getElementById('q-correct').value);
+            const explanation = document.getElementById('q-explanation').value.trim();
+            const editIdx = document.getElementById('q-edit-id').value;
+            let updatedBank = [...currentQuizBank];
+            if (editIdx !== '') updatedBank[parseInt(editIdx)] = { q: quest, options, correct, explanation };
+            else updatedBank.push({ q: quest, options, correct, explanation });
+            try {
+                const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: updatedBank }) });
+                const d = await res.json();
+                if (d.success) { toast('Question saved!', 'success'); clearQuizForm(); renderQuizEditor(); }
+                else toast('Save failed: ' + (d.error || '?'), 'error');
+            } catch (e) { toast('Connection error', 'error'); }
+        };
+
+        const _origSaveResearch = saveResearchPaper;
+        saveResearchPaper = async function () {
+            const title = document.getElementById('rp-title').value.trim();
+            const journal = document.getElementById('rp-journal').value.trim();
+            const year = parseInt(document.getElementById('rp-year').value);
+            const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+            if (!title || !journal || !year) { toast('Title, Journal and Year are required', 'error'); return; }
+            if (!pass) { toast('Not authenticated', 'error'); return; }
+            const editId = parseInt(document.getElementById('rp-edit-id').value);
+            const newPaper = { id: editId || Date.now(), title, journal, year, topic: document.getElementById('rp-topic').value, doi: document.getElementById('rp-doi').value.trim(), takeaway: document.getElementById('rp-takeaway').value.trim(), practice: document.getElementById('rp-practice').value.trim() };
+            let updatedList = [...currentResearchList];
+            if (editId) { const idx = updatedList.findIndex(p => p.id === editId); if (idx > -1) updatedList[idx] = newPaper; } else updatedList.push(newPaper);
+            try {
+                const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ admin_pass: pass, type: 'research_papers', items: updatedList }) });
+                const d = await res.json();
+                if (d.success) { toast('Research paper saved!', 'success'); clearResearchForm(); renderResearch(); }
+                else toast('Save failed: ' + (d.error || '?'), 'error');
+            } catch (e) { toast('Connection error', 'error'); }
+        };
+
+        // Also wrap all renderX fetch calls to handle new { success, data } format
+        const _origRenderMyths = renderMyths;
+        renderMyths = async function () {
+            try {
+                const res = await fetch('./api/content.php?type=myth_busters');
+                const json = await res.json();
+                const serverData = json.data ?? json;
+                currentMyths = (serverData && serverData.length) ? serverData : DEFAULT_MYTHS;
+                document.getElementById('myth-count').textContent = currentMyths.length + ' cards';
+                document.getElementById('myth-table-body').innerHTML = currentMyths.map(m => `
+                  <div style="border-bottom:1px solid var(--ad-border);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;">
+                    <div>
+                      <div style="font-size:0.84rem;font-weight:700;color:var(--ad-text);margin-bottom:4px;">⚠️ ${m.statement}</div>
+                      <div style="font-size:0.78rem;color:var(--ad-text-muted);">✅ ${m.fact.substring(0, 100)}…</div>
+                      <div style="font-size:0.72rem;color:var(--ad-indigo);margin-top:4px;">— ${m.source}</div>
+                    </div>
+                    <div class="action-btns">
+                      <button class="action-btn action-btn-edit myth-edit-btn" data-id="${m.id}">Edit</button>
+                      <button class="action-btn action-btn-delete myth-delete-btn" data-id="${m.id}">Delete</button>
+                    </div>
+                  </div>`).join('');
+            } catch (err) { console.error('Error loading myths:', err); toast('Failed to load myth cards', 'error'); }
+        };
+
+        const _origRenderResearch = renderResearch;
+        renderResearch = async function () {
+            try {
+                const res = await fetch('./api/content.php?type=research_papers');
+                const json = await res.json();
+                const serverData = json.data ?? json;
+                currentResearchList = (serverData && serverData.length) ? serverData : DEFAULT_RESEARCH_SEED;
+                document.getElementById('rp-count').textContent = currentResearchList.length + ' papers';
+                document.getElementById('rp-table').innerHTML = currentResearchList.map(p => `<tr>
+                  <td style="font-weight:700;font-size:0.84rem;">${p.title}</td>
+                  <td style="font-size:0.78rem;color:var(--ad-text-muted);">${p.journal}</td>
+                  <td>${p.year}</td>
+                  <td><span class="status-badge badge-published" style="font-size:0.66rem;">${p.topic}</span></td>
+                  <td><div class="action-btns">
+                    ${p.doi ? `<a href="${p.doi}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View ↗</a>` : ''}
+                    <button class="action-btn action-btn-edit res-edit-btn" data-id="${p.id}">Edit</button>
+                    <button class="action-btn action-btn-delete res-del-btn" data-id="${p.id}">Delete</button>
+                  </div></td>
+                </tr>`).join('');
+            } catch (err) { console.error('Error loading research:', err); toast('Failed to load research papers', 'error'); }
+        };
+
+        const _origRenderQuiz = renderQuizEditor;
+        renderQuizEditor = async function () {
+            try {
+                const res = await fetch('./api/content.php?type=quiz_questions');
+                const json = await res.json();
+                const serverData = json.data ?? json;
+                const tbody = document.getElementById('quiz-q-table');
+                const countEl = document.getElementById('quiz-q-count');
+                if (!serverData || serverData.length === 0) {
+                    countEl.textContent = 'Using built-in defaults'; tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--ad-text-muted);">No custom questions yet. Add one or click Reset to Defaults.</td></tr>`; currentQuizBank = []; return;
+                }
+                currentQuizBank = serverData; countEl.textContent = currentQuizBank.length + ' questions';
+                tbody.innerHTML = currentQuizBank.map((q, i) => {
+                    const letters = ['A', 'B', 'C', 'D'];
+                    return `<tr><td style="width:40px;">${i + 1}</td><td style="font-size:0.84rem;">${q.q.substring(0, 80)}${q.q.length > 80 ? '…' : ''}</td><td><span class="status-badge badge-published">${letters[q.correct]}: ${(q.options[q.correct] || '').substring(0, 25)}…</span></td><td><div class="action-btns"><button class="action-btn action-btn-edit quiz-edit-btn" data-idx="${i}">Edit</button><button class="action-btn action-btn-delete quiz-delete-btn" data-idx="${i}">Delete</button></div></td></tr>`;
+                }).join('');
+            } catch (err) { toast('Failed to load quiz bank', 'error'); }
+        };
+
     </script>
 </body>
 
