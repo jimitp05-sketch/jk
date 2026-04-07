@@ -2172,22 +2172,56 @@
             { id: 'pics', title: 'Post-ICU Recovery & PICS: Life After the Intensive Care Unit', pillar: 'Post-ICU Recovery & PICS', status: 'published' },
         ];
 
-        function renderKnowledge() {
-            const all = currentArticles;
-            document.getElementById('knowledge-table').innerHTML = all.map(a => `<tr>
-      <td style="max-width:320px;"><strong style="font-size:0.9rem;">${a.title}</strong></td>
-      <td><span style="font-size:0.8rem;color:var(--accent-secondary);">${a.pillar}</span></td>
-      <td><span class="status-badge badge-${a.status}">${a.status}</span></td>
-      <td><div class="action-btns">
-        ${a.id?.startsWith?.('art-')
-                    ? `<button class="action-btn action-btn-edit" onclick="editArticle('${a.id}')">Edit</button>
-             <button class="action-btn action-btn-delete" onclick="deleteArticle('${a.id}')">Delete</button>`
-                    : `<button class="action-btn action-btn-edit" onclick="editBuiltInArticle('${a.id}')">Edit</button>
-             <a href="knowledge.html#${a.id}" target="_blank" class="action-btn" style="padding:5px 10px;border:1.5px solid var(--border-medium);border-radius:var(--radius-sm);font-size:0.76rem;font-weight:700;color:var(--text-secondary);text-decoration:none;">View ↗</a>`
-                }
-      </div></td>
-    </tr>`).join('');
+        let currentArticles = []; // Global state — populated by renderKnowledge()
+
+        async function renderKnowledge() {
+            const tbody = document.getElementById('knowledge-table');
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">⏳ Loading articles…</td></tr>`;
+
+            let serverArticles = [];
+            try {
+                const res = await fetch('./api/content.php?type=knowledge_articles');
+                const json = await res.json();
+                const data = json.data ?? json;
+                serverArticles = Array.isArray(data) ? data : [];
+            } catch (e) {
+                console.warn('Could not load server knowledge articles:', e);
+            }
+
+            // Merge: built-ins first, then server-added articles (those with art- prefix)
+            // If a built-in was overridden by the editor (overridesId matches), prefer server version
+            const overrideIds = new Set(serverArticles.filter(a => a.overridesId).map(a => a.overridesId));
+            const builtInsToShow = BUILT_IN_ARTICLES.filter(b => !overrideIds.has(b.id));
+            currentArticles = [...serverArticles, ...builtInsToShow.map(b => ({ ...b, _builtIn: true }))];
+
+            // Sort: server-saved (non-built-in) first, then built-ins
+            currentArticles.sort((a, b) => {
+                if (a._builtIn && !b._builtIn) return 1;
+                if (!a._builtIn && b._builtIn) return -1;
+                return 0;
+            });
+
+            // Update header count
+            const countEl = document.querySelector('#panel-knowledge .table-title');
+            if (countEl) countEl.textContent = `All Articles (${currentArticles.length})`;
+
+            if (currentArticles.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">No articles yet. Click + New Article to create one.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = currentArticles.map(a => `<tr>
+                <td style="max-width:280px;"><strong style="font-size:0.88rem;">${a.title}</strong>${a._builtIn ? ' <span style="font-size:0.7rem;color:var(--text-muted);font-weight:400;">(built-in)</span>' : ''}</td>
+                <td><span style="font-size:0.8rem;color:var(--accent-secondary);">${a.pillar || '—'}</span></td>
+                <td><span class="status-badge badge-${a.status || 'published'}">${a.status || 'published'}</span></td>
+                <td><div class="action-btns">
+                    <button class="action-btn action-btn-edit" onclick="${a._builtIn ? `editBuiltInArticle('${a.id}')` : `editArticle('${a.id}')`}">Edit</button>
+                    ${!a._builtIn ? `<button class="action-btn action-btn-delete" onclick="deleteArticle('${a.id}')">Delete</button>` : ''}
+                    <a href="knowledge.html#${a.overridesId || a.id}" target="_blank" class="action-btn" style="padding:5px 10px;border:1.5px solid var(--ad-border);border-radius:var(--radius-sm);font-size:0.76rem;font-weight:700;color:var(--text-secondary);text-decoration:none;">View ↗</a>
+                </div></td>
+            </tr>`).join('');
         }
+
 
         // ============================================================
         // SECTION BUILDER HELPERS
@@ -2306,7 +2340,7 @@
             const structured = getStructuredData();
 
             if (!title || !structured.sections.length || !structured.sections[0].heading) {
-                alert('Title and at least one section with a heading are required.'); return;
+                toast('Title and at least one section with a heading are required.', 'error'); return;
             }
 
             const body = buildArticleHTML(structured);
@@ -2322,12 +2356,16 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'knowledge_articles', items: updatedList })
                 });
-                if ((await res.json()).success) {
+                const result = await res.json();
+                if (result.success) {
+                    toast('✅ Article saved successfully!', 'success');
                     clearEditor();
                     renderKnowledge();
                     switchPanel('knowledge');
+                } else {
+                    toast('Save failed: ' + (result.error || 'Unknown error'), 'error');
                 }
-            } catch (err) { alert('Error saving.'); }
+            } catch (err) { toast('Error saving article: ' + err.message, 'error'); }
         }
 
         function editArticle(id) {
@@ -2544,8 +2582,10 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'knowledge_articles', items: updatedList })
                 });
-                if ((await res.json()).success) { renderKnowledge(); }
-            } catch (err) { alert('Error deleting.'); }
+                const result = await res.json();
+                if (result.success) { toast('🗑️ Article deleted.', 'success'); renderKnowledge(); }
+                else toast('Delete failed: ' + (result.error || 'Unknown error'), 'error');
+            } catch (err) { toast('Error deleting: ' + err.message, 'error'); }
         }
 
         function clearEditor() {
