@@ -280,23 +280,28 @@
                     }
                 }
 
+                function normalizeSlug(str) {
+                    return (str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                }
+
                 function buildFilterButtons(papers) {
-                    // Collect unique topics from the paper data
-                    const topicSet = new Set();
-                    papers.forEach(p => { if (p.topic) topicSet.add(p.topic.trim()); });
+                    // Collect unique topics — deduplicate case-insensitively, keep first seen casing
+                    const seen = new Map(); // slug → display label
+                    papers.forEach(p => {
+                        if (!p.topic) return;
+                        const slug = normalizeSlug(p.topic);
+                        if (!seen.has(slug)) seen.set(slug, p.topic.trim());
+                    });
 
                     const container = document.querySelector('.research-filters');
-                    if (!container || topicSet.size === 0) return;
+                    if (!container || seen.size === 0) return;
 
-                    // Rebuild — keep "All Topics" first, then one button per unique topic
                     container.innerHTML = `<button class="filter-btn active" data-filter="all">All Topics</button>`;
-                    topicSet.forEach(topic => {
-                        const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                    seen.forEach((label, slug) => {
                         const btn = document.createElement('button');
                         btn.className = 'filter-btn';
                         btn.dataset.filter = slug;
-                        btn.dataset.topicFull = topic;  // store full topic for comparison
-                        btn.textContent = topic;
+                        btn.textContent = label;
                         container.appendChild(btn);
                     });
                 }
@@ -304,10 +309,8 @@
                 function topicMatches(paperTopic, filterSlug) {
                     if (filterSlug === 'all') return true;
                     if (!paperTopic) return false;
-                    const t = paperTopic.toLowerCase();
-                    // Match by slug (slugified topic) OR by contains (e.g. 'ards' in 'ards & ventilation')
-                    const slug = t.replace(/[^a-z0-9]+/g, '-');
-                    return slug === filterSlug || t.includes(filterSlug.replace(/-/g, ' ')) || t.includes(filterSlug);
+                    // Normalise both sides to slug then compare
+                    return normalizeSlug(paperTopic) === filterSlug;
                 }
 
                 function renderPapers(filterSlug) {
@@ -351,8 +354,8 @@
                                 // API empty — filter static HTML cards by data-topic attribute
                                 const slug = btn.dataset.filter;
                                 document.querySelectorAll('#tab-papers .research-item').forEach(card => {
-                                    const t = (card.dataset.topic || '').toLowerCase();
-                                    card.style.display = (slug === 'all' || t.includes(slug)) ? '' : 'none';
+                                    const cardSlug = normalizeSlug(card.dataset.topic || '');
+                                    card.style.display = (slug === 'all' || cardSlug === slug) ? '' : 'none';
                                 });
                             }
                         });
