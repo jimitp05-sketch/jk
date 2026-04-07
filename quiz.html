@@ -669,8 +669,12 @@
                     pct >= 0.7 ? "🎯 Impressive!" :
                         pct >= 0.5 ? "👍 Good effort!" : "🌱 Keep learning!";
 
-                const waMsg = encodeURIComponent(`I scored ${score}/${questions.length} on Dr. Jay Kothari's ICU IQ quiz! https://drjaykothari.in/quiz.html`);
+                const waMsg = encodeURIComponent(`I scored ${score}/${questions.length} on Dr. Jay Kothari's ICU IQ quiz! Can you beat me? 🧠 https://drjaykothari.in/quiz.html`);
                 document.getElementById('share-wa').href = `https://wa.me/?text=${waMsg}`;
+                const liMsg = encodeURIComponent(`I just scored ${score}/${questions.length} on an ICU Intelligence Quiz from Dr. Jay Kothari's website. Think you know critical care? Try it here: https://drjaykothari.in/quiz.html`);
+                document.getElementById('share-li').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://drjaykothari.in/quiz.html')}&summary=${liMsg}`;
+                const shareRow = document.getElementById('quiz-share-row');
+                shareRow.style.display = 'flex';
             }
         });
         document.getElementById('restart-quiz-btn').addEventListener('click', startQuiz);
