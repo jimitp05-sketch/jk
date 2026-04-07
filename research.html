@@ -257,29 +257,60 @@
             </div>
 
             <script>
+                let allResearchPapers = [];
+
                 async function initResearch() {
                     try {
-                        const res = await fetch('api/content.php?type=research_papers');
-                        const papers = await res.json();
-                        const grid = document.getElementById('tab-papers');
-
-                        grid.innerHTML = papers.map((p, i) => `
-                            <div class="glass-card research-item reveal ${i > 0 ? 'reveal-delay-' + Math.min(i, 3) : ''}" data-topic="${p.topic || 'icu'}">
-                                <div>
-                                    <div class="research-topic">${p.journal}</div>
-                                    <h3>${p.title}</h3>
-                                    <p class="research-authors">${p.authors}</p>
-                                </div>
-                                <div class="research-takeaway"><strong>Clinical Takeaway:</strong> ${p.takeaway}</div>
-                                <blockquote class="dr-position">
-                                    <strong>Dr. Kothari's Practice:</strong> ${p.position}
-                                </blockquote>
-                                <a href="${p.url}" target="_blank" rel="noopener" class="read-more">View Paper →</a>
-                            </div>
-                        `).join('');
-
-                    } catch (e) { console.error("Failed to load research papers", e); }
+                        const res = await fetch('./api/content.php?type=research_papers');
+                        allResearchPapers = await res.json();
+                        renderPapers('all');
+                        setupFilterListeners();
+                    } catch (e) {
+                        console.error("Failed to load research papers", e);
+                        // If API fails, you might want to show some static fallback or error
+                    }
                 }
+
+                function renderPapers(filterTopic) {
+                    const grid = document.getElementById('tab-papers');
+                    const filtered = filterTopic === 'all'
+                        ? allResearchPapers
+                        : allResearchPapers.filter(p => (p.topic || 'icu').toLowerCase() === filterTopic.toLowerCase());
+
+                    if (filtered.length === 0) {
+                        grid.innerHTML = `<div class="glass-card reveal" style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-muted);">No papers found for this topic yet.</div>`;
+                        if (window.revealNew) window.revealNew();
+                        return;
+                    }
+
+                    grid.innerHTML = filtered.map((p, i) => `
+                        <div class="glass-card research-item reveal ${i > 0 ? 'reveal-delay-' + Math.min(i, 3) : ''}" data-topic="${(p.topic || 'icu').toLowerCase()}">
+                            <div>
+                                <div class="research-topic">${p.journal} · ${p.year || ''}</div>
+                                <h3>${p.title}</h3>
+                                <p class="research-authors">${p.authors}</p>
+                            </div>
+                            <div class="research-takeaway"><strong>Clinical Takeaway:</strong> ${p.takeaway}</div>
+                            <blockquote class="dr-position">
+                                <strong>Dr. Kothari's Practice:</strong> ${p.position}
+                            </blockquote>
+                            <a href="${p.url}" target="_blank" rel="noopener" class="read-more">View Paper →</a>
+                        </div>
+                    `).join('');
+
+                    if (window.revealNew) window.revealNew();
+                }
+
+                function setupFilterListeners() {
+                    document.querySelectorAll('.research-filters .filter-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            document.querySelectorAll('.research-filters .filter-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            renderPapers(btn.dataset.filter);
+                        });
+                    });
+                }
+
                 window.addEventListener('DOMContentLoaded', initResearch);
 
                 function showResearchTab(tab, btn) {

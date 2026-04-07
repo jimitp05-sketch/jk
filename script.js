@@ -1,7 +1,49 @@
 /* ================================================
-   AI APOLLO 2.0 — MASTER SCRIPT (PREMIUM EDITION)
-   web-animation + frontend-design skills applied
+   AI APOLLO 2.1 — MASTER SCRIPT (UPGRADED)
+   v2.1.1 — 2026-04-08
    ================================================ */
+
+// ── GLOBAL UTILITIES (Available immediately for page-specific scripts) ──
+
+// 1. SCROLL REVEAL OBSERVER
+const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObs.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.01, rootMargin: '0px 0px 50px 0px' });
+
+window.revealNew = function () {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => revealObs.observe(el));
+};
+
+// 2. COUNTER ANIMATION
+function animateCountEl(el) {
+    const useTarget = el.dataset.target !== undefined;
+    const target = parseInt(useTarget ? el.dataset.target : el.dataset.count, 10);
+    const suffix = el.dataset.suffix || '';
+    if (isNaN(target)) return;
+    const step = Math.ceil(target / 80);
+    let current = 0;
+    const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current.toLocaleString() + suffix;
+        if (current >= target) clearInterval(timer);
+    }, 20);
+}
+
+const counterObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.dataset.counted) {
+            entry.target.dataset.counted = '1';
+            animateCountEl(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
+
+// ── DOM CONTENT LOADED ──────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
     const navbar = document.getElementById('navbar');
@@ -11,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     progressBar.id = 'scroll-progress';
     progressBar.style.cssText = `
     position:fixed;top:0;left:0;height:3px;width:0%;z-index:9999;
-    background:linear-gradient(90deg,#2B3280,#0078D4,#38ABFF);
+    background:linear-gradient(90deg,#ff4b2b,#ff416c);
     transition:width .1s linear;pointer-events:none;
   `;
     document.body.prepend(progressBar);
@@ -25,80 +67,23 @@ document.addEventListener('DOMContentLoaded', () => {
         else navbar.classList.remove('scrolled');
     }, { passive: true });
 
-    // ── 3. SCROLL REVEAL (web-animation skill) ───────
-    const revealObs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                revealObs.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.05, rootMargin: '60px 0px 60px 0px' });
-
-    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
-
-    // Fallback for file:// protocol
-    setTimeout(() => {
-        document.querySelectorAll('.reveal:not(.visible)').forEach(el => el.classList.add('visible'));
-    }, 700);
-
-    // ── 4. COUNTER ANIMATION (web-animation skill) ───
-    function animateCounter(el) {
-        const target = parseInt(el.dataset.target, 10);
-        const suffix = el.dataset.suffix || '';
-        if (isNaN(target)) return;
-        const duration = 2000;
-        const step = target / (duration / 16);
-        let current = 0;
-        const timer = setInterval(() => {
-            current += step;
-            if (current >= target) {
-                el.textContent = target.toLocaleString() + suffix;
-                clearInterval(timer);
-            } else {
-                el.textContent = Math.floor(current).toLocaleString() + suffix;
-            }
-        }, 16);
-    }
-
-    // For data-count (original) + data-target (new)
-    function animateCountEl(el) {
-        const useTarget = el.dataset.target !== undefined;
-        const target = parseInt(useTarget ? el.dataset.target : el.dataset.count, 10);
-        const suffix = el.dataset.suffix || '';
-        if (isNaN(target)) return;
-        const step = Math.ceil(target / 80);
-        let current = 0;
-        const timer = setInterval(() => {
-            current = Math.min(current + step, target);
-            el.textContent = current.toLocaleString() + suffix;
-            if (current >= target) clearInterval(timer);
-        }, 20);
-    }
-
-    const counterObs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !entry.target.dataset.counted) {
-                entry.target.dataset.counted = '1';
-                animateCountEl(entry.target);
-            }
-        });
-    }, { threshold: 0.5 });
-
+    // ── 3. RUN INITIAL REVEAL ────────────────────────
+    window.revealNew();
     document.querySelectorAll('[data-count], [data-target]').forEach(el => counterObs.observe(el));
 
+    // Fallback for file:// protocol or slow loads
+    setTimeout(() => {
+        document.querySelectorAll('.reveal:not(.visible)').forEach(el => el.classList.add('visible'));
+    }, 2000);
+
     // ── 5. HERO WORD STAGGER ─────────────────────────
-    // Split hero h1 into animated words
     const heroH1 = document.querySelector('.hero h1');
     if (heroH1) {
-        const html = heroH1.innerHTML;
-        // Preserve <br> and <span class="glow-text">
-        // Only animate top-level text nodes
         const nodes = Array.from(heroH1.childNodes);
         let delay = 0.3;
         heroH1.innerHTML = '';
         nodes.forEach(node => {
-            if (node.nodeType === 3) { // text node
+            if (node.nodeType === 3) {
                 node.textContent.split(' ').filter(w => w.trim()).forEach(word => {
                     const span = document.createElement('span');
                     span.className = 'hero-word';
@@ -108,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     heroH1.appendChild(span);
                 });
             } else {
-                // Wrap the element itself
                 const el = node.cloneNode(true);
                 if (el.nodeType === 1) {
                     el.classList.add('hero-word');
@@ -120,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── 6. ECG SVG — inject into hero ────────────────
+    // ── 6. ECG SVG ───────────────────────────────────
     const hero = document.querySelector('.hero');
     if (hero) {
         const ecgWrap = document.createElement('div');
@@ -133,10 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
         hero.appendChild(ecgWrap);
     }
 
-    // ── 7. CARD 3D TILT (subtle, performance-safe) ───
+    // ── 7. CARD 3D TILT ──────────────────────────────
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!prefersReduced) {
-        document.querySelectorAll('.glass-card').forEach(card => {
+        document.querySelectorAll('.glass-card, .myth-card').forEach(card => {
             card.addEventListener('mousemove', e => {
                 const r = card.getBoundingClientRect();
                 const rotX = ((e.clientY - r.top) - r.height / 2) / 22;
@@ -150,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Subtle parallax on hero image
         const heroImg = document.querySelector('.hero-image-wrapper');
         document.addEventListener('mousemove', e => {
             if (!heroImg) return;
@@ -184,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── 9. FAQ ACCORDION (smooth height) ─────────────
+    // ── 9. FAQ ACCORDION ─────────────────────────────
     document.querySelectorAll('.faq-question').forEach(btn => {
         btn.addEventListener('click', () => {
             const item = btn.closest('.faq-item');
@@ -200,22 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ── 10. RESEARCH FILTER ──────────────────────────
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const researchItems = document.querySelectorAll('.research-item[data-topic]');
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const topic = btn.dataset.filter;
-            researchItems.forEach(item => {
-                if (topic === 'all' || item.dataset.topic === topic) item.removeAttribute('hidden');
-                else item.setAttribute('hidden', '');
-            });
-        });
-    });
-
-    // ── 11. ACTIVE NAV HIGHLIGHT as you scroll ───────
+    // ── 11. ACTIVE NAV HIGHLIGHT ─────────────────────
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-links a');
     const sectionObs = new IntersectionObserver((entries) => {
@@ -229,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.45 });
     sections.forEach(s => sectionObs.observe(s));
 
-    // ── 12. SECTION MOUSE-FOLLOW RADIAL GRADIENT ─────
+    // ── 12. SECTION MOUSE-FOLLOW GRADIENT ────────────
     if (!prefersReduced) {
         document.querySelectorAll('.section').forEach(sec => {
             sec.addEventListener('mousemove', e => {
@@ -241,19 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
             sec.addEventListener('mouseleave', () => { sec.style.backgroundImage = ''; });
         });
     }
-
-    // ── ACCESSIBILITY ─────────────────────────────────
-    if (prefersReduced) {
-        document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
-    }
 });
 
 /* ═══════════════════════════════════════════════════
-   PHASE 1 GLOBALS
-   Emergency Strip · WhatsApp Float · Dark Mode · Page Transitions
+   SITE SETTINGS & GLOBALS
    ═══════════════════════════════════════════════════ */
 
-// ── SITE SETTINGS — loaded from /api/settings.php ─────────────────────────
 let WA_NUM = '919999999999';
 let WA_MSG = 'Hello%2C%20I%20would%20like%20to%20consult%20Dr.%20Jay%20Kothari';
 let ICU_PHONE = '18605001066';
@@ -263,60 +224,28 @@ function applySettings(s) {
     if (s.wa_message) WA_MSG = s.wa_message;
     if (s.icu_phone) ICU_PHONE = s.icu_phone;
 
-    // Patch speed dial and any other contact links
-    const emgCalls = document.querySelectorAll('.sd-emergency, .icu-link-phone');
-    const waChats = document.querySelectorAll('.sd-whatsapp, .wa-link-btn');
+    document.querySelectorAll('.sd-emergency, .icu-link-phone').forEach(el => { el.href = `tel:${ICU_PHONE}`; });
+    document.querySelectorAll('.sd-whatsapp, .wa-link-btn').forEach(el => { el.href = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(WA_MSG)}`; });
 
-    emgCalls.forEach(el => {
-        el.href = `tel:${ICU_PHONE}`;
-    });
-    waChats.forEach(el => {
-        el.href = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(WA_MSG)}`;
-    });
-
-    // Patch site name
     if (s.site_name) {
         document.querySelectorAll('.nav-logo, .footer-doctor-name').forEach(el => {
             if (el.classList.contains('nav-logo')) {
                 const parts = s.site_name.split(' ');
-                if (parts.length > 2) {
-                    el.innerHTML = `${parts[0]} ${parts[1]} <span class="glow-text">${parts.slice(2).join(' ')}</span>`;
-                } else if (parts.length === 2) {
-                    el.innerHTML = `${parts[0]} <span class="glow-text">${parts[1]}</span>`;
-                } else {
-                    el.textContent = s.site_name;
-                }
-            } else {
-                el.textContent = s.site_name;
-            }
+                if (parts.length >= 2) el.innerHTML = `${parts[0]} <span class="glow-text">${parts.slice(1).join(' ')}</span>`;
+                else el.textContent = s.site_name;
+            } else el.textContent = s.site_name;
         });
-    }
-
-    // Patch hero
-    if (s.hero_title) {
-        const h1 = document.querySelector('.hero h1');
-        if (h1) h1.innerHTML = s.hero_title.replace('Seconds', '<span class="glow-text">Seconds</span>');
-    }
-    if (s.hero_tagline) {
-        const p = document.querySelector('.hero-tagline');
-        if (p) p.textContent = s.hero_tagline;
-    }
-    if (s.hero_empathy) {
-        const p = document.querySelector('.hero-empathy');
-        if (p) p.textContent = s.hero_empathy;
     }
 }
 
 (function loadSettings() {
-    fetch('/api/settings.php')
+    fetch('./api/settings.php')
         .then(r => r.ok ? r.json() : Promise.reject())
-        .then(s => {
-            applySettings(s);
-        })
-        .catch(() => { }); // defaults are hardcoded in variables
+        .then(s => applySettings(s))
+        .catch(() => { });
 })();
 
-// ── UNIFIED SPEED DIAL FAB ────────────────────────────────
+// ── UNIFIED SPEED DIAL FAB ─────────────────────────
 (function createSpeedDial() {
     const fab = document.createElement('div');
     fab.id = 'speed-dial';
@@ -327,8 +256,7 @@ function applySettings(s) {
           <span class="sd-icon">🚨</span>
           <span class="sd-label">ICU Emergency</span>
         </a>
-        <a href="https://wa.me/${WA_NUM}?text=${WA_MSG}"
-           class="sd-btn sd-whatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+        <a href="https://wa.me/${WA_NUM}?text=${WA_MSG}" class="sd-btn sd-whatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
           <span class="sd-icon">💬</span>
           <span class="sd-label">WhatsApp Chat</span>
         </a>
@@ -343,29 +271,17 @@ function applySettings(s) {
       </button>
     `;
     document.body.appendChild(fab);
-
     setTimeout(() => fab.classList.add('sd-visible'), 800);
-
-    document.getElementById('sd-main-btn').addEventListener('click', e => {
-        e.stopPropagation();
-        fab.classList.toggle('sd-open');
-    });
-
-    document.addEventListener('click', e => {
-        if (!fab.contains(e.target)) fab.classList.remove('sd-open');
-    });
+    document.getElementById('sd-main-btn').addEventListener('click', e => { e.stopPropagation(); fab.classList.toggle('sd-open'); });
+    document.addEventListener('click', e => { if (!fab.contains(e.target)) fab.classList.remove('sd-open'); });
 })();
 
-
-
-// ── PAGE FADE TRANSITIONS ―――――――――――――――――――――――――――――
+// ── PAGE FADE TRANSITIONS ―――――――――――――――――――――――――――
 (function () {
     document.body.classList.add('page-fade-in');
     document.querySelectorAll('a[href]').forEach(link => {
         const href = link.getAttribute('href');
-        if (!href || href.startsWith('#') || href.startsWith('http') ||
-            href.startsWith('tel:') || href.startsWith('mailto:') ||
-            link.hasAttribute('target')) return;
+        if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('tel:') || href.startsWith('mailto:') || link.hasAttribute('target')) return;
         link.addEventListener('click', e => {
             e.preventDefault();
             document.body.classList.add('page-fade-out');
@@ -374,15 +290,14 @@ function applySettings(s) {
     });
 })();
 
-// ── DARK / LIGHT MODE TOGGLE ―――――――――――――――――――――――――
+// ── DARK / LIGHT MODE TOGGLE ――――――――――――――――――――――――
 (function () {
     const saved = localStorage.getItem('apollo_theme') || 'light';
     document.documentElement.setAttribute('data-theme', saved);
     const nav = document.querySelector('.nav-content');
     if (!nav) return;
     const btn = document.createElement('button');
-    btn.id = 'theme-toggle';
-    btn.className = 'theme-toggle-btn';
+    btn.id = 'theme-toggle'; btn.className = 'theme-toggle-btn';
     btn.setAttribute('aria-label', 'Toggle dark mode');
     btn.innerHTML = saved === 'dark' ? '☀️' : '🌙';
     btn.addEventListener('click', () => {
@@ -395,22 +310,18 @@ function applySettings(s) {
     nav.insertBefore(btn, toggle || null);
 })();
 
-// ── FOOTER ENHANCEMENTS ――――――――――――――――――――――――――――――
+// ── FOOTER ENHANCEMENTS ―――――――――――――――――――――――――――――
 (function () {
     document.querySelectorAll('.footer-year').forEach(el => { el.textContent = new Date().getFullYear(); });
     document.querySelectorAll('.footer-links').forEach(nav => {
         if (nav.querySelector('.footer-linkedin')) return;
         [
-            { text: 'LinkedIn', href: 'https://www.linkedin.com/in/dr-jay-kothari', cls: 'footer-linkedin', target: '_blank' },
-            { text: 'Find Us on Maps', href: 'https://maps.google.com/?q=Apollo+Hospitals+International+Ahmedabad', target: '_blank' },
-            { text: 'Sitemap', href: 'sitemap.xml' }
-        ].forEach(({ text, href, cls, target }) => {
-            const a = document.createElement('a');
-            a.href = href; a.textContent = text;
-            if (cls) a.className = cls;
+            { text: 'LinkedIn', href: 'https://www.linkedin.com/in/dr-jay-kothari' },
+            { text: 'Find Us on Maps', href: 'https://maps.google.com/?q=Apollo+Hospitals+International+Ahmedabad', target: '_blank' }
+        ].forEach(({ text, href, target }) => {
+            const a = document.createElement('a'); a.href = href; a.textContent = text;
             if (target) { a.target = target; a.rel = 'noopener'; }
             nav.appendChild(a);
         });
     });
 })();
-

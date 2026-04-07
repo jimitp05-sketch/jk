@@ -20,92 +20,105 @@ define('ADMIN_TOKEN',  getenv('APOLLO_ADMIN_TOKEN') ?: 'apollo_admin_2026');
 
 $VALID_TYPES = ['quiz_questions', 'knowledge_articles', 'research_papers', 'myth_busters'];
 
+// ── RESPONSE HELPER ─────────────────────────────────────────────────────────────
+function respond($data, $status = 200) {
+    http_response_code($status);
+    echo json_encode($data);
+    exit;
+}
+
+// ── LOGGING ───────────────────────────────────────────────────────────────────
+function log_error($msg) {
+    $logDir = __DIR__ . '/../logs';
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    $logFile = $logDir . '/api.log';
+    $entry = '[' . date('c') . '] ' . $_SERVER['REMOTE_ADDR'] . ' ' . $msg . "\n";
+    file_put_contents($logFile, $entry, FILE_APPEND);
+}
+
 // ── READ ────────────────────────────────────────────────────────────────────
 function readContent(): array {
     if (!file_exists(CONTENT_FILE)) {
-        return ['quiz_questions' => [], 'knowledge_articles' => [],
-                'research_papers' => [], 'myth_busters' => []];
+        // create empty skeleton if missing
+        $empty = ['quiz_questions' => [], 'knowledge_articles' => [], 'research_papers' => [], 'myth_busters' => []];
+        writeContent($empty);
+        return $empty;
     }
-    return json_decode(file_get_contents(CONTENT_FILE), true) ?? [];
+    $json = file_get_contents(CONTENT_FILE);
+    $data = json_decode($json, true);
+    if (!is_array($data)) {
+        log_error('Failed to decode content.json');
+        // fallback to empty structure
+        $data = ['quiz_questions' => [], 'knowledge_articles' => [], 'research_papers' => [], 'myth_busters' => []];
+    }
+    return $data;
 }
 
 // ── WRITE ───────────────────────────────────────────────────────────────────
 function writeContent(array $data): bool {
     $dir = dirname(CONTENT_FILE);
-    if (!is_dir($dir)) mkdir($dir, 0755, true);
-    return file_put_contents(CONTENT_FILE, json_encode($data, JSON_PRETTY_PRINT)) !== false;
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+    $json = json_encode($data, JSON_PRETTY_PRINT);
+    $result = file_put_contents(CONTENT_FILE, $json);
+    if ($result === false) {
+        log_error('Failed to write content.json');
+        return false;
+    }
+    chmod(CONTENT_FILE, 0644);
+    return true;
 }
 
 // ── AUTH ────────────────────────────────────────────────────────────────────
-function isAuthorized(): bool {
-    // Default password
+function isAuthorized(array $input = []): bool {
     $savedPass = 'apollo2024';
-    
-    // Try to get password from settings.json if it exists
-    if (file_exists(SETTINGS_FILE)) {
-        $st = json_decode(file_get_contents(SETTINGS_FILE), true);
+    // allow override via settings.json
+    $settingsFile = __DIR__ . '/../data/settings.json';
+    if (file_exists($settingsFile)) {
+        $st = json_decode(file_get_contents($settingsFile), true);
         if (isset($st['admin_pass'])) $savedPass = $st['admin_pass'];
     }
-
-    $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
-    // Accept 'admin_pass' (new) or 'admin_token' (old) for compatibility
     $provided = $input['admin_pass'] ?? $input['admin_token'] ?? $_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '';
-    
     return $provided === $savedPass;
 }
 
 // ── HANDLE: GET ─────────────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    global $VALID_TYPES;
     $type = $_GET['type'] ?? '';
     $content = readContent();
-
-    if ($type && in_array($type, $VALID_TYPES, true)) {
-        echo json_encode($content[$type] ?? []);
-    } else {
-        // Return all content types
-        echo json_encode($content);
+    if ($type && !in_array($type, $VALID_TYPES, true)) {
+        respond(['success' => false, 'data' => null, 'error' => 'Invalid type'], 400);
     }
-    exit;
+    $payload = $type ? ($content[$type] ?? []) : $content;
+    respond(['success' => true, 'data' => $payload, 'error' => null]);
 }
 
 // ── HANDLE: POST ─────────────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    global $VALID_TYPES;
     $input = json_decode(file_get_contents('php://input'), true) ?? [];
-
     if (!isAuthorized($input)) {
-        http_response_code(403);
-        echo json_encode(['error' => 'Unauthorized']);
-        exit;
+        respond(['success' => false, 'data' => null, 'error' => 'Unauthorized'], 401);
     }
-
-    $type  = $input['type']  ?? '';
+    $type = $input['type'] ?? '';
     $items = $input['items'] ?? null;
-
     if (!in_array($type, $VALID_TYPES, true)) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Invalid type. Use: ' . implode(', ', $VALID_TYPES)]);
-        exit;
+        respond(['success' => false, 'data' => null, 'error' => 'Invalid type'], 400);
     }
-
     if (!is_array($items)) {
-        http_response_code(400);
-        echo json_encode(['error' => 'items must be an array']);
-        exit;
+        respond(['success' => false, 'data' => null, 'error' => 'items must be an array'], 400);
     }
-
     $content = readContent();
     $content[$type] = $items;
-
     if (writeContent($content)) {
-        echo json_encode(['success' => true, 'type' => $type, 'count' => count($items)]);
+        respond(['success' => true, 'data' => ['type' => $type, 'count' => count($items)], 'error' => null]);
     } else {
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to write content. Check data/ folder permissions.']);
+        respond(['success' => false, 'data' => null, 'error' => 'Failed to write content. Check permissions.'], 500);
     }
-    exit;
 }
 
-http_response_code(405);
-echo json_encode(['error' => 'Method not allowed']);
+// Method not allowed
+respond(['success' => false, 'data' => null, 'error' => 'Method not allowed'], 405);
+?>

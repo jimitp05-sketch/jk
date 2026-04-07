@@ -512,61 +512,17 @@
         // ========== TABS ==========
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-selected', 'false');
+                });
                 document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-                btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
-                document.getElementById(btn.dataset.tab).classList.add('active');
+                btn.classList.add('active');
+                btn.setAttribute('aria-selected', 'true');
+                const panel = document.getElementById(btn.dataset.tab);
+                if (panel) panel.classList.add('active');
             });
         });
-
-        // ========== DEFAULT MYTHS (shown if server is empty) ==========
-        const DEFAULT_MYTHS = [
-            { id: 1, statement: '"Patients on ventilators feel nothing."', fact: 'Many ventilated patients are conscious and aware. Studies confirm they can hear voices. Light sedation is now preferred to prevent delirium and ICU-acquired weakness. Talk to your loved one — it matters.', source: 'ABCDEF Bundle · SCCM 2018' },
-            { id: 2, statement: '"ICU means the patient is going to die."', fact: 'The ICU is a place of intensive monitoring and life-saving intervention — not end of life. Survival rates in modern ICUs often exceed 80–85% for many diagnoses. The ICU is where the most reversible critical illnesses are treated.', source: 'ANZICS Report 2022' },
-            { id: 3, statement: '"More IV fluids is always better in shock."', fact: 'Fluid overload in the ICU is independently associated with worse outcomes — including prolonged ventilation and renal failure. Modern practice targets dynamic fluid responsiveness, not volume.', source: 'ANDROMEDA-SHOCK · JAMA 2019' },
-            { id: 4, statement: '"Antibiotics cure all infections in the ICU."', fact: 'ICU infections are increasingly caused by multidrug-resistant organisms (MRSA, ESBL, Carbapenem-resistant Klebsiella). The right antibiotic, chosen by culture, matters far more than speed alone.', source: 'Surviving Sepsis Campaign 2021' },
-            { id: 5, statement: '"Prone positioning (face-down) is experimental."', fact: 'Prone positioning for ≥16 hours/day in severe ARDS is evidence-based standard of care — reducing 28-day mortality from 32.8% to 16% in the landmark PROSEVA trial (NEJM 2013).', source: 'PROSEVA Trial · NEJM 2013' },
-            { id: 6, statement: '"ECMO is always the last resort."', fact: 'ECMO initiated earlier, before the patient deteriorates too far, is associated with better outcomes. The ELSO 2021 guidelines recommend ECMO consideration at a P/F ratio below 80 mmHg, not only when all else has failed.', source: 'ELSO Guidelines 2021' },
-            { id: 7, statement: '"Sedating ICU patients heavily keeps them calm and safe."', fact: 'Deep sedation is independently associated with delirium, weakness, prolonged ventilation and death. Current evidence mandates minimal sedation. The SAT/SBT (wake-and-breathe) trials changed ICU practice worldwide.', source: 'SLEAP Trial · Lancet 2012' },
-            { id: 8, statement: '"Families should not visit the ICU — it disturbs patients."', fact: 'The evidence shows the opposite. Family presence reduces patient anxiety, combats delirium, and improves psychological outcomes for both patient and family. The ABCDEF bundle explicitly includes family engagement as pillar F.', source: 'SCCM ABCDEF Bundle 2018' },
-        ];
-
-        // ========== MYTH BUSTER LOADING ==========
-        async function loadMythBusters() {
-            let myths = DEFAULT_MYTHS;
-            try {
-                const res = await fetch('./api/content.php?type=myth_busters');
-                const serverData = await res.json();
-                if (serverData && serverData.length > 0) myths = serverData;
-            } catch (e) { console.warn('Using default myths.'); }
-
-            const grid = document.getElementById('myths-grid');
-            grid.innerHTML = myths.map(m => `
-                <div class="myth-card glass-card reveal" tabindex="0" role="button" aria-label="Flip myth card">
-                    <div class="myth-card-inner">
-                        <div class="myth-front">
-                            <div class="myth-label">⚠️ Myth</div>
-                            <p class="myth-statement">${m.statement}</p>
-                            <div class="myth-tap-hint">👆 Tap to reveal the truth</div>
-                        </div>
-                        <div class="myth-back">
-                            <div class="myth-label fact">✅ Fact</div>
-                            <p class="myth-fact">${m.fact}</p>
-                            <div class="myth-source">— ${m.source}</div>
-                        </div>
-                    </div>
-                </div>`).join('');
-
-            // Flip on click or keyboard
-            grid.querySelectorAll('.myth-card').forEach(card => {
-                const toggle = () => card.classList.toggle('flipped');
-                card.addEventListener('click', toggle);
-                card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') toggle(); });
-            });
-        }
-
-        // Script is at bottom of body — DOM is already ready. Call directly.
-        loadMythBusters();
 
         // ========== SHUFFLE HELPER ==========
         function shuffle(arr) {
@@ -578,35 +534,86 @@
             return a;
         }
 
+        // ========== MYTH BUSTER LOADING ==========
+        async function loadMythBusters() {
+            const grid = document.getElementById('myths-grid');
+            if (!grid) return;
+
+            try {
+                const res = await fetch('./api/content.php?type=myth_busters');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const myths = await res.json();
+
+                if (!myths || myths.length === 0) {
+                    grid.innerHTML = '<p style="text-align:center; color:var(--text-muted); grid-column:1/-1; padding:40px;">No myths received from server.</p>';
+                    return;
+                }
+
+                grid.innerHTML = myths.map((m, i) => `
+                    <div class="myth-card reveal ${i > 3 ? 'reveal-delay-1' : ''}" onclick="this.classList.toggle('flipped')">
+                        <div class="myth-card-inner">
+                            <div class="myth-front">
+                                <div>
+                                    <div class="myth-label">Myth</div>
+                                    <h3 class="myth-statement">${m.statement}</h3>
+                                </div>
+                                <div class="myth-tap-hint">Tap to reveal facts ➔</div>
+                            </div>
+                            <div class="myth-back">
+                                <div>
+                                    <div class="myth-label fact">Fact Check</div>
+                                    <p class="myth-fact">${m.fact}</p>
+                                </div>
+                                <div class="myth-source">Source: ${m.source}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                if (window.revealNew) window.revealNew();
+                else {
+                    // Immediate reveal if observer not ready
+                    document.querySelectorAll('.myth-card.reveal').forEach(el => el.classList.add('visible'));
+                }
+
+            } catch (e) {
+                console.error("Myth loading failed:", e);
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+                        <p>Unable to load myths from server.</p>
+                        <p style="font-size:0.8rem; margin-top:10px;">(Check database/data/content.json permissions)</p>
+                    </div>
+                `;
+            }
+        }
+
         // ========== ICU IQ QUIZ LOGIC ==========
         let questions = [];
         let currentQ = 0, score = 0, answered = false;
 
         async function loadQuestionsFromServer() {
             try {
-                const res = await fetch('api/content.php?type=quiz_questions');
+                const res = await fetch('./api/content.php?type=quiz_questions');
                 const serverData = await res.json();
                 if (serverData && serverData.length > 0) {
                     return shuffle(serverData).slice(0, 10);
                 }
-            } catch (e) { console.warn('Could not fetch quiz from server, using defaults.'); }
-
-            // Minimal fallback for resilience
-            return shuffle([
-                { q: "What does ECMO stand for?", options: ["Extracorporeal Membrane Oxygenation", "Extended Cardiac Monitoring Operation", "Emergency Cardiac Muscle Oxygenation", "External Cardio-Metabolic Oxygenator"], correct: 0, explanation: "ECMO temporarily replaces heart/lung function by circulating blood outside the body through an artificial lung." }
-            ]).slice(0, 10);
+            } catch (e) { console.warn('Could not fetch quiz from server.'); }
+            return [];
         }
 
         async function startQuiz() {
             questions = await loadQuestionsFromServer();
+            if (questions.length === 0) {
+                alert("No questions available. Please try again later.");
+                return;
+            }
             currentQ = 0; score = 0;
             document.getElementById('quiz-start').style.display = 'none';
             document.getElementById('quiz-result').style.display = 'none';
             document.getElementById('quiz-main').style.display = 'block';
-            document.getElementById('quiz-q-num').textContent = `Question 1 of ${questions.length}`;
             loadQuestion();
         }
-
 
         function loadQuestion() {
             const q = questions[currentQ];
@@ -656,21 +663,18 @@
                 res.style.display = 'block';
                 document.getElementById('final-score').textContent = `${score}/${questions.length}`;
                 const pct = score / questions.length;
-                document.getElementById('result-msg').textContent = pct >= 0.9 ? "🏆 Outstanding! You have the knowledge of a critical care resident!" :
-                    pct >= 0.7 ? "🎯 Impressive! You clearly pay attention to what matters in medicine." :
-                        pct >= 0.5 ? "👍 Good effort! Explore the Knowledge Hub to level up." :
-                            "🌱 A great starting point! Head to the Knowledge Hub to learn more.";
+                document.getElementById('result-msg').textContent = pct >= 0.9 ? "🏆 Outstanding!" :
+                    pct >= 0.7 ? "🎯 Impressive!" :
+                        pct >= 0.5 ? "👍 Good effort!" : "🌱 Keep learning!";
 
-                // Share buttons
-                const waMsg = encodeURIComponent(`I scored ${score}/${questions.length} on the ICU Intel quiz by Dr. Jay Kothari! 🦷🏥 Can you beat it? https://forwisdom.com/quiz.html`);
-                const liMsg = encodeURIComponent(`I tested my ICU knowledge and scored ${score}/${questions.length} on the ICU Intel quiz by Dr. Jay Kothari at Dr. Jay Kothari! Try it: https://forwisdom.com/quiz.html`);
+                const waMsg = encodeURIComponent(`I scored ${score}/${questions.length} on Dr. Jay Kothari's ICU IQ quiz! https://drjaykothari.in/quiz.html`);
                 document.getElementById('share-wa').href = `https://wa.me/?text=${waMsg}`;
-                document.getElementById('share-li').href = `https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fforwisdom.com%2Fquiz.html&summary=${liMsg}`;
-                document.getElementById('quiz-share-row').style.display = 'flex';
             }
         });
         document.getElementById('restart-quiz-btn').addEventListener('click', startQuiz);
 
+        // Initial Load
+        loadMythBusters();
     </script>
 </body>
 
