@@ -1499,7 +1499,7 @@
             if (newPass) body.new_admin_pass = newPass;
 
             try {
-                const res = await fetch('/api/settings.php', {
+                const res = await fetch('./api/settings.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
@@ -1841,7 +1841,7 @@
             if (idx > -1) updatedList[idx] = newArt; else updatedList.push(newArt);
 
             try {
-                const res = await fetch('/api/content.php', {
+                const res = await fetch('./api/content.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'knowledge_articles', items: updatedList })
@@ -2063,7 +2063,7 @@
             const updatedList = currentArticles.filter(a => a.id !== id);
 
             try {
-                const res = await fetch('/api/content.php', {
+                const res = await fetch('./api/content.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'knowledge_articles', items: updatedList })
@@ -2215,13 +2215,22 @@
         }
 
         // ============================================================
-        // MYTH BUSTER CRUD — Server side via /api/content.php
+        // MYTH BUSTER CRUD — Server side via ./api/content.php
         // ============================================================
+        const DEFAULT_MYTHS = [
+            { id: 1, statement: '"Patients on ventilators feel nothing."', fact: 'Many ventilated patients are conscious and aware. Studies confirm they can hear voices. Light sedation is now preferred to prevent delirium and ICU-acquired weakness. Talk to your loved one — it matters.', source: 'ABCDEF Bundle · SCCM 2018' },
+            { id: 2, statement: '"ICU means the patient is going to die."', fact: 'The ICU is a place of intensive monitoring and life-saving intervention — not end of life. Survival rates in modern ICUs often exceed 80–85% for many diagnoses. The ICU is where the most reversible critical illnesses are treated.', source: 'ANZICS Report 2022' },
+            { id: 3, statement: '"More IV fluids is always better in shock."', fact: 'Fluid overload in the ICU is independently associated with worse outcomes — including prolonged ventilation and renal failure. Modern practice targets dynamic fluid responsiveness, not volume.', source: 'ANDROMEDA-SHOCK · JAMA 2019' },
+            { id: 4, statement: '"Antibiotics cure all infections in the ICU."', fact: 'ICU infections are increasingly caused by multidrug-resistant organisms (MRSA, ESBL, Carbapenem-resistant Klebsiella). The right antibiotic, chosen by culture, matters far more than speed alone.', source: 'Surviving Sepsis Campaign 2021' },
+            { id: 5, statement: '"Prone positioning (face-down) is experimental."', fact: 'Prone positioning for ≥16 hours/day in severe ARDS is evidence-based standard of care — reducing 28-day mortality from 32.8% to 16% in the landmark PROSEVA trial (NEJM 2013).', source: 'PROSEVA Trial · NEJM 2013' },
+            { id: 6, statement: '"ECMO is always the last resort."', fact: 'ECMO initiated earlier, before the patient deteriorates too far, is associated with better outcomes. The ELSO 2021 guidelines recommend ECMO consideration at a P/F ratio below 80 mmHg, not only when all else has failed.', source: 'ELSO Guidelines 2021' },
+        ];
+
         let currentMyths = [];
 
         async function renderMyths() {
             try {
-                const res = await fetch('/api/content.php?type=myth_busters');
+                const res = await fetch('./api/content.php?type=myth_busters');
                 const serverData = await res.json();
 
                 // If server is empty, fallback to DEFAULT_MYTHS
@@ -2285,7 +2294,7 @@
             }
 
             try {
-                const res = await fetch('/api/content.php', {
+                const res = await fetch('./api/content.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'myth_busters', items: updatedList })
@@ -2300,7 +2309,7 @@
             const updatedList = currentMyths.filter(x => x.id !== id);
 
             try {
-                const res = await fetch('/api/content.php', {
+                const res = await fetch('./api/content.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'myth_busters', items: updatedList })
@@ -2325,7 +2334,7 @@
 
         async function renderQuizEditor() {
             try {
-                const res = await fetch('/api/content.php?type=quiz_questions');
+                const res = await fetch('./api/content.php?type=quiz_questions');
                 const serverData = await res.json();
 
                 const tbody = document.getElementById('quiz-q-table');
@@ -2401,7 +2410,7 @@
             }
 
             try {
-                const res = await fetch('/api/content.php', {
+                const res = await fetch('./api/content.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: updatedBank })
@@ -2416,7 +2425,7 @@
             let updatedBank = currentQuizBank.filter((_, i) => i !== idx);
 
             try {
-                const res = await fetch('/api/content.php', {
+                const res = await fetch('./api/content.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: updatedBank })
@@ -2442,7 +2451,7 @@
             ];
 
             try {
-                const res = await fetch('/api/content.php', {
+                const res = await fetch('./api/content.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: defaults })
@@ -2459,7 +2468,7 @@
 
         async function renderResearch() {
             try {
-                const res = await fetch('/api/content.php?type=research_papers');
+                const res = await fetch('./api/content.php?type=research_papers');
                 const serverData = await res.json();
 
                 // Fallback to defaults if server is empty
@@ -2534,7 +2543,7 @@
             }
 
             try {
-                const res = await fetch('/api/content.php', {
+                const res = await fetch('./api/content.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'research_papers', items: updatedList })
@@ -2549,7 +2558,7 @@
             const updatedList = currentResearchList.filter(x => x.id !== id);
 
             try {
-                const res = await fetch('/api/content.php', {
+                const res = await fetch('./api/content.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_pass: pass, type: 'research_papers', items: updatedList })

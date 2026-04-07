@@ -1,6 +1,349 @@
 {
-    "quiz_questions": [],
-    "knowledge_articles": [],
-    "research_papers": [],
-    "myth_busters": []
+    "myth_busters": [
+        {
+            "id": 1,
+            "statement": "\"Patients on ventilators feel nothing.\"",
+            "fact": "Many ventilated patients are conscious and aware. Studies confirm they can hear voices. Light sedation is now preferred to prevent delirium and ICU-acquired weakness. Talk to your loved one — it matters.",
+            "source": "ABCDEF Bundle · SCCM 2018"
+        },
+        {
+            "id": 2,
+            "statement": "\"ICU means the patient is going to die.\"",
+            "fact": "The ICU is a place of intensive monitoring and life-saving intervention — not end of life. Survival rates in modern ICUs often exceed 80–85% for many diagnoses. The ICU is where the most reversible critical illnesses are treated.",
+            "source": "ANZICS Report 2022"
+        },
+        {
+            "id": 3,
+            "statement": "\"More IV fluids is always better in shock.\"",
+            "fact": "Fluid overload in the ICU is independently associated with worse outcomes — including prolonged ventilation and renal failure. Modern practice targets dynamic fluid responsiveness, not volume.",
+            "source": "ANDROMEDA-SHOCK · JAMA 2019"
+        },
+        {
+            "id": 4,
+            "statement": "\"Antibiotics cure all infections in the ICU.\"",
+            "fact": "ICU infections are increasingly caused by multidrug-resistant organisms (MRSA, ESBL, Carbapenem-resistant Klebsiella). The right antibiotic, chosen by culture, matters far more than speed alone.",
+            "source": "Surviving Sepsis Campaign 2021"
+        },
+        {
+            "id": 5,
+            "statement": "\"Prone positioning (face-down) is experimental.\"",
+            "fact": "Prone positioning for ≥16 hours/day in severe ARDS is evidence-based standard of care — reducing 28-day mortality from 32.8% to 16% in the landmark PROSEVA trial (NEJM 2013).",
+            "source": "PROSEVA Trial · NEJM 2013"
+        },
+        {
+            "id": 6,
+            "statement": "\"ECMO is always the last resort.\"",
+            "fact": "ECMO initiated earlier, before the patient deteriorates too far, is associated with better outcomes. The ELSO 2021 guidelines recommend ECMO consideration at a P/F ratio below 80 mmHg, not only when all else has failed.",
+            "source": "ELSO Guidelines 2021"
+        },
+        {
+            "id": 7,
+            "statement": "\"Sedating ICU patients heavily keeps them calm and safe.\"",
+            "fact": "Deep sedation is independently associated with delirium, weakness, prolonged ventilation and death. Current evidence mandates minimal sedation. The SAT/SBT wake-and-breathe trials changed ICU practice worldwide.",
+            "source": "SLEAP Trial · Lancet 2012"
+        },
+        {
+            "id": 8,
+            "statement": "\"Families should not visit the ICU — it disturbs patients.\"",
+            "fact": "The evidence shows the opposite. Family presence reduces patient anxiety, combats delirium, and improves psychological outcomes for both patient and family. The ABCDEF bundle explicitly includes family engagement as pillar F.",
+            "source": "SCCM ABCDEF Bundle 2018"
+        }
+    ],
+    "quiz_questions": [
+        {
+            "q": "What does ECMO stand for?",
+            "options": [
+                "Extracorporeal Membrane Oxygenation",
+                "Extended Cardiac Monitoring Operation",
+                "Emergency Cardiac Muscle Oxygenation",
+                "External Cardio-Metabolic Oxygenator"
+            ],
+            "correct": 0,
+            "explanation": "ECMO temporarily replaces heart/lung function by circulating blood outside the body through an artificial lung."
+        },
+        {
+            "q": "According to Sepsis-3, what defines septic shock?",
+            "options": [
+                "Fever >38°C",
+                "Vasopressor requirement AND lactate >2 mmol/L despite fluids",
+                "WBC >12,000",
+                "RR >20 breaths/min"
+            ],
+            "correct": 1,
+            "explanation": "Sepsis-3 defines septic shock as sepsis requiring vasopressors to maintain MAP ≥65 mmHg AND lactate >2 mmol/L."
+        },
+        {
+            "q": "What tidal volume is recommended for lung-protective ventilation in ARDS?",
+            "options": [
+                "10–12 mL/kg IBW",
+                "8–10 mL/kg IBW",
+                "6 mL/kg IBW",
+                "4 mL/kg IBW"
+            ],
+            "correct": 2,
+            "explanation": "ARMA trial showed 6 mL/kg IBW reduces 28-day ARDS mortality by 22%."
+        },
+        {
+            "q": "What is the primary target MAP when using vasopressors in septic shock?",
+            "options": [
+                "50 mmHg",
+                "65 mmHg",
+                "75 mmHg",
+                "85 mmHg"
+            ],
+            "correct": 1,
+            "explanation": "The Surviving Sepsis Campaign targets a MAP ≥65 mmHg as the resuscitation endpoint."
+        },
+        {
+            "q": "Which trial validated prone positioning in severe ARDS?",
+            "options": [
+                "ARMA",
+                "PROSEVA",
+                "EOLIA",
+                "ANDROMEDA"
+            ],
+            "correct": 1,
+            "explanation": "The PROSEVA trial (NEJM 2013) showed prone positioning ≥16h/day reduced 28-day mortality from 32.8% to 16%."
+        },
+        {
+            "q": "What does qSOFA stand for?",
+            "options": [
+                "Quick Sepsis Organ Failure Assessment",
+                "Quantified Sequential Organ Failure Algorithm",
+                "Quick SOFA",
+                "Quality Sepsis Field Assessment"
+            ],
+            "correct": 2,
+            "explanation": "qSOFA is a quick 3-criterion bedside score (altered mentation, RR ≥22, SBP ≤100) used to screen for sepsis outside the ICU."
+        },
+        {
+            "q": "Which of these is the first-line vasopressor in septic shock?",
+            "options": [
+                "Adrenaline",
+                "Dopamine",
+                "Norepinephrine",
+                "Vasopressin"
+            ],
+            "correct": 2,
+            "explanation": "Norepinephrine is the first-line vasopressor in septic shock per the SSC 2021 guidelines."
+        },
+        {
+            "q": "CRRT stands for?",
+            "options": [
+                "Continuous Renal Replacement Therapy",
+                "Cardiac Rate Rhythm Therapy",
+                "Critical Renal Reserve Testing",
+                "Continuous Respiratory Resuscitation Technique"
+            ],
+            "correct": 0,
+            "explanation": "CRRT is continuous renal replacement therapy — used in haemodynamically unstable ICU patients with acute kidney injury, running 24/7 at a slow, gentle rate."
+        },
+        {
+            "q": "What percentage of ICU patients develop delirium?",
+            "options": [
+                "5–10%",
+                "15–25%",
+                "50–80%",
+                "90–95%"
+            ],
+            "correct": 2,
+            "explanation": "Delirium affects 50–80% of mechanically ventilated patients, making it one of the most common and dangerous ICU complications."
+        },
+        {
+            "q": "The ABCDEF bundle in ICU care does NOT include which element?",
+            "options": [
+                "Analgesia-first approach",
+                "Both SAT and SBT",
+                "CT scan daily",
+                "Family engagement"
+            ],
+            "correct": 2,
+            "explanation": "The ABCDEF bundle stands for: Assess/manage pain, Both SAT and SBT, Choice of analgesia/sedation, Delirium assess/manage, Early mobility, Family engagement. Daily CT is not part of the bundle."
+        },
+        {
+            "q": "What is VAP?",
+            "options": [
+                "Ventricular Arrhythmia Protocol",
+                "Ventilator-Associated Pneumonia",
+                "Vasopressin-Assisted Perfusion",
+                "Venous Access Protocol"
+            ],
+            "correct": 1,
+            "explanation": "VAP is Ventilator-Associated Pneumonia — a hospital-acquired infection occurring ≥48h after intubation, increasing ICU stay by 8–10 days on average."
+        },
+        {
+            "q": "In the ICU, what does the SOFA score track?",
+            "options": [
+                "Nutritional status",
+                "Multisystem organ dysfunction",
+                "Pain levels",
+                "Fluid balance"
+            ],
+            "correct": 1,
+            "explanation": "SOFA (Sequential Organ Failure Assessment) quantifies dysfunction across six organ systems: respiratory, coagulation, liver, cardiovascular, neurological, and renal."
+        },
+        {
+            "q": "Which type of ECMO supports lung function only?",
+            "options": [
+                "VA-ECMO",
+                "VV-ECMO",
+                "ECCO2R",
+                "IABP"
+            ],
+            "correct": 1,
+            "explanation": "VV-ECMO (Veno-Venous) draws blood from a vein, oxygenates it, and returns it to a vein — supporting lung function. VA-ECMO supports both heart and lungs."
+        },
+        {
+            "q": "Early enteral nutrition in the ICU should ideally begin within:",
+            "options": [
+                "6 hours of admission",
+                "24–48 hours of admission",
+                "72 hours of admission",
+                "Only when the patient is aware"
+            ],
+            "correct": 1,
+            "explanation": "ESPEN 2023 guidelines recommend enteral nutrition within 24–48 hours. 'If the gut works, use it' — delaying nutrition worsens outcomes."
+        },
+        {
+            "q": "What is post-ICU syndrome (PICS)?",
+            "options": [
+                "A type of hospital infection",
+                "Psychological trauma from ICU noise",
+                "New/worsening physical, cognitive, or mental health after critical illness",
+                "A scoring tool for ICU severity"
+            ],
+            "correct": 2,
+            "explanation": "PICS is the constellation of new or worsening impairments in physical, cognitive, and mental health that persist beyond ICU discharge, affecting 30–50% of survivors."
+        },
+        {
+            "q": "What is the target blood glucose range in most ICU patients on insulin infusions?",
+            "options": [
+                "4.0–6.0 mmol/L",
+                "7.8–10 mmol/L",
+                "10–14 mmol/L",
+                "14–18 mmol/L"
+            ],
+            "correct": 1,
+            "explanation": "Tight glycaemic control targeting 4.0–6.0 mmol/L (NICE-SUGAR trial) increased mortality. Current guidelines target 7.8–10 mmol/L as the optimal ICU range."
+        },
+        {
+            "q": "Which score is used to recognise delirium in intubated ICU patients?",
+            "options": [
+                "GCS",
+                "CAM-ICU",
+                "SOFA",
+                "APACHE II"
+            ],
+            "correct": 1,
+            "explanation": "CAM-ICU (Confusion Assessment Method for ICU) is specifically validated for intubated patients who cannot speak, using simple tests for attention and cognition."
+        },
+        {
+            "q": "The EOLIA trial studied which treatment modality?",
+            "options": [
+                "Early antibiotic therapy",
+                "High-flow nasal cannula",
+                "VV-ECMO for severe ARDS",
+                "VA-ECMO for cardiogenic shock"
+            ],
+            "correct": 2,
+            "explanation": "EOLIA (NEJM 2018) randomised patients with severe ARDS to early VV-ECMO vs. conventional ventilation, establishing the evidence base for early ECMO referral."
+        },
+        {
+            "q": "Which of these is a recognised urgent indication for starting CRRT in the ICU?",
+            "options": [
+                "Serum creatinine >1.5×baseline",
+                "Refractory metabolic acidosis (pH <7.2)",
+                "Urine output <1 mL/kg/hr for 6 hours",
+                "BUN >40 mg/dL"
+            ],
+            "correct": 1,
+            "explanation": "KDIGO 2022 guidelines list refractory metabolic acidosis (pH <7.2 unresponsive to bicarbonate) as an urgent, life-threatening indication to initiate CRRT in the ICU."
+        },
+        {
+            "q": "What does AMS stand for in the ICU context?",
+            "options": [
+                "Acute Myocardial Stress",
+                "Antimicrobial Stewardship",
+                "Automated Monitoring System",
+                "Airway Management Score"
+            ],
+            "correct": 1,
+            "explanation": "Antimicrobial Stewardship (AMS) is the programme ensuring antibiotics are used only when needed, at the right dose and duration, to preserve their effectiveness and prevent resistance."
+        }
+    ],
+    "research_papers": [
+        {
+            "id": 1,
+            "title": "Prone Positioning in Severe ARDS (PROSEVA)",
+            "journal": "NEJM",
+            "year": 2013,
+            "topic": "ARDS & Ventilation",
+            "doi": "https://doi.org/10.1056/NEJMoa1214103",
+            "takeaway": "Prone positioning ≥16h/day reduced 28-day mortality from 32.8% to 16% in severe ARDS patients.",
+            "authors": "Guérin C, et al. — NEJM (2013)",
+            "position": "We implement prone positioning early for all severe ARDS patients at Apollo, maintaining it for at least 16 hours/day per PROSEVA protocol.",
+            "url": "https://doi.org/10.1056/NEJMoa1214103"
+        },
+        {
+            "id": 2,
+            "title": "VV-ECMO for Severe ARDS (EOLIA)",
+            "journal": "NEJM",
+            "year": 2018,
+            "topic": "ECMO",
+            "doi": "https://doi.org/10.1056/NEJMoa1800385",
+            "takeaway": "Early VV-ECMO reduced the composite primary endpoint; trial stopped early. Rescue ECMO crossover was 28%.",
+            "authors": "Combes A, et al. — NEJM (2018)",
+            "position": "EOLIA guides our ECMO initiation. We convene the ECMO team when P/F ratio drops below 50 mmHg despite optimal care.",
+            "url": "https://doi.org/10.1056/NEJMoa1800385"
+        },
+        {
+            "id": 3,
+            "title": "Lung-Protective Ventilation in ARDS (ARMA Trial)",
+            "journal": "NEJM",
+            "year": 2000,
+            "topic": "ARDS & Ventilation",
+            "doi": "https://doi.org/10.1056/NEJM200005043421801",
+            "takeaway": "6 mL/kg IBW tidal volumes reduced 28-day mortality by 22% compared with 12 mL/kg. This trial fundamentally changed ventilator practice.",
+            "authors": "ARDS Network — NEJM (2000)",
+            "position": "All our mechanically ventilated ARDS patients are managed with 6 mL/kg IBW tidal volumes and plateau pressure ≤30 cmH₂O as first-line standard.",
+            "url": "https://doi.org/10.1056/NEJM200005043421801"
+        },
+        {
+            "id": 4,
+            "title": "ANDROMEDA-SHOCK: Peripheral Perfusion vs. Lactate Resuscitation",
+            "journal": "JAMA",
+            "year": 2019,
+            "topic": "Sepsis",
+            "doi": "https://doi.org/10.1001/jama.2019.0071",
+            "takeaway": "Peripheral perfusion-guided resuscitation (capillary refill time) outperformed lactate-guided approach for septic shock — validating bedside clinical assessment.",
+            "authors": "Hernández G, et al. — JAMA (2019)",
+            "position": "ANDROMEDA-SHOCK validated bedside clinical assessment as gold standard. Capillary refill time is formally integrated into our shock resuscitation assessment at Apollo alongside lactate monitoring.",
+            "url": "https://doi.org/10.1001/jama.2019.0071"
+        },
+        {
+            "id": 5,
+            "title": "NICE-SUGAR: Intensive vs. Conventional Glucose Control",
+            "journal": "NEJM",
+            "year": 2009,
+            "topic": "Metabolism & Nutrition",
+            "doi": "https://doi.org/10.1056/NEJMoa0810625",
+            "takeaway": "Intensive glucose control (4.5–6.0 mmol/L) significantly increased 90-day mortality compared with conventional targets (≤10 mmol/L).",
+            "authors": "NICE-SUGAR Study Investigators — NEJM (2009)",
+            "position": "We target blood glucose 7.8–10 mmol/L in all ICU patients receiving insulin infusions. Tight control is actively avoided following NICE-SUGAR.",
+            "url": "https://doi.org/10.1056/NEJMoa0810625"
+        },
+        {
+            "id": 6,
+            "title": "Surviving Sepsis Campaign: International Guidelines 2021",
+            "journal": "Critical Care Medicine",
+            "year": 2021,
+            "topic": "Sepsis",
+            "doi": "https://doi.org/10.1097/CCM.0000000000005337",
+            "takeaway": "Updated Hour-1 Bundle: Measure lactate, obtain blood cultures, administer antibiotics, begin 30 mL/kg crystalloid resuscitation, apply vasopressors if MAP <65 mmHg.",
+            "authors": "Evans L, et al. — Critical Care Medicine (2021)",
+            "position": "The SSC 2021 Hour-1 Bundle is the framework for every suspected sepsis case at Apollo ICU. Lactate, cultures and antibiotics within the first hour — non-negotiable.",
+            "url": "https://doi.org/10.1097/CCM.0000000000005337"
+        }
+    ],
+    "knowledge_articles": []
 }
