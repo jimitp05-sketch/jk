@@ -101,6 +101,33 @@
             display: none;
         }
 
+        .platform-tabs-wrap {
+            position: sticky;
+            top: 60px;
+            /* Aligned with scrolled navbar height */
+            z-index: 900;
+            background: rgba(245, 247, 252, 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            width: 100%;
+        }
+
+        .platform-tabs {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 0 28px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .platform-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
         /* === ADMIN LAYOUT === */
         .admin-layout {
             display: none;
@@ -1397,7 +1424,11 @@
             if (!u || !p) { err.textContent = 'Enter username and password'; err.style.display = 'block'; return; }
 
             try {
-                const r = await fetch('./api/settings.php?action=check_auth&pass=' + encodeURIComponent(p));
+                const r = await fetch('./api/settings.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'check_auth', admin_pass: p })
+                });
                 if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
                 const d = await r.json();
                 if (d.success) {

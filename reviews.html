@@ -44,8 +44,8 @@
         /* ====== PLATFORM TABS ====== */
         .platform-tabs-wrap {
             position: sticky;
-            top: 70px;
-            z-index: 100;
+            top: 60px;
+            z-index: 900;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-subtle);
@@ -780,7 +780,7 @@
             <div class="footer-inner">
                 <div class="footer-brand">
                     <div class="footer-logo">Dr. Jay <span class="glow-text">Kothari</span></div>
-                    <div class="footer-tagline">Dr. Jay Kothari Â· Consultant Critical Care Â· Apollo Hospitals,
+                    <div class="footer-tagline">Dr. Jay Kothari · Consultant Critical Care · Apollo Hospitals,
                         Ahmedabad
                     </div>
                 </div>
@@ -806,7 +806,7 @@
                 id: 1, platform: "linkedin",
                 author: "Dr. S. Sharma", role: "Senior Intensivist, Ahmedabad", avatar: "SS", color: "#DBEAFE", avatarText: "#1e40af",
                 date: "March 14, 2025", year: 2025,
-                text: "The way Dr. Kothari handles complex ECMO weaning is pure clinical artistry. Attended his Grand Round last week â€” a masterclass in managing overlapping VV-ECMO with AKI. Took 3 pages of notes. A huge asset to our critical care community in Gujarat.",
+                text: "The way Dr. Kothari handles complex ECMO weaning is pure clinical artistry. Attended his Grand Round last week — a masterclass in managing overlapping VV-ECMO with AKI. Took 3 pages of notes. A huge asset to our critical care community in Gujarat.",
                 image: null, likes: 48, comments: 7
             },
             {
@@ -820,14 +820,14 @@
                 id: 3, platform: "twitter",
                 author: "@DrKiranCCM", role: "Senior Fellow, Critical Care", avatar: "DK", color: "#F5F5F5", avatarText: "#374151",
                 date: "January 21, 2025", year: 2025,
-                text: "Incredible to see the team at #AIApollo pushing the boundaries of what's possible in Indian critical care. Watched Dr. Kothari present on VV-ECMO management â€” genuinely world-class. If you're in Gujarat and need an ICU, this is your destination. #CriticalCare #MedTwitter",
+                text: "Incredible to see the team at #AIApollo pushing the boundaries of what's possible in Indian critical care. Watched Dr. Kothari present on VV-ECMO management — genuinely world-class. If you're in Gujarat and need an ICU, this is your destination. #CriticalCare #MedTwitter",
                 image: null, likes: 89, comments: 12
             },
             {
                 id: 4, platform: "linkedin",
                 author: "Dr. V. Joshi", role: "Critical Care Fellow, India", avatar: "VJ", color: "#D1FAE5", avatarText: "#065F46",
                 date: "August 08, 2024", year: 2024,
-                text: "Attended the Apollo ICU Grand Round where Dr. Kothari presented a case of VV-ECMO with simultaneous AKI requiring CRRT â€” a masterclass in managing overlapping organ failure. His SOFA-score-driven approach to daily de-escalation decisions is exactly what evidence-based ICU care looks like.",
+                text: "Attended the Apollo ICU Grand Round where Dr. Kothari presented a case of VV-ECMO with simultaneous AKI requiring CRRT — a masterclass in managing overlapping organ failure. His SOFA-score-driven approach to daily de-escalation decisions is exactly what evidence-based ICU care looks like.",
                 image: null, likes: 72, comments: 9
             },
             {
@@ -855,8 +855,8 @@
                 id: 8, platform: "instagram",
                 author: "apollo_ahmedabad", role: "Official Apollo Hospitals Account", avatar: "AP", color: "#F0ABFC", avatarText: "#7e22ce",
                 date: "July 12, 2024", year: 2024,
-                text: "Celebrating 20 years of Dr. Jay Kothari's exceptional service at Apollo Hospitals, Ahmedabad. A pillar of our Critical Care unit â€” recognised for clinical excellence, patient-centred care, and mentoring the next generation of intensivists. ðŸ™ #Apollo20Years #CriticalCare",
-                image: "img-team.png", imageCaption: "Dr. Jay Kothari with the Apollo Critical Care Team, Ahmedabad â€” 20-year milestone celebration.",
+                text: "Celebrating 20 years of Dr. Jay Kothari's exceptional service at Apollo Hospitals, Ahmedabad. A pillar of our Critical Care unit — recognised for clinical excellence, patient-centred care, and mentoring the next generation of intensivists. 🙏 #Apollo20Years #CriticalCare",
+                image: "img-team.png", imageCaption: "Dr. Jay Kothari with the Apollo Critical Care Team, Ahmedabad — 20-year milestone celebration.",
                 likes: 441, comments: 62
             },
             {
@@ -873,15 +873,15 @@
         // ============================================================
         const photos = [
             { src: "img-team.png", caption: "ICU Team, Apollo Ahmedabad", label: "Team" },
-            { src: "img-ecmo.png", caption: "ECMO Circuit â€” Advanced Life Support", label: "Clinical" },
+            { src: "img-ecmo.png", caption: "ECMO Circuit — Advanced Life Support", label: "Clinical" },
             { src: "img-knowledge.png", caption: "Medical Education Session", label: "Education" },
-            { src: null, caption: "ICU Rounds â€” Morning Briefing", label: "Rounds" },
-            { src: null, caption: "CRRT Setup â€” AKI Management", label: "Clinical" },
+            { src: null, caption: "ICU Rounds — Morning Briefing", label: "Rounds" },
+            { src: null, caption: "CRRT Setup — AKI Management", label: "Clinical" },
             { src: null, caption: "Gujarat Critical Care Conference 2023", label: "Conference" },
             { src: null, caption: "Apollo Grand Round Presentation", label: "Academic" },
-            { src: "img-hero-doctor.png", caption: "Dr. Jay Kothari â€” Consultant Critical Care", label: "Portrait" },
-            { src: null, caption: "Apollo Critical Care Unit â€” ICU Overview", label: "Facility" },
-            { src: null, caption: "Family Counselling Room â€” Patient-Family Communication", label: "Care" },
+            { src: "img-hero-doctor.png", caption: "Dr. Jay Kothari — Consultant Critical Care", label: "Portrait" },
+            { src: null, caption: "Apollo Critical Care Unit — ICU Overview", label: "Facility" },
+            { src: null, caption: "Family Counselling Room — Patient-Family Communication", label: "Care" },
             { src: null, caption: "Post-ICU Recovery Programme", label: "Recovery" },
             { src: null, caption: "Ventilator Management Workshop", label: "Education" },
         ];
@@ -905,7 +905,7 @@
         }
 
         function platformIcon(p) {
-            return { linkedin: "ðŸ”µ", facebook: "ðŸ“˜", instagram: "ðŸ“¸", twitter: "ð•", others: "ðŸ’¬" }[p] || "â­";
+            return { linkedin: "🔵", facebook: "📘", instagram: "📸", twitter: "𝕏 ", others: "💬" }[p] || "⭐";
         }
         function platformLabel(p) {
             return { linkedin: "LinkedIn", facebook: "Facebook", instagram: "Instagram", twitter: "X / Twitter", others: "Recognition" }[p] || p;
@@ -915,7 +915,7 @@
             const feed = document.getElementById("reviews-feed");
             const items = getFiltered();
             if (items.length === 0) {
-                feed.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">ðŸ”</div><p>No mentions found for this filter combination.<br>Try a different platform or year.</p></div>`;
+                feed.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🔍</div><p>No mentions found for this filter combination.<br>Try a different platform or year.</p></div>`;
                 return;
             }
             feed.innerHTML = items.map(r => `
@@ -931,10 +931,10 @@
         ${r.image ? `<div class="rc-image-wrap"><img class="rc-image lightbox-trigger" src="${r.image}" alt="${r.imageCaption || ''}" data-caption="${r.imageCaption || ''}" /></div>` : ''}
         <div class="rc-body"><p class="rc-text">${r.text}</p></div>
         <div class="rc-footer">
-          <span class="rc-date">ðŸ“… ${r.date}</span>
+          <span class="rc-date">📅 ${r.date}</span>
           <div class="rc-reactions">
-            <span class="rc-reaction">ðŸ‘ ${r.likes}</span>
-            <span class="rc-reaction">ðŸ’¬ ${r.comments}</span>
+            <span class="rc-reaction">👍 ${r.likes}</span>
+            <span class="rc-reaction">💬 ${r.comments}</span>
           </div>
         </div>
       </article>
@@ -973,12 +973,12 @@
                 if (p.src) {
                     return `<div class="photo-wall-item reveal" onclick="openLightbox('${p.src}','${p.caption}')">
           <img src="${p.src}" alt="${p.caption}" />
-          <div class="photo-wall-overlay"><span>ðŸ”</span><span>${p.caption}</span></div>
+          <div class="photo-wall-overlay"><span>🔍</span><span>${p.caption}</span></div>
         </div>`;
                 } else {
                     return `<div class="photo-wall-item reveal">
           <div class="photo-wall-placeholder">
-            <span class="ph-icon">ðŸ“·</span>
+            <span class="ph-icon">📸</span>
             <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;">${p.label}</span>
             <span>${p.caption}</span>
           </div>

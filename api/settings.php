@@ -66,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     
     // Check if this is a login check (requires auth)
     if (isset($_GET['action']) && $_GET['action'] === 'check_auth') {
+        // Fallback for legacy GET calls if still needed
         if (!isAuthorized()) {
             http_response_code(403);
             echo json_encode(['error' => 'Unauthorized']);
@@ -89,6 +90,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Handle auth check via POST to bypass WAF filters blocking 'pass' in GET
+    $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+    if (isset($input['action']) && $input['action'] === 'check_auth') {
+        if (!isAuthorized()) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Unauthorized']);
+            exit;
+        }
+        $settings = readSettings();
+        echo json_encode(['success' => true, 'user' => $settings['admin_user']]);
+        exit;
+    }
+
     if (!isAuthorized()) {
         http_response_code(403);
         echo json_encode(['error' => 'Unauthorized']);
