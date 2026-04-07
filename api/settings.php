@@ -38,7 +38,7 @@ function readSettings(): array {
     return array_merge($defaults, $saved);
 }
 
-// ── WRITE ───────────────────────────────────────────────────────────────────
+function writeSettings(array $data): bool {
     $dir = dirname(DATA_FILE);
     if (!is_dir($dir)) {
         if (!@mkdir($dir, 0755, true)) return false;
