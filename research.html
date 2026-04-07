@@ -263,39 +263,77 @@
                     try {
                         const res = await fetch('./api/content.php?type=research_papers');
                         const json = await res.json();
-                        allResearchPapers = json.data ?? json; // support both wrapped and legacy format
-                        renderPapers('all');
+                        const data = json.data ?? json;
+                        allResearchPapers = Array.isArray(data) ? data : [];
+
+                        if (allResearchPapers.length > 0) {
+                            // Dynamically rebuild filter buttons from actual topics in the data
+                            buildFilterButtons(allResearchPapers);
+                            renderPapers('all');
+                        }
+                        // If API returns empty, static HTML papers stay visible
                         setupFilterListeners();
                     } catch (e) {
-                        console.error("Failed to load research papers", e);
-                        // If API fails, you might want to show some static fallback or error
+                        console.error("Failed to load research papers:", e);
+                        // Static HTML fallback stays visible on error — no action needed
+                        setupFilterListeners();
                     }
                 }
 
-                function renderPapers(filterTopic) {
+                function buildFilterButtons(papers) {
+                    // Collect unique topics from the paper data
+                    const topicSet = new Set();
+                    papers.forEach(p => { if (p.topic) topicSet.add(p.topic.trim()); });
+
+                    const container = document.querySelector('.research-filters');
+                    if (!container || topicSet.size === 0) return;
+
+                    // Rebuild — keep "All Topics" first, then one button per unique topic
+                    container.innerHTML = `<button class="filter-btn active" data-filter="all">All Topics</button>`;
+                    topicSet.forEach(topic => {
+                        const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                        const btn = document.createElement('button');
+                        btn.className = 'filter-btn';
+                        btn.dataset.filter = slug;
+                        btn.dataset.topicFull = topic;  // store full topic for comparison
+                        btn.textContent = topic;
+                        container.appendChild(btn);
+                    });
+                }
+
+                function topicMatches(paperTopic, filterSlug) {
+                    if (filterSlug === 'all') return true;
+                    if (!paperTopic) return false;
+                    const t = paperTopic.toLowerCase();
+                    // Match by slug (slugified topic) OR by contains (e.g. 'ards' in 'ards & ventilation')
+                    const slug = t.replace(/[^a-z0-9]+/g, '-');
+                    return slug === filterSlug || t.includes(filterSlug.replace(/-/g, ' ')) || t.includes(filterSlug);
+                }
+
+                function renderPapers(filterSlug) {
                     const grid = document.getElementById('tab-papers');
-                    const filtered = filterTopic === 'all'
+                    const filtered = filterSlug === 'all'
                         ? allResearchPapers
-                        : allResearchPapers.filter(p => (p.topic || 'icu').toLowerCase() === filterTopic.toLowerCase());
+                        : allResearchPapers.filter(p => topicMatches(p.topic, filterSlug));
 
                     if (filtered.length === 0) {
-                        grid.innerHTML = `<div class="glass-card reveal" style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-muted);">No papers found for this topic yet.</div>`;
+                        grid.innerHTML = `<div class="glass-card reveal" style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-muted);">No papers found for this topic yet. Add them in the Admin panel.</div>`;
                         if (window.revealNew) window.revealNew();
                         return;
                     }
 
                     grid.innerHTML = filtered.map((p, i) => `
-                        <div class="glass-card research-item reveal ${i > 0 ? 'reveal-delay-' + Math.min(i, 3) : ''}" data-topic="${(p.topic || 'icu').toLowerCase()}">
+                        <div class="glass-card research-item reveal ${i > 0 ? 'reveal-delay-' + Math.min(i, 3) : ''}" data-topic="${(p.topic || '').toLowerCase()}">
                             <div>
-                                <div class="research-topic">${p.journal} · ${p.year || ''}</div>
-                                <h3>${p.title}</h3>
-                                <p class="research-authors">${p.authors}</p>
+                                <div class="research-topic">${p.topic ? p.topic + ' · ' : ''}${p.journal || ''} ${p.year || ''}</div>
+                                <h3>${p.title || ''}</h3>
+                                ${p.authors ? `<p class="research-authors">${p.authors}</p>` : ''}
                             </div>
-                            <div class="research-takeaway"><strong>Clinical Takeaway:</strong> ${p.takeaway}</div>
-                            <blockquote class="dr-position">
-                                <strong>Dr. Kothari's Practice:</strong> ${p.position}
-                            </blockquote>
-                            <a href="${p.url}" target="_blank" rel="noopener" class="read-more">View Paper →</a>
+                            ${p.takeaway ? `<div class="research-takeaway"><strong>Clinical Takeaway:</strong> ${p.takeaway}</div>` : ''}
+                            ${p.practice ? `<blockquote class="dr-position"><strong>Dr. Kothari's Practice:</strong> ${p.practice}</blockquote>` : ''}
+                            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                                ${p.doi ? `<a href="${p.doi}" target="_blank" rel="noopener" class="read-more">View Paper →</a>` : ''}
+                            </div>
                         </div>
                     `).join('');
 
@@ -307,7 +345,16 @@
                         btn.addEventListener('click', () => {
                             document.querySelectorAll('.research-filters .filter-btn').forEach(b => b.classList.remove('active'));
                             btn.classList.add('active');
-                            renderPapers(btn.dataset.filter);
+                            if (allResearchPapers.length > 0) {
+                                renderPapers(btn.dataset.filter);
+                            } else {
+                                // API empty — filter static HTML cards by data-topic attribute
+                                const slug = btn.dataset.filter;
+                                document.querySelectorAll('#tab-papers .research-item').forEach(card => {
+                                    const t = (card.dataset.topic || '').toLowerCase();
+                                    card.style.display = (slug === 'all' || t.includes(slug)) ? '' : 'none';
+                                });
+                            }
                         });
                     });
                 }
