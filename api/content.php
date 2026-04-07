@@ -93,6 +93,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         respond(['success' => false, 'data' => null, 'error' => 'Invalid type'], 400);
     }
     $payload = $type ? ($content[$type] ?? []) : $content;
+
+    // Deduplicate knowledge_articles by id — avoids stale duplicate entries
+    if ($type === 'knowledge_articles' && is_array($payload)) {
+        $seen = [];
+        $deduped = [];
+        foreach (array_reverse($payload) as $item) { // last save wins
+            $key = $item['id'] ?? null;
+            if ($key && !isset($seen[$key])) {
+                $seen[$key] = true;
+                $deduped[] = $item;
+            }
+        }
+        $payload = array_reverse($deduped);
+    }
+
     respond(['success' => true, 'data' => $payload, 'error' => null]);
 }
 

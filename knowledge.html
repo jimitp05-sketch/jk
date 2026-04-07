@@ -515,25 +515,48 @@
             try {
                 const res = await fetch('api/content.php?type=knowledge_articles');
                 const json = await res.json();
-                const serverArticles = json.data ?? json; // support both wrapped and legacy format
+                const raw = json.data ?? json;
+                if (!Array.isArray(raw)) return;
 
-                serverArticles.forEach(a => {
+                // Deduplicate by targetId — last write wins
+                const seen = new Map();
+                raw.forEach(a => {
                     const targetId = a.overridesId || a.id;
-                    articles[targetId] = {
-                        title: a.title,
-                        tag: a.pillar + (a.overridesId ? ' · Updated' : ' · New'),
-                        subtitle: a.subtitle,
-                        toc: a.structured ? a.structured.sections.map(s => ({ id: s.heading.toLowerCase().replace(/\s+/g, '-'), label: s.heading })) : [],
-                        related: [],
-                        content: a.body
-                    };
+                    seen.set(targetId, a);
+                });
+
+                seen.forEach((a, targetId) => {
+                    // Build content from structured sections if body is missing/undefined
+                    let content = (a.body && a.body !== 'undefined') ? a.body : '';
+                    if (!content && a.structured) {
+                        const s = a.structured;
+                        if (s.stats && s.stats.length) {
+                            content += '<div class="article-stats-row">' +
+                                s.stats.map(st => `<div class="article-stat-card"><div class="num">${st.num}</div><div class="lbl">${st.lbl}</div></div>`).join('') +
+                                '</div>';
+                        }
+                        (s.sections || []).forEach(sec => {
+                            if (sec.heading) content += `<h3>${sec.heading}</h3>`;
+                            if (sec.content) content += sec.content.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+                            if (sec.callout) content += `<div class="article-callout"><p>${sec.callout}</p></div>`;
+                            if (sec.warning) content += `<div class="article-warning-box"><div class="warn-title">⚠️ Important</div><p>${sec.warning}</p></div>`;
+                        });
+                    }
+
+                    const subtitle = (a.subtitle && a.subtitle !== 'undefined') ? a.subtitle : (a.pillar || '');
+                    const tag = (a.pillar || 'Knowledge Hub') + (a.overridesId ? ' · Updated' : ' · New');
+                    const toc = (a.structured && a.structured.sections)
+                        ? a.structured.sections.filter(s => s.heading).map(s => ({ id: s.heading.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''), label: s.heading }))
+                        : [];
+
+                    articles[targetId] = { title: a.title || 'Untitled', tag, subtitle, toc, related: [], content };
                 });
 
                 if (window.location.hash) {
                     const id = window.location.hash.replace('#', '');
                     if (articles[id]) showArticle(id);
                 }
-            } catch (e) { console.error("Sync failed", e); }
+            } catch (e) { console.error("Knowledge Hub sync failed:", e); }
         }
         window.addEventListener('DOMContentLoaded', initKnowledgeHub);
 
