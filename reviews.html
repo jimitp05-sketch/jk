@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Pulse | AI Apollo | Dr. Jay Kothari</title>
+    <meta name="description"
+        content="Clinical recognitions, professional mentions, and the community voice around Dr. Jay Kothari's critical care practice at Apollo Hospitals, Ahmedabad." />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        /* ====== PULSE-PAGE SPECIFIC STYLES ====== */
+        .pulse-hero {
+            background: var(--gradient-hero);
+            padding: 140px 0 70px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pulse-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 60%, rgba(45, 53, 130, 0.3) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .pulse-hero h1 {
+            color: #fff;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+        }
+
+        .pulse-hero p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.05rem;
+            max-width: 560px;
+            margin: 0 auto 32px;
+            line-height: 1.8;
+        }
+
+        /* ====== PLATFORM TABS ====== */
+        .platform-tabs-wrap {
+            position: sticky;
+            top: 70px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: 0 2px 16px rgba(11, 15, 26, 0.06);
+        }
+
+        .platform-tabs {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 0 28px;
+            max-width: var(--container-max);
+            margin: 0 auto;
+        }
+
+        .platform-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .platform-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 22px;
+            border-bottom: 3px solid transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.87rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .platform-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .platform-tab.active {
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+        }
+
+        .platform-tab .tab-icon {
+            font-size: 1.1rem;
+        }
+
+        .platform-tab .tab-count {
+            font-size: 0.7rem;
+            background: var(--bg-section);
+            color: var(--text-muted);
+            padding: 2px 7px;
+            border-radius: 99px;
+            font-weight: 700;
+        }
+
+        .platform-tab.active .tab-count {
+            background: rgba(45, 53, 130, 0.1);
+            color: var(--accent-primary);
+        }
+
+        /* ====== FILTER BAR ====== */
+        .filter-bar {
+            background: var(--bg-section);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 12px 0;
+        }
+
+        .filter-bar-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        .date-filter-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .date-filter-btn {
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            border: 1.5px solid var(--border-medium);
+            background: #fff;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .date-filter-btn.active,
+        .date-filter-btn:hover {
+            background: var(--accent-primary);
+            color: #fff;
+            border-color: var(--accent-primary);
+        }
+
+        .filter-sep {
+            width: 1px;
+            height: 24px;
+            background: var(--border-medium);
+            flex-shrink: 0;
+        }
+
+        .sort-select {
+            padding: 7px 14px;
+            border-radius: var(--radius-full);
+            border: 1.5px solid var(--border-medium);
+            background: #fff;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: var(--font-body);
+            appearance: none;
+            padding-right: 28px;
+        }
+
+        /* ====== PLATFORM PANELS ====== */
+        .platform-panel {
+            display: none;
+        }
+
+        .platform-panel.active {
+            display: block;
+        }
+
+        /* ====== REVIEW FEED ====== */
+        .reviews-feed {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 22px;
+            margin-top: 0;
+        }
+
+        .review-card-v2 {
+            background: #fff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-base);
+            overflow: hidden;
+        }
+
+        .review-card-v2:hover {
+            border-color: var(--border-accent);
+            box-shadow: var(--card-shadow-hover);
+            transform: translateY(-4px);
+        }
+
+        .rc-header {
+            padding: 16px 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rc-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .rc-meta {
+            flex: 1;
+        }
+
+        .rc-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .rc-role {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+
+        .rc-platform-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 99px;
+            flex-shrink: 0;
+        }
+
+        .badge-linkedin {
+            background: rgba(0, 119, 181, 0.1);
+            color: #0077B5;
+        }
+
+        .badge-facebook {
+            background: rgba(24, 119, 242, 0.1);
+            color: #1877F2;
+        }
+
+        .badge-instagram {
+            background: rgba(193, 53, 132, 0.1);
+            color: #C13584;
+        }
+
+        .badge-twitter {
+            background: rgba(0, 0, 0, 0.06);
+            color: #14171A;
+        }
+
+        .badge-others {
+            background: rgba(45, 53, 130, 0.08);
+            color: var(--accent-primary);
+        }
+
+        .rc-body {
+            padding: 14px 20px;
+        }
+
+        .rc-text {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+        }
+
+        .rc-image-wrap {
+            padding: 10px 20px 0;
+        }
+
+        .rc-image {
+            width: 100%;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            max-height: 240px;
+            display: block;
+        }
+
+        .rc-image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: var(--bg-section);
+            border-radius: var(--radius-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .rc-image-placeholder-icon {
+            font-size: 2rem;
+        }
+
+        .rc-footer {
+            padding: 12px 20px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 14px;
+        }
+
+        .rc-date {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+
+        .rc-reactions {
+            display: flex;
+            gap: 12px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .rc-reaction {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ====== PHOTO WALL ====== */
+        .photo-wall-section {
+            background: var(--bg-section);
+            border-top: 1px solid var(--border-subtle);
+            padding: 90px 0;
+        }
+
+        .photo-wall-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .photo-wall-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .photo-wall-item {
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            aspect-ratio: 1;
+            position: relative;
+            cursor: pointer;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-subtle);
+            transition: var(--transition-base);
+        }
+
+        .photo-wall-item:hover {
+            transform: scale(1.03);
+            box-shadow: var(--card-shadow-hover);
+            z-index: 2;
+        }
+
+        .photo-wall-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-wall-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--bg-section) 0%, #e8ecf8 100%);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .photo-wall-placeholder .ph-icon {
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+
+        .photo-wall-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(11, 15, 26, 0.55);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .photo-wall-item:hover .photo-wall-overlay {
+            opacity: 1;
+        }
+
+        .photo-wall-overlay span {
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .photo-upload-cta {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px 24px;
+            background: #fff;
+            border: 1.5px dashed var(--border-accent);
+            border-radius: var(--radius-md);
+            max-width: 480px;
+            margin: 40px auto 0;
+        }
+
+        .photo-upload-cta p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        /* ====== LIGHTBOX ====== */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 15, 26, 0.92);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+        }
+
+        .lightbox.open {
+            display: flex;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 800px;
+            max-height: 80vh;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: var(--radius-md);
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -44px;
+            right: 0;
+            font-size: 1.8rem;
+            color: #fff;
+            cursor: pointer;
+            line-height: 1;
+            background: none;
+            border: none;
+            padding: 4px;
+        }
+
+        .lightbox-caption {
+            text-align: center;
+            margin-top: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.86rem;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 14px;
+        }
+
+        .empty-state p {
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+            .reviews-feed {
+                grid-template-columns: 1fr;
+            }
+
+            .photo-wall-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .platform-tabs {
+                gap: 0;
+            }
+
+            .platform-tab {
+                padding: 14px 14px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cursor-glow"></div>
+    <div id="secondary-glow"></div>
+
+    <!-- NAV -->
+    <nav class="nav scrolled" id="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">AI <span class="glow-text">APOLLO</span></a>
+            <div class="nav-links">
+                <a href="index.html#about">About</a>
+                <a href="index.html#expertise">Expertise</a>
+                <a href="knowledge.html">Knowledge Hub</a>
+                <a href="research.html">Research</a>
+                <a href="quiz.html">ICU Intel</a>
+                <a href="reviews.html" class="active">Pulse</a>
+                <a href="index.html#contact" class="nav-cta">Book Consultation</a>
+            </div>
+            <button class="nav-toggle" id="nav-toggle"
+                aria-label="Open navigation"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+    <div class="nav-mobile" id="nav-mobile">
+        <a href="index.html">Home</a><a href="knowledge.html">Knowledge Hub</a>
+        <a href="research.html">Research</a><a href="quiz.html">ICU Intel ✨</a>
+        <a href="reviews.html">Pulse</a>
+        <a href="index.html#contact" class="btn-primary" style="margin-top:16px;text-align:center;">Book
+            Consultation</a>
+    </div>
+
+    <!-- HERO -->
+    <div class="pulse-hero">
+        <div class="container" style="position:relative;z-index:2;">
+            <span class="section-label" style="color:rgba(255,255,255,0.5);">Social Proof & Community</span>
+            <h1>The <span
+                    style="background:linear-gradient(135deg,#7B96FF,#4DAAFF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Pulse</span>
+            </h1>
+            <p>Professional recognitions, community mentions, and the voice of a practice built on trust — across every
+                platform where Dr. Kothari's work resonates.</p>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+                <a href="#reviews-main" class="btn-primary" style="background:#4DAAFF;color:#0B0F1A;">Read Reviews</a>
+                <a href="#photo-wall" class="btn-outline"
+                    style="border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);">📸 Photo Wall</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- PLATFORM TABS (STICKY) -->
+    <div class="platform-tabs-wrap" id="reviews-main">
+        <div class="platform-tabs" role="tablist">
+            <button class="platform-tab active" data-platform="all" role="tab">
+                <span class="tab-icon">⭐</span> All <span class="tab-count" id="count-all">9</span>
+            </button>
+            <button class="platform-tab" data-platform="linkedin" role="tab">
+                <span class="tab-icon">🔵</span> LinkedIn <span class="tab-count" id="count-linkedin">3</span>
+            </button>
+            <button class="platform-tab" data-platform="facebook" role="tab">
+                <span class="tab-icon">📘</span> Facebook <span class="tab-count" id="count-facebook">2</span>
+            </button>
+            <button class="platform-tab" data-platform="instagram" role="tab">
+                <span class="tab-icon">📸</span> Instagram <span class="tab-count" id="count-instagram">1</span>
+            </button>
+            <button class="platform-tab" data-platform="twitter" role="tab">
+                <span class="tab-icon">𝕏</span> X / Twitter <span class="tab-count" id="count-twitter">2</span>
+            </button>
+            <button class="platform-tab" data-platform="others" role="tab">
+                <span class="tab-icon">💬</span> Others <span class="tab-count" id="count-others">1</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <div class="filter-bar-inner">
+            <span class="filter-label">Sort:</span>
+            <div class="date-filter-btns">
+                <button class="date-filter-btn active" data-sort="newest">Newest First</button>
+                <button class="date-filter-btn" data-sort="oldest">Oldest First</button>
+            </div>
+            <div class="filter-sep"></div>
+            <span class="filter-label">Year:</span>
+            <div class="date-filter-btns" id="year-filters">
+                <button class="date-filter-btn active" data-year="all">All</button>
+                <button class="date-filter-btn" data-year="2025">2025</button>
+                <button class="date-filter-btn" data-year="2024">2024</button>
+                <button class="date-filter-btn" data-year="2023">2023</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEWS MAIN -->
+    <section class="section" style="padding-top:50px; padding-bottom:60px;">
+        <div class="container">
+            <div class="reviews-feed" id="reviews-feed"></div>
+            <p class="nmc-note" style="margin-top:48px;">In compliance with NMC Professional Conduct Regulations 2023,
+                these are illustrative professional mentions and community recognitions — not direct patient
+                testimonials solicited as marketing material.</p>
+        </div>
+    </section>
+
+    <!-- PHOTO WALL -->
+    <section class="photo-wall-section" id="photo-wall">
+        <div class="container">
+            <div class="photo-wall-header reveal">
+                <span class="section-label">Photo Wall</span>
+                <h2 class="section-title">Moments From <span class="glow-text">The Practice</span></h2>
+                <p class="section-subtitle" style="margin:0 auto; text-align:center;">A visual chronicle — conferences,
+                    team rounds, milestones, and the people at the heart of it all.</p>
+            </div>
+            <div class="photo-wall-grid" id="photo-wall-grid">
+                <!-- JS-rendered photo items -->
+            </div>
+            <div class="photo-upload-cta">
+                <div style="font-size:2rem;">📬</div>
+                <strong style="color:var(--text-primary); font-size:1rem;">Share Your Photo</strong>
+                <p>Were you part of Dr. Kothari's team, or a recovered patient wanting to celebrate your journey? Share
+                    your photo to be featured on this wall. Your submission goes to our team for review.</p>
+                <button class="btn-primary" onclick="openPhotoModal()" style="margin-top:16px; display:inline-flex;">📤
+                    Share Your Story →</button>
+            </div>
+
+            <!-- ====== PHOTO SUBMISSION MODAL ====== -->
+            <div id="photo-modal"
+                style="display:none; position:fixed; inset:0; z-index:5000; background:rgba(11,15,26,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:20px;">
+                <div
+                    style="background:#fff; border-radius:24px; max-width:520px; width:100%; max-height:90vh; overflow-y:auto; padding:36px; box-shadow:0 40px 100px rgba(0,0,0,0.4); position:relative;">
+                    <button onclick="closePhotoModal()"
+                        style="position:absolute; top:16px; right:20px; font-size:1.4rem; background:none; border:none; color:var(--text-muted); cursor:pointer;">✕</button>
+                    <div style="font-size:2rem; margin-bottom:12px;">📷</div>
+                    <h3
+                        style="font-size:1.3rem; color:var(--text-primary); margin-bottom:6px; font-family:var(--font-heading);">
+                        Submit Your Photo</h3>
+                    <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:24px;">Your photo will be
+                        reviewed before appearing on the wall. All submissions are moderated.</p>
+
+                    <div id="photo-submit-success"
+                        style="display:none; text-align:center; padding:28px; background:rgba(26,122,74,0.06); border:1px solid rgba(26,122,74,0.2); border-radius:12px; margin-bottom:16px;">
+                        <div style="font-size:2.5rem;">✅</div>
+                        <h4 style="color:#1A7A4A; margin:8px 0;">Submitted for Review!</h4>
+                        <p style="font-size:0.86rem; color:var(--text-muted);">Thank you. Your photo has been sent to
+                            our team for approval.</p>
+                    </div>
+
+                    <form id="photo-submit-form">
+                        <!-- Image Upload -->
+                        <div style="margin-bottom:16px;">
+                            <label
+                                style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Upload
+                                Photo *</label>
+                            <div id="photo-drop-zone" onclick="document.getElementById('photo-file-input').click()"
+                                style="border:2px dashed var(--border-medium); border-radius:12px; padding:28px; text-align:center; cursor:pointer; transition:border-color 0.2s; background:var(--bg-section);">
+                                <div id="photo-preview" style="display:none; margin-bottom:12px;"><img id="preview-img"
+                                        style="max-height:160px; border-radius:8px; margin:0 auto; display:block;" />
+                                </div>
+                                <div id="drop-zone-text">
+                                    <div style="font-size:2rem;">🖼️</div>
+                                    <p style="font-size:0.88rem; color:var(--text-muted); margin-top:8px;">Click to
+                                        choose a photo<br><span style="font-size:0.76rem;">JPG, PNG, WEBP — max
+                                            5MB</span></p>
+                                </div>
+                            </div>
+                            <input type="file" id="photo-file-input" accept="image/*" style="display:none;"
+                                onchange="handlePhotoSelect(this)" />
+                        </div>
+
+                        <div style="margin-bottom:14px;">
+                            <label
+                                style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Your
+                                Name *</label>
+                            <input type="text" id="ps-name" placeholder="Dr. / Mr. / Ms. Full Name" required
+                                style="width:100%; padding:11px 14px; border:1.5px solid var(--border-medium); border-radius:8px; font-family:var(--font-body); font-size:0.9rem; color:var(--text-primary);" />
+                        </div>
+
+                        <div style="margin-bottom:14px;">
+                            <label
+                                style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Photo
+                                Caption *</label>
+                            <input type="text" id="ps-caption" placeholder="e.g. ICU Recovery — January 2024" required
+                                style="width:100%; padding:11px 14px; border:1.5px solid var(--border-medium); border-radius:8px; font-family:var(--font-body); font-size:0.9rem; color:var(--text-primary);" />
+                        </div>
+
+                        <div style="margin-bottom:14px;">
+                            <label
+                                style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Your
+                                Story / Context</label>
+                            <textarea id="ps-story"
+                                placeholder="Tell us your story — patient, family member, or team member? What does this photo mean to you?"
+                                rows="3"
+                                style="width:100%; padding:11px 14px; border:1.5px solid var(--border-medium); border-radius:8px; font-family:var(--font-body); font-size:0.9rem; color:var(--text-primary); resize:vertical;"></textarea>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+                            <div>
+                                <label
+                                    style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Category</label>
+                                <select id="ps-label"
+                                    style="width:100%; padding:11px 14px; border:1.5px solid var(--border-medium); border-radius:8px; font-family:var(--font-body); font-size:0.9rem; color:var(--text-primary);">
+                                    <option>Team</option>
+                                    <option>Patient Journey</option>
+                                    <option>Clinical</option>
+                                    <option>Education</option>
+                                    <option>Conference</option>
+                                    <option>Recovery</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Approx.
+                                    Date</label>
+                                <input type="month" id="ps-date"
+                                    style="width:100%; padding:11px 14px; border:1.5px solid var(--border-medium); border-radius:8px; font-family:var(--font-body); font-size:0.9rem; color:var(--text-primary);" />
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="submitPhotoForm()"
+                            style="width:100%; padding:14px; background:var(--accent-primary); color:#fff; border:none; border-radius:10px; font-size:0.95rem; font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(45,53,130,0.3);">📤
+                            Submit for Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIGHTBOX -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-label="Photo viewer">
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
+            <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+            <div class="lightbox-caption" id="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <div class="footer-logo">AI <span class="glow-text">APOLLO</span></div>
+                    <div class="footer-tagline">Dr. Jay Kothari · Consultant Critical Care · Apollo Hospitals, Ahmedabad
+                    </div>
+                </div>
+                <nav class="footer-links">
+                    <a href="index.html">Home</a><a href="knowledge.html">Knowledge Hub</a>
+                    <a href="research.html">Research</a><a href="quiz.html">ICU Intel</a>
+                    <a href="reviews.html">Pulse</a><a href="index.html#contact">Contact</a>
+                </nav>
+            </div>
+            <div class="footer-bottom"><em>In compliance with NMC Regulations 2023. All mentions are generalised and
+                    educational, not personal endorsements or outcome guarantees.</em></div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // ============================================================
+        // REVIEWS DATA
+        // Each item: { id, platform, author, role, avatar, color, date, year, text, image, imageCaption, likes, comments }
+        // ============================================================
+        const reviews = [
+            {
+                id: 1, platform: "linkedin",
+                author: "Dr. S. Sharma", role: "Senior Intensivist, Ahmedabad", avatar: "SS", color: "#DBEAFE", avatarText: "#1e40af",
+                date: "March 14, 2025", year: 2025,
+                text: "The way Dr. Kothari handles complex ECMO weaning is pure clinical artistry. Attended his Grand Round last week — a masterclass in managing overlapping VV-ECMO with AKI. Took 3 pages of notes. A huge asset to our critical care community in Gujarat.",
+                image: null, likes: 48, comments: 7
+            },
+            {
+                id: 2, platform: "facebook",
+                author: "M. Patel", role: "Family of ICU Patient, Ahmedabad", avatar: "MP", color: "#DCFCE7", avatarText: "#166534",
+                date: "November 02, 2024", year: 2024,
+                text: "Deep gratitude for the team at Apollo. Dr. Jay's calm, methodical approach during our father's septic shock gave our family hope when we had none. The daily briefings meant everything to us. We knew exactly what was happening and felt part of the process.",
+                image: null, likes: 124, comments: 19
+            },
+            {
+                id: 3, platform: "twitter",
+                author: "@DrKiranCCM", role: "Senior Fellow, Critical Care", avatar: "DK", color: "#F5F5F5", avatarText: "#374151",
+                date: "January 21, 2025", year: 2025,
+                text: "Incredible to see the team at #AIApollo pushing the boundaries of what's possible in Indian critical care. Watched Dr. Kothari present on VV-ECMO management — genuinely world-class. If you're in Gujarat and need an ICU, this is your destination. #CriticalCare #MedTwitter",
+                image: null, likes: 89, comments: 12
+            },
+            {
+                id: 4, platform: "linkedin",
+                author: "Dr. V. Joshi", role: "Critical Care Fellow, India", avatar: "VJ", color: "#D1FAE5", avatarText: "#065F46",
+                date: "August 08, 2024", year: 2024,
+                text: "Attended the Apollo ICU Grand Round where Dr. Kothari presented a case of VV-ECMO with simultaneous AKI requiring CRRT — a masterclass in managing overlapping organ failure. His SOFA-score-driven approach to daily de-escalation decisions is exactly what evidence-based ICU care looks like.",
+                image: null, likes: 72, comments: 9
+            },
+            {
+                id: 5, platform: "facebook",
+                author: "A. Rahemanwala", role: "Family of a Recovered Patient", avatar: "AR", color: "#FFE4E6", avatarText: "#9f1239",
+                date: "May 19, 2024", year: 2024,
+                text: "My mother was on a ventilator for 18 days. We didn't think she'd come home. Dr. Kothari's team was transparent, compassionate, and relentlessly skilled. She is home now, and that is everything.",
+                image: null, likes: 203, comments: 31
+            },
+            {
+                id: 6, platform: "twitter",
+                author: "@ICU_Nurse_Ahm", role: "Senior ICU Nurse, Apollo Hospitals", avatar: "NA", color: "#E0E7FF", avatarText: "#3730a3",
+                date: "October 05, 2023", year: 2023,
+                text: "Working under Dr. Kothari has made me a fundamentally better clinician. His commitment to the ABCDEF bundle, daily SBTs, and family communication sets the gold standard. Proud to be on this team. #NurseLife #CriticalCare",
+                image: null, likes: 57, comments: 8
+            },
+            {
+                id: 7, platform: "linkedin",
+                author: "Dr. P. Shah", role: "Consultant Physician, Baroda", avatar: "PS", color: "#CFFAFE", avatarText: "#155E75",
+                date: "February 27, 2025", year: 2025,
+                text: "When my colleagues and I need a second opinion on a complex multi-organ failure case in Gujarat, Dr. Kothari is our first call. Encyclopaedic knowledge of critical care, zero ego, and always takes the time to explain his reasoning. Rare combination.",
+                image: null, likes: 61, comments: 5
+            },
+            {
+                id: 8, platform: "instagram",
+                author: "apollo_ahmedabad", role: "Official Apollo Hospitals Account", avatar: "AP", color: "#F0ABFC", avatarText: "#7e22ce",
+                date: "July 12, 2024", year: 2024,
+                text: "Celebrating 20 years of Dr. Jay Kothari's exceptional service at Apollo Hospitals, Ahmedabad. A pillar of our Critical Care unit — recognised for clinical excellence, patient-centred care, and mentoring the next generation of intensivists. 🙏 #Apollo20Years #CriticalCare",
+                image: "img-team.png", imageCaption: "Dr. Jay Kothari with the Apollo Critical Care Team, Ahmedabad — 20-year milestone celebration.",
+                likes: 441, comments: 62
+            },
+            {
+                id: 9, platform: "others",
+                author: "Medical Review Panel", role: "Gujarat Critical Care Conference 2023", avatar: "RC", color: "#FEF9C3", avatarText: "#854d0e",
+                date: "December 03, 2023", year: 2023,
+                text: "Dr. Kothari's structured approach to lung-protective ventilation in ARDS patients is referenced as a model of evidence-based ICU management. His presentation on antimicrobial stewardship in Indian ICUs was cited by three separate faculty members during the subsequent session.",
+                image: null, likes: 34, comments: 4
+            }
+        ];
+
+        // ============================================================
+        // PHOTO WALL DATA
+        // ============================================================
+        const photos = [
+            { src: "img-team.png", caption: "ICU Team, Apollo Ahmedabad", label: "Team" },
+            { src: "img-ecmo.png", caption: "ECMO Circuit — Advanced Life Support", label: "Clinical" },
+            { src: "img-knowledge.png", caption: "Medical Education Session", label: "Education" },
+            { src: null, caption: "ICU Rounds — Morning Briefing", label: "Rounds" },
+            { src: null, caption: "CRRT Setup — AKI Management", label: "Clinical" },
+            { src: null, caption: "Gujarat Critical Care Conference 2023", label: "Conference" },
+            { src: null, caption: "Apollo Grand Round Presentation", label: "Academic" },
+            { src: "img-hero-doctor.png", caption: "Dr. Jay Kothari — Consultant Critical Care", label: "Portrait" },
+            { src: null, caption: "Apollo Critical Care Unit — ICU Overview", label: "Facility" },
+            { src: null, caption: "Family Counselling Room — Patient-Family Communication", label: "Care" },
+            { src: null, caption: "Post-ICU Recovery Programme", label: "Recovery" },
+            { src: null, caption: "Ventilator Management Workshop", label: "Education" },
+        ];
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentPlatform = "all";
+        let currentSort = "newest";
+        let currentYear = "all";
+
+        // ============================================================
+        // RENDER
+        // ============================================================
+        function getFiltered() {
+            let items = [...reviews];
+            if (currentPlatform !== "all") items = items.filter(r => r.platform === currentPlatform);
+            if (currentYear !== "all") items = items.filter(r => r.year === parseInt(currentYear));
+            items.sort((a, b) => currentSort === "newest" ? b.year - a.year || b.id - a.id : a.year - b.year || a.id - b.id);
+            return items;
+        }
+
+        function platformIcon(p) {
+            return { linkedin: "🔵", facebook: "📘", instagram: "📸", twitter: "𝕏", others: "💬" }[p] || "⭐";
+        }
+        function platformLabel(p) {
+            return { linkedin: "LinkedIn", facebook: "Facebook", instagram: "Instagram", twitter: "X / Twitter", others: "Recognition" }[p] || p;
+        }
+
+        function renderReviews() {
+            const feed = document.getElementById("reviews-feed");
+            const items = getFiltered();
+            if (items.length === 0) {
+                feed.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🔍</div><p>No mentions found for this filter combination.<br>Try a different platform or year.</p></div>`;
+                return;
+            }
+            feed.innerHTML = items.map(r => `
+      <article class="review-card-v2 reveal" data-platform="${r.platform}" data-year="${r.year}">
+        <div class="rc-header">
+          <div class="rc-avatar" style="background:${r.color};color:${r.avatarText};">${r.avatar}</div>
+          <div class="rc-meta">
+            <div class="rc-name">${r.author}</div>
+            <div class="rc-role">${r.role}</div>
+          </div>
+          <span class="rc-platform-badge badge-${r.platform === 'twitter' ? 'twitter' : r.platform}">${platformIcon(r.platform)} ${platformLabel(r.platform)}</span>
+        </div>
+        ${r.image ? `<div class="rc-image-wrap"><img class="rc-image lightbox-trigger" src="${r.image}" alt="${r.imageCaption || ''}" data-caption="${r.imageCaption || ''}" /></div>` : ''}
+        <div class="rc-body"><p class="rc-text">${r.text}</p></div>
+        <div class="rc-footer">
+          <span class="rc-date">📅 ${r.date}</span>
+          <div class="rc-reactions">
+            <span class="rc-reaction">👍 ${r.likes}</span>
+            <span class="rc-reaction">💬 ${r.comments}</span>
+          </div>
+        </div>
+      </article>
+    `).join('');
+
+            // Re-observe reveal items
+            document.querySelectorAll('.review-card-v2.reveal').forEach(el => {
+                el.style.opacity = '0'; el.style.transform = 'translateY(28px)';
+                setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; el.style.transition = 'all 0.6s cubic-bezier(0.22,1,0.36,1)'; }, 30);
+            });
+
+            // Lightbox triggers
+            document.querySelectorAll('.lightbox-trigger').forEach(img => {
+                img.style.cursor = 'zoom-in';
+                img.addEventListener('click', () => openLightbox(img.src, img.dataset.caption));
+            });
+        }
+
+        function updateCounts() {
+            const all = reviews.length;
+            const byPlatform = { linkedin: 0, facebook: 0, instagram: 0, twitter: 0, others: 0 };
+            reviews.forEach(r => { if (byPlatform[r.platform] !== undefined) byPlatform[r.platform]++; });
+            document.getElementById('count-all').textContent = all;
+            Object.keys(byPlatform).forEach(p => {
+                const el = document.getElementById('count-' + p);
+                if (el) el.textContent = byPlatform[p];
+            });
+        }
+
+        // ============================================================
+        // PHOTO WALL RENDER
+        // ============================================================
+        function renderPhotoWall() {
+            const grid = document.getElementById("photo-wall-grid");
+            grid.innerHTML = photos.map((p, i) => {
+                if (p.src) {
+                    return `<div class="photo-wall-item reveal" onclick="openLightbox('${p.src}','${p.caption}')">
+          <img src="${p.src}" alt="${p.caption}" />
+          <div class="photo-wall-overlay"><span>🔍</span><span>${p.caption}</span></div>
+        </div>`;
+                } else {
+                    return `<div class="photo-wall-item reveal">
+          <div class="photo-wall-placeholder">
+            <span class="ph-icon">📷</span>
+            <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;">${p.label}</span>
+            <span>${p.caption}</span>
+          </div>
+        </div>`;
+                }
+            }).join('');
+        }
+
+        // ============================================================
+        // LIGHTBOX
+        // ============================================================
+        function openLightbox(src, caption) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-img').alt = caption || '';
+            document.getElementById('lightbox-caption').textContent = caption || '';
+            document.getElementById('lightbox').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+        document.getElementById('lightbox').addEventListener('click', e => { if (e.target === e.currentTarget) closeLightbox(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+        // Platform tabs
+        document.querySelectorAll('.platform-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.platform-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentPlatform = btn.dataset.platform;
+                renderReviews();
+            });
+        });
+
+        // Sort buttons
+        document.querySelectorAll('.date-filter-btn[data-sort]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.date-filter-btn[data-sort]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSort = btn.dataset.sort;
+                renderReviews();
+            });
+        });
+
+        // Year filters
+        document.querySelectorAll('.date-filter-btn[data-year]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.date-filter-btn[data-year]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentYear = btn.dataset.year;
+                renderReviews();
+            });
+        });
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        updateCounts();
+        renderReviews();
+        renderPhotoWall();
+
+        // ============================================================
+        // PHOTO SUBMISSION MODAL
+        // ============================================================
+        let photoBase64 = null;
+
+        function openPhotoModal() {
+            const modal = document.getElementById('photo-modal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            photoBase64 = null;
+        }
+        function closePhotoModal() {
+            document.getElementById('photo-modal').style.display = 'none';
+            document.body.style.overflow = '';
+            document.getElementById('photo-submit-success').style.display = 'none';
+            document.getElementById('photo-submit-form').style.display = 'block';
+            document.getElementById('photo-preview').style.display = 'none';
+            document.getElementById('drop-zone-text').style.display = 'block';
+            document.getElementById('photo-file-input').value = '';
+            ['ps-name', 'ps-caption', 'ps-story', 'ps-date'].forEach(id => document.getElementById(id).value = '');
+        }
+        document.getElementById('photo-modal').addEventListener('click', function (e) {
+            if (e.target === this) closePhotoModal();
+        });
+        function handlePhotoSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) { alert('File too large. Max 5MB.'); return; }
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                photoBase64 = e.target.result;
+                document.getElementById('preview-img').src = photoBase64;
+                document.getElementById('photo-preview').style.display = 'block';
+                document.getElementById('drop-zone-text').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+        function submitPhotoForm() {
+            const name = document.getElementById('ps-name').value.trim();
+            const caption = document.getElementById('ps-caption').value.trim();
+            if (!name || !caption) { alert('Name and caption are required.'); return; }
+            if (!photoBase64) { alert('Please select a photo to upload.'); return; }
+            const pending = JSON.parse(localStorage.getItem('apollo_pending_photos') || '[]');
+            pending.push({
+                id: Date.now(), name, caption,
+                story: document.getElementById('ps-story').value.trim(),
+                label: document.getElementById('ps-label').value,
+                date: document.getElementById('ps-date').value,
+                imageBase64: photoBase64,
+                status: 'pending',
+                submitted: new Date().toISOString()
+            });
+            localStorage.setItem('apollo_pending_photos', JSON.stringify(pending));
+            document.getElementById('photo-submit-form').style.display = 'none';
+            document.getElementById('photo-submit-success').style.display = 'block';
+        }
+
+    </script>
+</body>
+
+</html>

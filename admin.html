@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel — AI Apollo</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        body {
+            background: #F1F3FA;
+        }
+
+        /* === LOGIN SCREEN === */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-hero);
+            padding: 24px;
+        }
+
+        .login-card {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            padding: 48px 40px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .login-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .login-field {
+            margin-bottom: 14px;
+            text-align: left;
+        }
+
+        .login-field label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .login-field input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border-medium);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+            font-size: 0.92rem;
+            color: var(--text-primary);
+        }
+
+        .login-field input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(45, 53, 130, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--accent-primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: var(--transition-base);
+        }
+
+        .login-btn:hover {
+            background: #1e256a;
+        }
+
+        .login-error {
+            margin-top: 12px;
+            font-size: 0.82rem;
+            color: #C0392B;
+            display: none;
+        }
+
+        /* === ADMIN LAYOUT === */
+        .admin-layout {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .admin-top {
+            background: #fff;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            box-shadow: 0 2px 8px rgba(11, 15, 26, 0.06);
+        }
+
+        .admin-top-logo {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .admin-top-logo span {
+            color: var(--accent-primary);
+        }
+
+        .admin-top-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .admin-view-site {
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: var(--accent-secondary);
+        }
+
+        .admin-logout {
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .admin-body {
+            display: flex;
+        }
+
+        /* === SIDEBAR === */
+        .admin-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: #fff;
+            border-right: 1px solid var(--border-subtle);
+            min-height: calc(100vh - 60px);
+            padding: 20px 0;
+        }
+
+        .admin-nav-group {
+            margin-bottom: 6px;
+        }
+
+        .admin-nav-label {
+            font-size: 0.66rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            padding: 10px 20px 6px;
+        }
+
+        .admin-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            font-size: 0.87rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border-left: 3px solid transparent;
+        }
+
+        .admin-nav-link:hover {
+            background: rgba(45, 53, 130, 0.05);
+            color: var(--accent-primary);
+            border-left-color: var(--accent-primary);
+        }
+
+        .admin-nav-link.active {
+            background: rgba(45, 53, 130, 0.07);
+            color: var(--accent-primary);
+            border-left-color: var(--accent-primary);
+        }
+
+        .admin-nav-link .nav-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .admin-badge {
+            margin-left: auto;
+            background: #C0392B;
+            color: #fff;
+            font-size: 0.66rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 99px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* === MAIN CONTENT === */
+        .admin-main {
+            flex: 1;
+            padding: 28px;
+            overflow-x: hidden;
+        }
+
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-panel.active {
+            display: block;
+        }
+
+        .panel-header {
+            margin-bottom: 28px;
+        }
+
+        .panel-header h1 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .panel-header p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* STAT CARDS */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .admin-stat {
+            background: #fff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .admin-stat-num {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent-primary);
+        }
+
+        .admin-stat-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* TABLES */
+        .admin-table-wrap {
+            background: #fff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+
+        .table-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: var(--bg-section);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        td {
+            padding: 13px 16px;
+            font-size: 0.87rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(45, 53, 130, 0.02);
+        }
+
+        /* BADGES */
+        .status-badge {
+            display: inline-flex;
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .badge-pending {
+            background: rgba(155, 89, 43, 0.1);
+            color: #92400E;
+        }
+
+        .badge-approved {
+            background: rgba(26, 122, 74, 0.1);
+            color: #1A7A4A;
+        }
+
+        .badge-rejected {
+            background: rgba(192, 57, 43, 0.1);
+            color: #C0392B;
+        }
+
+        .badge-published {
+            background: rgba(45, 53, 130, 0.1);
+            color: var(--accent-primary);
+        }
+
+        .badge-draft {
+            background: rgba(126, 132, 163, 0.1);
+            color: var(--text-muted);
+        }
+
+        /* ACTION BUTTONS */
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.76rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1.5px solid;
+            transition: var(--transition-fast);
+        }
+
+        .action-btn-approve {
+            border-color: rgba(26, 122, 74, 0.4);
+            color: #1A7A4A;
+            background: rgba(26, 122, 74, 0.06);
+        }
+
+        .action-btn-approve:hover {
+            background: rgba(26, 122, 74, 0.15);
+        }
+
+        .action-btn-reject {
+            border-color: rgba(192, 57, 43, 0.3);
+            color: #C0392B;
+            background: rgba(192, 57, 43, 0.04);
+        }
+
+        .action-btn-reject:hover {
+            background: rgba(192, 57, 43, 0.12);
+        }
+
+        .action-btn-edit {
+            border-color: var(--border-accent);
+            color: var(--accent-primary);
+            background: rgba(45, 53, 130, 0.04);
+        }
+
+        .action-btn-edit:hover {
+            background: rgba(45, 53, 130, 0.12);
+        }
+
+        .action-btn-delete {
+            border-color: rgba(192, 57, 43, 0.3);
+            color: #C0392B;
+            background: rgba(192, 57, 43, 0.04);
+        }
+
+        .action-btn-delete:hover {
+            background: rgba(192, 57, 43, 0.12);
+        }
+
+        /* === KNOWLEDGE EDITOR === */
+        .editor-card {
+            background: #fff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            box-shadow: var(--card-shadow);
+            margin-top: 24px;
+        }
+
+        .editor-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 18px;
+        }
+
+        .editor-field {
+            margin-bottom: 16px;
+        }
+
+        .editor-field label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .editor-field input,
+        .editor-field select,
+        .editor-field textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border-medium);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .editor-field input:focus,
+        .editor-field select:focus,
+        .editor-field textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .editor-field textarea {
+            resize: vertical;
+            min-height: 180px;
+            line-height: 1.7;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-save-draft {
+            padding: 11px 24px;
+            background: var(--bg-section);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+        }
+
+        .btn-publish {
+            padding: 11px 24px;
+            background: var(--accent-primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+        }
+
+        .editor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* === CALENDAR IN ADMIN === */
+        .admin-calendar-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .admin-cal-card {
+            background: #fff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .admin-cal-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 18px;
+        }
+
+        .mini-cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .mini-cal-day {
+            text-align: center;
+            padding: 7px 4px;
+            font-size: 0.82rem;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: background var(--transition-fast);
+        }
+
+        .mini-cal-day.label {
+            font-size: 0.66rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            cursor: default;
+            padding: 6px 4px;
+        }
+
+        .mini-cal-day.has-booking {
+            background: rgba(45, 53, 130, 0.1);
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .mini-cal-day.today {
+            background: var(--accent-primary);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .mini-cal-day.sunday {
+            color: #C0392B;
+            opacity: 0.5;
+        }
+
+        .mini-cal-day.empty {
+            cursor: default;
+        }
+
+        /* === SECTION BUILDER === */
+        .section-card {
+            background: var(--bg-section);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            margin-bottom: 10px;
+        }
+
+        .section-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-card .editor-field {
+            margin-bottom: 10px;
+        }
+
+        .section-card .editor-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .stats-builder {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .stat-input-group {
+            background: var(--bg-section);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+        }
+
+        .stat-input-group small {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-input-group input {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1.5px solid var(--border-medium);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+            font-size: 0.83rem;
+            color: var(--text-primary);
+            background: #fff;
+            margin-bottom: 8px;
+        }
+
+        .stat-input-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .stat-input-group input:last-child {
+            margin-bottom: 0;
+        }
+
+        .booking-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .booking-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .booking-time {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            min-width: 60px;
+        }
+
+        .booking-patient {
+            font-size: 0.88rem;
+            color: var(--text-primary);
+        }
+
+        .booking-reason-sm {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+
+        .empty-bookings {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-muted);
+            font-size: 0.86rem;
+        }
+
+        /* PHOTO REVIEW GRID */
+        .photo-review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .photo-review-item {
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: #fff;
+            box-shadow: var(--card-shadow);
+        }
+
+        .photo-review-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background: var(--bg-section);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .photo-review-body {
+            padding: 12px;
+        }
+
+        .photo-review-name {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .photo-review-date {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .photo-review-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        @media (max-width:900px) {
+            .admin-sidebar {
+                display: none;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .admin-calendar-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- === LOGIN === -->
+    <div class="login-screen" id="login-screen">
+        <div class="login-card">
+            <div class="login-logo">AI <span style="color:var(--accent-primary);">APOLLO</span></div>
+            <div class="login-label">Admin Panel · Restricted Access</div>
+            <div class="login-field">
+                <label for="admin-user">Username</label>
+                <input type="text" id="admin-user" placeholder="admin" autocomplete="username" />
+            </div>
+            <div class="login-field">
+                <label for="admin-pass">Password</label>
+                <input type="password" id="admin-pass" placeholder="••••••••" autocomplete="current-password" />
+            </div>
+            <button class="login-btn" onclick="doLogin()">Sign In →</button>
+            <div class="login-error" id="login-error">Incorrect credentials. Try again.</div>
+            <div style="margin-top:18px; font-size:0.74rem; color:var(--text-muted);">Default: <code>admin</code> /
+                <code>apollo2024</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- === ADMIN LAYOUT === -->
+    <div class="admin-layout" id="admin-layout">
+        <!-- TOP BAR -->
+        <div class="admin-top">
+            <div class="admin-top-logo">AI <span>APOLLO</span> <span
+                    style="color:var(--text-muted);font-weight:400;font-size:0.8rem;margin-left:8px;">Admin Panel</span>
+            </div>
+            <div class="admin-top-right">
+                <a href="index.html" class="admin-view-site" target="_blank">View Site ↗</a>
+                <span class="admin-logout" onclick="doLogout()">Sign Out</span>
+            </div>
+        </div>
+
+        <div class="admin-body">
+            <!-- SIDEBAR -->
+            <div class="admin-sidebar">
+                <div class="admin-nav-group">
+                    <div class="admin-nav-label">Overview</div>
+                    <div class="admin-nav-link active" data-panel="dashboard" onclick="switchPanel('dashboard')"><span
+                            class="nav-icon">📊</span>Dashboard</div>
+                </div>
+                <div class="admin-nav-group">
+                    <div class="admin-nav-label">Consultations</div>
+                    <div class="admin-nav-link" data-panel="calendar" onclick="switchPanel('calendar')"><span
+                            class="nav-icon">🗓️</span>Booking Calendar</div>
+                    <div class="admin-nav-link" data-panel="requests" onclick="switchPanel('requests')"><span
+                            class="nav-icon">📋</span>Pending Requests <span class="admin-badge"
+                            id="badge-requests">0</span></div>
+                </div>
+                <div class="admin-nav-group">
+                    <div class="admin-nav-label">Content</div>
+                    <div class="admin-nav-link" data-panel="knowledge" onclick="switchPanel('knowledge')"><span
+                            class="nav-icon">📚</span>Knowledge Hub</div>
+                    <div class="admin-nav-link" data-panel="editor" onclick="switchPanel('editor')"><span
+                            class="nav-icon">✏️</span>New Article</div>
+                    <div class="admin-nav-link" data-panel="myths" onclick="switchPanel('myths')"><span
+                            class="nav-icon">🃏</span>Myth Buster Cards</div>
+                    <div class="admin-nav-link" data-panel="quizeditor" onclick="switchPanel('quizeditor')"><span
+                            class="nav-icon">🧠</span>Quiz Questions</div>
+                    <div class="admin-nav-link" data-panel="research" onclick="switchPanel('research')"><span
+                            class="nav-icon">🔬</span>Research Papers</div>
+                </div>
+                <div class="admin-nav-group">
+                    <div class="admin-nav-label">Community</div>
+                    <div class="admin-nav-link" data-panel="reviews" onclick="switchPanel('reviews')"><span
+                            class="nav-icon">⭐</span>Review Approvals <span class="admin-badge"
+                            id="badge-reviews">0</span></div>
+                    <div class="admin-nav-link" data-panel="photos" onclick="switchPanel('photos')"><span
+                            class="nav-icon">🖼️</span>Photo Wall <span class="admin-badge" id="badge-photos">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN -->
+            <div class="admin-main">
+
+                <!-- DASHBOARD -->
+                <div class="admin-panel active" id="panel-dashboard">
+                    <div class="panel-header">
+                        <h1>Dashboard</h1>
+                        <p>Overview of consultations, content, and community activity.</p>
+                    </div>
+                    <div class="stats-row">
+                        <div class="admin-stat">
+                            <div class="admin-stat-num" id="stat-bookings">0</div>
+                            <div class="admin-stat-label">Total Bookings</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-num" id="stat-pending-books">0</div>
+                            <div class="admin-stat-label">Pending Requests</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-num" id="stat-articles">10</div>
+                            <div class="admin-stat-label">Published Articles</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-num" id="stat-pending-reviews">0</div>
+                            <div class="admin-stat-label">Pending Approvals</div>
+                        </div>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <div class="table-header">
+                            <div class="table-title">Recent Booking Requests</div><button
+                                class="action-btn action-btn-edit" onclick="switchPanel('requests')">View All</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-recent-bookings">
+                                <tr>
+                                    <td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">No
+                                        booking requests yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CALENDAR -->
+                <div class="admin-panel" id="panel-calendar">
+                    <div class="panel-header">
+                        <h1>Booking Calendar</h1>
+                        <p>View scheduled OPD consultations by date.</p>
+                    </div>
+                    <div class="admin-calendar-grid">
+                        <div class="admin-cal-card">
+                            <div
+                                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                                <h3 id="admin-cal-month" style="margin:0;">April 2026</h3>
+                                <div style="display:flex;gap:6px;">
+                                    <button class="cal-nav-btn" onclick="adminCalNav(-1)">‹</button>
+                                    <button class="cal-nav-btn" onclick="adminCalNav(1)">›</button>
+                                </div>
+                            </div>
+                            <div class="mini-cal-grid" id="admin-cal-grid"></div>
+                        </div>
+                        <div class="admin-cal-card">
+                            <h3 id="selected-day-label">Select a day to see bookings</h3>
+                            <div id="day-booking-list">
+                                <div class="empty-bookings">Click a date on the calendar</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOOKING REQUESTS -->
+                <div class="admin-panel" id="panel-requests">
+                    <div class="panel-header">
+                        <h1>Booking Requests</h1>
+                        <p>Review and manage incoming consultation requests.</p>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <div class="table-header">
+                            <div class="table-title">All Requests</div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Phone</th>
+                                    <th>Date & Time</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requests-table">
+                                <tr>
+                                    <td colspan="6" style="text-align:center;color:var(--text-muted);padding:28px;">
+                                        Loading…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- KNOWLEDGE HUB -->
+                <div class="admin-panel" id="panel-knowledge">
+                    <div class="panel-header">
+                        <h1>Knowledge Hub</h1>
+                        <p>Manage published articles and pillars.</p>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <div class="table-header">
+                            <div class="table-title">Published Articles (10)</div><button
+                                class="action-btn action-btn-edit" onclick="switchPanel('editor')">+ New
+                                Article</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Pillar</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="knowledge-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ARTICLE EDITOR -->
+                <div class="admin-panel" id="panel-editor">
+                    <div class="panel-header">
+                        <h1>Article Editor</h1>
+                        <p>Create or edit a Knowledge Hub article.</p>
+                    </div>
+                    <div class="editor-card">
+                        <input type="hidden" id="editor-id" value="" />
+                        <input type="hidden" id="editor-overrides-id" value="" />
+                        <div class="editor-grid">
+                            <div class="editor-field">
+                                <label>Article Title *</label>
+                                <input type="text" id="editor-title"
+                                    placeholder="e.g. Understanding Sepsis: What Families Must Know" />
+                            </div>
+                            <div class="editor-field">
+                                <label>Pillar / Topic *</label>
+                                <select id="editor-pillar">
+                                    <option>Sepsis & Infection</option>
+                                    <option>ECMO & Advanced Life Support</option>
+                                    <option>Organ Failure & CRRT</option>
+                                    <option>Respiratory & Ventilation</option>
+                                    <option>Multi-Organ Failure</option>
+                                    <option>Family Guide to the ICU</option>
+                                    <option>ICU Delirium & Brain Health</option>
+                                    <option>Critical Care Nutrition</option>
+                                    <option>Infection Control & Antimicrobial Stewardship</option>
+                                    <option>Post-ICU Recovery & PICS</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="editor-field">
+                            <label>Article Subtitle / Description</label>
+                            <input type="text" id="editor-subtitle"
+                                placeholder="A short, plain-language description shown in the hub cards…" />
+                        </div>
+                        <!-- Hidden textarea — stores generated HTML for knowledge.html -->
+                        <textarea id="editor-body" style="display:none;"></textarea>
+
+                        <!-- SECTION BUILDER -->
+                        <div class="editor-field">
+                            <div
+                                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                                <label style="margin:0;">Article Sections</label>
+                                <button type="button" class="action-btn action-btn-edit" onclick="addSection()">+ Add
+                                    Section</button>
+                            </div>
+                            <div id="sections-builder"></div>
+                            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;">Each section has a
+                                heading, plain-text content, an optional highlighted callout, and an optional warning
+                                note.</p>
+                        </div>
+
+                        <!-- STATS BUILDER -->
+                        <div class="editor-field">
+                            <label>Key Stats <span style="font-weight:400;color:var(--text-muted);">(optional — up to 3
+                                    headline numbers shown in the article)</span></label>
+                            <div class="stats-builder">
+                                <div class="stat-input-group">
+                                    <small>Stat 1 — Number</small><input type="text" id="stat1-num"
+                                        placeholder="e.g. 11M" />
+                                    <small>Stat 1 — Label</small><input type="text" id="stat1-lbl"
+                                        placeholder="e.g. deaths annually worldwide" />
+                                </div>
+                                <div class="stat-input-group">
+                                    <small>Stat 2 — Number</small><input type="text" id="stat2-num"
+                                        placeholder="e.g. 7%" />
+                                    <small>Stat 2 — Label</small><input type="text" id="stat2-lbl"
+                                        placeholder="e.g. mortality increase per hour" />
+                                </div>
+                                <div class="stat-input-group">
+                                    <small>Stat 3 — Number</small><input type="text" id="stat3-num"
+                                        placeholder="e.g. 1hr" />
+                                    <small>Stat 3 — Label</small><input type="text" id="stat3-lbl"
+                                        placeholder="e.g. the critical window" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="editor-grid">
+                            <div class="editor-field">
+                                <label>Author</label>
+                                <input type="text" id="editor-author" value="Dr. Jay Kothari" />
+                            </div>
+                            <div class="editor-field">
+                                <label>Status</label>
+                                <select id="editor-status">
+                                    <option value="published">Published</option>
+                                    <option value="draft">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="editor-actions">
+                            <button class="btn-save-draft" onclick="saveArticle('draft')">Save as Draft</button>
+                            <button class="btn-publish" onclick="saveArticle('published')">Publish Article</button>
+                            <button class="action-btn action-btn-reject" style="margin-left:auto;"
+                                onclick="clearEditor()">Clear</button>
+                        </div>
+                    </div>
+                    <div id="editor-articles-list" style="margin-top:24px;"></div>
+                </div>
+
+                <!-- REVIEWS APPROVAL -->
+                <div class="admin-panel" id="panel-reviews">
+                    <div class="panel-header">
+                        <h1>Review Approvals</h1>
+                        <p>Approve or reject submitted community reviews before they appear on the Pulse page.</p>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <div class="table-header">
+                            <div class="table-title">Pending Reviews</div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name / Platform</th>
+                                    <th>Review Text</th>
+                                    <th>Submitted</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reviews-table">
+                                <tr>
+                                    <td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">No
+                                        pending reviews. <a href="reviews.html" target="_blank"
+                                            style="color:var(--accent-secondary);">View Pulse page ↗</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Demo submit form to test workflow -->
+                    <div class="editor-card" style="margin-top:24px;">
+                        <h3>➕ Submit Test Review (Simulate incoming request)</h3>
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>Name</label><input type="text" id="rv-name"
+                                    placeholder="Dr. A. Sharma" /></div>
+                            <div class="editor-field"><label>Platform</label>
+                                <select id="rv-platform">
+                                    <option value="linkedin">LinkedIn</option>
+                                    <option value="facebook">Facebook</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="twitter">X / Twitter</option>
+                                    <option value="others">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="editor-field"><label>Review Text</label><textarea id="rv-text"
+                                style="min-height:80px;" placeholder="Write the review content…"></textarea></div>
+                        <button class="btn-publish" onclick="submitTestReview()" style="margin-top:4px;">Submit for
+                            Approval</button>
+                    </div>
+                </div>
+
+                <!-- PHOTO WALL -->
+                <div class="admin-panel" id="panel-photos">
+                    <div class="panel-header">
+                        <h1>Photo Wall</h1>
+                        <p>Approve submitted photos for the Pulse Photo Wall.</p>
+                    </div>
+                    <div class="editor-card">
+                        <h3>➕ Add Photo to Wall</h3>
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>Photo URL / Filename</label><input type="text"
+                                    id="photo-url" placeholder="img-team.png or https://…" /></div>
+                            <div class="editor-field"><label>Caption</label><input type="text" id="photo-caption"
+                                    placeholder="e.g. ICU Team, Apollo Ahmedabad" /></div>
+                        </div>
+                        <div class="editor-field"><label>Label Tag</label><input type="text" id="photo-label"
+                                placeholder="Team / Clinical / Conference / Education…" /></div>
+                        <button class="btn-publish" onclick="addPhoto()">Add to Photo Wall</button>
+                    </div>
+                    <div class="photo-review-grid" id="photo-grid"></div>
+                </div>
+
+                <!-- MYTH BUSTER EDITOR -->
+                <div class="admin-panel" id="panel-myths">
+                    <div class="panel-header">
+                        <h1>🃏 Myth Buster Cards</h1>
+                        <p>Add, edit or remove flip-cards shown in the ICU Intel → Myth Busters tab.</p>
+                    </div>
+                    <div class="editor-card">
+                        <h3>➕ Add / Edit Myth Card</h3>
+                        <input type="hidden" id="myth-edit-id" value="" />
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>Myth Statement (front)</label><textarea id="myth-statement"
+                                    rows="3" placeholder='"Patients on ventilators feel nothing."'></textarea></div>
+                            <div class="editor-field"><label>Fact (back)</label><textarea id="myth-fact" rows="3"
+                                    placeholder="Evidence-based explanation of the truth…"></textarea></div>
+                        </div>
+                        <div class="editor-field"><label>Source / Citation</label><input type="text" id="myth-source"
+                                placeholder="e.g. SSC Guidelines 2021" /></div>
+                        <div class="editor-actions" style="margin-top:8px;">
+                            <button class="btn-publish" onclick="saveMythCard()">💾 Save Card</button>
+                            <button class="btn-save-draft" onclick="clearMythForm()">Clear</button>
+                        </div>
+                    </div>
+                    <div class="admin-table-wrap" style="margin-top:24px;">
+                        <div class="table-header">
+                            <div class="table-title">All Myth Cards</div><span id="myth-count"
+                                style="font-size:0.8rem;color:var(--text-muted);"></span>
+                        </div>
+                        <div id="myth-table-body" style="padding:0 4px;"></div>
+                    </div>
+                    <p style="font-size:0.78rem;color:var(--text-muted);margin-top:12px;">💡 After saving, the Myth
+                        Busters tab on quiz.html will use these custom cards instead of the defaults.</p>
+                </div>
+
+                <!-- QUIZ QUESTION EDITOR -->
+                <div class="admin-panel" id="panel-quizeditor">
+                    <div class="panel-header">
+                        <h1>🧠 Quiz Questions</h1>
+                        <p>Manage the 50-question bank. 10 random questions are picked each quiz attempt.</p>
+                    </div>
+                    <div class="editor-card">
+                        <h3>➕ Add / Edit Question</h3>
+                        <input type="hidden" id="q-edit-id" value="" />
+                        <div class="editor-field"><label>Question</label><input type="text" id="q-question"
+                                placeholder="What does ECMO stand for?" /></div>
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>Option A</label><input type="text" id="q-a"
+                                    placeholder="Option A" /></div>
+                            <div class="editor-field"><label>Option B</label><input type="text" id="q-b"
+                                    placeholder="Option B" /></div>
+                            <div class="editor-field"><label>Option C</label><input type="text" id="q-c"
+                                    placeholder="Option C (optional)" /></div>
+                            <div class="editor-field"><label>Option D</label><input type="text" id="q-d"
+                                    placeholder="Option D (optional)" /></div>
+                        </div>
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>Correct Answer (0=A, 1=B, 2=C, 3=D)</label>
+                                <select id="q-correct">
+                                    <option value="0">A</option>
+                                    <option value="1">B</option>
+                                    <option value="2">C</option>
+                                    <option value="3">D</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="editor-field"><label>Explanation</label><textarea id="q-explanation" rows="2"
+                                placeholder="Why this answer is correct…"></textarea></div>
+                        <div class="editor-actions" style="margin-top:8px;">
+                            <button class="btn-publish" onclick="saveQuizQuestion()">💾 Save Question</button>
+                            <button class="btn-save-draft" onclick="clearQuizForm()">Clear</button>
+                            <button class="btn-save-draft" onclick="resetQuizToDefault()" style="color:#C0392B;">↺ Reset
+                                to 50 Defaults</button>
+                        </div>
+                    </div>
+                    <div class="admin-table-wrap" style="margin-top:24px;">
+                        <div class="table-header">
+                            <div class="table-title">Question Bank</div><span id="quiz-q-count"
+                                style="font-size:0.8rem;color:var(--text-muted);"></span>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Question</th>
+                                    <th>Correct</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quiz-q-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- RESEARCH PAPERS EDITOR -->
+                <div class="admin-panel" id="panel-research">
+                    <div class="panel-header">
+                        <h1>🔬 Research Papers</h1>
+                        <p>Add, edit or remove papers shown on the Research page.</p>
+                    </div>
+                    <div class="editor-card">
+                        <h3>➕ Add / Edit Paper</h3>
+                        <input type="hidden" id="rp-edit-id" value="" />
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>Paper Title</label><input type="text" id="rp-title"
+                                    placeholder="PROSEVA Trial: Prone Positioning in Severe ARDS" /></div>
+                            <div class="editor-field"><label>Journal</label><input type="text" id="rp-journal"
+                                    placeholder="New England Journal of Medicine" /></div>
+                        </div>
+                        <div class="editor-grid">
+                            <div class="editor-field"><label>Year</label><input type="number" id="rp-year"
+                                    placeholder="2013" min="1990" max="2030" /></div>
+                            <div class="editor-field"><label>Topic Tag</label>
+                                <select id="rp-topic">
+                                    <option>ARDS & Ventilation</option>
+                                    <option>Sepsis & Infection</option>
+                                    <option>ECMO</option>
+                                    <option>Renal Support</option>
+                                    <option>Nutrition & Metabolism</option>
+                                    <option>Delirium & Sedation</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="editor-field"><label>DOI / URL</label><input type="text" id="rp-doi"
+                                placeholder="https://doi.org/…" /></div>
+                        <div class="editor-field"><label>Key Finding / Abstract (1–2 sentences)</label><textarea
+                                id="rp-abstract" rows="2"
+                                placeholder="Prone positioning ≥16h/day reduced 28-day mortality from 32.8% to 16%…"></textarea>
+                        </div>
+                        <div class="editor-actions" style="margin-top:8px;">
+                            <button class="btn-publish" onclick="saveResearchPaper()">💾 Save Paper</button>
+                            <button class="btn-save-draft" onclick="clearResearchForm()">Clear</button>
+                        </div>
+                    </div>
+                    <div class="admin-table-wrap" style="margin-top:24px;">
+                        <div class="table-header">
+                            <div class="table-title">All Papers</div><span id="rp-count"
+                                style="font-size:0.8rem;color:var(--text-muted);"></span>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Journal</th>
+                                    <th>Year</th>
+                                    <th>Topic</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rp-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- /admin-main -->
+
+        </div><!-- /admin-body -->
+    </div><!-- /admin-layout -->
+
+    <script>
+        // ============================================================
+        // AUTH
+        // ============================================================
+        const ADMIN_USER = 'admin';
+        const ADMIN_PASS = 'apollo2024';
+
+        function doLogin() {
+            const u = document.getElementById('admin-user').value;
+            const p = document.getElementById('admin-pass').value;
+            if (u === ADMIN_USER && p === ADMIN_PASS) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-layout').style.display = 'block';
+                loadAll();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+        document.getElementById('admin-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+        document.getElementById('admin-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('admin-pass').focus(); });
+
+        function doLogout() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('admin-layout').style.display = 'none';
+            document.getElementById('admin-user').value = '';
+            document.getElementById('admin-pass').value = '';
+        }
+
+        // ============================================================
+        // PANEL SWITCHING
+        // ============================================================
+        function switchPanel(name) {
+            document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.admin-nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById('panel-' + name).classList.add('active');
+            document.querySelector(`[data-panel="${name}"]`)?.classList.add('active');
+            if (name === 'requests') renderRequests();
+            if (name === 'calendar') renderAdminCal();
+            if (name === 'knowledge') renderKnowledge();
+            if (name === 'reviews') renderReviews();
+            if (name === 'photos') renderPhotos();
+            if (name === 'myths') renderMyths();
+            if (name === 'quizeditor') renderQuizEditor();
+            if (name === 'research') renderResearch();
+
+        }
+
+        // ============================================================
+        // DATA HELPERS
+        // ============================================================
+        const getBookings = () => { try { return JSON.parse(localStorage.getItem('apollo_booking_requests') || '[]'); } catch { return []; } };
+        const saveBookings = d => localStorage.setItem('apollo_booking_requests', JSON.stringify(d));
+        const getPendingReviews = () => { try { return JSON.parse(localStorage.getItem('apollo_pending_reviews') || '[]'); } catch { return []; } };
+        const savePendingReviews = d => localStorage.setItem('apollo_pending_reviews', JSON.stringify(d));
+        const getAdminArticles = () => { try { return JSON.parse(localStorage.getItem('apollo_admin_articles') || '[]'); } catch { return []; } };
+        const saveAdminArticles = d => localStorage.setItem('apollo_admin_articles', JSON.stringify(d));
+        const getAdminPhotos = () => { try { return JSON.parse(localStorage.getItem('apollo_admin_photos') || '[]'); } catch { return []; } };
+        const saveAdminPhotos = d => localStorage.setItem('apollo_admin_photos', JSON.stringify(d));
+
+        function updateBadges() {
+            const pb = getBookings().filter(b => b.status === 'pending').length;
+            const pr = getPendingReviews().filter(r => r.status === 'pending').length;
+            const pp = getPendingPhotos().filter(p => p.status === 'pending').length;
+            document.getElementById('badge-requests').textContent = pb;
+            document.getElementById('badge-reviews').textContent = pr;
+            document.getElementById('badge-photos').textContent = pp;
+            document.getElementById('badge-requests').style.display = pb > 0 ? '' : 'none';
+            document.getElementById('badge-reviews').style.display = pr > 0 ? '' : 'none';
+            document.getElementById('badge-photos').style.display = pp > 0 ? '' : 'none';
+        }
+
+        // Pending photo submissions from reviews.html upload form
+        const getPendingPhotos = () => { try { return JSON.parse(localStorage.getItem('apollo_pending_photos') || '[]'); } catch { return []; } };
+        const savePendingPhotos = d => localStorage.setItem('apollo_pending_photos', JSON.stringify(d));
+
+        // ============================================================
+        // DASHBOARD
+        // ============================================================
+        function renderDashboard() {
+            const bookings = getBookings();
+            document.getElementById('stat-bookings').textContent = bookings.length;
+            document.getElementById('stat-pending-books').textContent = bookings.filter(b => b.status === 'pending').length;
+            document.getElementById('stat-pending-reviews').textContent = getPendingReviews().filter(r => r.status === 'pending').length;
+            const recent = bookings.slice(-5).reverse();
+            const tbody = document.getElementById('dashboard-recent-bookings');
+            if (recent.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">No bookings yet.</td></tr>';
+            } else {
+                tbody.innerHTML = recent.map(b => `<tr>
+        <td><strong>${b.name}</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">${b.phone}</span></td>
+        <td>${b.dateLabel}</td><td>${b.slot}</td>
+        <td><span style="font-size:0.83rem;">${b.reason}</span></td>
+        <td><span class="status-badge badge-${b.status}">${b.status}</span></td>
+      </tr>`).join('');
+            }
+            updateBadges();
+        }
+
+        // ============================================================
+        // REQUESTS
+        // ============================================================
+        function renderRequests() {
+            const bookings = getBookings();
+            const tbody = document.getElementById('requests-table');
+            if (bookings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:28px;">No booking requests yet.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = [...bookings].reverse().map((b, i) => `<tr>
+      <td><strong>${b.name}</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">${b.phone}</span></td>
+      <td>${b.phone}</td>
+      <td>${b.dateLabel}<br><span style="color:var(--accent-primary);font-weight:700;">${b.slot}</span></td>
+      <td style="max-width:200px;">${b.reason}</td>
+      <td><span class="status-badge badge-${b.status}">${b.status}</span></td>
+      <td><div class="action-btns">
+        ${b.status === 'pending' ? `<button class="action-btn action-btn-approve" onclick="updateBookingStatus(${b.id},'approved')">✓ Confirm</button>
+        <button class="action-btn action-btn-reject" onclick="updateBookingStatus(${b.id},'rejected')">✕ Reject</button>` : ''}
+        ${b.status === 'approved' ? `<button class="action-btn action-btn-reject" onclick="updateBookingStatus(${b.id},'rejected')">Cancel</button>` : ''}
+      </div></td>
+    </tr>`).join('');
+            updateBadges();
+        }
+
+        function updateBookingStatus(id, status) {
+            const bookings = getBookings().map(b => b.id === id ? { ...b, status } : b);
+            saveBookings(bookings);
+            renderRequests();
+            renderDashboard();
+        }
+
+        // ============================================================
+        // ADMIN CALENDAR
+        // ============================================================
+        let adminCalDate = new Date();
+        let adminSelectedDate = null;
+        const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        function adminCalNav(dir) {
+            adminCalDate.setMonth(adminCalDate.getMonth() + dir);
+            renderAdminCal();
+        }
+
+        function renderAdminCal() {
+            const year = adminCalDate.getFullYear();
+            const month = adminCalDate.getMonth();
+            document.getElementById('admin-cal-month').textContent = `${MONTH_NAMES[month]} ${year}`;
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const bookings = getBookings().filter(b => b.status === 'approved');
+            const bookedDates = {};
+            bookings.forEach(b => { bookedDates[b.date] = (bookedDates[b.date] || 0) + 1; });
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+
+            let html = '';
+            ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(d => html += `<div class="mini-cal-day label">${d}</div>`);
+            for (let i = 0; i < firstDay; i++) html += `<div class="mini-cal-day empty"></div>`;
+            for (let day = 1; day <= daysInMonth; day++) {
+                const d = new Date(year, month, day);
+                d.setHours(0, 0, 0, 0);
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const isSun = d.getDay() === 0;
+                const isToday = d.getTime() === today.getTime();
+                const hasBooking = bookedDates[dateKey] > 0;
+                let cls = 'mini-cal-day';
+                if (isSun) cls += ' sunday';
+                if (isToday) cls += ' today';
+                else if (hasBooking) cls += ' has-booking';
+                html += `<div class="${cls}" onclick="adminSelectDate('${dateKey}','${parseInt(day)} ${MONTH_NAMES[month]} ${year}')">${day}</div>`;
+            }
+            document.getElementById('admin-cal-grid').innerHTML = html;
+        }
+
+        function adminSelectDate(dateKey, label) {
+            adminSelectedDate = dateKey;
+            document.getElementById('selected-day-label').textContent = label;
+            const bookings = getBookings().filter(b => b.date === dateKey && b.status === 'approved');
+            const el = document.getElementById('day-booking-list');
+            if (bookings.length === 0) {
+                el.innerHTML = '<div class="empty-bookings">No confirmed bookings for this date.</div>';
+            } else {
+                el.innerHTML = bookings.map(b => `<div class="booking-list-item">
+        <div class="booking-time">${b.slot}</div>
+        <div><div class="booking-patient">${b.name}</div><div class="booking-reason-sm">${b.reason}</div></div>
+        <span class="status-badge badge-approved">Confirmed</span>
+      </div>`).join('');
+            }
+        }
+
+        // ============================================================
+        // KNOWLEDGE
+        // ============================================================
+        const BUILT_IN_ARTICLES = [
+            { id: 'sepsis', title: 'The Silent Killer: Recognising Sepsis Before It\'s Too Late', pillar: 'Sepsis & Infection', status: 'published' },
+            { id: 'ecmo', title: 'ECMO Explained: When Modern Medicine Buys Time', pillar: 'ECMO & Advanced Life Support', status: 'published' },
+            { id: 'crrt', title: 'Kidney Failure in the ICU: CRRT and How It Saves Lives', pillar: 'Organ Failure & CRRT', status: 'published' },
+            { id: 'ventilation', title: 'Mechanical Ventilation: What the Machine Is Doing and Why', pillar: 'Respiratory & Ventilation', status: 'published' },
+            { id: 'mof', title: 'Multi-Organ Failure: When the Body\'s Systems Begin to Shut Down', pillar: 'Multi-Organ Failure', status: 'published' },
+            { id: 'family-guide', title: 'Your Loved One Is in the ICU: A Family\'s Complete Guide', pillar: 'Family Guide to the ICU', status: 'published' },
+            { id: 'delirium', title: 'ICU Delirium & Brain Health: Why Critical Illness Affects the Mind', pillar: 'ICU Delirium & Brain Health', status: 'published' },
+            { id: 'nutrition', title: 'Critical Care Nutrition: Feeding as a Life-Saving Therapy', pillar: 'Critical Care Nutrition', status: 'published' },
+            { id: 'antimicrobial', title: 'Infection Control & Antimicrobial Stewardship in the ICU', pillar: 'Infection Control & AMR', status: 'published' },
+            { id: 'pics', title: 'Post-ICU Recovery & PICS: Life After the Intensive Care Unit', pillar: 'Post-ICU Recovery & PICS', status: 'published' },
+        ];
+
+        function renderKnowledge() {
+            const extras = getAdminArticles();
+            // Suppress built-in articles that have been overridden by admin edits
+            const overriddenIds = extras.map(e => e.overridesId).filter(Boolean);
+            const visibleBuiltIn = BUILT_IN_ARTICLES.filter(a => !overriddenIds.includes(a.id));
+            const all = [...visibleBuiltIn, ...extras];
+            document.getElementById('knowledge-table').innerHTML = all.map(a => `<tr>
+      <td style="max-width:320px;"><strong style="font-size:0.9rem;">${a.title}</strong></td>
+      <td><span style="font-size:0.8rem;color:var(--accent-secondary);">${a.pillar}</span></td>
+      <td><span class="status-badge badge-${a.status}">${a.status}</span></td>
+      <td><div class="action-btns">
+        ${a.id?.startsWith?.('art-')
+                    ? `<button class="action-btn action-btn-edit" onclick="editArticle('${a.id}')">Edit</button>
+             <button class="action-btn action-btn-delete" onclick="deleteArticle('${a.id}')">Delete</button>`
+                    : `<button class="action-btn action-btn-edit" onclick="editBuiltInArticle('${a.id}')">Edit</button>
+             <a href="knowledge.html#${a.id}" target="_blank" class="action-btn" style="padding:5px 10px;border:1.5px solid var(--border-medium);border-radius:var(--radius-sm);font-size:0.76rem;font-weight:700;color:var(--text-secondary);text-decoration:none;">View ↗</a>`
+                }
+      </div></td>
+    </tr>`).join('');
+        }
+
+        // ============================================================
+        // SECTION BUILDER HELPERS
+        // ============================================================
+        function addSection(data) {
+            data = data || {};
+            const container = document.getElementById('sections-builder');
+            const idx = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'section-card';
+            div.innerHTML = `
+                <div class="section-card-header">
+                    <span>Section ${idx}</span>
+                    <button type="button" class="action-btn action-btn-delete" style="padding:3px 10px;" onclick="this.closest('.section-card').remove();renumberSections();">✕ Remove</button>
+                </div>
+                <div class="editor-field">
+                    <label>Section Heading</label>
+                    <input type="text" class="sec-heading" placeholder="e.g. What Is Sepsis?" />
+                </div>
+                <div class="editor-field">
+                    <label>Section Content <span style="font-weight:400;color:var(--text-muted);">(plain text — no HTML needed)</span></label>
+                    <textarea class="sec-content" rows="4" placeholder="Write the section content here in plain English…"></textarea>
+                </div>
+                <div class="editor-field">
+                    <label>💡 Callout Box <span style="font-weight:400;color:var(--text-muted);">(optional — highlighted insight)</span></label>
+                    <input type="text" class="sec-callout" placeholder="e.g. Key Definition: Sepsis is life-threatening organ dysfunction…" />
+                </div>
+                <div class="editor-field" style="margin-bottom:0;">
+                    <label>⚠️ Warning Note <span style="font-weight:400;color:var(--text-muted);">(optional — important caution)</span></label>
+                    <input type="text" class="sec-warning" placeholder="e.g. Do NOT give IV fluids without dynamic assessment…" />
+                </div>`;
+            container.appendChild(div);
+            if (data.heading) div.querySelector('.sec-heading').value = data.heading;
+            if (data.content) div.querySelector('.sec-content').value = data.content;
+            if (data.callout) div.querySelector('.sec-callout').value = data.callout;
+            if (data.warning) div.querySelector('.sec-warning').value = data.warning;
+        }
+
+        function renumberSections() {
+            document.querySelectorAll('#sections-builder .section-card').forEach((card, i) => {
+                card.querySelector('.section-card-header span').textContent = `Section ${i + 1}`;
+            });
+        }
+
+        function clearSectionsOnly() {
+            document.getElementById('sections-builder').innerHTML = '';
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`stat${i}-num`).value = '';
+                document.getElementById(`stat${i}-lbl`).value = '';
+            }
+        }
+
+        function loadStructured(structured) {
+            clearSectionsOnly();
+            (structured.sections || []).forEach(s => addSection(s));
+            const stats = structured.stats || [];
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`stat${i + 1}-num`).value = (stats[i] && stats[i].num) || '';
+                document.getElementById(`stat${i + 1}-lbl`).value = (stats[i] && stats[i].lbl) || '';
+            }
+        }
+
+        function getStructuredData() {
+            const sections = [];
+            document.querySelectorAll('#sections-builder .section-card').forEach(card => {
+                sections.push({
+                    heading: card.querySelector('.sec-heading').value.trim(),
+                    content: card.querySelector('.sec-content').value.trim(),
+                    callout: card.querySelector('.sec-callout').value.trim(),
+                    warning: card.querySelector('.sec-warning').value.trim()
+                });
+            });
+            const stats = [];
+            for (let i = 1; i <= 3; i++) {
+                const num = document.getElementById(`stat${i}-num`).value.trim();
+                const lbl = document.getElementById(`stat${i}-lbl`).value.trim();
+                if (num) stats.push({ num, lbl });
+            }
+            return { sections, stats };
+        }
+
+        function buildArticleHTML(structured) {
+            let html = '';
+            const stats = structured.stats || [];
+            if (stats.length > 0) {
+                html += '<div class="article-stats-row">';
+                stats.forEach(s => { html += `<div class="article-stat-card"><div class="num">${s.num}</div><div class="lbl">${s.lbl}</div></div>`; });
+                html += '</div>';
+            }
+            (structured.sections || []).forEach(s => {
+                if (s.heading) html += `<h3>${s.heading}</h3>`;
+                if (s.content) {
+                    const paras = s.content.split(/\n\n+/).map(p => p.replace(/\n/g, '<br>'));
+                    html += paras.map(p => `<p>${p}</p>`).join('');
+                }
+                if (s.callout) html += `<div class="article-callout"><p>${s.callout}</p></div>`;
+                if (s.warning) html += `<div class="article-warning-box"><div class="warn-title">⚠️ Important</div><p>${s.warning}</p></div>`;
+            });
+            return html;
+        }
+
+        // ============================================================
+        // ARTICLE CRUD
+        // ============================================================
+        function saveArticle(status) {
+            const id = document.getElementById('editor-id').value || ('art-' + Date.now());
+            const title = document.getElementById('editor-title').value.trim();
+            const pillar = document.getElementById('editor-pillar').value;
+            const subtitle = document.getElementById('editor-subtitle').value.trim();
+            const author = document.getElementById('editor-author').value;
+            const overridesId = document.getElementById('editor-overrides-id').value || '';
+            const structured = getStructuredData();
+            if (!title || !structured.sections.length || !structured.sections[0].heading) {
+                alert('Title and at least one section with a heading are required.'); return;
+            }
+            const body = buildArticleHTML(structured);
+            const articles = getAdminArticles();
+            const existing = articles.findIndex(a => a.id === id);
+            const article = { id, title, pillar, subtitle, body, author, status, overridesId, structured, savedAt: new Date().toISOString() };
+            if (existing >= 0) articles[existing] = article; else articles.push(article);
+            saveAdminArticles(articles);
+            clearEditor();
+            switchPanel('knowledge');
+        }
+
+        function editArticle(id) {
+            const article = getAdminArticles().find(a => a.id === id);
+            if (!article) return;
+            document.getElementById('editor-id').value = article.id;
+            document.getElementById('editor-title').value = article.title;
+            document.getElementById('editor-pillar').value = article.pillar;
+            document.getElementById('editor-subtitle').value = article.subtitle || '';
+            document.getElementById('editor-author').value = article.author;
+            document.getElementById('editor-status').value = article.status;
+            document.getElementById('editor-overrides-id').value = article.overridesId || '';
+            if (article.structured && article.structured.sections && article.structured.sections.length) {
+                loadStructured(article.structured);
+            } else {
+                clearSectionsOnly(); addSection();
+            }
+            switchPanel('editor');
+        }
+
+        const BUILT_IN_CONTENT = {
+            sepsis: {
+                subtitle: "Sepsis kills 11 million people every year — more than all cancers combined. Learn the warning signs, the timeline of deterioration, and why the first hour is everything.",
+                structured: {
+                    stats: [
+                        { num: "11M", lbl: "sepsis deaths annually worldwide" },
+                        { num: "7%", lbl: "mortality increase per hour of antibiotic delay" },
+                        { num: "1hr", lbl: "the critical window — the Hour-1 Bundle" }
+                    ],
+                    sections: [
+                        { heading: "What Is Sepsis?", content: "Sepsis is not an infection. It is your body's dysregulated, life-threatening response to an infection — a cascade of inflammation that, paradoxically, begins to destroy the very organs it is trying to protect. Any infection can trigger sepsis: a urinary tract infection, a chest infection, an abdominal infection, even a dental abscess.", callout: "Key Definition (Sepsis-3, 2016): Sepsis is life-threatening organ dysfunction caused by a dysregulated host response to infection. It is identified clinically by an increase in the SOFA score of ≥2 points.", warning: "" },
+                        { heading: "Warning Signs Families Must Know", content: "The most dangerous thing about sepsis is how quickly it can progress — from apparent wellness to life-threatening collapse in hours. The THINK acronym is useful for families:", callout: "", warning: "T: Temperature — very high (>38.5°C) or very low (<36°C) | H: Heart rate — unusually fast, above 90 beats per minute | I: Infection — known or suspected | N: Neurological — confusion, altered behaviour, or unusual drowsiness | K: Kidney — not passing urine, or much less than usual" },
+                        { heading: "The Sepsis-3 Criteria", content: "In 2016, the international Sepsis-3 taskforce redefined how we diagnose sepsis. The Quick SOFA (qSOFA) score is used for rapid bedside screening: Respiratory rate ≥ 22/min, Altered mental status, Systolic BP ≤ 100 mmHg. A qSOFA score of 2 or more in a patient with suspected infection warrants urgent clinical assessment and escalation.", callout: "", warning: "" },
+                        { heading: "The SSC Hour-1 Bundle", content: "The Surviving Sepsis Campaign Hour-1 Bundle is the global standard for sepsis management. At Apollo ICU, this bundle is initiated within 60 minutes of sepsis recognition: measure lactate, obtain blood cultures, administer broad-spectrum antibiotics, begin crystalloid resuscitation (30 mL/kg), apply vasopressors if MAP <65 mmHg — Norepinephrine first-line.", callout: "", warning: "" },
+                        { heading: "What Happens in the ICU", content: "Once admitted to the ICU with sepsis, the focus shifts to source control, haemodynamic stabilisation, organ support, and daily reassessment of antibiotics. Dr. Kothari's team uses dynamic fluid assessments — passive leg raise tests and pulse pressure variation — rather than aggressive fixed-volume protocols, to guide resuscitation precisely.", callout: "", warning: "" }
+                    ]
+                }
+            },
+            ecmo: {
+                subtitle: "A plain-language guide to Extracorporeal Membrane Oxygenation — who needs it, how it works, and what outcomes families can realistically expect.",
+                structured: {
+                    stats: [
+                        { num: "50–70%", lbl: "VV-ECMO survival in experienced centres" },
+                        { num: "5–7L", lbl: "blood volume processed per minute" },
+                        { num: "1971", lbl: "year of first successful ECMO use (Dr. Bartlett)" }
+                    ],
+                    sections: [
+                        { heading: "What Is ECMO?", content: "Extracorporeal Membrane Oxygenation is an advanced life support technique that temporarily takes over the function of the heart, the lungs, or both. Blood is pumped out of the patient's body through large cannulas, passed through an artificial membrane oxygenator that adds oxygen and removes carbon dioxide, and then returned to the patient. In essence, ECMO does what the lungs and heart cannot — buying critical time for organs to recover.", callout: "Dr. Kothari's Perspective: ECMO is not the last resort people fear it to be. It is a bridge — to recovery, to a transplant, or to a decision. When initiated at the right time, in the right patient, by an experienced team, outcomes are genuinely impressive.", warning: "" },
+                        { heading: "Types of ECMO", content: "VV-ECMO (Veno-Venous): Supports lung function only. Blood is drawn from a vein, oxygenated, and returned to a vein. Used in severe ARDS and respiratory failure.\n\nVA-ECMO (Veno-Arterial): Supports both heart and lung function. Blood is drawn from a vein and returned to an artery. Used in cardiogenic shock and cardiac arrest.\n\nECCO₂R: A low-flow variant focused primarily on CO₂ removal in less severe respiratory failure.", callout: "", warning: "" },
+                        { heading: "Who Needs ECMO?", content: "ECMO is not for every ICU patient. The ELSO 2021 guidelines recommend considering VV-ECMO when conventional mechanical ventilation fails to maintain life-compatible oxygenation in severe ARDS — specifically when PaO₂/FiO₂ ratio is below 50–80 mmHg despite optimal ventilator settings.", callout: "", warning: "ECMO is NOT appropriate for: Irreversible neurological injury | End-stage multi-organ failure with no reversible aetiology | Uncontrolled bleeding disorders | Advanced malignancy without transplant option" },
+                        { heading: "ECMO in Practice at Apollo ICU", content: "Once initiated, ECMO requires 24/7 expert management by a dedicated team. The ICU team monitors circuit pressures, membrane function, oxygenator performance, and anticoagulation levels continuously. Daily weaning assessments are performed — testing whether the patient's own lungs or heart can gradually take over the work of the ECMO circuit as function returns.", callout: "", warning: "" },
+                        { heading: "What Families Should Know — and Ask", content: "If a family member is being considered for ECMO, the most important questions to ask are: What is the reversible cause of organ failure? What is our recovery target? What defined endpoints will guide the decision to continue or discontinue? An experienced ECMO team will always have clear answers to these questions before initiation.", callout: "", warning: "" }
+                    ]
+                }
+            },
+            crrt: {
+                subtitle: "Understanding Continuous Renal Replacement Therapy — why it differs from conventional dialysis, and when it is used in the ICU.",
+                structured: {
+                    stats: [
+                        { num: "50%", lbl: "of ICU patients develop AKI" },
+                        { num: "3×", lbl: "increased mortality risk with AKI in ICU" },
+                        { num: "~60%", lbl: "of severe AKI patients recover if they survive the critical illness" }
+                    ],
+                    sections: [
+                        { heading: "Acute Kidney Injury (AKI) in the ICU", content: "Acute Kidney Injury affects 30–50% of all ICU patients and is independently associated with increased mortality. In the context of critical illness — whether sepsis, major surgery, cardiogenic shock, or rhabdomyolysis — the kidneys are often among the first organs to suffer. When they fail, toxins accumulate, fluid balance deteriorates, and acid-base disorders worsen.", callout: "", warning: "" },
+                        { heading: "CRRT vs. Conventional Haemodialysis — What's the Difference?", content: "Conventional intermittent haemodialysis (IHD) runs for 4 hours, dialysing large volumes of blood rapidly. This rapid fluid and solute shift is poorly tolerated by haemodynamically unstable ICU patients — it can cause dangerous drops in blood pressure. CRRT solves this by running continuously at a much slower rate — typically 20–25 mL/kg/hour — allowing gentle, gradual removal of fluid and toxins that the heart and circulation can tolerate.", callout: "Key Concept: The slower, gentler pace of CRRT is its defining advantage. It removes fluid and waste products at a rate the unstable ICU patient's haemodynamics can accommodate.", warning: "" },
+                        { heading: "When Does the ICU Use CRRT? (KDIGO 2022)", content: "Per KDIGO 2022 AKI Guidelines, the urgent indications for initiating CRRT are: Refractory metabolic acidosis (pH <7.2 not responding to bicarbonate) | Refractory hyperkalaemia (>6 mmol/L not responding to medical management) | Severe uraemic complications (encephalopathy, pericarditis, bleeding) | Fluid overload unresponsive to diuretics causing respiratory compromise | Drug or toxin removal requiring continuous clearance.", callout: "", warning: "" },
+                        { heading: "What Families Need to Know About CRRT", content: "CRRT requires close monitoring of the access site (typically a large central venous catheter), anticoagulation to prevent filter clotting, and frequent electrolyte checks. The machine runs continuously, appears technically complex, but causes the patient minimal discomfort. The goal is always supporting kidney function while the underlying critical illness is treated — with the hope that the kidneys will recover sufficiently to function independently again.", callout: "", warning: "" }
+                    ]
+                }
+            },
+            ventilation: {
+                subtitle: "A family-friendly explanation of mechanical ventilation in the ICU — settings, complications, and the weaning process.",
+                structured: {
+                    stats: [
+                        { num: "6 mL", lbl: "per kg ideal body weight — the lung-protective tidal volume (ARMA Trial)" },
+                        { num: "22%", lbl: "reduction in ARDS mortality with lower tidal volumes" },
+                        { num: "16+hrs", lbl: "prone positioning daily reduces ARDS mortality (PROSEVA Trial)" }
+                    ],
+                    sections: [
+                        { heading: "Why Is My Family Member on a Ventilator?", content: "Mechanical ventilation is a life-support measure — not a sign of hopelessness. When a patient cannot breathe adequately on their own due to severe pneumonia, ARDS, sepsis, drug overdose, or post-operative complications, a ventilator breathes for them while the underlying cause is treated. The goal is always to support the patient through the crisis and safely remove ventilator support as soon as possible.", callout: "", warning: "" },
+                        { heading: "How Does a Ventilator Work?", content: "A ventilator delivers a precisely controlled breath — a mixture of oxygen and air — through a tube placed in the windpipe (endotracheal tube). The key settings include: tidal volume (how much air per breath), respiratory rate (how many breaths per minute), FiO₂ (fraction of oxygen), and PEEP (Positive End-Expiratory Pressure — keeping the air sacs from collapsing).", callout: "", warning: "" },
+                        { heading: "Lung-Protective Ventilation", content: "Traditional ventilation used high volumes to keep oxygen levels normal. The landmark ARMA trial (2000) showed this caused ventilator-induced lung injury (VILI). The modern standard is lung-protective ventilation: 6 mL/kg tidal volumes, higher PEEP to keep air sacs open, and limiting plateau pressures. This approach reduced 28-day ARDS mortality by 22%.", callout: "Evidence-Based: Prone positioning (lying face down) for ≥16 hours per day reduced 28-day ARDS mortality from 32.8% to 16% in the PROSEVA trial — now standard practice in Dr. Kothari's ICU.", warning: "" },
+                        { heading: "The Weaning Process — Getting Off the Ventilator", content: "Weaning is the careful, systematic process of reducing ventilator support as the patient's breathing improves. Every day, Dr. Kothari's team conducts a Spontaneous Breathing Trial (SBT) — reducing ventilator support to minimal levels and monitoring whether the patient can breathe safely on their own. If the SBT is passed and other criteria are met, the tube is removed (extubation).", callout: "", warning: "" },
+                        { heading: "What Families Should Understand", content: "Many patients on ventilators are conscious and aware — they may be able to hear you, so talk to them gently. Sedation is kept as light as possible — heavy sedation increases complications. Progress is measured daily — ask the team what today's SBT result was. There will be days of setback — weaning is rarely linear. Patience and trust in the process matter.", callout: "", warning: "" }
+                    ]
+                }
+            },
+            mof: {
+                subtitle: "Understanding MODS — what causes it, why it is so dangerous, and how critical care specialists orchestrate the complex support required.",
+                structured: {
+                    stats: [
+                        { num: ">50%", lbl: "MODS cases precipitated by sepsis" },
+                        { num: "3–4", lbl: "organ failures — mortality approaches 70–80%" },
+                        { num: "SOFA", lbl: "daily scoring to track organ function trajectory" }
+                    ],
+                    sections: [
+                        { heading: "What Is Multi-Organ Dysfunction Syndrome (MODS)?", content: "MODS is the progressive dysfunction of two or more organ systems in a critically ill patient — such that homeostasis cannot be maintained without medical intervention. It is the most common cause of ICU death. When lungs, kidneys, liver, heart, and brain fail in sequence or simultaneously, the intensivist's role becomes that of a conductor — orchestrating simultaneous support for each failing system.", callout: "Key Concept: No single organ fails in isolation in MODS. Interventions to support one organ must be carefully chosen to avoid worsening another. This is the art of critical care medicine.", warning: "" },
+                        { heading: "Why Does Multi-Organ Failure Happen?", content: "The most common triggers are severe sepsis and septic shock (accounting for >50% of cases), major trauma, large burns, pancreatitis, and cardiogenic shock. The underlying mechanism involves excessive systemic inflammation, microvascular thrombosis, cellular energy failure, and apoptosis — a biological perfect storm that progressively impairs organ function despite adequate perfusion.", callout: "", warning: "" },
+                        { heading: "The SOFA Score — Tracking Organ Failure", content: "The Sequential Organ Failure Assessment (SOFA) score quantifies the degree of dysfunction across six organ systems: respiratory (P/F ratio), coagulation (platelets), liver (bilirubin), cardiovascular (vasopressor requirement), neurological (GCS), and renal (creatinine). A SOFA score of ≥2 indicates active organ dysfunction. Daily SOFA trajectory is one of the most important prognostic tools in MODS management.", callout: "", warning: "" },
+                        { heading: "How MODS Is Managed at Apollo ICU", content: "Management is fundamentally supportive — buying time for organ recovery while treating the precipitating cause. In practice: ECMO or high-flow nasal cannula for respiratory failure, CRRT for renal failure, vasopressors for cardiovascular support, enteral nutrition to protect the gut, heparin for coagulopathy, and strict glycaemic control. There is no single drug that reverses MODS.", callout: "", warning: "" }
+                    ]
+                }
+            },
+            "family-guide": {
+                subtitle: "Everything families need to know about the ICU — the machines, the monitors, how to communicate, and how to support recovery from outside the room.",
+                structured: {
+                    stats: [],
+                    sections: [
+                        { heading: "Entering the ICU for the First Time", content: "Nothing fully prepares you for seeing a family member in the ICU for the first time. The noise of monitors, the tangle of lines, the hiss of ventilators — it is overwhelming. The most important thing to know is that every wire, tube, and machine has a purpose. You are not powerless. Your presence matters, your questions matter, and your support is part of the healing process.", callout: "Remember: Even if your loved one appears sedated, they may be able to hear you. Studies show that familiar voices, gentle touch, and spoken reassurance reduce anxiety and improve ICU outcomes. Talk to them. Tell them what day it is. Tell them you're there.", warning: "" },
+                        { heading: "Understanding the Machines Around the Bed", content: "Heart Rate Monitor: Shows how fast the heart is beating — normal is 60–100 bpm.\n\nBlood Pressure: Either via cuff cycling every few minutes, or an invasive arterial line in the wrist artery for continuous real-time reading.\n\nSpO₂ (Oxygen Saturation): The probe on the finger measuring how well the blood carries oxygen. Targets are typically 94–98%.\n\nVentilator: If intubated — breathes for your loved one. You will see a tube in the mouth and the ventilator cycling with each breath.\n\nIV Lines and Infusions: Medications, fluids, and nutrition delivered directly into the bloodstream.", callout: "", warning: "" },
+                        { heading: "How to Communicate With the ICU Team", content: "At Apollo ICU, the team aim to provide family briefings daily — usually in the morning after rounds. Prepare your questions in advance. The most useful questions to ask: What is the primary diagnosis? Is the patient improving, stable, or deteriorating? What is the next 24-hour plan? What are the things to watch for? Are there decisions being made that need our input?", callout: "", warning: "Things NOT to do in the ICU: Do not bring outside food, flowers, or plants (infection risk) | Do not discuss prognosis negatively near the patient — they may hear | Do not adjust or touch any tubes, lines, or equipment | Do not visit if you have fever, cough, or diarrhoea" },
+                        { heading: "Supporting Recovery from Outside the Room", content: "Your self-care is not a luxury — it is a medical necessity. ICU family members are at significant risk of anxiety, depression, and PTSD. Eat regularly. Sleep in shifts if you must stay at the hospital. Accept help from friends and family. Ask the social work team for support resources. And know that by staying informed, advocating for your loved one, and being present, you are genuinely contributing to their care.", callout: "", warning: "" }
+                    ]
+                }
+            },
+            delirium: {
+                subtitle: "Why ICU patients become confused or agitated, how delirium is clinically assessed and managed, and what the long-term cognitive implications are.",
+                structured: {
+                    stats: [
+                        { num: "50–80%", lbl: "of mechanically ventilated patients develop delirium" },
+                        { num: "3×", lbl: "higher risk of 6-month mortality in delirious ICU patients" },
+                        { num: "11 days", lbl: "longer hospital stay in patients with ICU delirium" }
+                    ],
+                    sections: [
+                        { heading: "What Is ICU Delirium?", content: "ICU delirium is an acute brain dysfunction characterised by disturbed attention, impaired thinking, and an altered level of consciousness — occurring in 50–80% of mechanically ventilated ICU patients. It is not just confusion. Delirium is an independent risk factor for increased mortality, prolonged ventilation, longer ICU and hospital stays, and lasting cognitive impairment after discharge.", callout: "", warning: "" },
+                        { heading: "Types of ICU Delirium", content: "Hyperactive: Agitation, pulling at tubes, attempting to get out of bed — the most visible type, and often the most frightening for families.\n\nHypoactive: Quiet, withdrawn, flat — often missed, but actually the most common and prognostically worse form.\n\nMixed: Fluctuating between both types — the most common overall pattern.", callout: "", warning: "" },
+                        { heading: "CAM-ICU — How We Assess ICU Delirium", content: "The Confusion Assessment Method for the ICU (CAM-ICU) is a validated bedside tool applicable even in intubated patients. It assesses: (1) Acute onset and fluctuating course, (2) Inattention, (3) Altered level of consciousness, (4) Disorganised thinking. A positive CAM-ICU result triggers immediate management review.", callout: "", warning: "" },
+                        { heading: "The ABCDEF Bundle — Prevention Is the Priority", content: "The ABCDEF bundle (2018) is the comprehensive, evidence-based framework for delirium prevention and management: A — Assess pain; B — Both Spontaneous Awakening and Breathing Trials; C — Choice of sedation (light sedation targets); D — Delirium assess/manage (CAM-ICU); E — Early Mobility and Exercise; F — Family engagement and empowerment. Implementing the full ABCDEF bundle reduces delirium incidence by up to 78% in some studies.", callout: "", warning: "" }
+                    ]
+                }
+            },
+            nutrition: {
+                subtitle: "Why nutrition is among the most underappreciated life-saving therapies in the ICU — optimal timing, routes, and evidence-based targets.",
+                structured: {
+                    stats: [
+                        { num: "24–48h", lbl: "target window for enteral nutrition initiation" },
+                        { num: "1.2–2g", lbl: "protein per kg body weight per day — ICU target" },
+                        { num: "25–30", lbl: "kcal/kg/day — typical ICU caloric target" }
+                    ],
+                    sections: [
+                        { heading: "Why Nutrition Is a Life-Saving ICU Therapy", content: "ICU patients undergo a profound metabolic storm — hypermetabolism, accelerated protein catabolism, immune dysregulation, and gut barrier dysfunction. Without adequate nutritional support, lean muscle mass is lost at a rate of 1–2% per day. This ICU-acquired weakness prolongs ventilation, impairs immunity, delays wound healing, and worsens long-term outcomes. Early, optimal nutrition is not comfort — it is therapy.", callout: "Key Insight: An ICU patient who is not eating is not simply not hungry. They are burning through their body reserve at an alarming rate. Every hour of nutritional delay matters.", warning: "" },
+                        { heading: "Timing Is Everything: Early Enteral Nutrition", content: "ESPEN 2023 guidelines recommend initiating enteral nutrition within 24–48 hours of ICU admission in most patients. If the gut works, use it — is the guiding principle. Early enteral nutrition preserves gut mucosal integrity (preventing bacterial translocation), maintains gut-associated immunity, reduces infections and systemic inflammation, and improves clinical outcomes compared to parenteral routes.", callout: "", warning: "" },
+                        { heading: "Enteral vs. Parenteral Nutrition", content: "Enteral nutrition (EN) is delivered via a tube in the stomach (NGT) or small intestine (NJT) and is the preferred route when the gut is functional. Parenteral nutrition (PN) — delivered intravenously — is reserved for patients where EN is contraindicated or insufficient (e.g., gut ileus, short bowel). PN carries higher infection risk and is metabolically more complex to manage. Supplemental PN can be added after 3–7 days if EN alone cannot meet targets.", callout: "", warning: "" },
+                        { heading: "Caloric and Protein Targets", content: "Optimal caloric target in the early ICU phase (days 1–3): 70–80% of estimated requirements — hypocaloric feeding reduces metabolic complications while still being protective. From Day 3–4 onwards: full caloric target of 25–30 kcal/kg/day. Protein: 1.2–2.0 g/kg/day — the higher range for burns, trauma, and ECMO patients. Daily monitoring of blood glucose (target 7.8–10 mmol/L) with insulin infusion is mandatory in all ICU patients receiving nutrition.", callout: "", warning: "" }
+                    ]
+                }
+            },
+            antimicrobial: {
+                subtitle: "Preventing hospital-acquired infections, understanding antibiotic resistance in Indian ICUs, and how stewardship protects patients — and the future of medicine.",
+                structured: {
+                    stats: [
+                        { num: "30%", lbl: "of ICU patients develop at least one HAI" },
+                        { num: "8–10 days", lbl: "additional ICU stay caused by VAP" },
+                        { num: "2–3×", lbl: "higher mortality risk with HAI" }
+                    ],
+                    sections: [
+                        { heading: "Hospital-Acquired Infections in the ICU", content: "Hospital-acquired infections (HAIs) are among the most serious threats to ICU patients. The most common include Ventilator-Associated Pneumonia (VAP), Central Line-Associated Bloodstream Infections (CLABSI), and Catheter-Associated Urinary Tract Infections (CAUTI). These infections affect 30% of ICU patients, significantly increase mortality, prolong stay, and drive antibiotic use — fuelling resistance.", callout: "", warning: "" },
+                        { heading: "Prevention: ICU Bundles That Work", content: "Apollo ICU implements evidence-based prevention bundles. VAP bundle includes head-of-bed elevation at 30–45°, daily sedation holidays, oral care with chlorhexidine, and subglottic suction. CLABSI bundle includes maximum barrier precautions, chlorhexidine skin prep, and daily necessity reviews. Every unnecessary line, tube, and catheter is removed as soon as clinically safe.", callout: "", warning: "" },
+                        { heading: "Antimicrobial Stewardship — Using Antibiotics Wisely", content: "Antimicrobial stewardship (AMS) is the coordinated programme ensuring antibiotics are used only when needed, for the right duration, and then de-escalated or stopped based on culture results. This is not about being conservative with sick patients — it is about being precise. Giving the wrong antibiotic for too long selects for resistant organisms that will be untreatable in the next patient.", callout: "The Stewardship Principle: Start broad when sepsis is suspected. Culture early. De-escalate once organism and sensitivities are known. Stop when the course is complete. This protects the patient, the community, and the future of medicine.", warning: "" },
+                        { heading: "AMR and the Indian ICU Context", content: "India has one of the world's highest burdens of carbapenem-resistant Klebsiella, ESBL-producing E. coli, and MRSA. Hospital-acquired infections in Indian ICUs are far more likely to involve multi-drug resistant organisms than in Western centres. This makes stewardship even more critical — and makes culture-guided therapy the non-negotiable standard of care at responsible ICUs like Apollo Hospitals, Ahmedabad.", callout: "", warning: "" }
+                    ]
+                }
+            },
+            pics: {
+                subtitle: "Post-Intensive Care Syndrome affects up to 50% of ICU survivors — the physical, cognitive, and psychological challenges of life after critical illness.",
+                structured: {
+                    stats: [
+                        { num: "30–50%", lbl: "of ICU survivors develop PICS" },
+                        { num: "25%", lbl: "of ICU survivors develop PTSD" },
+                        { num: "months–years", lbl: "duration of PICS symptoms in many patients" }
+                    ],
+                    sections: [
+                        { heading: "What Is Post-Intensive Care Syndrome (PICS)?", content: "Discharge from the ICU is not the end of the critical illness journey — it is the beginning of a new, often underappreciated one. Post-Intensive Care Syndrome (PICS) is the term for new or worsening impairments in physical, cognitive, and mental health status arising after critical illness — persisting beyond the acute hospitalisation. SCCM estimates 30–50% of ICU survivors are affected.", callout: "PICS also affects families — PICS-F (Post-Intensive Care Syndrome — Family) refers to the psychological burden borne by caregivers of ICU survivors: anxiety, depression, complicated grief, and PTSD at very high rates.", warning: "" },
+                        { heading: "Physical Challenges of PICS", content: "ICU-acquired weakness (ICUAW) is the most common physical manifestation — significant muscle atrophy and weakness affecting 25–50% of mechanically ventilated patients. It causes difficulty walking, climbing stairs, and performing daily activities for months after discharge. Other physical issues include persistent fatigue, dysphagia (swallowing difficulties post-extubation), sleep disorders, sexual dysfunction, and chronic pain.", callout: "", warning: "" },
+                        { heading: "Cognitive and Mental Health Challenges", content: "Cognitive impairment after ICU is strikingly common — affecting attention, memory, processing speed, and executive function. Many survivors describe brain fog persisting for months. Depression affects up to 30% of survivors. Anxiety is highly prevalent. And 25% develop clinical PTSD, characterised by intrusive memories, nightmares, hyperarousal, and avoidance of hospital reminders.", callout: "", warning: "" },
+                        { heading: "Supporting Long-Term ICU Recovery", content: "Early mobilisation in the ICU (from day 2–3 if haemodynamically stable) is the single most evidence-based intervention for preventing ICUAW. Post-ICU rehabilitation should be multidisciplinary: physiotherapy to rebuild strength, neuropsychological support for cognitive and emotional recovery, and ICU follow-up clinics that screen for PTSD and unresolved physical complications. ICU diaries — daily logs kept by nurses for the patient — have been shown to reduce PTSD rates by up to 35%.", callout: "", warning: "" }
+                    ]
+                }
+            }
+        };
+
+
+
+        function editBuiltInArticle(id) {
+            const a = BUILT_IN_ARTICLES.find(x => x.id === id);
+            if (!a) return;
+            const content = BUILT_IN_CONTENT[id] || {};
+            document.getElementById('editor-id').value = 'art-' + id;
+            document.getElementById('editor-title').value = a.title;
+            document.getElementById('editor-pillar').value = a.pillar;
+            document.getElementById('editor-subtitle').value = content.subtitle || '';
+            document.getElementById('editor-author').value = 'Dr. Jay Kothari';
+            document.getElementById('editor-status').value = a.status;
+            document.getElementById('editor-overrides-id').value = id;
+            if (content.structured) {
+                loadStructured(content.structured);
+            } else {
+                clearSectionsOnly(); addSection();
+            }
+            switchPanel('editor');
+        }
+
+        function deleteArticle(id) {
+            if (!confirm('Delete this article?')) return;
+            saveAdminArticles(getAdminArticles().filter(a => a.id !== id));
+            renderKnowledge();
+        }
+
+        function clearEditor() {
+            ['editor-id', 'editor-title', 'editor-subtitle', 'editor-body', 'editor-overrides-id'].forEach(f => document.getElementById(f).value = '');
+            document.getElementById('editor-author').value = 'Dr. Jay Kothari';
+            document.getElementById('editor-status').value = 'published';
+            clearSectionsOnly();
+            addSection();
+        }
+
+        // ============================================================
+        // REVIEWS
+        // ============================================================
+        function renderReviews() {
+            const reviews = getPendingReviews();
+            const tbody = document.getElementById('reviews-table');
+            if (reviews.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">No pending reviews. Use the form below to simulate one.</td></tr>';
+            } else {
+                tbody.innerHTML = [...reviews].reverse().map(r => `<tr>
+        <td><strong>${r.name}</strong><br><span style="font-size:0.75rem;text-transform:capitalize;color:var(--accent-secondary);">${r.platform}</span></td>
+        <td style="max-width:300px;font-size:0.86rem;">${r.text.substring(0, 120)}${r.text.length > 120 ? '…' : ''}</td>
+        <td style="font-size:0.78rem;color:var(--text-muted);">${new Date(r.submitted).toLocaleDateString('en-GB')}</td>
+        <td><span class="status-badge badge-${r.status}">${r.status}</span></td>
+        <td><div class="action-btns">
+          ${r.status === 'pending' ? `<button class="action-btn action-btn-approve" onclick="updateReviewStatus(${r.id},'approved')">✓ Approve</button>
+          <button class="action-btn action-btn-reject" onclick="updateReviewStatus(${r.id},'rejected')">✕ Reject</button>` :
+                        `<span style="font-size:0.8rem;color:var(--text-muted);">${r.status}</span>`}
+        </div></td>
+      </tr>`).join('');
+            }
+            updateBadges();
+        }
+
+        function updateReviewStatus(id, status) {
+            const reviews = getPendingReviews().map(r => r.id === id ? { ...r, status } : r);
+            savePendingReviews(reviews);
+            renderReviews();
+        }
+
+        function submitTestReview() {
+            const name = document.getElementById('rv-name').value.trim();
+            const platform = document.getElementById('rv-platform').value;
+            const text = document.getElementById('rv-text').value.trim();
+            if (!name || !text) { alert('Name and review text are required.'); return; }
+            const reviews = getPendingReviews();
+            reviews.push({ id: Date.now(), name, platform, text, status: 'pending', submitted: new Date().toISOString() });
+            savePendingReviews(reviews);
+            document.getElementById('rv-name').value = '';
+            document.getElementById('rv-text').value = '';
+            renderReviews();
+            alert('Test review submitted for approval!');
+        }
+
+        // ============================================================
+        // PHOTOS
+        // ============================================================
+        function renderPhotos() {
+            const pending = getPendingPhotos();
+            const adminPhotos = getAdminPhotos();
+            const grid = document.getElementById('photo-grid');
+            let html = '';
+
+            // ---- Section 1: User-submitted photos from public form ----
+            if (pending.length > 0) {
+                html += `<div style="grid-column:1/-1;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);padding:4px 0 8px;border-bottom:1px solid var(--border-subtle);margin-bottom:4px;">📤 Pending User Submissions (${pending.length})</div>`;
+                html += pending.map(p => `<div class="photo-review-item">
+      <div class="photo-review-img">
+        ${p.imageBase64 ? `<img src="${p.imageBase64}" style="width:100%;height:100%;object-fit:cover;" />` : '📷'}
+      </div>
+      <div class="photo-review-body">
+        <div class="photo-review-name">${p.name}</div>
+        <div class="photo-review-date">${p.caption} · ${p.label}</div>
+        ${p.story ? `<div style="font-size:0.74rem;color:var(--text-secondary);margin:4px 0;line-height:1.5;">${p.story.substring(0, 100)}…</div>` : ''}
+        <div style="margin-top:6px;"><span class="status-badge badge-${p.status}">${p.status}</span></div>
+        <div class="photo-review-actions" style="margin-top:8px;">
+          ${p.status === 'pending' ? `<button class="action-btn action-btn-approve" onclick="approveSubmittedPhoto(${p.id})">✓ Approve</button>
+          <button class="action-btn action-btn-reject" onclick="rejectSubmittedPhoto(${p.id})">✕ Reject</button>` : `<span style="font-size:0.78rem;color:var(--text-muted);">Reviewed</span>`}
+        </div>
+      </div>
+    </div>`).join('');
+            }
+
+            // ---- Section 2: Admin-added photos ----
+            if (adminPhotos.length > 0) {
+                html += `<div style="grid-column:1/-1;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);padding:12px 0 8px;border-bottom:1px solid var(--border-subtle);margin-bottom:4px;">🖼️ Admin-Added Photos (${adminPhotos.length})</div>`;
+                html += adminPhotos.map(p => `<div class="photo-review-item">
+      <div class="photo-review-img">${p.url ? `<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" />` : '📷'}</div>
+      <div class="photo-review-body">
+        <div class="photo-review-name">${p.caption}</div>
+        <div class="photo-review-date">${p.label} · ${p.status}</div>
+        <div class="photo-review-actions" style="margin-top:8px;">
+          <button class="action-btn action-btn-delete" onclick="deletePhoto(${p.id})">Delete</button>
+        </div>
+      </div>
+    </div>`).join('');
+            }
+
+            if (!html) html = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">No photos yet. Use the form above or wait for user submissions.</div>';
+            grid.innerHTML = html;
+            updateBadges();
+        }
+
+        function approveSubmittedPhoto(id) {
+            const pending = getPendingPhotos();
+            const p = pending.find(x => x.id === id);
+            if (!p) return;
+            // Mark as approved in pending_photos
+            savePendingPhotos(pending.map(x => x.id === id ? { ...x, status: 'approved' } : x));
+            // Also add to admin_photos wall with base64 image
+            const adminPhotos = getAdminPhotos();
+            adminPhotos.push({ id: Date.now(), url: p.imageBase64, caption: p.caption, label: p.label, status: 'approved', added: new Date().toISOString() });
+            saveAdminPhotos(adminPhotos);
+            renderPhotos();
+        }
+        function rejectSubmittedPhoto(id) {
+            savePendingPhotos(getPendingPhotos().map(p => p.id === id ? { ...p, status: 'rejected' } : p));
+            renderPhotos();
+        }
+
+        function addPhoto() {
+            const url = document.getElementById('photo-url').value.trim();
+            const caption = document.getElementById('photo-caption').value.trim();
+            const label = document.getElementById('photo-label').value.trim() || 'General';
+            if (!caption) { alert('Caption is required.'); return; }
+            const photos = getAdminPhotos();
+            photos.push({ id: Date.now(), url, caption, label, status: 'approved', added: new Date().toISOString() });
+            saveAdminPhotos(photos);
+            document.getElementById('photo-url').value = '';
+            document.getElementById('photo-caption').value = '';
+            document.getElementById('photo-label').value = '';
+            renderPhotos();
+        }
+
+        function updatePhotoStatus(id, status) {
+            saveAdminPhotos(getAdminPhotos().map(p => p.id === id ? { ...p, status } : p));
+            renderPhotos();
+        }
+        function deletePhoto(id) {
+            if (!confirm('Delete this photo?')) return;
+            saveAdminPhotos(getAdminPhotos().filter(p => p.id !== id));
+            renderPhotos();
+        }
+
+        // ============================================================
+        // MYTH BUSTER CRUD
+        // ============================================================
+        const DEFAULT_MYTHS = [
+            { id: 1, statement: '"If you\'re on a ventilator, you\'re in a coma and feel nothing."', fact: 'Many ventilated patients are conscious and aware. Sedation levels are carefully titrated — over-sedation increases ICU delirium. Light sedation protocols (ABCDEF bundle) are now standard.', source: 'Evidence-based ICU practice' },
+            { id: 2, statement: '"More IV fluids always help a shocked patient recover faster."', fact: 'Fluid overload is directly associated with increased ICU mortality. Modern protocols use dynamic fluid assessments (PPV, PLR). De-resuscitation is now a key ICU skill.', source: 'SSC Guidelines 2021' },
+            { id: 3, statement: '"ECMO is a last resort — once on ECMO, patients rarely survive."', fact: 'With careful patient selection, VV-ECMO survival for severe ARDS reaches 50–70%. CESAR and EOLIA trials demonstrated significant benefits. ECMO is a bridge to recovery.', source: 'ELSO Registry Data 2023' },
+            { id: 4, statement: '"Sepsis only affects elderly or immunocompromised patients."', fact: 'Sepsis can affect anyone — even a 25-year-old with a dental infection. It caused 11 million deaths in 2017 globally. Young, healthy people can deteriorate within hours.', source: 'Lancet Global Health 2020' },
+            { id: 5, statement: '"Once organs start failing, nothing more can be done."', fact: 'Modern ICU medicine can support multiple organ systems simultaneously — CRRT, ECMO, vasopressors, enteral nutrition. Many patients with 3–4 organ failure make full recoveries.', source: 'Multi-organ support therapy 2023' },
+            { id: 6, statement: '"Eating is not important in the ICU — patients are getting fluids."', fact: 'ICU nutrition is a life-saving therapy. Early enteral feeding (within 24–48hrs) reduces infections, ICU-acquired weakness, and mortality.', source: 'ESPEN ICU Guidelines 2023' },
+            { id: 7, statement: '"Higher doses of antibiotics are always better for severe infections."', fact: 'Antibiotic stewardship — right drug, right dose, right duration — is more effective than "more". Overuse drives AMR. De-escalation once cultures return is critical.', source: 'WHO AMR Action Plan' },
+            { id: 8, statement: '"Once a patient leaves the ICU, they\'re fully recovered."', fact: 'Post-Intensive Care Syndrome (PICS) affects up to 50% of ICU survivors — physical weakness, cognitive decline, anxiety, PTSD for months to years.', source: 'SCCM PICS Task Force' }
+        ];
+        const getMyths = () => { try { const d = JSON.parse(localStorage.getItem('apollo_admin_myths') || 'null'); return d && d.length ? d : DEFAULT_MYTHS; } catch { return DEFAULT_MYTHS; } };
+        const saveMyths = d => localStorage.setItem('apollo_admin_myths', JSON.stringify(d));
+
+        function renderMyths() {
+            const myths = getMyths();
+            document.getElementById('myth-count').textContent = myths.length + ' cards';
+            document.getElementById('myth-table-body').innerHTML = myths.map(m => `
+              <div style="border-bottom:1px solid var(--border-subtle);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;">
+                <div>
+                  <div style="font-size:0.84rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;">⚠️ ${m.statement}</div>
+                  <div style="font-size:0.78rem;color:var(--text-secondary);">✅ ${m.fact.substring(0, 100)}…</div>
+                  <div style="font-size:0.72rem;color:var(--accent-secondary);margin-top:4px;">— ${m.source}</div>
+                </div>
+                <div class="action-btns">
+                  <button class="action-btn action-btn-edit" onclick="editMyth(${m.id})">Edit</button>
+                  <button class="action-btn action-btn-delete" onclick="deleteMyth(${m.id})">Delete</button>
+                </div>
+              </div>`).join('');
+        }
+        function editMyth(id) {
+            const m = getMyths().find(x => x.id === id);
+            if (!m) return;
+            document.getElementById('myth-edit-id').value = id;
+            document.getElementById('myth-statement').value = m.statement;
+            document.getElementById('myth-fact').value = m.fact;
+            document.getElementById('myth-source').value = m.source;
+            document.querySelector('#panel-myths .editor-card h3').textContent = '✏️ Edit Myth Card';
+        }
+        function saveMythCard() {
+            const stmt = document.getElementById('myth-statement').value.trim();
+            const fact = document.getElementById('myth-fact').value.trim();
+            const source = document.getElementById('myth-source').value.trim();
+            if (!stmt || !fact) { alert('Myth statement and fact are required.'); return; }
+            const myths = getMyths();
+            const editId = parseInt(document.getElementById('myth-edit-id').value);
+            if (editId) {
+                const idx = myths.findIndex(m => m.id === editId);
+                if (idx > -1) myths[idx] = { ...myths[idx], statement: stmt, fact, source };
+            } else {
+                myths.push({ id: Date.now(), statement: stmt, fact, source });
+            }
+            saveMyths(myths);
+            clearMythForm();
+            renderMyths();
+        }
+        function deleteMyth(id) {
+            if (!confirm('Delete this myth card?')) return;
+            saveMyths(getMyths().filter(m => m.id !== id));
+            renderMyths();
+        }
+        function clearMythForm() {
+            ['myth-edit-id', 'myth-statement', 'myth-fact', 'myth-source'].forEach(id => document.getElementById(id).value = '');
+            document.querySelector('#panel-myths .editor-card h3').textContent = '➕ Add / Edit Myth Card';
+        }
+
+        // ============================================================
+        // QUIZ QUESTION CRUD
+        // ============================================================
+        const getQuizBank = () => { try { const d = JSON.parse(localStorage.getItem('apollo_quiz_questions') || 'null'); if (d && d.length) return d; } catch { } return null; };
+        const saveQuizBank = d => localStorage.setItem('apollo_quiz_questions', JSON.stringify(d));
+
+        function renderQuizEditor() {
+            // Get from localStorage or show empty (first load = no custom bank set)
+            const bank = getQuizBank();
+            const tbody = document.getElementById('quiz-q-table');
+            const countEl = document.getElementById('quiz-q-count');
+            if (!bank) {
+                countEl.textContent = '50 built-in questions (not yet customised)';
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted);">Using the 50 default questions from quiz.html. Add a question above to start customising, or click "Reset to 50 Defaults" to load them into the editor.</td></tr>`;
+                return;
+            }
+            countEl.textContent = bank.length + ' questions';
+            tbody.innerHTML = bank.map((q, i) => {
+                const letters = ['A', 'B', 'C', 'D'];
+                return `<tr>
+                  <td style="width:40px;">${i + 1}</td>
+                  <td style="font-size:0.84rem;">${q.q.substring(0, 80)}${q.q.length > 80 ? '…' : ''}</td>
+                  <td><span class="status-badge badge-published">${letters[q.correct]}: ${q.options[q.correct]?.substring?.(0, 30) ?? ''}…</span></td>
+                  <td><div class="action-btns">
+                    <button class="action-btn action-btn-edit" onclick="editQuizQ(${i})">Edit</button>
+                    <button class="action-btn action-btn-delete" onclick="deleteQuizQ(${i})">Delete</button>
+                  </div></td>
+                </tr>`;
+            }).join('');
+        }
+        function editQuizQ(idx) {
+            const bank = getQuizBank();
+            if (!bank) return;
+            const q = bank[idx];
+            document.getElementById('q-edit-id').value = idx;
+            document.getElementById('q-question').value = q.q;
+            document.getElementById('q-a').value = q.options[0] || '';
+            document.getElementById('q-b').value = q.options[1] || '';
+            document.getElementById('q-c').value = q.options[2] || '';
+            document.getElementById('q-d').value = q.options[3] || '';
+            document.getElementById('q-correct').value = q.correct;
+            document.getElementById('q-explanation').value = q.explanation || '';
+        }
+        function saveQuizQuestion() {
+            const quest = document.getElementById('q-question').value.trim();
+            const optA = document.getElementById('q-a').value.trim();
+            const optB = document.getElementById('q-b').value.trim();
+            if (!quest || !optA || !optB) { alert('Question and at least options A & B are required.'); return; }
+            const options = [optA, optB, document.getElementById('q-c').value.trim(), document.getElementById('q-d').value.trim()].filter(Boolean);
+            const correct = parseInt(document.getElementById('q-correct').value);
+            const explanation = document.getElementById('q-explanation').value.trim();
+            const editIdx = document.getElementById('q-edit-id').value;
+            let bank = getQuizBank() || [];
+            if (editIdx !== '') {
+                bank[parseInt(editIdx)] = { q: quest, options, correct, explanation };
+            } else {
+                bank.push({ q: quest, options, correct, explanation });
+            }
+            saveQuizBank(bank);
+            clearQuizForm();
+            renderQuizEditor();
+            alert('✅ Question saved! Quiz will now use this custom bank.');
+        }
+        function deleteQuizQ(idx) {
+            if (!confirm('Delete this question?')) return;
+            const bank = getQuizBank() || [];
+            bank.splice(idx, 1);
+            saveQuizBank(bank);
+            renderQuizEditor();
+        }
+        function clearQuizForm() {
+            ['q-edit-id', 'q-question', 'q-a', 'q-b', 'q-c', 'q-d', 'q-explanation'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('q-correct').value = '0';
+        }
+        function resetQuizToDefault() {
+            if (!confirm('This will clear the custom quiz bank and reload all 50 default questions. Continue?')) return;
+            localStorage.removeItem('apollo_quiz_questions');
+            renderQuizEditor();
+            alert('↺ Reset done. Quiz is back to the 50 built-in questions.');
+        }
+
+        // ============================================================
+        // RESEARCH PAPERS CRUD
+        // ============================================================
+        const DEFAULT_RESEARCH = [
+            { id: 1, title: 'Prone Positioning in Severe ARDS (PROSEVA)', journal: 'NEJM', year: 2013, topic: 'ARDS & Ventilation', doi: 'https://doi.org/10.1056/NEJMoa1214103', abstract: 'Prone positioning ≥16h/day reduced 28-day mortality from 32.8% to 16% in severe ARDS patients.' },
+            { id: 2, title: 'VV-ECMO for Severe ARDS (EOLIA)', journal: 'NEJM', year: 2018, topic: 'ECMO', doi: 'https://doi.org/10.1056/NEJMoa1800385', abstract: 'Early VV-ECMO reduced the composite primary endpoint; trial stopped early. Rescue ECMO crossover was 28%.' },
+            { id: 3, title: 'Lung-Protective Ventilation (ARDSNet/ARMA)', journal: 'NEJM', year: 2000, topic: 'ARDS & Ventilation', doi: 'https://doi.org/10.1056/NEJM200005043421801', abstract: '6 mL/kg IBW tidal volumes reduced 28-day mortality by 22% vs 12 mL/kg in ARDS.' },
+            { id: 4, title: 'Surviving Sepsis Campaign 2021 Guidelines', journal: 'Intensive Care Medicine', year: 2021, topic: 'Sepsis & Infection', doi: 'https://doi.org/10.1007/s00134-021-06506-y', abstract: 'Comprehensive guideline update on sepsis/septic shock management including Hour-1 Bundle and antimicrobial stewardship.' }
+        ];
+        const getResearch = () => { try { const d = JSON.parse(localStorage.getItem('apollo_admin_research') || 'null'); return d && d.length ? d : DEFAULT_RESEARCH; } catch { return DEFAULT_RESEARCH; } };
+        const saveResearch = d => localStorage.setItem('apollo_admin_research', JSON.stringify(d));
+
+        function renderResearch() {
+            const papers = getResearch();
+            document.getElementById('rp-count').textContent = papers.length + ' papers';
+            document.getElementById('rp-table').innerHTML = papers.map(p => `<tr>
+              <td style="font-weight:700;font-size:0.84rem;">${p.title}</td>
+              <td style="font-size:0.78rem;color:var(--text-muted);">${p.journal}</td>
+              <td>${p.year}</td>
+              <td><span class="status-badge badge-published" style="font-size:0.66rem;">${p.topic}</span></td>
+              <td><div class="action-btns">
+                ${p.doi ? `<a href="${p.doi}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View ↗</a>` : ''}
+                <button class="action-btn action-btn-edit" onclick="editResearch(${p.id})">Edit</button>
+                <button class="action-btn action-btn-delete" onclick="deleteResearch(${p.id})">Delete</button>
+              </div></td>
+            </tr>`).join('');
+        }
+        function editResearch(id) {
+            const p = getResearch().find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('rp-edit-id').value = id;
+            document.getElementById('rp-title').value = p.title;
+            document.getElementById('rp-journal').value = p.journal;
+            document.getElementById('rp-year').value = p.year;
+            document.getElementById('rp-topic').value = p.topic;
+            document.getElementById('rp-doi').value = p.doi || '';
+            document.getElementById('rp-abstract').value = p.abstract || '';
+        }
+        function saveResearchPaper() {
+            const title = document.getElementById('rp-title').value.trim();
+            const journal = document.getElementById('rp-journal').value.trim();
+            const year = parseInt(document.getElementById('rp-year').value);
+            if (!title || !journal || !year) { alert('Title, journal and year are required.'); return; }
+            const papers = getResearch();
+            const editId = parseInt(document.getElementById('rp-edit-id').value);
+            const newPaper = { id: editId || Date.now(), title, journal, year, topic: document.getElementById('rp-topic').value, doi: document.getElementById('rp-doi').value.trim(), abstract: document.getElementById('rp-abstract').value.trim() };
+            if (editId) {
+                const idx = papers.findIndex(p => p.id === editId);
+                if (idx > -1) papers[idx] = newPaper; else papers.push(newPaper);
+            } else { papers.push(newPaper); }
+            saveResearch(papers);
+            clearResearchForm();
+            renderResearch();
+        }
+        function deleteResearch(id) {
+            if (!confirm('Delete this paper?')) return;
+            saveResearch(getResearch().filter(p => p.id !== id));
+            renderResearch();
+        }
+        function clearResearchForm() {
+            ['rp-edit-id', 'rp-title', 'rp-journal', 'rp-year', 'rp-doi', 'rp-abstract'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        function loadAll() {
+
+            renderDashboard();
+            renderAdminCal();
+            updateBadges();
+        }
+    </script>
+</body>
+
+</html>

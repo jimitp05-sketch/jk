@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Research Library | AI Apollo | Dr. Jay Kothari</title>
+    <meta name="description"
+        content="Curated landmark research and clinical guidelines in critical care medicine — reviewed and contextualised by Dr. Jay Kothari, Apollo Hospitals, Ahmedabad." />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div id="cursor-glow"></div>
+    <div id="secondary-glow"></div>
+    <nav class="nav scrolled" id="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">AI <span class="glow-text">APOLLO</span></a>
+            <div class="nav-links">
+                <a href="index.html#about">About</a>
+                <a href="index.html#expertise">Expertise</a>
+                <a href="knowledge.html">Knowledge Hub</a>
+                <a href="research.html" class="active glow-text">Research</a>
+                <a href="quiz.html">ICU Intel</a>
+                <a href="reviews.html">Pulse</a>
+                <a href="index.html#contact" class="nav-cta">Book Consultation</a>
+            </div>
+            <button class="nav-toggle" id="nav-toggle"
+                aria-label="Open navigation"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+    <div class="nav-mobile" id="nav-mobile">
+        <a href="index.html#about">About</a>
+        <a href="knowledge.html">Knowledge Hub</a>
+        <a href="research.html">Research</a>
+        <a href="quiz.html">ICU Intel ✨</a>
+        <a href="reviews.html">Pulse</a>
+        <a href="index.html#contact" class="btn-primary" style="margin-top:16px;text-align:center;">Book
+            Consultation</a>
+    </div>
+
+    <main class="section" style="padding-top:160px;">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Evidence-Based Medicine</span>
+                <h1 class="section-title">The Research <span class="glow-text">Library</span></h1>
+                <p class="section-subtitle">Landmark studies and clinical guidelines. Reviewed and contextualised for
+                    modern ICU practice by Dr. Jay Kothari.</p>
+            </div>
+
+            <div class="research-filters">
+                <button class="filter-btn active" data-filter="all">All Topics</button>
+                <button class="filter-btn" data-filter="sepsis">Sepsis</button>
+                <button class="filter-btn" data-filter="ecmo">ECMO</button>
+                <button class="filter-btn" data-filter="ards">ARDS</button>
+                <button class="filter-btn" data-filter="crrt">CRRT / AKI</button>
+                <button class="filter-btn" data-filter="icu">ICU Practice</button>
+            </div>
+
+            <div class="research-grid">
+
+                <div class="glass-card research-item reveal" data-topic="sepsis">
+                    <div>
+                        <div class="research-topic">Sepsis · 2021 Landmark</div>
+                        <h3>Surviving Sepsis Campaign: 2021 International Guidelines</h3>
+                        <p class="research-authors">Evans L, et al. — Intensive Care Medicine / Critical Care Medicine
+                        </p>
+                    </div>
+                    <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Dynamic fluid assessment, early
+                        antibiotics (Hour-1 for Septic Shock), and Norepinephrine as first-line vasopressor.
+                        Corticosteroids recommended for refractory septic shock.</div>
+                    <a href="https://doi.org/10.1007/s00134-021-06506-y" target="_blank" rel="noopener"
+                        class="read-more">View Paper →</a>
+                </div>
+
+                <div class="glass-card research-item reveal reveal-delay-1" data-topic="ards">
+                    <div>
+                        <div class="research-topic">ARDS · NEJM Foundational</div>
+                        <h3>ARMA Trial: Lower Tidal Volumes for ALI and ARDS</h3>
+                        <p class="research-authors">ARDSNet Investigators — New England Journal of Medicine (2000)</p>
+                    </div>
+                    <div class="research-takeaway"><strong>Clinical Takeaway:</strong> 6 mL/kg IBW tidal volumes reduce
+                        28-day mortality by 22% in ARDS compared to 12 mL/kg. Foundational for lung-protective
+                        ventilation.</div>
+                    <a href="https://doi.org/10.1056/NEJM200005043421801" target="_blank" rel="noopener"
+                        class="read-more">View Paper →</a>
+                </div>
+
+                <div class="glass-card research-item reveal reveal-delay-2" data-topic="ecmo">
+                    <div>
+                        <div class="research-topic">ECMO · The Lancet</div>
+                        <h3>CESAR Trial: Conventional vs. ECMO-Centre Referral for ARDS</h3>
+                        <p class="research-authors">Peek GJ, et al. — The Lancet (2009)</p>
+                    </div>
+                    <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Referral to an ECMO-specialist
+                        centre significantly improves survival without severe disability at 6 months in severe ARDS.
+                    </div>
+                    <a href="https://doi.org/10.1016/S0140-6736(09)61069-2" target="_blank" rel="noopener"
+                        class="read-more">View Paper →</a>
+                </div>
+
+                <div class="glass-card research-item reveal reveal-delay-3" data-topic="ecmo">
+                    <div>
+                        <div class="research-topic">ECMO · NEJM High-Impact</div>
+                        <h3>EOLIA Trial: ECMO Rescue Therapy for Severe ARDS</h3>
+                        <p class="research-authors">Combes A, et al. — New England Journal of Medicine (2018)</p>
+                    </div>
+                    <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Bayesian analysis of EOLIA
+                        suggests &gt;99% probability of a mortality benefit for early ECMO in the most severe ARDS.
+                        Crossover rate (28%) confounded primary endpoint.</div>
+                    <a href="https://doi.org/10.1056/NEJMoa1800385" target="_blank" rel="noopener"
+                        class="read-more">View Paper →</a>
+                </div>
+
+                <div class="glass-card research-item reveal" data-topic="sepsis">
+                    <div>
+                        <div class="research-topic">Sepsis · NEJM Landmark</div>
+                        <h3>ProCESS Trial: Protocol-Based Care for Early Septic Shock</h3>
+                        <p class="research-authors">ProCESS Investigators — New England Journal of Medicine (2014)</p>
+                    </div>
+                    <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Protocol-based resuscitation
+                        (including Rivers' EGDT) did not improve outcomes over usual ICU care in septic shock —
+                        emphasising that clinical judgement remains central, not rigid algorithms.</div>
+                    <a href="https://doi.org/10.1056/NEJMoa1401602" target="_blank" rel="noopener"
+                        class="read-more">View Paper →</a>
+                </div>
+
+                <div class="glass-card research-item reveal reveal-delay-1" data-topic="crrt">
+                    <div>
+                        <div class="research-topic">AKI · KDIGO Guidelines 2022</div>
+                        <h3>KDIGO Clinical Practice Guideline for Acute Kidney Injury 2022 Update</h3>
+                        <p class="research-authors">KDIGO AKI Work Group — Kidney International Supplements</p>
+                    </div>
+                    <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Stage 3 AKI with metabolic
+                        acidosis, fluid overload, or haemodynamic instability warrants urgent CRRT initiation. Dose:
+                        20–25 mL/kg/hr effluent for adequate clearance.</div>
+                    <a href="https://doi.org/10.1016/j.kint.2022.10.016" target="_blank" rel="noopener"
+                        class="read-more">View Guidelines →</a>
+                </div>
+
+                <div class="glass-card research-item reveal reveal-delay-2" data-topic="icu">
+                    <div>
+                        <div class="research-topic">ICU Practice · NEJM 2021</div>
+                        <h3>RECOVERY Trial: Dexamethasone in Hospitalised Patients With COVID-19</h3>
+                        <p class="research-authors">RECOVERY Collaborative Group — New England Journal of Medicine
+                            (2021)</p>
+                    </div>
+                    <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Dexamethasone 6 mg/day for 10
+                        days reduced 28-day mortality by 35% in mechanically ventilated Covid-19 patients — now the
+                        global standard for severe respiratory failure.</div>
+                    <a href="https://doi.org/10.1056/NEJMoa2021436" target="_blank" rel="noopener"
+                        class="read-more">View Paper →</a>
+                </div>
+
+                <div class="glass-card research-item reveal reveal-delay-3" data-topic="sepsis">
+                    <div>
+                        <div class="research-topic">Sepsis · NEJM 2019</div>
+                        <h3>ANDROMEDA-SHOCK: Peripheral Perfusion vs. Lactate Resuscitation</h3>
+                        <p class="research-authors">Hernández G, et al. — JAMA (2019)</p>
+                    </div>
+                    <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Peripheral perfusion-guided
+                        resuscitation (capillary refill time) outperformed lactate-guided approach for septic shock —
+                        demonstrating clinical bedside assessment remains vital in ICU management.</div>
+                    <a href="https://doi.org/10.1001/jama.2019.0071" target="_blank" rel="noopener"
+                        class="read-more">View Paper →</a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <div class="footer-logo">AI <span class="glow-text">APOLLO</span></div>
+                    <div class="footer-tagline">Dr. Jay Kothari · Consultant Critical Care · Apollo Hospitals, Ahmedabad
+                    </div>
+                </div>
+                <nav class="footer-links">
+                    <a href="index.html">Home</a><a href="knowledge.html">Knowledge Hub</a>
+                    <a href="research.html">Research</a><a href="quiz.html">ICU Intel</a>
+                    <a href="reviews.html">Pulse</a><a href="index.html#contact">Contact</a>
+                </nav>
+            </div>
+            <div class="footer-bottom"><em>Research summaries are for educational context only. Always refer to current
+                    full-text guidelines for clinical decision-making.</em></div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+# AI Apollo — Website 2
+# Hostinger Git Deploy Config
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+*.code-workspace
+
+# Logs
+*.log
+
+# Node (if ever used)
+node_modules/
+package-lock.json
+
+# Admin panel — exclude from public Git for security
+# Uncomment the line below if you want to keep admin.html off GitHub
+# admin.html
+
+# Temp files
+*.tmp
+*.bak
+~$*

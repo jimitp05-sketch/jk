@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ICU Intel — Test Your Critical Care IQ | AI Apollo</title>
+    <meta name="description"
+        content="Bust medical myths, test your ICU knowledge, and explore fascinating critical care facts — an interactive, playful educational experience from Dr. Jay Kothari's desk." />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        .tabs {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 32px;
+            border-radius: 99px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-primary);
+            color: #fff;
+            border-color: var(--accent-primary);
+            box-shadow: 0 4px 20px rgba(94, 106, 210, 0.4);
+        }
+
+        .tab-btn:hover:not(.active) {
+            border-color: var(--border-accent);
+            color: var(--text-primary);
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .myth-flip-hint {
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .myth-flip-hint span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(43, 50, 128, 0.08);
+            padding: 6px 14px;
+            border-radius: 99px;
+            border: 1px solid var(--border-accent);
+        }
+
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px;
+            background: rgba(43, 50, 128, 0.08);
+            border: 1px solid var(--border-accent);
+            border-radius: 99px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+            margin-bottom: 32px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cursor-glow"></div>
+    <div id="secondary-glow"></div>
+
+    <nav class="nav scrolled" id="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">AI <span class="glow-text">APOLLO</span></a>
+            <div class="nav-links">
+                <a href="index.html#about">About</a>
+                <a href="knowledge.html">Knowledge Hub</a>
+                <a href="research.html">Research</a>
+                <a href="quiz.html" class="active glow-text">ICU Intel</a>
+                <a href="reviews.html">Pulse</a>
+                <a href="index.html#contact" class="nav-cta">Book Consultation</a>
+            </div>
+            <button class="nav-toggle" id="nav-toggle"
+                aria-label="Open navigation"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+    <div class="nav-mobile" id="nav-mobile">
+        <a href="index.html">Home</a>
+        <a href="knowledge.html">Knowledge Hub</a>
+        <a href="research.html">Research</a>
+        <a href="reviews.html">Pulse</a>
+        <a href="index.html#contact" class="btn-primary" style="margin-top:16px;text-align:center;">Book
+            Consultation</a>
+    </div>
+
+    <!-- HERO — Prestige White page-hero -->
+    <section class="page-hero">
+        <div class="container" style="position:relative; z-index:2;">
+            <span class="section-label" style="color:rgba(255,255,255,0.55);">Interactive · Playful · Educational</span>
+            <h1 style="margin-bottom:18px;">ICU <span
+                    style="background:linear-gradient(135deg,#7B96FF,#4DAAFF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Intel</span>
+            </h1>
+            <p>Bust myths. Test your IQ. Discover facts that might just save a life. Medical science made fascinating —
+                from the desk of a 30-year intensive care specialist.</p>
+            <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+                <a href="#myths" class="btn-primary"
+                    style="background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,0.3);box-shadow:none;">🔬
+                    Bust Myths</a>
+                <a href="#quiz" class="btn-outline">🧠 Take the Quiz</a>
+                <a href="#facts" class="btn-outline">📊 Explore Facts</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FACT TICKER -->
+    <div
+        style="background:#080C1A; border-top:1px solid rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.05); padding:14px 0; overflow:hidden; white-space:nowrap;">
+        <div class="fact-ticker">
+            <span class="ticker-item"><span class="ticker-icon">🦠</span> Sepsis kills 11 million people annually — more
+                than all cancers combined <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">🫀</span> ECMO circuits can oxygenate blood outside the
+                body at 5–7 litres per minute <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">💨</span> Lung-protective ventilation (6 mL/kg) reduces
+                ARDS mortality by 22% <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">🧪</span> ICU patients have a 50% chance of developing
+                delirium during their stay <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">⏱️</span> Every hour of delay in sepsis antibiotics
+                increases mortality by 7% <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">🧠</span> 1 in 4 ICU survivors develop PTSD after
+                discharge <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">💊</span> Overuse of antibiotics creates resistant
+                superbugs — antimicrobial stewardship saves lives <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">🌱</span> Post-ICU Syndrome (PICS) can last years —
+                physical, cognitive, and psychological <span class="ticker-sep">···</span></span>
+            <!-- Duplicate for seamless loop -->
+            <span class="ticker-item"><span class="ticker-icon">🦠</span> Sepsis kills 11 million people annually — more
+                than all cancers combined <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">🫀</span> ECMO circuits can oxygenate blood outside the
+                body at 5–7 litres per minute <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">💨</span> Lung-protective ventilation (6 mL/kg) reduces
+                ARDS mortality by 22% <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">🧪</span> ICU patients have a 50% chance of developing
+                delirium during their stay <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">⏱️</span> Every hour of delay in sepsis antibiotics
+                increases mortality by 7% <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">🧠</span> 1 in 4 ICU survivors develop PTSD after
+                discharge <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">💊</span> Overuse of antibiotics creates resistant
+                superbugs — antimicrobial stewardship saves lives <span class="ticker-sep">···</span></span>
+            <span class="ticker-item"><span class="ticker-icon">🌱</span> Post-ICU Syndrome (PICS) can last years —
+                physical, cognitive, and psychological <span class="ticker-sep">···</span></span>
+        </div>
+    </div>
+
+    <!-- MAIN TABS SECTION -->
+    <section class="section" id="myths">
+        <div class="container">
+            <div class="tabs" role="tablist">
+                <button class="tab-btn active" data-tab="myths-panel" role="tab" aria-selected="true">🔬 Myth
+                    Busters</button>
+                <button class="tab-btn" data-tab="quiz-panel" role="tab" aria-selected="false">🧠 ICU IQ Quiz</button>
+                <button class="tab-btn" data-tab="facts-panel" role="tab" aria-selected="false">📊 ICU Facts &
+                    Stats</button>
+            </div>
+
+            <!-- MYTH BUSTERS -->
+            <div class="tab-panel active" id="myths-panel">
+                <div class="section-header center" style="margin-bottom:32px;">
+                    <h2 class="section-title">Medical <span class="glow-text">Myth Busters</span></h2>
+                    <p class="section-subtitle" style="margin:0 auto;">Think you know the ICU? Tap a card to reveal the
+                        truth — some answers might surprise you.</p>
+                </div>
+                <div class="myth-flip-hint"><span>👆 Tap any card to flip it</span></div>
+                <div class="myths-grid">
+
+                    <div class="myth-card" onclick="this.classList.toggle('flipped')" tabindex="0"
+                        onkeydown="if(event.key==='Enter')this.classList.toggle('flipped')">
+                        <div class="myth-card-inner">
+                            <div class="myth-front">
+                                <div><span class="myth-label myth-text">⚠️ MYTH</span></div>
+                                <div class="myth-statement">"If you're on a ventilator, you're in a coma and feel
+                                    nothing."</div>
+                                <div class="myth-hint">Tap to reveal the truth →</div>
+                            </div>
+                            <div class="myth-back">
+                                <div><span class="myth-label fact-text">✅ FACT</span></div>
+                                <div class="myth-fact-content">Many ventilated patients are conscious and aware.
+                                    Sedation levels are carefully titrated — over-sedation increases ICU delirium,
+                                    muscle weakness, and ICU length of stay. Light sedation protocols (like ABCDEF
+                                    bundle) are now standard.</div>
+                                <div><span class="myth-label fact-text">— Evidence-based ICU practice</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="myth-card" onclick="this.classList.toggle('flipped')" tabindex="0"
+                        onkeydown="if(event.key==='Enter')this.classList.toggle('flipped')">
+                        <div class="myth-card-inner">
+                            <div class="myth-front">
+                                <div><span class="myth-label myth-text">⚠️ MYTH</span></div>
+                                <div class="myth-statement">"More IV fluids always help a shocked patient recover
+                                    faster."</div>
+                                <div class="myth-hint">Tap to reveal the truth →</div>
+                            </div>
+                            <div class="myth-back">
+                                <div><span class="myth-label fact-text">✅ FACT</span></div>
+                                <div class="myth-fact-content">Fluid overload is directly associated with increased ICU
+                                    mortality. Modern sepsis protocols use dynamic fluid assessments (pulse pressure
+                                    variation, PLR test) rather than aggressive volume loading. "De-resuscitation" is
+                                    now a key ICU skill.</div>
+                                <div><span class="myth-label fact-text">— SSC Guidelines 2021</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="myth-card" onclick="this.classList.toggle('flipped')" tabindex="0"
+                        onkeydown="if(event.key==='Enter')this.classList.toggle('flipped')">
+                        <div class="myth-card-inner">
+                            <div class="myth-front">
+                                <div><span class="myth-label myth-text">⚠️ MYTH</span></div>
+                                <div class="myth-statement">"ECMO is a last resort — once on ECMO, patients rarely
+                                    survive."</div>
+                                <div class="myth-hint">Tap to reveal the truth →</div>
+                            </div>
+                            <div class="myth-back">
+                                <div><span class="myth-label fact-text">✅ FACT</span></div>
+                                <div class="myth-fact-content">With careful patient selection and experienced centres,
+                                    VV-ECMO survival rates for severe ARDS reach 50–70%. The CESAR and EOLIA trials both
+                                    demonstrated significant benefits. ECMO is a bridge to recovery, not a terminal
+                                    decision.</div>
+                                <div><span class="myth-label fact-text">— ELSO Registry Data 2023</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="myth-card" onclick="this.classList.toggle('flipped')" tabindex="0"
+                        onkeydown="if(event.key==='Enter')this.classList.toggle('flipped')">
+                        <div class="myth-card-inner">
+                            <div class="myth-front">
+                                <div><span class="myth-label myth-text">⚠️ MYTH</span></div>
+                                <div class="myth-statement">"Sepsis only affects elderly or immunocompromised patients."
+                                </div>
+                                <div class="myth-hint">Tap to reveal the truth →</div>
+                            </div>
+                            <div class="myth-back">
+                                <div><span class="myth-label fact-text">✅ FACT</span></div>
+                                <div class="myth-fact-content">Sepsis can affect anyone — from a 25-year-old with a
+                                    dental infection to a healthy post-operative patient. It caused 11 million deaths in
+                                    2017 globally. Young, otherwise healthy people can deteriorate rapidly within hours
+                                    of onset.</div>
+                                <div><span class="myth-label fact-text">— Lancet Global Health 2020</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="myth-card" onclick="this.classList.toggle('flipped')" tabindex="0"
+                        onkeydown="if(event.key==='Enter')this.classList.toggle('flipped')">
+                        <div class="myth-card-inner">
+                            <div class="myth-front">
+                                <div><span class="myth-label myth-text">⚠️ MYTH</span></div>
+                                <div class="myth-statement">"Once organs start failing, nothing more can be done."</div>
+                                <div class="myth-hint">Tap to reveal the truth →</div>
+                            </div>
+                            <div class="myth-back">
+                                <div><span class="myth-label fact-text">✅ FACT</span></div>
+                                <div class="myth-fact-content">Modern ICU medicine can support multiple organ systems
+                                    simultaneously — CRRT for kidneys, ECMO for heart/lungs, vasopressors for
+                                    circulation, enteral nutrition for the gut. Many patients with 3-4 organ failure
+                                    make full recoveries with expert ICU management.</div>
+                                <div><span class="myth-label fact-text">— Multi-organ support therapy 2023</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="myth-card" onclick="this.classList.toggle('flipped')" tabindex="0"
+                        onkeydown="if(event.key==='Enter')this.classList.toggle('flipped')">
+                        <div class="myth-card-inner">
+                            <div class="myth-front">
+                                <div><span class="myth-label myth-text">⚠️ MYTH</span></div>
+                                <div class="myth-statement">"Eating is not important in the ICU — patients are getting
+                                    fluids."</div>
+                                <div class="myth-hint">Tap to reveal the truth →</div>
+                            </div>
+                            <div class="myth-back">
+                                <div><span class="myth-label fact-text">✅ FACT</span></div>
+                                <div class="myth-fact-content">ICU nutrition is a life-saving therapy. Critically ill
+                                    patients undergo hypermetabolism. Early enteral feeding (within 24–48hrs) reduces
+                                    infections, ICU-acquired weakness, ventilation duration, and mortality. "Let food be
+                                    thy medicine" applies most in the ICU.</div>
+                                <div><span class="myth-label fact-text">— ESPEN ICU Guidelines 2023</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="myth-card" onclick="this.classList.toggle('flipped')" tabindex="0"
+                        onkeydown="if(event.key==='Enter')this.classList.toggle('flipped')">
+                        <div class="myth-card-inner">
+                            <div class="myth-front">
+                                <div><span class="myth-label myth-text">⚠️ MYTH</span></div>
+                                <div class="myth-statement">"Higher doses of antibiotics are always better for severe
+                                    infections."</div>
+                                <div class="myth-hint">Tap to reveal the truth →</div>
+                            </div>
+                            <div class="myth-back">
+                                <div><span class="myth-label fact-text">✅ FACT</span></div>
+                                <div class="myth-fact-content">Antibiotic stewardship — using the right drug at the
+                                    right dose for the right duration — is more effective than "more antibiotics."
+                                    Overuse drives antimicrobial resistance, the next global health crisis.
+                                    De-escalation once cultures return is critical ICU practice.</div>
+                                <div><span class="myth-label fact-text">— WHO AMR Action Plan</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="myth-card" onclick="this.classList.toggle('flipped')" tabindex="0"
+                        onkeydown="if(event.key==='Enter')this.classList.toggle('flipped')">
+                        <div class="myth-card-inner">
+                            <div class="myth-front">
+                                <div><span class="myth-label myth-text">⚠️ MYTH</span></div>
+                                <div class="myth-statement">"Once a patient leaves the ICU, they're fully recovered."
+                                </div>
+                                <div class="myth-hint">Tap to reveal the truth →</div>
+                            </div>
+                            <div class="myth-back">
+                                <div><span class="myth-label fact-text">✅ FACT</span></div>
+                                <div class="myth-fact-content">Post-Intensive Care Syndrome (PICS) affects up to 50% of
+                                    ICU survivors — causing physical weakness, cognitive decline, anxiety, depression,
+                                    and PTSD for months to years. Discharge from ICU is the beginning, not the end, of
+                                    the recovery journey.</div>
+                                <div><span class="myth-label fact-text">— SCCM PICS Task Force</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <p class="nmc-note" style="margin-top:40px;">All facts are based on peer-reviewed evidence and current
+                    clinical guidelines. For medical decisions, always consult a qualified physician.</p>
+            </div>
+
+            <!-- ICU IQ QUIZ -->
+            <div class="tab-panel" id="quiz-panel" id="quiz">
+                <div class="section-header center" style="margin-bottom:48px;">
+                    <h2 class="section-title">ICU <span class="glow-text">IQ Quiz</span></h2>
+                    <p class="section-subtitle" style="margin:0 auto;">10 questions. How much do you really know about
+                        what happens in an ICU?</p>
+                </div>
+                <div class="quiz-wrapper">
+                    <div id="quiz-start" style="text-align:center; padding:60px 40px;">
+                        <div style="font-size:4rem; margin-bottom:20px;">🧠</div>
+                        <h3
+                            style="font-size:1.8rem; color:var(--text-primary); margin-bottom:16px; font-family:var(--font-heading);">
+                            Ready to Test Your ICU IQ?</h3>
+                        <p style="color:var(--text-secondary); font-size:1rem; margin-bottom:32px; line-height:1.75;">10
+                            questions from the world of critical care medicine. No pressure — even doctors learn
+                            something new here!</p>
+                        <button class="btn-primary" id="start-quiz-btn" style="font-size:1rem; padding:16px 40px;">Start
+                            Quiz →</button>
+                    </div>
+                    <div id="quiz-main" style="display:none;">
+                        <div class="quiz-progress-bar">
+                            <div class="quiz-progress-fill" id="quiz-progress" style="width:10%;"></div>
+                        </div>
+                        <div class="quiz-q-num" id="quiz-q-num">Question 1 of 10</div>
+                        <div class="quiz-question" id="quiz-question">Loading...</div>
+                        <div class="quiz-options" id="quiz-options"></div>
+                        <div class="quiz-feedback" id="quiz-feedback"></div>
+                        <div class="quiz-btn-row">
+                            <span id="quiz-current-score" style="font-size:0.85rem; color:var(--text-muted);">Score:
+                                0</span>
+                            <button class="btn-primary" id="quiz-next-btn" style="display:none;">Next Question
+                                →</button>
+                        </div>
+                    </div>
+                    <div id="quiz-result" style="display:none;" class="glass-card"
+                        style="padding:60px; text-align:center;">
+                        <div class="quiz-score-display">
+                            <div class="quiz-score-num glow-text" id="final-score">0/10</div>
+                            <div class="quiz-score-label">Your ICU Intelligence Score</div>
+                            <div class="quiz-result-msg" id="result-msg"></div>
+                            <div style="display:flex; gap:16px; justify-content:center; margin-top:32px;">
+                                <button class="btn-primary" id="restart-quiz-btn">Retake Quiz 🔄</button>
+                                <a href="knowledge.html" class="btn-outline">Explore Knowledge Hub →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ICU FACTS & STATS -->
+            <div class="tab-panel" id="facts-panel" id="facts">
+                <div class="section-header center" style="margin-bottom:40px;">
+                    <h2 class="section-title">ICU <span class="glow-text">Facts & Stats</span></h2>
+                    <p class="section-subtitle" style="margin:0 auto;">The numbers behind critical care — evidence that
+                        shapes how we save lives.</p>
+                </div>
+                <div class="stats-infographic">
+                    <div class="glass-card stat-infographic-card reveal">
+                        <div class="stat-infographic-num glow-text" data-count="11" data-suffix="M">0M</div>
+                        <div class="stat-infographic-label">Sepsis deaths annually worldwide — more than all cancers
+                            combined</div>
+                    </div>
+                    <div class="glass-card stat-infographic-card reveal reveal-delay-1">
+                        <div class="stat-infographic-num" style="color:var(--accent-gold);" data-count="22"
+                            data-suffix="%">0%</div>
+                        <div class="stat-infographic-label">Reduction in ARDS mortality with lung-protective ventilation
+                            (ARMA Trial)</div>
+                    </div>
+                    <div class="glass-card stat-infographic-card reveal reveal-delay-2">
+                        <div class="stat-infographic-num" style="color:#34d399;" data-count="50" data-suffix="%">0%
+                        </div>
+                        <div class="stat-infographic-label">Of ICU patients experience delirium at some point during
+                            their stay</div>
+                    </div>
+                    <div class="glass-card stat-infographic-card reveal reveal-delay-3">
+                        <div class="stat-infographic-num glow-text" data-count="7" data-suffix="%">0%</div>
+                        <div class="stat-infographic-label">Increase in sepsis mortality for each hour of antibiotic
+                            delay</div>
+                    </div>
+                </div>
+
+                <div style="margin-top:60px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                    <div class="glass-card reveal" style="padding:32px;">
+                        <h3
+                            style="color:var(--text-primary); font-size:1.15rem; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+                            🫀 ECMO Facts</h3>
+                        <ul style="display:flex; flex-direction:column; gap:12px; list-style:none;">
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:var(--accent-secondary); flex-shrink:0;">→</span> ECMO was first used
+                                successfully in 1971 by Dr. Robert Bartlett</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:var(--accent-secondary); flex-shrink:0;">→</span> A VV-ECMO circuit
+                                processes 5–7 litres of blood per minute outside the body</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:var(--accent-secondary); flex-shrink:0;">→</span> ECMO centre volume
+                                directly correlates with survival — high-volume centres see 55–70% survival</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:var(--accent-secondary); flex-shrink:0;">→</span> Only ~400 centres
+                                globally are certified ELSO ECMO centres</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card" style="padding:32px;">
+                        <h3 style="color:var(--text-primary); font-size:1.15rem; margin-bottom:20px;">🦠 Sepsis Facts
+                        </h3>
+                        <ul style="display:flex; flex-direction:column; gap:12px; list-style:none;">
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:#f87171; flex-shrink:0;">→</span> The Sepsis-3 definition (2016)
+                                replaced SIRS criteria — qSOFA is now the screening tool</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:#f87171; flex-shrink:0;">→</span> Lactate &gt;2 mmol/L with suspected
+                                infection meets Sepsis-3 septic shock criteria</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:#f87171; flex-shrink:0;">→</span> India accounts for 10–12 million
+                                sepsis cases annually — largely under-diagnosed</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:#f87171; flex-shrink:0;">→</span> ICU-acquired infections affect up to
+                                30% of admitted patients — prevention is critical</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card" style="padding:32px;">
+                        <h3 style="color:var(--text-primary); font-size:1.15rem; margin-bottom:20px;">💨 Ventilation
+                            Facts</h3>
+                        <ul style="display:flex; flex-direction:column; gap:12px; list-style:none;">
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:var(--accent-primary); flex-shrink:0;">→</span> Ventilator-associated
+                                pneumonia (VAP) increases ICU stay by 8–10 days on average</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:var(--accent-primary); flex-shrink:0;">→</span> Prone positioning for
+                                16+ hours/day reduces ARDS mortality by 16% (PROSEVA trial)</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:var(--accent-primary); flex-shrink:0;">→</span> Only 6 mL per kilogram
+                                of body weight — the lung-protective ventilation tidal volume target</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:var(--accent-primary); flex-shrink:0;">→</span> Daily spontaneous
+                                breathing trials (SBTs) help identify readiness for extubation</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card" style="padding:32px;">
+                        <h3 style="color:var(--text-primary); font-size:1.15rem; margin-bottom:20px;">🌱 Post-ICU Facts
+                        </h3>
+                        <ul style="display:flex; flex-direction:column; gap:12px; list-style:none;">
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:#34d399; flex-shrink:0;">→</span> PICS (Post-Intensive Care Syndrome)
+                                affects 30–50% of ICU survivors long-term</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:#34d399; flex-shrink:0;">→</span> ICU-acquired weakness (ICUAW) affects
+                                25–50% of patients mechanically ventilated &gt;7 days</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:#34d399; flex-shrink:0;">→</span> Early physiotherapy in the ICU
+                                (within 48 hours) dramatically reduces ICUAW incidence</li>
+                            <li style="font-size:0.9rem; color:var(--text-secondary); display:flex; gap:10px;"><span
+                                    style="color:#34d399; flex-shrink:0;">→</span> ICU diaries kept by nursing staff
+                                reduce PTSD in survivors by up to 35%</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="text-align:center; margin-top:50px;">
+                    <a href="knowledge.html" class="btn-primary">Deep Dive: Read the Knowledge Hub →</a>
+                </div>
+                <p class="nmc-note" style="margin-top:30px;">All statistics are derived from peer-reviewed literature
+                    and reputable global health databases. Sources available on the Research page.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <div class="footer-logo">AI <span class="glow-text">APOLLO</span></div>
+                    <div class="footer-tagline">Dr. Jay Kothari · Consultant Critical Care · Apollo Hospitals, Ahmedabad
+                    </div>
+                </div>
+                <nav class="footer-links">
+                    <a href="index.html">Home</a><a href="knowledge.html">Knowledge Hub</a>
+                    <a href="research.html">Research</a><a href="quiz.html">ICU Intel</a>
+                    <a href="reviews.html">Pulse</a><a href="index.html#contact">Contact</a>
+                </nav>
+            </div>
+            <div class="footer-bottom"><em>ICU Intel is for educational purposes only. No content constitutes medical
+                    advice. Always consult a qualified physician for medical decisions.</em></div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // ========== TABS ==========
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ========== 50-QUESTION BANK ==========
+        const QUESTION_BANK = [
+            { q: "What does ECMO stand for?", options: ["Extracorporeal Membrane Oxygenation", "Extended Cardiac Monitoring Operation", "Emergency Cardiac Muscle Oxygenation", "External Cardio-Metabolic Oxygenator"], correct: 0, explanation: "ECMO temporarily replaces heart/lung function by circulating blood outside the body through an artificial lung." },
+            { q: "According to Sepsis-3, what defines septic shock?", options: ["Fever >38°C", "Vasopressor requirement AND lactate >2 mmol/L despite fluids", "WBC >12,000", "RR >20 breaths/min"], correct: 1, explanation: "Sepsis-3 defines septic shock as sepsis requiring vasopressors to maintain MAP ≥65 mmHg AND lactate >2 mmol/L." },
+            { q: "What tidal volume is recommended for lung-protective ventilation in ARDS?", options: ["10–12 mL/kg IBW", "8–10 mL/kg IBW", "6 mL/kg IBW", "4 mL/kg IBW"], correct: 2, explanation: "ARMA trial showed 6 mL/kg IBW reduces 28-day ARDS mortality by 22%." },
+            { q: "What is the primary purpose of CRRT in the ICU?", options: ["Rapid toxin removal via intermittent dialysis", "Continuous slow renal support for haemodynamically unstable patients", "To replace liver function", "To provide nutritional support"], correct: 1, explanation: "CRRT runs 24h/day at slow flow rates — safe for haemodynamically unstable patients unlike intermittent HD." },
+            { q: "First-line vasopressor for septic shock per SSC 2021?", options: ["Adrenaline", "Dopamine", "Norepinephrine", "Vasopressin"], correct: 2, explanation: "Norepinephrine is first-line vasopressor targeting MAP ≥65 mmHg per Surviving Sepsis Campaign 2021." },
+            { q: "PICS stands for:", options: ["Post-ICU Care Syndrome", "Post-Intensive Care Syndrome", "Perioperative ICU Care Symptoms", "Pulmonary ICU Complication Score"], correct: 1, explanation: "PICS affects 30–50% of ICU survivors — physical, cognitive, and psychological effects lasting years." },
+            { q: "Which trial showed prone positioning reduces ARDS mortality?", options: ["ARMA", "CESAR", "PROSEVA", "EOLIA"], correct: 2, explanation: "PROSEVA (NEJM 2013): prone ≥16h/day reduced 28-day mortality from 32.8% to 16% in severe ARDS." },
+            { q: "ICU delirium is best screened with:", options: ["GCS alone", "CAM-ICU", "SOFA score", "Ramsay Sedation Scale"], correct: 1, explanation: "CAM-ICU is the globally validated bedside tool — applicable even in intubated patients." },
+            { q: "qSOFA score of ≥2 indicates:", options: ["High risk for poor sepsis outcomes", "Mild infection", "Readiness for ICU discharge", "Need for immediate intubation"], correct: 0, explanation: "qSOFA ≥2 (altered mentation, RR ≥22, SBP ≤100) identifies high-risk patients with suspected infection." },
+            { q: "Recommended first-line approach to ICU nutrition?", options: ["Parenteral nutrition immediately", "Early enteral nutrition within 24–48h", "Oral feeding when able to swallow", "IV glucose for 72h"], correct: 1, explanation: "ESPEN 2023: early enteral feeding within 24–48h preserves gut integrity and improves outcomes." },
+            { q: "What does SOFA score assess?", options: ["Sedation depth", "Sequential organ failure", "Sepsis antibiotic timing", "Surgical operative failure"], correct: 1, explanation: "SOFA (Sequential Organ Failure Assessment) scores 6 organ systems — respiratory, coagulation, liver, cardiovascular, renal, neurological." },
+            { q: "Which ECMO mode is used for severe ARDS?", options: ["VA-ECMO", "VV-ECMO", "PA-ECMO", "AV-ECMO"], correct: 1, explanation: "VV-ECMO (veno-venous) is used for severe respiratory failure (ARDS) — it oxygenates blood without bypassing the heart." },
+            { q: "The CESAR trial demonstrated benefit of:", options: ["Prone positioning", "VV-ECMO referral to specialist centres for severe ARDS", "Daily SBTs", "Early mobilisation"], correct: 1, explanation: "CESAR trial: transfer to ECMO-capable centres improved survival/disability-free survival for severe ARDS." },
+            { q: "'Lung rest' strategy during ECMO involves:", options: ["Keeping ventilator on full support", "Ultra-protective ventilation — very low tidal volumes", "Extubating the patient", "Using CPAP only"], correct: 1, explanation: "During VV-ECMO, 'lung rest' uses ultra-protective settings (TV 3–4 mL/kg, low PEEP, low FiO2) to allow lung recovery." },
+            { q: "KDIGO 2022 urgent indications for renal replacement therapy include:", options: ["Creatinine >1.5 mg/dL", "Severe hyperkalaemia, fluid overload, or metabolic acidosis refractory to treatment", "BUN >50 mg/dL", "Urine output <500 mL/day"], correct: 1, explanation: "KDIGO 2022 urgent RRT indications: refractory hyperkalaemia, severe acidosis, fluid overload, or uraemic complications." },
+            { q: "What is the ABCDEF bundle in the ICU?", options: ["Antibiotic Bundle for De-escalation", "Awakening, Breathing, Coordination, Delirium, Early mobility, Family engagement", "Airway, Blood pressure, Coagulation, Diabetic control, Electrolytes, Fluids", "Assessment, Baseline, Central line, Diuresis, Extubation, Feeding"], correct: 1, explanation: "ABCDEF bundle reduces ICU delirium, ventilator days, and length of stay through structured daily care protocols." },
+            { q: "What does 'spontaneous breathing trial' (SBT) assess?", options: ["Whether a patient is ready for ECMO", "Readiness for extubation", "Adequacy of deep sedation", "Nutritional status"], correct: 1, explanation: "SBT tests whether a ventilated patient can breathe independently — a prerequisite before extubation." },
+            { q: "Maximum PEEP commonly used in severe ARDS?", options: ["5–8 cmH2O", "10–15 cmH2O", "16–20 cmH2O", "24–30 cmH2O"], correct: 1, explanation: "ARDS Network protocols use PEEP tables titrated to FiO2. In severe ARDS, PEEP 10–15 cmH2O is typical, while keeping plateau pressure <30 cmH2O." },
+            { q: "What is 'de-resuscitation' in sepsis management?", options: ["Stopping all IV fluids immediately", "Active removal of excess fluid administered during resuscitation", "Discontinuing vasopressors", "Removing the central line"], correct: 1, explanation: "De-resuscitation involves active diuresis or UFC to remove fluid after acute resuscitation — fluid overload independently worsens outcomes." },
+            { q: "Which scoring tool guides ICU sedation depth?", options: ["GCS", "RASS (Richmond Agitation-Sedation Scale)", "APACHE II", "SOFA"], correct: 1, explanation: "RASS is the most widely validated sedation assessment tool — targets light sedation (RASS -1 to -2) per PADIS guidelines." },
+            { q: "What is the 'golden hour' concept in sepsis?", options: ["1 hour to discharge", "Hour-1 Bundle: blood cultures, lactate, antibiotics, IV fluids, vasopressors within 1 hour", "1 hour to transfer to ICU", "1 hour ventilator weaning trial"], correct: 1, explanation: "SSC Hour-1 Bundle: blood cultures, lactate, broad-spectrum antibiotics, 30 mL/kg crystalloid, vasopressors for MAP <65 — all within 1 hour." },
+            { q: "ICU-acquired weakness (ICUAW) is best prevented by:", options: ["Deep sedation and immobilisation", "Early physiotherapy and mobilisation", "High protein parenteral nutrition only", "Steroid administration"], correct: 1, explanation: "Early mobilisation (within 24–48h of ICU admission) is the most evidence-based intervention to prevent ICUAW." },
+            { q: "Prone positioning is contraindicated in:", options: ["PaO2/FiO2 <150", "Haemodynamic instability not responding to vasopressors", "Severe ARDS", "All ARDS patients"], correct: 1, explanation: "Absolute contraindications to proning include open chest/abdomen, unstable spine fracture, and refractory haemodynamic instability." },
+            { q: "What is 'permissive hypercapnia' in ventilated ARDS patients?", options: ["Deliberately increasing FiO2", "Accepting PaCO2 >45 mmHg to limit ventilator-induced lung injury", "Lowering PEEP despite hypoxia", "Accepting SpO2 <88%"], correct: 1, explanation: "Permissive hypercapnia allows PaCO2 to rise (up to 60–70 mmHg, pH >7.20) as a consequence of low tidal volume lung-protective ventilation." },
+            { q: "Which antibiotic approach defines 'de-escalation'?", options: ["Stopping all antibiotics after 48h", "Switching from broad-spectrum to targeted therapy based on culture results", "Adding a second antibiotic", "Increasing dose after 3 days"], correct: 1, explanation: "De-escalation: once cultures return, switch from empirical broad-spectrum to a narrow, targeted antibiotic — reducing resistance and side effects." },
+            { q: "What does 'fluid responsiveness' mean in the ICU?", options: ["Patient needs more fluid", "Patient's cardiac output will increase significantly with a fluid bolus", "Urine output responds to diuretics", "Central venous pressure is low"], correct: 1, explanation: "Fluid responsiveness means ≥10–15% increase in cardiac output/SV after a fluid challenge — prevents futile fluid loading." },
+            { q: "VAP stands for:", options: ["Ventricular Assist Protocol", "Ventilator-Associated Pneumonia", "Vascular Access Procedure", "Vasopressor Administration Protocol"], correct: 1, explanation: "VAP (Ventilator-Associated Pneumonia) occurs >48h after intubation — increases ICU stay by 8–10 days and has 20–50% mortality." },
+            { q: "What is the P/F ratio used for in ARDS?", options: ["Protein/fat nutritional ratio", "PaO2/FiO2 ratio to classify ARDS severity", "Prone/flat positioning ratio", "Pressure/flow ratio in ECMO"], correct: 1, explanation: "P/F ratio (PaO2/FiO2): mild ARDS >200, moderate 100–200, severe <100. <50 mmHg may meet ECMO EOLIA criteria." },
+            { q: "Which drug is used for sedation in ICU delirium prevention?", options: ["Midazolam", "Dexmedetomidine", "Propofol", "Fentanyl"], correct: 1, explanation: "Dexmedetomidine (alpha-2 agonist) is associated with shorter duration of delirium and more awakened, cooperative sedation than benzodiazepines." },
+            { q: "What is the Sepsis-3 definition of sepsis?", options: ["Temperature >38°C with positive blood culture", "Life-threatening organ dysfunction due to dysregulated host response to infection", "WBC >12,000 with infection source", "Hypotension requiring vasopressors"], correct: 1, explanation: "Sepsis-3 (2016): sepsis = life-threatening organ dysfunction (SOFA score increase ≥2) caused by dysregulated host response to infection." },
+            { q: "Normal MAP target during septic shock vasopressor therapy?", options: ["≥50 mmHg", "≥65 mmHg", "≥80 mmHg", "≥90 mmHg"], correct: 1, explanation: "SSC guidelines target MAP ≥65 mmHg with vasopressors in septic shock — higher targets (80–85) showed no benefit in SEPSISPAM trial." },
+            { q: "What does 'plateau pressure' indicate in ventilated patients?", options: ["Peak airway resistance", "Alveolar distension pressure — surrogate for lung injury risk", "Ventilator PEEP level", "Mean airway pressure"], correct: 1, explanation: "Plateau pressure (Pplat) reflects alveolar pressure. Target <30 cmH2O in ARDS to prevent VILI (ventilator-induced lung injury)." },
+            { q: "Which of these is a non-invasive indicator of fluid responsiveness?", options: ["Central venous pressure (CVP)", "Pulse pressure variation (PPV) on arterial line", "Urine output >0.5 mL/kg/h", "Serum lactate"], correct: 1, explanation: "PPV >13% on arterial line waveform in mechanically ventilated patients predicts fluid responsiveness better than static measures like CVP." },
+            { q: "'FAST HUG' mnemonic in ICU care stands for what first element?", options: ["Fluid balance", "Feeding", "Foley catheter", "FiO2 setting"], correct: 1, explanation: "FAST HUG: Feeding, Analgesia, Sedation, Thromb-embolism prophylaxis, Head-of-bed elevation, stress Ulcer prevention, Glucose control." },
+            { q: "Stress ulcer prophylaxis in ICU is indicated for:", options: ["All ICU patients universally", "Mechanically ventilated patients >48h OR coagulopathy"], correct: 1, explanation: "ASHP guidelines: SUP most beneficial in mechanically ventilated patients >48h or those with coagulopathy — PPIs or H2 blockers used." },
+            { q: "What is 'early goal-directed therapy' (EGDT) historically used for?", options: ["Ventilator weaning", "Sepsis resuscitation targeting CVP, MAP, ScvO2 within 6 hours", "ECMO circuit priming", "ICU nutrition protocol"], correct: 1, explanation: "Rivers et al (2001): EGDT targeted CVP 8–12, MAP ≥65, ScvO2 ≥70% — later trials (ARISE, ProCESS, ProMISe) showed standard care equally effective." },
+            { q: "What is the significance of elevated serum lactate in shock?", options: ["Dehydration marker", "Tissue hypoperfusion and anaerobic metabolism", "Hepatic dysfunction only", "Elevated from exercise"], correct: 1, explanation: "Lactate >2 mmol/L indicates tissue oxygen debt. Serial lactate clearance ≥10%/2h is a therapeutic target in septic shock resuscitation." },
+            { q: "Which antibiotic class covers MRSA in VAP?", options: ["Carbapenem", "Vancomycin or Linezolid", "Cephalosporin", "Fluoroquinolone"], correct: 1, explanation: "MRSA VAP requires vancomycin (trough-guided or AUC-guided) or linezolid — beta-lactams insufficient for MRSA." },
+            { q: "What is the EOLIA trial?", options: ["Early nutrition trial in ARDS", "Randomised trial assessing VV-ECMO vs conventional therapy in severe ARDS"], correct: 1, explanation: "EOLIA (NEJM 2018): primary endpoint (60-day mortality) not significant (35% vs 46%, p=0.07) but crossed rescue ECMO frequently — generally interpreted as supportive of ECMO in severe ARDS." },
+            { q: "What characterises 'refractory hypoxaemia' in ARDS?", options: ["SpO2 <95% on room air", "PaO2/FiO2 <100 despite optimal conventional management", "RR >30 on NIV", "pH <7.35"], correct: 1, explanation: "Refractory hypoxaemia: P/F ratio <100 and/or SpO2 <88% despite FiO2 1.0, PEEP ≥10, and prone positioning — a threshold for ECMO consideration." },
+            { q: "Continuous EEG monitoring in the ICU is indicated for:", options: ["All sedated patients", "Non-convulsive status epilepticus (NCSE) in unexplained encephalopathy", "Routine delirium screening", "Post-cardiac surgery fever"], correct: 1, explanation: "NCSE may present as unexplained encephalopathy without clinical seizures — continuous EEG in at-risk patients (TBI, post-arrest, stroke) is indicated." },
+            { q: "What is 'awakening and breathing coordination' (ABC)?", options: ["GCS assessment protocol", "Daily pairing of Spontaneous Awakening Trial (SAT) with Spontaneous Breathing Trial (SBT)"], correct: 1, explanation: "ABC trial: paired daily SAT (stopping sedation) + SBT → reduces ventilator days, ICU days, and 1-year mortality compared to SBT alone." },
+            { q: "What anticoagulant is standard during ECMO circuits?", options: ["Low molecular weight heparin", "Unfractionated heparin (UFH) titrated to anti-Xa or APTT"], correct: 1, explanation: "UFH infusion is standard during ECMO to prevent circuit thrombosis — targeted by APTT 60–80s or anti-Xa 0.3–0.7 IU/mL depending on centre protocol." },
+            { q: "Post-cardiac arrest targeted temperature management (TTM) target?", options: ["36–37.5°C — fever control only", "32–36°C for 24–48h in comatose survivors"], correct: 1, explanation: "TTM2 trial (2021) showed no benefit of 33°C vs strict fever avoidance (37.5°C) — current practice focuses on fever prevention ≤37.8°C." },
+            { q: "Which drug is used to reverse benzodiazepine sedation in RASS assessment?", options: ["Naloxone", "Flumazenil"], correct: 1, explanation: "Flumazenil reverses benzodiazepine effect (GABA-A antagonism). Naloxone reverses opioids. Neither is routinely used — dose titration preferred." },
+            { q: "'Ventilator bundle' prevents VAP via which measure?", options: ["Strict antibiotic prophylaxis", "HOB elevation 30–45°, oral chlorhexidine, cuff pressure checks, daily extubation assessment"], correct: 1, explanation: "VAP bundle: HOB 30–45°, oral decontamination with chlorhexidine, cuff pressure 20–30 cmH2O, daily SBT/extubation readiness assessment." },
+            { q: "What is Surviving Sepsis Campaign's recommendation for initial fluid bolus?", options: ["10 mL/kg crystalloid", "30 mL/kg IV crystalloid within 3 hours"], correct: 1, explanation: "SSC 2021: 30 mL/kg IV crystalloid within 3 hours of sepsis recognition, then assess fluid responsiveness before giving more." },
+            { q: "'Biomarker-guided antibiotic stewardship' most commonly uses:", options: ["CRP alone", "Procalcitonin (PCT) to guide de-escalation and duration"], correct: 1, explanation: "PCT-guided antibiotic stewardship: PCT rise suggests bacterial sepsis; decline guides safe early discontinuation — reduces antibiotic exposure by 1–2 days." },
+            { q: "What is the role of IABP (intra-aortic balloon pump)?", options: ["ECMO alternative for ARDS", "Counterpulsation device to reduce cardiac afterload in cardiogenic shock"], correct: 1, explanation: "IABP inflates in diastole (increases coronary perfusion) and deflates in systole (reduces afterload). Used in cardiogenic shock though evidence from IABP-SHOCK II was neutral." },
+            { q: "Which condition is the most common cause of ICU-acquired AKI?", options: ["Glomerulonephritis", "Sepsis-associated AKI — accounts for ~50% of ICU AKI"], correct: 1, explanation: "Sepsis is the most common cause of AKI in the ICU — mediated by afferent arteriolar vasoconstriction, tubular injury, and microvascular thrombosis." }
+        ];
+
+        // Fisher-Yates shuffle
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        // Load questions: admin override from localStorage or shuffle from 50-bank
+        function loadQuestions() {
+            try {
+                const custom = JSON.parse(localStorage.getItem('apollo_quiz_questions') || 'null');
+                if (custom && custom.length > 0) return shuffle(custom).slice(0, 10);
+            } catch (e) { }
+            return shuffle(QUESTION_BANK).slice(0, 10);
+        }
+
+        let questions = [];
+        let currentQ = 0, score = 0, answered = false;
+
+        function startQuiz() {
+            questions = loadQuestions();
+            currentQ = 0; score = 0;
+            document.getElementById('quiz-start').style.display = 'none';
+            document.getElementById('quiz-result').style.display = 'none';
+            document.getElementById('quiz-main').style.display = 'block';
+            document.getElementById('quiz-q-num').textContent = `Question 1 of ${questions.length}`;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQ];
+            document.getElementById('quiz-q-num').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+            document.getElementById('quiz-question').textContent = q.q;
+            document.getElementById('quiz-progress').style.width = `${((currentQ + 1) / questions.length) * 100}%`;
+            const opts = document.getElementById('quiz-options');
+            opts.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                btn.addEventListener('click', () => selectAnswer(i));
+                opts.appendChild(btn);
+            });
+            const fb = document.getElementById('quiz-feedback');
+            fb.className = 'quiz-feedback'; fb.style.display = 'none';
+            document.getElementById('quiz-next-btn').style.display = 'none';
+            document.getElementById('quiz-current-score').textContent = `Score: ${score}`;
+            answered = false;
+        }
+
+        function selectAnswer(idx) {
+            if (answered) return;
+            answered = true;
+            const q = questions[currentQ];
+            const opts = document.querySelectorAll('.quiz-option');
+            opts.forEach(b => b.disabled = true);
+            opts[idx].classList.add(idx === q.correct ? 'correct' : 'wrong');
+            if (idx !== q.correct) opts[q.correct].classList.add('correct');
+            if (idx === q.correct) score++;
+            document.getElementById('quiz-current-score').textContent = `Score: ${score}`;
+            const fb = document.getElementById('quiz-feedback');
+            fb.textContent = q.explanation;
+            fb.className = `quiz-feedback show ${idx === q.correct ? 'correct-fb' : 'wrong-fb'}`;
+            fb.style.display = 'block';
+            document.getElementById('quiz-next-btn').style.display = 'flex';
+        }
+
+        document.getElementById('start-quiz-btn').addEventListener('click', startQuiz);
+        document.getElementById('quiz-next-btn').addEventListener('click', () => {
+            currentQ++;
+            if (currentQ < questions.length) { loadQuestion(); }
+            else {
+                document.getElementById('quiz-main').style.display = 'none';
+                const res = document.getElementById('quiz-result');
+                res.style.display = 'block';
+                document.getElementById('final-score').textContent = `${score}/${questions.length}`;
+                const pct = score / questions.length;
+                document.getElementById('result-msg').textContent = pct >= 0.9 ? "🏆 Outstanding! You have the knowledge of a critical care resident!" :
+                    pct >= 0.7 ? "🎯 Impressive! You clearly pay attention to what matters in medicine." :
+                        pct >= 0.5 ? "👍 Good effort! Explore the Knowledge Hub to level up." :
+                            "🌱 A great starting point! Head to the Knowledge Hub to learn more.";
+            }
+        });
+        document.getElementById('restart-quiz-btn').addEventListener('click', startQuiz);
+
+    </script>
+</body>
+
+</html>

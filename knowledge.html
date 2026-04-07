@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Critical Care Knowledge Hub | AI Apollo | Dr. Jay Kothari</title>
+    <meta name="description"
+        content="Authoritative medical education on critical care — ECMO, sepsis, CRRT, ventilation, and more. Written from the desk of Dr. Jay Kothari, Apollo Hospitals, Ahmedabad." />
+    <link rel="canonical" href="https://drjaykothari.in/knowledge.html" />
+    <script
+        type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Critical Care Knowledge Hub","description":"Authoritative medical education resource on Critical Care Medicine by Dr. Jay Kothari.","url":"https://drjaykothari.in/knowledge.html","author":{"@type":"Physician","name":"Dr. Jay Kothari"}}</script>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div id="cursor-glow"></div>
+    <div id="secondary-glow"></div>
+
+    <nav class="nav scrolled" id="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">AI <span class="glow-text">APOLLO</span></a>
+            <div class="nav-links">
+                <a href="index.html#about">About</a>
+                <a href="index.html#expertise">Expertise</a>
+                <a href="knowledge.html" class="active glow-text">Knowledge Hub</a>
+                <a href="research.html">Research</a>
+                <a href="quiz.html">ICU Intel</a>
+                <a href="reviews.html">Pulse</a>
+                <a href="index.html#contact" class="nav-cta">Book Consultation</a>
+            </div>
+            <button class="nav-toggle" id="nav-toggle"
+                aria-label="Open navigation"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+    <div class="nav-mobile" id="nav-mobile">
+        <a href="index.html">Home</a><a href="knowledge.html">Knowledge Hub</a>
+        <a href="research.html">Research</a><a href="quiz.html">ICU Intel ✨</a>
+        <a href="reviews.html">Pulse</a>
+        <a href="index.html#contact" class="btn-primary" style="margin-top:16px;text-align:center;">Book
+            Consultation</a>
+    </div>
+
+    <!-- HUB LAYOUT -->
+    <div class="hub-layout" id="hub-layout">
+        <section
+            style="padding:140px 0 80px; text-align:center; background:var(--gradient-hero); position:relative; overflow:hidden;">
+            <div
+                style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(45,53,130,0.3) 0%,transparent 65%);pointer-events:none;">
+            </div>
+            <div class="container" style="position:relative;z-index:2;">
+                <span class="section-label" style="color:rgba(255,255,255,0.55);">Knowledge Hub</span>
+                <h1
+                    style="font-size:clamp(2.4rem,5vw,3.8rem); letter-spacing:-2px; color:#fff; font-family:var(--font-heading); line-height:1.1; margin-bottom:16px;">
+                    Critical Care Medicine<br />
+                    <span
+                        style="background:linear-gradient(135deg,#A5B4FC,#60A5FA);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Knowledge
+                        Hub</span>
+                </h1>
+                <p
+                    style="font-size:1.05rem; color:rgba(255,255,255,0.7); max-width:620px; margin:0 auto; line-height:1.85;">
+                    Authoritative, plain-language education on intensive care — from ICU fundamentals to advanced
+                    procedures like ECMO and CRRT. Written from the desk of a 30-year specialist.
+                </p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <h2
+                    style="text-align:center; color:var(--text-secondary); font-family:var(--font-body); font-size:0.85rem; text-transform:uppercase; letter-spacing:3px; margin-bottom:40px; font-weight:600;">
+                    Ten Knowledge Pillars</h2>
+                <div class="pillars-grid">
+                    <a href="#" class="glass-card pillar-card reveal" onclick="showArticle('sepsis');return false;">
+                        <div class="pillar-icon">🦠</div>
+                        <h3>Sepsis &amp; Infection</h3>
+                        <p>Recognising the signs of sepsis, understanding how it progresses, and why every hour matters
+                            in treatment.</p>
+                        <span class="pillar-read-more">Read Pillar →</span>
+                    </a>
+                    <a href="#" class="glass-card pillar-card reveal reveal-delay-1"
+                        onclick="showArticle('ecmo');return false;">
+                        <div class="pillar-icon">🫀</div>
+                        <h3>ECMO &amp; Advanced Life Support</h3>
+                        <p>What ECMO is, who qualifies, how it buys time for recovery, and what outcomes families can
+                            realistically expect.</p>
+                        <span class="pillar-read-more">Read Pillar →</span>
+                    </a>
+                    <a href="#" class="glass-card pillar-card reveal reveal-delay-2"
+                        onclick="showArticle('crrt');return false;">
+                        <div class="pillar-icon">🧪</div>
+                        <h3>Organ Failure &amp; CRRT</h3>
+                        <p>Acute kidney injury in the ICU, the role of continuous dialysis, and how the body's organs
+                            fail together and how medicine responds.</p>
+                        <span class="pillar-read-more">Read Pillar →</span>
+                    </a>
+                    <a href="#" class="glass-card pillar-card reveal reveal-delay-1"
+                        onclick="showArticle('ventilation');return false;">
+                        <div class="pillar-icon">💨</div>
+                        <h3>Respiratory &amp; Ventilation</h3>
+                        <p>What mechanical ventilation does, how it protects breathing, and the systematic process of
+                            safely weaning patients.</p>
+                        <span class="pillar-read-more">Read Pillar →</span>
+                    </a>
+                    <a href="#" class="glass-card pillar-card reveal reveal-delay-2"
+                        onclick="showArticle('mof');return false;">
+                        <div class="pillar-icon">🫁</div>
+                        <h3>Multi-Organ Failure</h3>
+                        <p>When multiple organ systems fail simultaneously — the cascade, the critical window, and the
+                            interventions that matter most.</p>
+                        <span class="pillar-read-more">Read Pillar →</span>
+                    </a>
+                    <a href="#" class="glass-card pillar-card reveal reveal-delay-3"
+                        onclick="showArticle('family-guide');return false;">
+                        <div class="pillar-icon">👨‍👩‍👧</div>
+                        <h3>Family Guide to the ICU</h3>
+                        <p>Everything families need to know — what monitors show, how to talk to the team, what to ask,
+                            and how to support recovery from outside.</p>
+                        <span class="pillar-read-more">Read Pillar →</span>
+                    </a>
+                    <a href="#" class="glass-card pillar-card reveal reveal-delay-1"
+                        onclick="showArticle('delirium');return false;">
+                        <div class="pillar-icon">🧠</div>
+                        <h3>ICU Delirium &amp; Brain Health</h3>
+                        <p>Why ICU patients become confused or agitated, how delirium is clinically assessed, and
+                            long-term cognitive implications.</p>
+                        <span class="pillar-read-more">Read Pillar →</span>
+                    </a>
+                    <a href="#" class="glass-card pillar-card reveal reveal-delay-2"
+                        onclick="showArticle('nutrition');return false;">
+                        <div class="pillar-icon">🍽️</div>
+                        <h3>Critical Care Nutrition</h3>
+                        <p>Why nutrition is a life-saving therapy — optimal timing, enteral vs parenteral routes, and
+                            evidence-based caloric targets.</p>
+                        <span class="pillar-read-more">Read Pillar →</span>
+                    </a>
+                    <a href="#" class="glass-card pillar-card reveal reveal-delay-3"
+                        onclick="showArticle('antimicrobial');return false;">
+                        <div class="pillar-icon">💊</div>
+                        <h3>Infection Control &amp; Antimicrobial Stewardship</h3>
+                        <p>Preventing HAIs, understanding antibiotic resistance in Indian ICUs, and how stewardship
+                            protects patients and the health system.</p>
+                        <span class="pillar-read-more">Read Pillar →</span>
+                    </a>
+                    <a href="#" class="glass-card pillar-card reveal reveal-delay-1"
+                        onclick="showArticle('pics');return false;">
+                        <div class="pillar-icon">🌱</div>
+                        <h3>Post-ICU Recovery &amp; PICS</h3>
+                        <p>Life after the ICU — Post-Intensive Care Syndrome, physical and psychological rehabilitation,
+                            and how to support long-term recovery.</p>
+                        <span class="pillar-read-more">Read Pillar →</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ARTICLE LAYOUT -->
+    <div class="article-layout" id="article-layout">
+        <div class="breadcrumb">
+            <div class="container">
+                <div class="breadcrumb-inner">
+                    <a href="index.html">Home</a>
+                    <span>/</span>
+                    <a href="knowledge.html" onclick="showHub();return false;">Knowledge Hub</a>
+                    <span>/</span>
+                    <span class="current" id="breadcrumb-current">Article</span>
+                </div>
+            </div>
+        </div>
+        <div class="article-wrapper">
+            <aside class="article-sidebar-left">
+                <div class="sidebar-title">Knowledge Pillars</div>
+                <a href="#" class="sidebar-link" id="nav-sepsis" onclick="showArticle('sepsis');return false;">Sepsis
+                    &amp; Infection</a>
+                <a href="#" class="sidebar-link" id="nav-ecmo" onclick="showArticle('ecmo');return false;">ECMO &amp;
+                    Life Support</a>
+                <a href="#" class="sidebar-link" id="nav-crrt" onclick="showArticle('crrt');return false;">Organ Failure
+                    &amp; CRRT</a>
+                <a href="#" class="sidebar-link" id="nav-ventilation"
+                    onclick="showArticle('ventilation');return false;">Respiratory &amp; Ventilation</a>
+                <a href="#" class="sidebar-link" id="nav-mof" onclick="showArticle('mof');return false;">Multi-Organ
+                    Failure</a>
+                <a href="#" class="sidebar-link" id="nav-family-guide"
+                    onclick="showArticle('family-guide');return false;">Family Guide to ICU</a>
+                <a href="#" class="sidebar-link" id="nav-delirium" onclick="showArticle('delirium');return false;">ICU
+                    Delirium &amp; Brain Health</a>
+                <a href="#" class="sidebar-link" id="nav-nutrition"
+                    onclick="showArticle('nutrition');return false;">Critical Care Nutrition</a>
+                <a href="#" class="sidebar-link" id="nav-antimicrobial"
+                    onclick="showArticle('antimicrobial');return false;">Infection Control &amp; AMR</a>
+                <a href="#" class="sidebar-link" id="nav-pics" onclick="showArticle('pics');return false;">Post-ICU
+                    Recovery &amp; PICS</a>
+            </aside>
+            <main class="article-content" id="article-content" aria-live="polite"></main>
+            <aside class="article-sidebar-right">
+                <div class="toc-sticky">
+                    <div class="toc-title">On This Page</div>
+                    <div id="toc-links"></div>
+                    <div id="related-knowledge" style="margin-top:32px;">
+                        <div class="toc-title">Related Pillars</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <div class="footer-logo">AI <span class="glow-text">APOLLO</span></div>
+                    <div class="footer-tagline">Dr. Jay Kothari · Consultant Critical Care · Apollo Hospitals, Ahmedabad
+                    </div>
+                </div>
+                <nav class="footer-links">
+                    <a href="index.html">Home</a><a href="knowledge.html">Knowledge Hub</a>
+                    <a href="research.html">Research</a><a href="quiz.html">ICU Intel</a>
+                    <a href="reviews.html">Pulse</a><a href="index.html#contact">Contact</a>
+                </nav>
+            </div>
+            <div class="footer-bottom"><em>All knowledge hub content is written for educational purposes. It does not
+                    constitute medical advice. Always consult a qualified physician for clinical decisions.</em></div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        const articles = {
+            sepsis: {
+                title: "The Silent Killer: Recognising Sepsis Before It's Too Late",
+                tag: "Sepsis & Infection · 10 min read",
+                subtitle: "Sepsis kills 11 million people every year — more than all cancers combined. Learn the warning signs, the timeline of deterioration, and why the first hour is everything.",
+                toc: [{ id: "what-is-sepsis", label: "What Is Sepsis?" }, { id: "warning-signs", label: "Warning Signs" }, { id: "sepsis-3", label: "Sepsis-3 Criteria" }, { id: "hour-1", label: "The Hour-1 Bundle" }, { id: "sepsis-icu", label: "In the ICU" }],
+                related: ["ecmo", "mof", "ventilation"],
+                content: `
+        <h3 id="what-is-sepsis">What Is Sepsis?</h3>
+        <p>Sepsis is not an infection. It is your body's dysregulated, life-threatening response to an infection — a cascade of inflammation that, paradoxically, begins to destroy the very organs it is trying to protect. Any infection can trigger sepsis: a urinary tract infection, a chest infection, an abdominal infection, even a dental abscess.</p>
+        <div class="article-callout"><p><strong>Key Definition (Sepsis-3, 2016):</strong> Sepsis is life-threatening organ dysfunction caused by a dysregulated host response to infection. It is identified clinically by an increase in the SOFA score of ≥2 points.</p></div>
+        <h3 id="warning-signs">Warning Signs Families Must Know</h3>
+        <p>The most dangerous thing about sepsis is how quickly it can progress — from apparent wellness to life-threatening collapse in hours. The THINK acronym is useful for families:</p>
+        <div class="article-warning-box">
+          <div class="warn-title">🚨 Sepsis Warning Signs — When to Act NOW</div>
+          <ul>
+            <li><strong>T</strong>emperature — very high (&gt;38.5°C) or very low (&lt;36°C)</li>
+            <li><strong>H</strong>eart rate — unusually fast, above 90 beats per minute</li>
+            <li><strong>I</strong>nfection — known or suspected source of infection</li>
+            <li><strong>N</strong>eurological — confusion, altered behaviour, or unusual drowsiness</li>
+            <li><strong>K</strong>idney — not passing urine, or much less than usual</li>
+          </ul>
+        </div>
+        <div class="article-stats-row">
+          <div class="article-stat-card"><div class="num">11M</div><div class="lbl">sepsis deaths annually worldwide</div></div>
+          <div class="article-stat-card"><div class="num">7%</div><div class="lbl">mortality increase per hour of antibiotic delay</div></div>
+          <div class="article-stat-card"><div class="num">1hr</div><div class="lbl">the critical window — the Hour-1 Bundle</div></div>
+        </div>
+        <h3 id="sepsis-3">The Sepsis-3 Criteria</h3>
+        <p>In 2016, the international Sepsis-3 taskforce redefined how we diagnose sepsis. The new definition focuses on organ dysfunction rather than the old SIRS (Systemic Inflammatory Response Syndrome) criteria, which were too non-specific. The Quick SOFA (qSOFA) score is used for rapid bedside screening:</p>
+        <ul style="list-style:disc; padding-left:22px; color:var(--text-secondary); font-size:0.95rem; line-height:1.85; margin:14px 0;">
+          <li>Respiratory rate ≥ 22 breaths per minute</li>
+          <li>Altered mental status (any new confusion)</li>
+          <li>Systolic blood pressure ≤ 100 mmHg</li>
+        </ul>
+        <p>A qSOFA score of 2 or more in a patient with suspected infection warrants urgent clinical assessment and escalation.</p>
+        <h3 id="hour-1">The SSC Hour-1 Bundle</h3>
+        <p>The Surviving Sepsis Campaign Hour-1 Bundle is the global standard for sepsis management. At Apollo Hospitals Ahmedabad ICU, this bundle is initiated within 60 minutes of sepsis recognition:</p>
+        <ol style="padding-left:22px; color:var(--text-secondary); font-size:0.95rem; line-height:1.85; margin:14px 0;">
+          <li>Measure lactate level — if &gt;2 mmol/L, re-measure after resuscitation</li>
+          <li>Obtain blood cultures before antibiotic administration</li>
+          <li>Administer broad-spectrum antibiotics (within 1 hour for septic shock)</li>
+          <li>Begin crystalloid resuscitation: 30 mL/kg IV for hypotension or lactate ≥4</li>
+          <li>Apply vasopressors for MAP &lt;65 mmHg despite fluid — Norepinephrine is first-line</li>
+        </ol>
+        <h3 id="sepsis-icu">What Happens in the ICU</h3>
+        <p>Once admitted to the ICU with sepsis, the focus shifts to source control (finding and treating the infection), haemodynamic stabilisation, organ support, and daily reassessment of antibiotics (de-escalating to narrow-spectrum once cultures return). Dr. Kothari's team uses dynamic fluid assessments — passive leg raise tests and pulse pressure variation — rather than aggressive fixed-volume protocols, to guide resuscitation precisely.</p>`
+            },
+            ecmo: {
+                title: "ECMO Explained: When Modern Medicine Buys Time That Nature Won't",
+                tag: "ECMO & Advanced Life Support · 12 min read",
+                subtitle: "A plain-language guide to Extracorporeal Membrane Oxygenation — who needs it, how it works, and what outcomes families can realistically expect.",
+                toc: [{ id: "what-ecmo", label: "What Is ECMO?" }, { id: "types", label: "Types of ECMO" }, { id: "who-needs", label: "Who Needs ECMO?" }, { id: "in-practice", label: "ECMO in Practice" }, { id: "what-families", label: "What Families Should Know" }],
+                related: ["mof", "ventilation", "crrt"],
+                content: `
+        <h3 id="what-ecmo">What Is ECMO?</h3>
+        <p>Extracorporeal Membrane Oxygenation is an advanced life support technique that temporarily takes over the function of the heart, the lungs, or both. Blood is pumped out of the patient's body through large cannulas, passed through an artificial membrane oxygenator that adds oxygen and removes carbon dioxide, and then returned to the patient. In essence, ECMO does what the lungs and heart cannot — buying critical time for organs to recover.</p>
+        <div class="article-callout"><p><strong>Dr. Kothari's Perspective:</strong> ECMO is not the last resort people fear it to be. It is a bridge — to recovery, to a transplant, or to a decision. When initiated at the right time, in the right patient, by an experienced team, outcomes are genuinely impressive.</p></div>
+        <h3 id="types">Types of ECMO</h3>
+        <ul style="list-style:disc; padding-left:22px; color:var(--text-secondary); font-size:0.95rem; line-height:1.85; margin:14px 0;">
+          <li><strong style="color:var(--text-primary);">VV-ECMO (Veno-Venous):</strong> Supports lung function only. Blood is drawn from a vein, oxygenated, and returned to a vein. Used in severe ARDS and respiratory failure.</li>
+          <li><strong style="color:var(--text-primary);">VA-ECMO (Veno-Arterial):</strong> Supports both heart and lung function. Blood is drawn from a vein and returned to an artery. Used in cardiogenic shock and cardiac arrest.</li>
+          <li><strong style="color:var(--text-primary);">ECCO₂R:</strong> A low-flow variant focused primarily on CO₂ removal in less severe respiratory failure.</li>
+        </ul>
+        <div class="article-stats-row">
+          <div class="article-stat-card"><div class="num">50–70%</div><div class="lbl">VV-ECMO survival in experienced centres</div></div>
+          <div class="article-stat-card"><div class="num">5–7L</div><div class="lbl">blood volume processed per minute</div></div>
+          <div class="article-stat-card"><div class="num">1971</div><div class="lbl">year of first successful ECMO use (Dr. Bartlett)</div></div>
+        </div>
+        <h3 id="who-needs">Who Needs ECMO?</h3>
+        <p>ECMO is not for every ICU patient. The ELSO (Extracorporeal Life Support Organization) 2021 guidelines recommend considering VV-ECMO when conventional mechanical ventilation fails to maintain life-compatible oxygenation in severe ARDS — specifically when PaO₂/FiO₂ ratio is below 50–80 mmHg despite optimal ventilator settings.</p>
+        <div class="article-warning-box">
+          <div class="warn-title">⚠️ ECMO is NOT appropriate for all patients</div>
+          <ul>
+            <li>Irreversible neurological injury with no chance of meaningful recovery</li>
+            <li>End-stage multi-organ failure with no reversible aetiology</li>
+            <li>Uncontrolled bleeding disorders that preclude anticoagulation</li>
+            <li>Advanced malignancy or terminal illness without transplant option</li>
+          </ul>
+        </div>
+        <h3 id="in-practice">ECMO in Practice at Apollo ICU</h3>
+        <p>Once initiated, ECMO requires 24/7 expert management by a dedicated team. The ICU team monitors circuit pressures, membrane function, oxygenator performance, and anticoagulation levels continuously. Daily weaning assessments are performed by Dr. Kothari's team — testing whether the patient's own lungs or heart can gradually take over the work of the ECMO circuit as function returns.</p>
+        <h3 id="what-families">What Families Should Know — and Ask</h3>
+        <p>If a family member is being considered for ECMO, the most important questions to ask the ICU team are: What is the reversible cause of organ failure? What is our recovery target? What defined endpoints will guide the decision to continue or discontinue? An experienced ECMO team will always have clear answers to these questions before initiation.</p>`
+            },
+            crrt: {
+                title: "Kidney Failure in the ICU: CRRT and How It Saves Lives",
+                tag: "Organ Failure & CRRT · 8 min read",
+                subtitle: "Understanding Continuous Renal Replacement Therapy — why it differs from conventional dialysis, and when it is used in the ICU.",
+                toc: [{ id: "aki-icu", label: "AKI in the ICU" }, { id: "crrt-vs", label: "CRRT vs. Haemodialysis" }, { id: "when-crrt", label: "When CRRT is Used" }, { id: "crrt-practice", label: "CRRT in Practice" }],
+                related: ["sepsis", "mof", "ecmo"],
+                content: `
+        <h3 id="aki-icu">Acute Kidney Injury (AKI) in the ICU</h3>
+        <p>Acute Kidney Injury affects 30–50% of all ICU patients and is independently associated with increased mortality. In the context of critical illness — whether sepsis, major surgery, cardiogenic shock, or rhabdomyolysis — the kidneys are often among the first organs to suffer. When they fail, toxins accumulate, fluid balance deteriorates, and acid-base disorders worsen.</p>
+        <div class="article-stats-row">
+          <div class="article-stat-card"><div class="num">50%</div><div class="lbl">of ICU patients develop AKI</div></div>
+          <div class="article-stat-card"><div class="num">3×</div><div class="lbl">increased mortality risk with AKI in ICU</div></div>
+          <div class="article-stat-card"><div class="num">~60%</div><div class="lbl">of severe AKI patients recover if they survive the critical illness</div></div>
+        </div>
+        <h3 id="crrt-vs">CRRT vs. Conventional Haemodialysis — What's the Difference?</h3>
+        <p>Conventional intermittent haemodialysis (IHD) runs for 4 hours, dialysing large volumes of blood rapidly. This rapid fluid and solute shift is poorly tolerated by haemodynamically unstable ICU patients — it can cause dangerous drops in blood pressure. CRRT solves this by running continuously at a much slower rate — typically 20–25 mL/kg/hour — allowing gentle, gradual removal of fluid and toxins that the heart and circulation can tolerate.</p>
+        <div class="article-callout"><p><strong>Key Concept:</strong> The slower, gentler pace of CRRT is its defining advantage. It removes fluid and waste products at a rate the unstable ICU patient's haemodynamics can accommodate.</p></div>
+        <h3 id="when-crrt">When Does the ICU Use CRRT? (KDIGO 2022)</h3>
+        <p>Per KDIGO 2022 AKI Guidelines, the urgent indications for initiating RRT (typically CRRT in the ICU) are:</p>
+        <ul style="list-style:disc; padding-left:22px; color:var(--text-secondary); font-size:0.95rem; line-height:1.85; margin:14px 0;">
+          <li>Refractory metabolic acidosis (pH &lt;7.2 not responding to bicarbonate)</li>
+          <li>Refractory hyperkalemia (&gt;6 mmol/L not responding to medical management)</li>
+          <li>Severe uraemic complications (encephalopathy, pericarditis, bleeding)</li>
+          <li>Fluid overload unresponsive to diuretics causing respiratory compromise</li>
+          <li>Drug or toxin removal requiring continuous clearance</li>
+        </ul>
+        <h3 id="crrt-practice">What Families Need to Know About CRRT</h3>
+        <p>CRRT requires close monitoring of the access site (typically a large central venous catheter), anticoagulation to prevent filter clotting, and frequent electrolyte checks. The machine runs continuously, appears technically complex, but causes the patient minimal discomfort. The goal is always supporting kidney function while the underlying critical illness is treated — with the hope that the kidneys will recover sufficiently to function independently again.</p>`
+            },
+            ventilation: {
+                title: "Mechanical Ventilation: What the Machine Is Doing and Why",
+                tag: "Respiratory & Ventilation · 9 min read",
+                subtitle: "A family-friendly explanation of mechanical ventilation in the ICU — settings, complications, and the weaning process.",
+                toc: [{ id: "why-vent", label: "Why Ventilation?" }, { id: "how-it-works", label: "How It Works" }, { id: "lung-protect", label: "Lung-Protective Ventilation" }, { id: "weaning", label: "The Weaning Process" }, { id: "family-vent", label: "For Families" }],
+                related: ["ecmo", "mof", "sepsis"],
+                content: `
+        <h3 id="why-vent">Why Is My Family Member on a Ventilator?</h3>
+        <p>Mechanical ventilation is a life-support measure — not a sign of hopelessness. When a patient cannot breathe adequately on their own due to severe pneumonia, ARDS, sepsis, drug overdose, or post-operative complications, a ventilator breathes for them while the underlying cause is treated. The goal is always to support the patient through the crisis and safely remove ventilator support as soon as possible.</p>
+        <h3 id="how-it-works">How Does a Ventilator Work?</h3>
+        <p>A ventilator delivers a precisely controlled breath — a mixture of oxygen and air — through a tube placed in the windpipe (endotracheal tube). The key settings include: <strong style="color:var(--text-primary);">tidal volume</strong> (how much air per breath), <strong style="color:var(--text-primary);">respiratory rate</strong> (how many breaths per minute), <strong style="color:var(--text-primary);">FiO₂</strong> (fraction of oxygen), and <strong style="color:var(--text-primary);">PEEP</strong> (Positive End-Expiratory Pressure — keeping the air sacs from collapsing).</p>
+        <div class="article-stats-row">
+          <div class="article-stat-card"><div class="num">6 mL</div><div class="lbl">per kg ideal body weight — the lung-protective tidal volume (ARMA Trial)</div></div>
+          <div class="article-stat-card"><div class="num">22%</div><div class="lbl">reduction in ARDS mortality with lower tidal volumes</div></div>
+          <div class="article-stat-card"><div class="num">16+hrs</div><div class="lbl">prone positioning daily reduces ARDS mortality (PROSEVA Trial)</div></div>
+        </div>
+        <h3 id="lung-protect">Lung-Protective Ventilation</h3>
+        <p>Traditional ventilation used high volumes to keep oxygen levels normal. The landmark ARMA trial (2000) showed this caused ventilator-induced lung injury (VILI) — the machine itself damaging already-fragile lungs. The modern standard is lung-protective ventilation: 6 mL/kg tidal volumes, higher PEEP to keep air sacs open, and limiting plateau pressures. This approach reduced 28-day ARDS mortality by 22%.</p>
+        <div class="article-callout"><p><strong>Evidence-Based:</strong> Prone positioning (lying face down) for ≥16 hours per day reduced 28-day ARDS mortality from 32.8% to 16% in the PROSEVA trial — a remarkable finding that is now standard practice in Dr. Kothari's ICU.</p></div>
+        <h3 id="weaning">The Weaning Process — Getting Off the Ventilator</h3>
+        <p>Weaning is the careful, systematic process of reducing ventilator support as the patient's breathing improves. Every day, Dr. Kothari's team conducts a Spontaneous Breathing Trial (SBT) — reducing ventilator support to minimal levels and monitoring whether the patient can breathe safely on their own. If the SBT is passed and other criteria are met (adequate consciousness, airway reflexes, secretion management), the tube is removed in a process called extubation.</p>
+        <h3 id="family-vent">What Families Should Understand</h3>
+        <p>Seeing a loved one on a ventilator is distressing. Several things are worth knowing: (1) Many patients on ventilators are conscious and aware — they may be able to hear you, so talk to them gently. (2) Sedation is kept as light as possible — heavy sedation increases complications. (3) Progress is measured daily — ask the team what today's SBT result was. (4) There will be days of setback — weaning is rarely linear. Patience and trust in the process matter.</p>`
+            },
+            mof: {
+                title: "Multi-Organ Failure: When the Body's Systems Begin to Shut Down",
+                tag: "Multi-Organ Failure · 11 min read",
+                subtitle: "Understanding MODS — what causes it, why it is so dangerous, and how critical care specialists orchestrate the complex support required.",
+                toc: [{ id: "what-mods", label: "What Is MODS?" }, { id: "why-happens", label: "Why It Happens" }, { id: "sofa", label: "SOFA Score" }, { id: "management", label: "Management" }],
+                related: ["sepsis", "ecmo", "crrt"],
+                content: `
+        <h3 id="what-mods">What Is Multi-Organ Dysfunction Syndrome (MODS)?</h3>
+        <p>MODS is the progressive dysfunction of two or more organ systems in a critically ill patient — such that homeostasis cannot be maintained without medical intervention. It is the most common cause of ICU death. When lungs, kidneys, liver, heart, and brain fail in sequence or simultaneously, the intensivist's role becomes that of a conductor — orchestrating simultaneous support for each failing system.</p>
+        <div class="article-callout"><p><strong>Key Concept:</strong> No single organ fails in isolation in MODS. Interventions to support one organ must be carefully chosen to avoid worsening another. This is the art of critical care medicine.</p></div>
+        <h3 id="why-happens">Why Does Multi-Organ Failure Happen?</h3>
+        <p>The most common triggers are severe sepsis and septic shock (accounting for &gt;50% of cases), major trauma, large burns, pancreatitis, and cardiogenic shock. The underlying mechanism involves excessive systemic inflammation, microvascular thrombosis, cellular energy failure, and apoptosis — a biological "perfect storm" that progressively impairs organ function despite adequate perfusion.</p>
+        <div class="article-stats-row">
+          <div class="article-stat-card"><div class="num">&gt;50%</div><div class="lbl">MODS cases precipitated by sepsis</div></div>
+          <div class="article-stat-card"><div class="num">3–4</div><div class="lbl">organ failures — mortality approaches 70–80%</div></div>
+          <div class="article-stat-card"><div class="num">SOFA</div><div class="lbl">daily scoring to track organ function trajectory</div></div>
+        </div>
+        <h3 id="sofa">The SOFA Score — Tracking Organ Failure</h3>
+        <p>The Sequential Organ Failure Assessment (SOFA) score quantifies the degree of dysfunction across six organ systems: respiratory (P/F ratio), coagulation (platelets), liver (bilirubin), cardiovascular (vasopressor requirement), neurological (GCS), and renal (creatinine). A SOFA score of ≥2 indicates active organ dysfunction. Daily SOFA trajectory — improving or worsening — is one of the most important prognostic tools in MODS management.</p>
+        <h3 id="management">How MODS Is Managed at Apollo ICU</h3>
+        <p>Management is fundamentally supportive — buying time for organ recovery while treating the precipitating cause. In practice: ECMO or high-flow nasal cannula for respiratory failure, CRRT for renal failure, vasopressors for cardiovascular support, enteral nutrition to protect the gut, heparin for coagulopathy, and strict glycaemic control. There is no single drug that reverses MODS — the intensivist must manage each failing system with precision while searching for, and eliminating, the underlying trigger.</p>`
+            },
+            "family-guide": {
+                title: "Your Loved One Is in the ICU: A Family's Complete Guide",
+                tag: "Family Guide · 15 min read",
+                subtitle: "Everything families need to know about the ICU — the machines, the monitors, how to communicate, and how to support recovery from outside the room.",
+                toc: [{ id: "entering", label: "Entering the ICU" }, { id: "machines", label: "Understanding the Machines" }, { id: "team", label: "Talking to the Team" }, { id: "support", label: "Supporting Recovery" }],
+                related: ["sepsis", "ventilation", "pics"],
+                content: `
+        <h3 id="entering">Entering the ICU for the First Time</h3>
+        <p>Nothing fully prepares you for seeing a family member in the ICU for the first time. The noise of monitors, the tangle of lines, the hiss of ventilators — it is overwhelming. The most important thing to know is that every wire, tube, and machine has a purpose. You are not powerless. Your presence matters, your questions matter, and your support is part of the healing process.</p>
+        <div class="article-callout"><p><strong>Remember:</strong> Even if your loved one appears sedated, they may be able to hear you. Studies show that familiar voices, gentle touch, and spoken reassurance reduce anxiety and improve ICU outcomes. Talk to them. Tell them what day it is. Tell them you're there.</p></div>
+        <h3 id="machines">Understanding the Machines Around the Bed</h3>
+        <ul style="list-style:disc; padding-left:22px; color:var(--text-secondary); font-size:0.95rem; line-height:1.85; margin:14px 0;">
+          <li><strong style="color:var(--text-primary);">Heart Rate Monitor:</strong> Shows how fast the heart is beating. Normal is 60–100 bpm. ICU patients often run faster due to illness and medications.</li>
+          <li><strong style="color:var(--text-primary);">Blood Pressure:</strong> Either via cuff (cycling every few minutes) or an invasive arterial line — a thin catheter in the wrist artery for continuous real-time BP reading.</li>
+          <li><strong style="color:var(--text-primary);">SpO₂ (Oxygen Saturation):</strong> The probe on the finger measuring how well the blood is carrying oxygen. Targets are typically 94–98% or as guided by condition.</li>
+          <li><strong style="color:var(--text-primary);">Ventilator:</strong> If intubated — breathes for your loved one. You will see a tube in the mouth and the ventilator cycling with each breath.</li>
+          <li><strong style="color:var(--text-primary);">IV Lines and Infusions:</strong> Medications, fluids, and nutrition delivered directly into the bloodstream via central and peripheral lines.</li>
+        </ul>
+        <h3 id="team">How to Communicate With the ICU Team</h3>
+        <p>At Apollo ICU, the team aim to provide family briefings daily — usually in the morning after rounds. Prepare your questions in advance. The most useful questions to ask: What is the primary diagnosis? Is the patient improving, stable, or deteriorating? What is the next 24-hour plan? What are the things to watch for? Are there decisions being made that need our input?</p>
+        <div class="article-warning-box">
+          <div class="warn-title">⚠️ Things NOT to Do in the ICU</div>
+          <ul>
+            <li>Do not bring outside food, flowers, or plants — infection risk</li>
+            <li>Do not discuss prognosis negatively near the patient — they may hear</li>
+            <li>Do not adjust or touch any tubes, lines, or equipment</li>
+            <li>Do not visit if you have fever, cough, or diarrhoea</li>
+          </ul>
+        </div>
+        <h3 id="support">Supporting Recovery from Outside the Room</h3>
+        <p>Your self-care is not a luxury — it is a medical necessity. ICU family members are at significant risk of anxiety, depression, and PTSD. Eat regularly. Sleep in shifts if you must stay at the hospital. Accept help from friends and family. Ask the social work team for support resources. And know that by staying informed, advocating for your loved one, and being present, you are genuinely contributing to their care.</p>`
+            },
+            delirium: {
+                title: "ICU Delirium & Brain Health: Why Critical Illness Affects the Mind",
+                tag: "ICU Delirium & Brain Health · 8 min read",
+                subtitle: "Why ICU patients become confused or agitated, how delirium is clinically assessed and managed, and what the long-term cognitive implications are.",
+                toc: [{ id: "what-delirium", label: "What Is ICU Delirium?" }, { id: "types-d", label: "Types of Delirium" }, { id: "camicu", label: "CAM-ICU Assessment" }, { id: "abcdef", label: "ABCDEF Bundle" }],
+                related: ["pics", "family-guide", "ventilation"],
+                content: `
+        <h3 id="what-delirium">What Is ICU Delirium?</h3>
+        <p>ICU delirium is an acute brain dysfunction characterised by disturbed attention, impaired thinking, and an altered level of consciousness — occurring in 50–80% of mechanically ventilated ICU patients. It is not "just confusion." Delirium is an independent risk factor for increased mortality, prolonged ventilation, longer ICU and hospital stays, and lasting cognitive impairment after discharge.</p>
+        <div class="article-stats-row">
+          <div class="article-stat-card"><div class="num">50–80%</div><div class="lbl">of mechanically ventilated patients develop delirium</div></div>
+          <div class="article-stat-card"><div class="num">3×</div><div class="lbl">higher risk of 6-month mortality in delirious ICU patients</div></div>
+          <div class="article-stat-card"><div class="num">11 days</div><div class="lbl">longer hospital stay in patients with ICU delirium</div></div>
+        </div>
+        <h3 id="types-d">Types of ICU Delirium</h3>
+        <ul style="list-style:disc; padding-left:22px; color:var(--text-secondary); font-size:0.95rem; line-height:1.85; margin:14px 0;">
+          <li><strong style="color:var(--text-primary);">Hyperactive:</strong> Agitation, pulling at tubes, attempting to get out of bed — the most visible type, and often the most frightening for families.</li>
+          <li><strong style="color:var(--text-primary);">Hypoactive:</strong> Quiet, withdrawn, flat — often missed, but actually the most common and prognostically worse form.</li>
+          <li><strong style="color:var(--text-primary);">Mixed:</strong> Fluctuating between both types — the most common overall pattern.</li>
+        </ul>
+        <h3 id="camicu">CAM-ICU — How We Assess ICU Delirium</h3>
+        <p>The Confusion Assessment Method for the ICU (CAM-ICU) is a validated bedside tool applicable even in intubated patients. It assesses: (1) Acute onset / fluctuating course, (2) Inattention (3) Altered level of consciousness, (4) Disorganised thinking. A positive CAM-ICU result triggers immediate management review.</p>
+        <h3 id="abcdef">The ABCDEF Bundle — Prevention Is the Priority</h3>
+        <p>The ABCDEF bundle (2018) is the comprehensive, evidence-based framework for delirium prevention and management: <strong style="color:var(--text-primary);">A</strong>ssess pain, <strong style="color:var(--text-primary);">B</strong>oth Spontaneous Awakening and Breathing Trials, <strong style="color:var(--text-primary);">C</strong>hoice of sedation (light sedation targets), <strong style="color:var(--text-primary);">D</strong>elirium assess/manage (CAM-ICU), <strong style="color:var(--text-primary);">E</strong>arly Mobility and Exercise, <strong style="color:var(--text-primary);">F</strong>amily engagement and empowerment. Implementing the full ABCDEF bundle reduces delirium incidence by up to 78% in some studies.</p>`
+            },
+            nutrition: {
+                title: "Critical Care Nutrition: Feeding as a Life-Saving Therapy",
+                tag: "Critical Care Nutrition · 7 min read",
+                subtitle: "Why nutrition is among the most underappreciated life-saving therapies in the ICU — optimal timing, routes, and evidence-based targets.",
+                toc: [{ id: "why-nut", label: "Why Nutrition Matters" }, { id: "timing", label: "Timing Is Everything" }, { id: "enteral", label: "Enteral vs. Parenteral" }, { id: "targets", label: "Caloric Targets" }],
+                related: ["delirium", "mof", "pics"],
+                content: `
+        <h3 id="why-nut">Why Nutrition Is a Life-Saving ICU Therapy</h3>
+        <p>ICU patients undergo a profound metabolic storm — hypermetabolism, accelerated protein catabolism, immune dysregulation, and gut barrier dysfunction. Without adequate nutritional support, lean muscle mass is lost at a rate of 1–2% per day. This "ICU-acquired weakness" prolongs ventilation, impairs immunity, delays wound healing, and worsens long-term outcomes. Early, optimal nutrition is not comfort — it is therapy.</p>
+        <div class="article-callout"><p><strong>Key Insight:</strong> An ICU patient who is not eating is not simply "not hungry." They are burning through their body reserve at an alarming rate. Every hour of nutritional delay matters.</p></div>
+        <h3 id="timing">Timing Is Everything: Early Enteral Nutrition</h3>
+        <p>ESPEN 2023 guidelines recommend initiating enteral nutrition within 24–48 hours of ICU admission in most patients. "If the gut works, use it" is the guiding principle. Early enteral nutrition: preserves gut mucosal integrity (preventing bacterial translocation), maintains gut-associated immunity, reduces infections and systemic inflammation, and improves clinical outcomes compared to parenteral routes.</p>
+        <div class="article-stats-row">
+          <div class="article-stat-card"><div class="num">24–48h</div><div class="lbl">target window for enteral nutrition initiation</div></div>
+          <div class="article-stat-card"><div class="num">1.2–2g</div><div class="lbl">protein per kg body weight per day — ICU target</div></div>
+          <div class="article-stat-card"><div class="num">25–30</div><div class="lbl">kcal/kg/day — typical ICU caloric target</div></div>
+        </div>
+        <h3 id="enteral">Enteral vs. Parenteral Nutrition</h3>
+        <p>Enteral nutrition (EN) is delivered via a tube in the stomach (NGT) or small intestine (NJT) and is the preferred route when the gut is functional. Parenteral nutrition (PN) — delivered intravenously — is reserved for patients where EN is contraindicated or insufficient (e.g., gut ileus, short bowel). PN carries higher infection risk and is metabolically more complex to manage. Supplemental PN can be added after 3–7 days if EN alone cannot meet targets.</p>
+        <h3 id="targets">Caloric and Protein Targets</h3>
+        <p>Optimal caloric target in the early ICU phase (days 1–3): 70–80% of estimated requirements — hypocaloric feeding reduces metabolic complications while still being protective. From Day 3–4 onwards: full caloric target of 25–30 kcal/kg/day. Protein: 1.2–2.0 g/kg/day — the higher range for burns, trauma, and ECMO patients. Daily monitoring of blood glucose (target 7.8–10 mmol/L) with insulin infusion is mandatory in all ICU patients receiving nutrition.</p>`
+            },
+            antimicrobial: {
+                title: "Infection Control & Antimicrobial Stewardship in the ICU",
+                tag: "Infection Control & AMR · 7 min read",
+                subtitle: "Preventing hospital-acquired infections, understanding antibiotic resistance in Indian ICUs, and how stewardship protects patients — and the future of medicine.",
+                toc: [{ id: "hai", label: "HAIs in the ICU" }, { id: "bundles", label: "Prevention Bundles" }, { id: "amr", label: "Antimicrobial Stewardship" }, { id: "india", label: "AMR in India" }],
+                related: ["sepsis", "mof", "delirium"],
+                content: `
+        <h3 id="hai">Hospital-Acquired Infections in the ICU</h3>
+        <p>Hospital-acquired infections (HAIs) are among the most serious threats to ICU patients. The most common include Ventilator-Associated Pneumonia (VAP), Central Line-Associated Bloodstream Infections (CLABSI), and Catheter-Associated Urinary Tract Infections (CAUTI). These infections affect 30% of ICU patients, significantly increase mortality, prolong stay, and drive antibiotic use — fuelling resistance.</p>
+        <div class="article-stats-row">
+          <div class="article-stat-card"><div class="num">30%</div><div class="lbl">of ICU patients develop at least one HAI</div></div>
+          <div class="article-stat-card"><div class="num">8–10 days</div><div class="lbl">additional ICU stay caused by VAP</div></div>
+          <div class="article-stat-card"><div class="num">2–3×</div><div class="lbl">higher mortality risk with HAI</div></div>
+        </div>
+        <h3 id="bundles">Prevention: ICU Bundles That Work</h3>
+        <p>Apollo ICU implements evidence-based prevention bundles: VAP bundle includes head-of-bed elevation at 30–45°, daily sedation holidays, oral care with chlorhexidine, and subglottic suction. CLABSI bundle includes maximum barrier precautions, chlorhexidine skin prep, and daily necessity reviews. Every unnecessary line, tube, and catheter is removed as soon as clinically safe.</p>
+        <h3 id="amr">Antimicrobial Stewardship — Using Antibiotics Wisely</h3>
+        <p>Antimicrobial stewardship (AMS) is the coordinated programme ensuring antibiotics are used only when needed, for the right duration, and then de-escalated or stopped based on culture results. This is not about being conservative with sick patients — it is about being precise. Giving the wrong antibiotic for too long selects for resistant organisms that will be untreatable in the next patient.</p>
+        <div class="article-callout"><p><strong>The Stewardship Principle:</strong> Start broad when sepsis is suspected. Culture early. De-escalate once organism and sensitivities are known. Stop when the course is complete. This protects the patient, the community, and the future of medicine.</p></div>
+        <h3 id="india">AMR and the Indian ICU Context</h3>
+        <p>India has one of the world's highest burdens of carbapenem-resistant Klebsiella, ESBL-producing E. coli, and MRSA. Hospital-acquired infections in Indian ICUs are far more likely to involve multi-drug resistant organisms than in Western centres. This makes stewardship even more critical — and makes culture-guided therapy the non-negotiable standard of care at responsible ICUs like Apollo Hospitals, Ahmedabad.</p>`
+            },
+            pics: {
+                title: "Post-ICU Recovery & PICS: Life After the Intensive Care Unit",
+                tag: "Post-ICU Recovery · 8 min read",
+                subtitle: "Post-Intensive Care Syndrome affects up to 50% of ICU survivors — the physical, cognitive, and psychological challenges of life after critical illness.",
+                toc: [{ id: "what-pics", label: "What Is PICS?" }, { id: "physical", label: "Physical Challenges" }, { id: "cognitive", label: "Cognitive & Mental Health" }, { id: "recovery", label: "Supporting Recovery" }],
+                related: ["family-guide", "delirium", "nutrition"],
+                content: `
+        <h3 id="what-pics">What Is Post-Intensive Care Syndrome (PICS)?</h3>
+        <p>Discharge from the ICU is not the end of the critical illness journey — it is the beginning of a new, often underappreciated one. Post-Intensive Care Syndrome (PICS) is the term for new or worsening impairments in physical, cognitive, and mental health status arising after critical illness — persisting beyond the acute hospitalisation. SCCM estimates 30–50% of ICU survivors are affected.</p>
+        <div class="article-callout"><p><strong>PICS also affects families</strong> — PICS-F (Post-Intensive Care Syndrome — Family) refers to the psychological burden borne by caregivers of ICU survivors: anxiety, depression, complicated grief, and PTSD at very high rates.</p></div>
+        <div class="article-stats-row">
+          <div class="article-stat-card"><div class="num">30–50%</div><div class="lbl">of ICU survivors develop PICS</div></div>
+          <div class="article-stat-card"><div class="num">25%</div><div class="lbl">of ICU survivors develop PTSD</div></div>
+          <div class="article-stat-card"><div class="num">months–years</div><div class="lbl">duration of PICS symptoms in many patients</div></div>
+        </div>
+        <h3 id="physical">Physical Challenges of PICS</h3>
+        <p>ICU-acquired weakness (ICUAW) is the most common physical manifestation — significant muscle atrophy and weakness affecting 25–50% of mechanically ventilated patients. It causes difficulty walking, climbing stairs, and performing daily activities for months after discharge. Other physical issues include persistent fatigue, dysphagia (swallowing difficulties post-extubation), sleep disorders, sexual dysfunction, and chronic pain.</p>
+        <h3 id="cognitive">Cognitive and Mental Health Challenges</h3>
+        <p>Cognitive impairment after ICU is strikingly common — affecting attention, memory, processing speed, and executive function. Many survivors describe "brain fog" persisting for months. Depression affects up to 30% of survivors. Anxiety is highly prevalent. And 25% develop clinical PTSD, characterised by intrusive memories, nightmares, hyperarousal, and avoidance of hospital reminders.</p>
+        <h3 id="recovery">Supporting Long-Term ICU Recovery</h3>
+        <p>Early mobilisation in the ICU (from day 2–3 if haemodynamically stable) is the single most evidence-based intervention for preventing ICUAW. Post-ICU rehabilitation should be multidisciplinary: physiotherapy to rebuild strength, neuropsychological support for cognitive and emotional recovery, and ICU follow-up clinics that screen for PTSD and unresolved physical complications. ICU diaries — daily logs kept by nurses for the patient — have been shown to reduce PTSD rates by up to 35% by helping survivors reconstruct their ICU experience in a non-traumatic way.</p>`
+            }
+        };
+
+        // ============================================================
+        // MERGE ADMIN OVERRIDES FROM localStorage
+        // Articles edited/created in admin.html are stored in apollo_admin_articles.
+        // If an admin article overrides a built-in (overridesId set), replace it.
+        // Otherwise add it as a new pillar article.
+        (function mergeAdminArticles() {
+            try {
+                const adminArticles = JSON.parse(localStorage.getItem('apollo_admin_articles') || '[]');
+                adminArticles.forEach(a => {
+                    if (!a.body || a.status === 'draft') return; // skip drafts / empty
+                    const targetId = a.overridesId || a.id;
+                    const existing = articles[targetId];
+                    articles[targetId] = {
+                        title: a.title || (existing && existing.title) || '',
+                        tag: a.pillar + ' · Updated',
+                        subtitle: a.subtitle || (existing && existing.subtitle) || '',
+                        toc: (existing && existing.toc) || [],
+                        related: (existing && existing.related) || [],
+                        content: a.body
+                    };
+                });
+            } catch (e) { /* silently fail */ }
+        })();
+
+        function showHub() {
+            document.getElementById('hub-layout').classList.remove('hidden');
+            document.getElementById('article-layout').classList.remove('active');
+            window.scrollTo(0, 0);
+        }
+
+        function showArticle(id) {
+            const a = articles[id];
+            if (!a) return;
+            document.getElementById('hub-layout').classList.add('hidden');
+            document.getElementById('article-layout').classList.add('active');
+            document.getElementById('breadcrumb-current').textContent = a.title.substring(0, 40) + '...';
+
+            // Sidebar active state
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            const activeLink = document.getElementById('nav-' + id);
+            if (activeLink) activeLink.classList.add('active');
+
+            // Build TOC
+            document.getElementById('toc-links').innerHTML = a.toc.map(t =>
+                `<a href="#${t.id}" class="toc-link">${t.label}</a>`
+            ).join('');
+
+            // Build related
+            const rk = document.getElementById('related-knowledge');
+            rk.innerHTML = '<div class="toc-title">Related Pillars</div>' +
+                a.related.map(rid => {
+                    const r = articles[rid];
+                    if (!r) return '';
+                    const icons = { sepsis: '🦠', ecmo: '🫀', crrt: '🧪', ventilation: '💨', mof: '🫁', 'family-guide': '👨‍👩‍👧', delirium: '🧠', nutrition: '🍽️', antimicrobial: '💊', pics: '🌱' };
+                    return `<a href="#" class="related-link" onclick="showArticle('${rid}');return false;"><span class="rlink-icon">${icons[rid] || '📖'}</span><span class="rlink-title">${r.title.substring(0, 55)}...</span></a>`;
+                }).join('');
+
+            // Build article content
+            document.getElementById('article-content').innerHTML = `
+      <button class="back-btn" onclick="showHub()">← Back to Hub</button>
+      <span class="article-tag">${a.tag}</span>
+      <h2>${a.title}</h2>
+      <p class="article-subtitle">${a.subtitle}</p>
+      <div class="article-meta">
+        <span>Dr. Jay Kothari</span><span>·</span>
+        <span>Apollo Hospitals, Ahmedabad</span><span>·</span>
+        <span>Educational Content</span>
+      </div>
+      ${a.content}
+      <div style="margin-top:48px; padding-top:28px; border-top:1px solid var(--border-subtle); font-size:0.8rem; color:var(--text-muted); font-style:italic;">
+        All content on this Knowledge Hub is written for educational purposes only. It does not constitute medical advice. Please consult Dr. Kothari or another qualified physician for clinical decisions specific to your case.
+      </div>`;
+
+            window.scrollTo(0, 0);
+        }
+
+        // Handle hash-based deep links (e.g., knowledge.html#sepsis)
+        if (window.location.hash) {
+            const id = window.location.hash.replace('#', '');
+            if (articles[id]) showArticle(id);
+        }
+    </script>
+</body>
+
+</html>
