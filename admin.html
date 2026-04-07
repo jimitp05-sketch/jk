@@ -837,6 +837,11 @@
                             class="nav-icon">🖼️</span>Photo Wall <span class="admin-badge" id="badge-photos">0</span>
                     </div>
                 </div>
+                <div class="admin-nav-group">
+                    <div class="admin-nav-label">Configuration</div>
+                    <div class="admin-nav-link" data-panel="settings" onclick="switchPanel('settings')"><span
+                            class="nav-icon">⚙️</span>Site Settings</div>
+                </div>
             </div>
 
             <!-- MAIN -->
@@ -1150,6 +1155,52 @@
                     <div class="photo-review-grid" id="photo-grid"></div>
                 </div>
 
+                <!-- SITE SETTINGS -->
+                <div class="admin-panel" id="panel-settings">
+                    <div class="panel-header">
+                        <h1>⚙️ Site Settings</h1>
+                        <p>Update contact numbers, WhatsApp details, and site name. Changes are saved to the server and
+                            reflected on the live website immediately.</p>
+                    </div>
+                    <div class="editor-card">
+                        <h3>📲 Contact & WhatsApp</h3>
+                        <div class="editor-grid">
+                            <div class="editor-field">
+                                <label>WhatsApp Number <span style="font-weight:400;color:var(--text-muted);">(with
+                                        country code, no +)</span></label>
+                                <input type="text" id="st-wa-number" placeholder="919999999999" />
+                            </div>
+                            <div class="editor-field">
+                                <label>ICU Emergency Phone</label>
+                                <input type="text" id="st-icu-phone" placeholder="18605001066" />
+                            </div>
+                        </div>
+                        <div class="editor-field">
+                            <label>WhatsApp Pre-filled Message</label>
+                            <input type="text" id="st-wa-message"
+                                placeholder="Hello, I would like to consult Dr. Jay Kothari" />
+                        </div>
+                        <div class="editor-field">
+                            <label>Site / Doctor Name</label>
+                            <input type="text" id="st-site-name" placeholder="Dr. Jay Kothari" />
+                        </div>
+                        <div
+                            style="margin-top:8px;padding:12px 16px;background:#FFF9E6;border:1px solid #F3D272;border-radius:8px;font-size:0.82rem;color:#7A5C00;">
+                            ⚠️ <strong>Admin Token Required:</strong> Enter your admin token below to authorize the
+                            save.
+                        </div>
+                        <div class="editor-field" style="margin-top:12px;">
+                            <label>Admin Token</label>
+                            <input type="password" id="st-token" placeholder="apollo_admin_2026" />
+                        </div>
+                        <div class="editor-actions" style="margin-top:16px;">
+                            <button class="btn-publish" onclick="saveSettings()">💾 Save Settings to Server</button>
+                            <button class="btn-save-draft" onclick="loadCurrentSettings()">↺ Reload Current</button>
+                        </div>
+                        <div id="settings-status" style="margin-top:12px;font-size:0.85rem;display:none;"></div>
+                    </div>
+                </div>
+
                 <!-- MYTH BUSTER EDITOR -->
                 <div class="admin-panel" id="panel-myths">
                     <div class="panel-header">
@@ -1337,6 +1388,65 @@
         }
 
         // ============================================================
+        // SITE SETTINGS — reads/writes via /api/settings.php
+        // ============================================================
+        function loadCurrentSettings() {
+            const st = document.getElementById('settings-status');
+            st.style.display = 'block';
+            st.style.color = '#555';
+            st.textContent = 'Loading current settings…';
+            fetch('/api/settings.php')
+                .then(r => r.ok ? r.json() : Promise.reject('Network error'))
+                .then(s => {
+                    document.getElementById('st-wa-number').value = s.wa_number || '';
+                    document.getElementById('st-icu-phone').value = s.icu_phone || '';
+                    document.getElementById('st-wa-message').value = s.wa_message || '';
+                    document.getElementById('st-site-name').value = s.site_name || '';
+                    st.style.color = '#16A34A';
+                    st.textContent = '✅ Current settings loaded.';
+                })
+                .catch(() => {
+                    st.style.color = '#C0392B';
+                    st.textContent = '⚠️ Could not load settings from server. Check that api/settings.php is deployed.';
+                });
+        }
+
+        function saveSettings() {
+            const token = document.getElementById('st-token').value.trim();
+            if (!token) { alert('Please enter your Admin Token.'); return; }
+            const payload = {
+                admin_token: token,
+                wa_number: document.getElementById('st-wa-number').value.trim(),
+                icu_phone: document.getElementById('st-icu-phone').value.trim(),
+                wa_message: document.getElementById('st-wa-message').value.trim(),
+                site_name: document.getElementById('st-site-name').value.trim()
+            };
+            const st = document.getElementById('settings-status');
+            st.style.display = 'block';
+            st.style.color = '#555';
+            st.textContent = 'Saving…';
+            fetch('/api/settings.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) {
+                        st.style.color = '#16A34A';
+                        st.textContent = '✅ Settings saved! The live website will use the new values on next page load.';
+                    } else {
+                        st.style.color = '#C0392B';
+                        st.textContent = '❌ ' + (res.error || 'Save failed.');
+                    }
+                })
+                .catch(() => {
+                    st.style.color = '#C0392B';
+                    st.textContent = '❌ Network error. Make sure api/settings.php is deployed on the server.';
+                });
+        }
+
+        // ============================================================
         // PANEL SWITCHING
         // ============================================================
         function switchPanel(name) {
@@ -1347,6 +1457,8 @@
             if (name === 'requests') renderRequests();
             if (name === 'calendar') renderAdminCal();
             if (name === 'knowledge') renderKnowledge();
+            if (name === 'settings') loadCurrentSettings();
+
             if (name === 'reviews') renderReviews();
             if (name === 'photos') renderPhotos();
             if (name === 'myths') renderMyths();
@@ -2231,4 +2343,3 @@
 </body>
 
 </html>
-

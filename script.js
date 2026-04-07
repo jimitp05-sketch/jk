@@ -253,7 +253,27 @@ document.addEventListener('DOMContentLoaded', () => {
    Emergency Strip · WhatsApp Float · Dark Mode · Page Transitions
    ═══════════════════════════════════════════════════ */
 
-const WA_NUM = '919999999999';
+// ── SITE SETTINGS — loaded from /api/settings.php ─────────────────────────
+// Falls back to hardcoded defaults so the page still works without the back-end.
+let WA_NUM = '919999999999';
+let WA_MSG = 'Hello%2C%20I%20would%20like%20to%20consult%20Dr.%20Jay%20Kothari';
+let ICU_PHONE = '18605001066';
+
+(function loadSettings() {
+    fetch('/api/settings.php')
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(s => {
+            if (s.wa_number) WA_NUM = s.wa_number;
+            if (s.wa_message) WA_MSG = encodeURIComponent(s.wa_message);
+            if (s.icu_phone) ICU_PHONE = s.icu_phone;
+            // Patch any Speed Dial links already in DOM
+            const emgCall = document.querySelector('.sd-emergency');
+            const waChat = document.querySelector('.sd-whatsapp');
+            if (emgCall) emgCall.href = `tel:${ICU_PHONE}`;
+            if (waChat) waChat.href = `https://wa.me/${WA_NUM}?text=${WA_MSG}`;
+        })
+        .catch(() => { }); // silently fall back to defaults
+})();
 
 // ── UNIFIED SPEED DIAL FAB ────────────────────────────────
 // Single popup: tap the main button → 3 actions slide up
