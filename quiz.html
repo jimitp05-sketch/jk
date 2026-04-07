@@ -394,9 +394,22 @@
                             <div class="quiz-score-num glow-text" id="final-score">0/10</div>
                             <div class="quiz-score-label">Your ICU Intelligence Score</div>
                             <div class="quiz-result-msg" id="result-msg"></div>
-                            <div style="display:flex; gap:16px; justify-content:center; margin-top:32px;">
+                            <div
+                                style="display:flex; gap:16px; justify-content:center; margin-top:32px; flex-wrap:wrap;">
                                 <button class="btn-primary" id="restart-quiz-btn">Retake Quiz 🔄</button>
                                 <a href="knowledge.html" class="btn-outline">Explore Knowledge Hub →</a>
+                            </div>
+                            <!-- Share row — shown after quiz completes -->
+                            <div id="quiz-share-row"
+                                style="display:none; gap:12px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+                                <a id="share-wa" href="#" target="_blank" rel="noopener"
+                                    style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#25D366;color:#fff;border-radius:999px;font-size:0.85rem;font-weight:700;text-decoration:none;">
+                                    📲 Share Score on WhatsApp
+                                </a>
+                                <a id="share-li" href="#" target="_blank" rel="noopener"
+                                    style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#0A66C2;color:#fff;border-radius:999px;font-size:0.85rem;font-weight:700;text-decoration:none;">
+                                    💼 Challenge a Friend on LinkedIn
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -689,6 +702,13 @@
                     pct >= 0.7 ? "🎯 Impressive! You clearly pay attention to what matters in medicine." :
                         pct >= 0.5 ? "👍 Good effort! Explore the Knowledge Hub to level up." :
                             "🌱 A great starting point! Head to the Knowledge Hub to learn more.";
+
+                // Share buttons
+                const waMsg = encodeURIComponent(`I scored ${score}/${questions.length} on the ICU Intel quiz by Dr. Jay Kothari! 🦷🏥 Can you beat it? https://forwisdom.com/quiz.html`);
+                const liMsg = encodeURIComponent(`I tested my ICU knowledge and scored ${score}/${questions.length} on the ICU Intel quiz by Dr. Jay Kothari at AI Apollo! Try it: https://forwisdom.com/quiz.html`);
+                document.getElementById('share-wa').href = `https://wa.me/?text=${waMsg}`;
+                document.getElementById('share-li').href = `https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fforwisdom.com%2Fquiz.html&summary=${liMsg}`;
+                document.getElementById('quiz-share-row').style.display = 'flex';
             }
         });
         document.getElementById('restart-quiz-btn').addEventListener('click', startQuiz);

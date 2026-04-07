@@ -57,7 +57,14 @@
                 <button class="filter-btn" data-filter="icu">ICU Practice</button>
             </div>
 
-            <div class="research-grid">
+            <!-- Tab toggle -->
+            <div class="research-view-tabs reveal" style="display:flex;gap:12px;margin-bottom:32px;">
+                <button class="filter-btn active" onclick="showResearchTab('papers',this)">📄 Landmark Papers</button>
+                <button class="filter-btn" onclick="showResearchTab('family',this)">👨‍👩‍👧 Family Reading</button>
+            </div>
+
+            <!-- PAPERS TAB -->
+            <div id="tab-papers" class="research-grid">
 
                 <div class="glass-card research-item reveal" data-topic="sepsis">
                     <div>
@@ -69,8 +76,17 @@
                     <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Dynamic fluid assessment, early
                         antibiotics (Hour-1 for Septic Shock), and Norepinephrine as first-line vasopressor.
                         Corticosteroids recommended for refractory septic shock.</div>
-                    <a href="https://doi.org/10.1007/s00134-021-06506-y" target="_blank" rel="noopener"
-                        class="read-more">View Paper →</a>
+                    <blockquote class="dr-position">
+                        <strong>Dr. Kothari's Practice:</strong> At Apollo, we activate the Hour-1 bundle the moment
+                        Sepsis-3 criteria are met — blood cultures, lactate, and antibiotics within 60 minutes. This
+                        single protocol has measurably reduced ICU mortality in our unit.
+                    </blockquote>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                        <a href="https://doi.org/10.1007/s00134-021-06506-y" target="_blank" rel="noopener"
+                            class="read-more">View Paper →</a>
+                        <a href="https://www.sccm.org/SurvivingSepsisCampaign/Guidelines/Adult-Patients" target="_blank"
+                            rel="noopener" class="btn-outline btn-sm">📄 SSC Guidelines PDF</a>
+                    </div>
                 </div>
 
                 <div class="glass-card research-item reveal reveal-delay-1" data-topic="ards">
@@ -82,6 +98,11 @@
                     <div class="research-takeaway"><strong>Clinical Takeaway:</strong> 6 mL/kg IBW tidal volumes reduce
                         28-day mortality by 22% in ARDS compared to 12 mL/kg. Foundational for lung-protective
                         ventilation.</div>
+                    <blockquote class="dr-position">
+                        <strong>Dr. Kothari's Practice:</strong> Lung-protective ventilation is non-negotiable in our
+                        ICU — every ventilated ARDS patient is set to 6 mL/kg IBW from the first hour. The evidence for
+                        this is as strong as any in medicine.
+                    </blockquote>
                     <a href="https://doi.org/10.1056/NEJM200005043421801" target="_blank" rel="noopener"
                         class="read-more">View Paper →</a>
                 </div>
@@ -95,8 +116,17 @@
                     <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Referral to an ECMO-specialist
                         centre significantly improves survival without severe disability at 6 months in severe ARDS.
                     </div>
-                    <a href="https://doi.org/10.1016/S0140-6736(09)61069-2" target="_blank" rel="noopener"
-                        class="read-more">View Paper →</a>
+                    <blockquote class="dr-position">
+                        <strong>Dr. Kothari's Practice:</strong> This trial validated what experienced intensivists knew
+                        — ECMO outcomes depend entirely on the team's experience. Apollo Ahmedabad is one of very few
+                        centres in Gujarat where this expertise is available.
+                    </blockquote>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                        <a href="https://doi.org/10.1016/S0140-6736(09)61069-2" target="_blank" rel="noopener"
+                            class="read-more">View Paper →</a>
+                        <a href="https://www.elso.org/resources/guidelines.aspx" target="_blank" rel="noopener"
+                            class="btn-outline btn-sm">📄 ELSO ECMO Guidelines</a>
+                    </div>
                 </div>
 
                 <div class="glass-card research-item reveal reveal-delay-3" data-topic="ecmo">
@@ -108,6 +138,11 @@
                     <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Bayesian analysis of EOLIA
                         suggests &gt;99% probability of a mortality benefit for early ECMO in the most severe ARDS.
                         Crossover rate (28%) confounded primary endpoint.</div>
+                    <blockquote class="dr-position">
+                        <strong>Dr. Kothari's Practice:</strong> EOLIA guides our ECMO initiation criteria at Apollo.
+                        When PaO₂/FiO₂ drops below 50 mmHg despite optimal ventilation, we convene the multidisciplinary
+                        team within hours, not days.
+                    </blockquote>
                     <a href="https://doi.org/10.1056/NEJMoa1800385" target="_blank" rel="noopener"
                         class="read-more">View Paper →</a>
                 </div>
@@ -121,6 +156,11 @@
                     <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Protocol-based resuscitation
                         (including Rivers' EGDT) did not improve outcomes over usual ICU care in septic shock —
                         emphasising that clinical judgement remains central, not rigid algorithms.</div>
+                    <blockquote class="dr-position">
+                        <strong>Dr. Kothari's Practice:</strong> ProCESS reinforced something I have believed throughout
+                        my career — protocols support good care, but they never replace the intensivist's eye. Pattern
+                        recognition built over 30 years is irreplaceable.
+                    </blockquote>
                     <a href="https://doi.org/10.1056/NEJMoa1401602" target="_blank" rel="noopener"
                         class="read-more">View Paper →</a>
                 </div>
@@ -134,6 +174,11 @@
                     <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Stage 3 AKI with metabolic
                         acidosis, fluid overload, or haemodynamic instability warrants urgent CRRT initiation. Dose:
                         20–25 mL/kg/hr effluent for adequate clearance.</div>
+                    <blockquote class="dr-position">
+                        <strong>Dr. Kothari's Practice:</strong> We run CRRT continuously in haemodynamically unstable
+                        AKI patients. The 2022 KDIGO update aligned perfectly with our existing Apollo ICU protocol — we
+                        were already applying these thresholds.
+                    </blockquote>
                     <a href="https://doi.org/10.1016/j.kint.2022.10.016" target="_blank" rel="noopener"
                         class="read-more">View Guidelines →</a>
                 </div>
@@ -148,24 +193,78 @@
                     <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Dexamethasone 6 mg/day for 10
                         days reduced 28-day mortality by 35% in mechanically ventilated Covid-19 patients — now the
                         global standard for severe respiratory failure.</div>
+                    <blockquote class="dr-position">
+                        <strong>Dr. Kothari's Practice:</strong> RECOVERY was one of the most impactful trials of my
+                        career. During the COVID waves, dexamethasone was the single intervention that consistently
+                        changed outcomes in our ventilated patients.
+                    </blockquote>
                     <a href="https://doi.org/10.1056/NEJMoa2021436" target="_blank" rel="noopener"
                         class="read-more">View Paper →</a>
                 </div>
 
                 <div class="glass-card research-item reveal reveal-delay-3" data-topic="sepsis">
                     <div>
-                        <div class="research-topic">Sepsis · NEJM 2019</div>
+                        <div class="research-topic">Sepsis · JAMA 2019</div>
                         <h3>ANDROMEDA-SHOCK: Peripheral Perfusion vs. Lactate Resuscitation</h3>
                         <p class="research-authors">Hernández G, et al. — JAMA (2019)</p>
                     </div>
                     <div class="research-takeaway"><strong>Clinical Takeaway:</strong> Peripheral perfusion-guided
                         resuscitation (capillary refill time) outperformed lactate-guided approach for septic shock —
                         demonstrating clinical bedside assessment remains vital in ICU management.</div>
+                    <blockquote class="dr-position">
+                        <strong>Dr. Kothari's Practice:</strong> ANDROMEDA-SHOCK validated bedside clinical assessment
+                        as the gold standard. Capillary refill time is now formally integrated into our shock
+                        resuscitation assessment at Apollo alongside lactate monitoring.
+                    </blockquote>
                     <a href="https://doi.org/10.1001/jama.2019.0071" target="_blank" rel="noopener"
                         class="read-more">View Paper →</a>
                 </div>
 
             </div>
+
+            <!-- FAMILY TAB -->
+            <div id="tab-family" class="research-grid" style="display:none;">
+                <div class="glass-card research-item reveal">
+                    <div class="research-topic">For Families · Plain Language</div>
+                    <h3>What Is Sepsis? A Family Guide</h3>
+                    <p class="research-authors">Based on Surviving Sepsis Campaign 2021</p>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.75;margin:12px 0;">Sepsis is
+                        when the body's response to an infection starts harming its own organs. It is a medical
+                        emergency. The earlier it is recognised and treated, the better the outcome. If your loved one
+                        is in the ICU for sepsis, the team is following a carefully timed bundle of treatments.</p>
+                    <a href="knowledge.html#sepsis" class="read-more">Read Full Article →</a>
+                </div>
+                <div class="glass-card research-item reveal reveal-delay-1">
+                    <div class="research-topic">For Families · Plain Language</div>
+                    <h3>ECMO: What Families Need to Know</h3>
+                    <p class="research-authors">Based on ELSO Guidelines & EOLIA Trial</p>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.75;margin:12px 0;">ECMO is a
+                        machine that temporarily does the work of the heart and lungs. It gives the body a chance to
+                        rest and heal. It is used only when all other treatments have not worked. Understanding what
+                        ECMO does — and doesn't do — helps families make informed decisions with the medical team.</p>
+                    <a href="knowledge.html#ecmo" class="read-more">Read Full Article →</a>
+                </div>
+                <div class="glass-card research-item reveal reveal-delay-2">
+                    <div class="research-topic">For Families · Plain Language</div>
+                    <h3>Ventilators Explained Simply</h3>
+                    <p class="research-authors">Based on ARDSNet ARMA Trial principles</p>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.75;margin:12px 0;">A ventilator
+                        is a breathing machine. It is not a permanent solution — it supports breathing while the
+                        underlying problem is treated. Being on a ventilator does not mean a patient cannot recover. Dr.
+                        Kothari's team works every day to safely reduce ventilator dependence as soon as possible.</p>
+                    <a href="knowledge.html" class="read-more">Explore Knowledge Hub →</a>
+                </div>
+            </div>
+
+            <script>
+                function showResearchTab(tab, btn) {
+                    document.getElementById('tab-papers').style.display = tab === 'papers' ? 'grid' : 'none';
+                    document.getElementById('tab-family').style.display = tab === 'family' ? 'grid' : 'none';
+                    document.querySelectorAll('.research-view-tabs .filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                }
+            </script>
+
         </div>
     </main>
 
