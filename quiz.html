@@ -70,6 +70,115 @@
             border: 1px solid var(--border-accent);
         }
 
+        /* ── MYTH FLIP CARDS ── */
+        .myths-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 24px;
+            perspective: 1400px;
+        }
+
+        .myth-card {
+            min-height: 230px;
+            cursor: pointer;
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+
+        .myth-card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 230px;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(.4, 0, .2, 1);
+            border-radius: 16px;
+        }
+
+        .myth-card.flipped .myth-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .myth-front,
+        .myth-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 16px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 230px;
+        }
+
+        .myth-front {
+            background: linear-gradient(145deg, #1a1f4e 0%, #0f1235 100%);
+            border: 1.5px solid rgba(165, 180, 252, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .myth-card:hover .myth-front {
+            border-color: rgba(165, 180, 252, 0.5);
+            box-shadow: 0 12px 40px rgba(94, 106, 210, 0.3);
+        }
+
+        .myth-back {
+            background: linear-gradient(145deg, #0d3b2e 0%, #071e17 100%);
+            border: 1.5px solid rgba(52, 211, 153, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            transform: rotateY(180deg);
+        }
+
+        .myth-label {
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: #a5b4fc;
+            margin-bottom: 14px;
+        }
+
+        .myth-label.fact {
+            color: #34d399;
+        }
+
+        .myth-statement {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #e2e8f8;
+            font-style: italic;
+            line-height: 1.6;
+            flex: 1;
+            margin: 0 0 16px;
+        }
+
+        .myth-fact {
+            font-size: 0.87rem;
+            color: #a7f3d0;
+            line-height: 1.8;
+            flex: 1;
+            margin: 0 0 14px;
+        }
+
+        .myth-source {
+            font-size: 0.7rem;
+            color: #34d399;
+            font-weight: 700;
+            font-style: italic;
+            opacity: 0.85;
+        }
+
+        .myth-tap-hint {
+            font-size: 0.7rem;
+            color: rgba(165, 180, 252, 0.6);
+            text-align: right;
+            margin-top: 8px;
+        }
+
         .score-badge {
             display: inline-flex;
             align-items: center;
@@ -457,6 +566,16 @@
         }
 
         window.addEventListener('DOMContentLoaded', loadMythBusters);
+
+        // ========== SHUFFLE HELPER ==========
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
 
         // ========== ICU IQ QUIZ LOGIC ==========
         let questions = [];
