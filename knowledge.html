@@ -514,7 +514,8 @@
         async function initKnowledgeHub() {
             try {
                 const res = await fetch('api/content.php?type=knowledge_articles');
-                const serverArticles = await res.json();
+                const json = await res.json();
+                const serverArticles = json.data ?? json; // support both wrapped and legacy format
 
                 serverArticles.forEach(a => {
                     const targetId = a.overridesId || a.id;

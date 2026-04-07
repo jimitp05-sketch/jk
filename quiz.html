@@ -542,7 +542,8 @@
             try {
                 const res = await fetch('./api/content.php?type=myth_busters');
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const myths = await res.json();
+                const json = await res.json();
+                const myths = json.data ?? json; // support both wrapped and legacy format
 
                 if (!myths || myths.length === 0) {
                     grid.innerHTML = '<p style="text-align:center; color:var(--text-muted); grid-column:1/-1; padding:40px;">No myths received from server.</p>';
@@ -594,7 +595,8 @@
         async function loadQuestionsFromServer() {
             try {
                 const res = await fetch('./api/content.php?type=quiz_questions');
-                const serverData = await res.json();
+                const json = await res.json();
+                const serverData = json.data ?? json; // support both wrapped and legacy format
                 if (serverData && serverData.length > 0) {
                     return shuffle(serverData).slice(0, 10);
                 }

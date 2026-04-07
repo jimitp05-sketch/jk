@@ -262,7 +262,8 @@
                 async function initResearch() {
                     try {
                         const res = await fetch('./api/content.php?type=research_papers');
-                        allResearchPapers = await res.json();
+                        const json = await res.json();
+                        allResearchPapers = json.data ?? json; // support both wrapped and legacy format
                         renderPapers('all');
                         setupFilterListeners();
                     } catch (e) {
