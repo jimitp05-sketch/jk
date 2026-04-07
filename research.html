@@ -58,10 +58,17 @@
             </div>
 
             <!-- Tab toggle -->
-            <div class="research-view-tabs reveal" style="display:flex;gap:12px;margin-bottom:32px;">
-                <button class="filter-btn active" onclick="showResearchTab('papers',this)">📄 Landmark Papers</button>
-                <button class="filter-btn" onclick="showResearchTab('family',this)">👨‍👩‍👧 Family Reading</button>
+            <div class="research-view-tabs reveal"
+                style="display:flex;gap:12px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
+                <button class="filter-btn active" id="tab-btn-papers" onclick="showResearchTab('papers',this)">📄
+                    Landmark Papers <span id="papers-count-badge"
+                        style="background:rgba(94,106,210,0.2);padding:2px 8px;border-radius:99px;font-size:0.75rem;margin-left:4px;">…</span></button>
+                <button class="filter-btn" id="tab-btn-family" onclick="showResearchTab('family',this)">👨‍👩‍👧 Family
+                    Reading <span
+                        style="background:rgba(94,106,210,0.2);padding:2px 8px;border-radius:99px;font-size:0.75rem;margin-left:4px;">3</span></button>
             </div>
+            <p id="tab-desc" style="font-size:0.82rem;color:var(--text-muted);margin-bottom:28px;">📚 Peer-reviewed
+                landmark trials, curated and contextualised by Dr. Kothari — filtered by topic below.</p>
 
             <!-- PAPERS TAB -->
             <div id="tab-papers" class="research-grid">
@@ -266,16 +273,19 @@
                         const data = json.data ?? json;
                         allResearchPapers = Array.isArray(data) ? data : [];
 
+                        // Update count badge
+                        const badge = document.getElementById('papers-count-badge');
+                        if (badge) badge.textContent = allResearchPapers.length > 0 ? allResearchPapers.length : '…';
+
                         if (allResearchPapers.length > 0) {
-                            // Dynamically rebuild filter buttons from actual topics in the data
                             buildFilterButtons(allResearchPapers);
                             renderPapers('all');
                         }
-                        // If API returns empty, static HTML papers stay visible
                         setupFilterListeners();
                     } catch (e) {
                         console.error("Failed to load research papers:", e);
-                        // Static HTML fallback stays visible on error — no action needed
+                        const badge = document.getElementById('papers-count-badge');
+                        if (badge) badge.textContent = '!';
                         setupFilterListeners();
                     }
                 }
@@ -369,6 +379,18 @@
                     document.getElementById('tab-family').style.display = tab === 'family' ? 'grid' : 'none';
                     document.querySelectorAll('.research-view-tabs .filter-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
+
+                    // Show/hide topic filter bar — only relevant for Landmark Papers
+                    const filterBar = document.querySelector('.research-filters');
+                    if (filterBar) filterBar.style.display = tab === 'papers' ? '' : 'none';
+
+                    // Update description text
+                    const desc = document.getElementById('tab-desc');
+                    if (desc) {
+                        desc.textContent = tab === 'papers'
+                            ? '📚 Peer-reviewed landmark trials, curated and contextualised by Dr. Kothari — filtered by topic below.'
+                            : '👨‍👩‍👧 Plain-language guides for patients and families — understanding ICU conditions without medical jargon.';
+                    }
                 }
             </script>
 
