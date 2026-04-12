@@ -76,33 +76,37 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.reveal:not(.visible)').forEach(el => el.classList.add('visible'));
     }, 2000);
 
-    // ── 5. HERO WORD STAGGER ─────────────────────────
-    const heroH1 = document.querySelector('.hero h1');
-    if (heroH1) {
-        const nodes = Array.from(heroH1.childNodes);
-        let delay = 0.3;
-        heroH1.innerHTML = '';
-        nodes.forEach(node => {
-            if (node.nodeType === 3) {
-                node.textContent.split(' ').filter(w => w.trim()).forEach(word => {
-                    const span = document.createElement('span');
-                    span.className = 'hero-word';
-                    span.textContent = word + ' ';
-                    span.style.animationDelay = delay + 's';
-                    delay += 0.12;
-                    heroH1.appendChild(span);
-                });
-            } else {
-                const el = node.cloneNode(true);
-                if (el.nodeType === 1) {
+    // ── 5. HERO WORD STAGGER (Now triggered via applySettings) ─────────────────────────
+    window.staggerHero = function () {
+        const heroH1 = document.querySelector('.hero h1');
+        if (heroH1) {
+            const nodes = Array.from(heroH1.childNodes);
+            let delay = 0.3;
+            heroH1.innerHTML = '';
+            nodes.forEach(node => {
+                if (node.nodeType === 3) {
+                    node.textContent.split(' ').filter(w => w.trim()).forEach(word => {
+                        const span = document.createElement('span');
+                        span.className = 'hero-word';
+                        span.textContent = word + ' ';
+                        span.style.animationDelay = delay + 's';
+                        delay += 0.12;
+                        heroH1.appendChild(span);
+                    });
+                } else if (node.nodeType === 1) {
+                    const el = node.cloneNode(true);
                     el.classList.add('hero-word');
                     el.style.animationDelay = delay + 's';
                     delay += 0.12;
+                    heroH1.appendChild(el);
                 }
-                heroH1.appendChild(el);
-            }
-        });
-    }
+            });
+        }
+    };
+    // If not using dynamic settings, run immediately after a short delay
+    setTimeout(() => {
+        if (!window.cmsHydrated) window.staggerHero();
+    }, 100);
 
     // ── 6. ECG SVG ───────────────────────────────────
     const hero = document.querySelector('.hero');

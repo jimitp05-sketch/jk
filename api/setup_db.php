@@ -8,7 +8,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/db.php';
 
 echo "<pre>🚀 Starting AI Apollo Auto-Setup...\n\n";
 
@@ -27,7 +27,7 @@ try {
     }
 
     // 2. Run Migration Script
-    require_once __DIR__ . '/../migrate_content.php';
+    require_once __DIR__ . '/migrate_content.php';
     echo "\n✅ Content Migration: SUCCESS\n";
 
     echo "\n🎉 Setup is 100% complete!\n";
