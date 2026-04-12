@@ -256,26 +256,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Update Hero Content (Homepage only)
         if (document.getElementById('hero-title')) {
-            if (s.hero_title) document.getElementById('hero-title').innerHTML = escapeHTML(s.hero_title).replace(/\*\*(.*?)\*\*/g, '<span class="glow-text">$1</span>');
-            if (s.hero_tagline) document.getElementById('hero-tagline').textContent = s.hero_tagline;
-            if (s.hero_empathy) document.getElementById('hero-empathy').textContent = s.hero_empathy;
+            if (s.hero_title) document.getElementById('hero-title').innerHTML = s.hero_title.replace(/\*\*(.*?)\*\*/g, '<span class="glow-text">$1</span>');
+            if (s.hero_desc || s.hero_tagline) {
+                const desc = s.hero_desc || s.hero_tagline;
+                document.getElementById('hero-empathy').textContent = desc;
+            }
             if (s.hero_badge && document.getElementById('hero-badge-text')) {
                 document.getElementById('hero-badge-text').textContent = s.hero_badge;
                 document.getElementById('hero-badge-wrap').style.display = 'inline-flex';
             }
+            if (s.hero_img && document.querySelector('.hero-doctor-img')) {
+                document.querySelector('.hero-doctor-img').src = s.hero_img;
+            }
         }
 
         // 4. Update Stats Band
-        for (let i = 1; i <= 4; i++) {
-            const valEl = document.getElementById(`stat${i}-val`);
-            const lblEl = document.getElementById(`stat${i}-lbl`);
-            if (valEl && s[`stat${i}_num`]) {
-                valEl.dataset.target = s[`stat${i}_num`].replace(/[^\d]/g, '');
-                valEl.dataset.suffix = s[`stat${i}_num`].replace(/[\d]/g, '');
-                valEl.textContent = s[`stat${i}_num`];
+        const statsMap = [
+            { val: s.hero_stat1_val || s.stat1_num, lbl: s.hero_stat1_lbl || s.stat1_lbl, id: 1 },
+            { val: s.hero_stat2_val || s.stat2_num, lbl: s.hero_stat2_lbl || s.stat2_lbl, id: 2 },
+            { val: s.hero_stat3_val || s.stat3_num, lbl: s.hero_stat3_lbl || s.stat3_lbl, id: 3 }
+        ];
+
+        statsMap.forEach(item => {
+            const valEl = document.getElementById(`stat${item.id}-val`);
+            const lblEl = document.getElementById(`stat${item.id}-lbl`);
+            if (valEl && item.val) {
+                valEl.dataset.target = item.val.toString().replace(/[^\d]/g, '');
+                valEl.dataset.suffix = item.val.toString().replace(/[\d]/g, '');
+                valEl.textContent = item.val;
             }
-            if (lblEl && s[`stat${i}_lbl`]) lblEl.textContent = s[`stat${i}_lbl`];
-        }
+            if (lblEl && item.lbl) lblEl.textContent = item.lbl;
+        });
 
         // 5. Handle Ticker
         if (s.ticker_on && s.ticker_text) {

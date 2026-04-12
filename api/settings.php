@@ -123,7 +123,7 @@ function readSettings(): array {
         'hero_stat3_lbl' => 'ECMO Docs in Gujarat',
         'hero_img'    => 'img-hero-doctor.png',
         'admin_user'  => 'admin',
-        'admin_pass'  => password_hash('apollo2024', PASSWORD_ARGON2ID) // Default hashed
+        'admin_pass'  => password_hash('apollo2024', PASSWORD_DEFAULT) // Default hashed
     ];
 
     $pdo = getPDO();
@@ -136,8 +136,8 @@ function readSettings(): array {
     $saved = json_decode($row['data'], true) ?: [];
     
     // Migration: if stored password is NOT hashed, hash it now & save back to DB
-    if (isset($saved['admin_pass']) && !str_starts_with($saved['admin_pass'], '$argon2id$') && !str_starts_with($saved['admin_pass'], '$2y$')) {
-        $saved['admin_pass'] = password_hash($saved['admin_pass'], PASSWORD_ARGON2ID);
+    if (isset($saved['admin_pass']) && !str_starts_with($saved['admin_pass'], '$2y$')) {
+        $saved['admin_pass'] = password_hash($saved['admin_pass'], PASSWORD_DEFAULT);
         writeSettings($saved);
     }
     
@@ -222,18 +222,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Public settings (NEVER return admin_pass)
     echo json_encode([
-        'site_content' => [
-            'hero_title' => $settings['hero_title'],
-            'hero_desc'  => $settings['hero_desc'],
-            'hero_badge' => $settings['hero_badge'],
-            'hero_stat1_val' => $settings['hero_stat1_val'],
-            'hero_stat1_lbl' => $settings['hero_stat1_lbl'],
-            'hero_stat2_val' => $settings['hero_stat2_val'],
-            'hero_stat2_lbl' => $settings['hero_stat2_lbl'],
-            'hero_stat3_val' => $settings['hero_stat3_val'],
-            'hero_stat3_lbl' => $settings['hero_stat3_lbl'],
-            'hero_img'   => $settings['hero_img'],
-        ],
+        'hero_title' => $settings['hero_title'],
+        'hero_desc'  => $settings['hero_desc'],
+        'hero_badge' => $settings['hero_badge'],
+        'hero_stat1_val' => $settings['hero_stat1_val'],
+        'hero_stat1_lbl' => $settings['hero_stat1_lbl'],
+        'hero_stat2_val' => $settings['hero_stat2_val'],
+        'hero_stat2_lbl' => $settings['hero_stat2_lbl'],
+        'hero_stat3_val' => $settings['hero_stat3_val'],
+        'hero_stat3_lbl' => $settings['hero_stat3_lbl'],
+        'hero_img'   => $settings['hero_img'],
         'wa_number'  => $settings['wa_number'],
         'wa_message' => $settings['wa_message'],
         'icu_phone'  => $settings['icu_phone'],
@@ -322,13 +320,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle password change — always hash
     if (isset($input['admin_pass']) && !empty(trim($input['admin_pass']))) {
         $newPass = trim((string)$input['admin_pass']);
-        // Don't re-hash if it's already hashed (shouldn't happen but safety check)
-        if (!str_starts_with($newPass, '$argon2id$') && !str_starts_with($newPass, '$2y$')) {
-            $current['admin_pass'] = password_hash($newPass, PASSWORD_ARGON2ID);
+        // Don't re-hash if it's already hashed
+        if (!str_starts_with($newPass, '$2y$')) {
+            $current['admin_pass'] = password_hash($newPass, PASSWORD_DEFAULT);
         }
     }
     if (isset($input['new_admin_pass']) && !empty(trim($input['new_admin_pass']))) {
-        $current['admin_pass'] = password_hash(trim((string)$input['new_admin_pass']), PASSWORD_ARGON2ID);
+        $current['admin_pass'] = password_hash(trim((string)$input['new_admin_pass']), PASSWORD_DEFAULT);
     }
 
     if (writeSettings($current)) {
