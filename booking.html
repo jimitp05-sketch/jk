@@ -7,460 +7,17 @@
     <title>Book a Consultation | Dr. Jay Kothari | Apollo Hospitals</title>
     <meta name="description"
         content="Book an OPD consultation with Dr. Jay Kothari, Critical Care Specialist at Apollo Hospitals, Ahmedabad. Monday–Saturday, 2–4 PM." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" />
+    </noscript>
     <link rel="stylesheet" href="styles.css" />
-    <style>
-        .booking-hero {
-            background: var(--gradient-hero);
-            padding: 130px 0 60px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
 
-        .booking-hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 60%, rgba(45, 53, 130, 0.3) 0%, transparent 65%);
-            pointer-events: none;
-        }
-
-        .booking-hero h1 {
-            color: #fff;
-            font-size: clamp(2.5rem, 5vw, 3.8rem);
-            letter-spacing: -2px;
-        }
-
-        .booking-hero p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1.02rem;
-            max-width: 520px;
-            margin: 12px auto 0;
-            line-height: 1.8;
-        }
-
-        .booking-layout {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 32px;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 60px 28px 100px;
-        }
-
-        /* CALENDAR */
-        .calendar-card {
-            background: #fff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 32px;
-            box-shadow: var(--card-shadow);
-        }
-
-        .cal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-
-        .cal-month {
-            font-family: var(--font-heading);
-            font-size: 1.3rem;
-            color: var(--text-primary);
-        }
-
-        .cal-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .cal-nav-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            border: 1.5px solid var(--border-medium);
-            background: #fff;
-            color: var(--text-secondary);
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition-fast);
-        }
-
-        .cal-nav-btn:hover {
-            border-color: var(--accent-primary);
-            color: var(--accent-primary);
-        }
-
-        .cal-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-        }
-
-        .cal-day-label {
-            text-align: center;
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 6px 0;
-        }
-
-        .cal-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-sm);
-            font-size: 0.88rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: var(--transition-fast);
-            position: relative;
-        }
-
-        .cal-day:hover:not(.empty):not(.past):not(.sunday) {
-            background: rgba(45, 53, 130, 0.08);
-            color: var(--accent-primary);
-        }
-
-        .cal-day.today {
-            background: rgba(45, 53, 130, 0.1);
-            color: var(--accent-primary);
-            font-weight: 700;
-        }
-
-        .cal-day.selected {
-            background: var(--accent-primary);
-            color: #fff;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(45, 53, 130, 0.35);
-        }
-
-        .cal-day.empty {
-            cursor: default;
-        }
-
-        .cal-day.past {
-            color: var(--border-medium);
-            cursor: not-allowed;
-        }
-
-        .cal-day.sunday {
-            color: #C0392B;
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .cal-day.has-slots::after {
-            content: '';
-            width: 5px;
-            height: 5px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            position: absolute;
-            bottom: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .cal-day.selected::after {
-            background: #fff;
-        }
-
-        /* TIME SLOTS */
-        .slots-section {
-            margin-top: 28px;
-        }
-
-        .slots-title {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 14px;
-        }
-
-        .slots-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-
-        .slot-btn {
-            padding: 10px 6px;
-            border: 1.5px solid var(--border-medium);
-            border-radius: var(--radius-sm);
-            background: #fff;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            text-align: center;
-        }
-
-        .slot-btn:hover {
-            border-color: var(--accent-primary);
-            color: var(--accent-primary);
-            background: rgba(45, 53, 130, 0.04);
-        }
-
-        .slot-btn.selected {
-            background: var(--accent-primary);
-            color: #fff;
-            border-color: var(--accent-primary);
-        }
-
-        .slot-btn.booked {
-            background: var(--bg-section);
-            color: var(--border-medium);
-            cursor: not-allowed;
-            text-decoration: line-through;
-            border-style: dashed;
-        }
-
-        .no-slots {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-muted);
-            font-size: 0.88rem;
-        }
-
-        /* BOOKING FORM */
-        .booking-form-card {
-            background: #fff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            box-shadow: var(--card-shadow);
-            margin-top: 28px;
-        }
-
-        .booking-form-card h3 {
-            font-size: 1.05rem;
-            color: var(--text-primary);
-            margin-bottom: 18px;
-            font-family: var(--font-body);
-            font-weight: 700;
-        }
-
-        .form-field {
-            margin-bottom: 16px;
-        }
-
-        .form-field label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-field input,
-        .form-field select,
-        .form-field textarea {
-            width: 100%;
-            padding: 11px 14px;
-            border: 1.5px solid var(--border-medium);
-            border-radius: var(--radius-sm);
-            font-family: var(--font-body);
-            font-size: 0.9rem;
-            color: var(--text-primary);
-            background: #fff;
-            transition: border-color var(--transition-fast);
-        }
-
-        .form-field input:focus,
-        .form-field select:focus,
-        .form-field textarea:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(45, 53, 130, 0.1);
-        }
-
-        .form-field textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .booking-submit {
-            width: 100%;
-            padding: 14px;
-            background: var(--accent-primary);
-            color: #fff;
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition-base);
-            box-shadow: 0 4px 16px rgba(45, 53, 130, 0.3);
-        }
-
-        .booking-submit:hover {
-            background: #1e256a;
-            transform: translateY(-2px);
-        }
-
-        .booking-submit:disabled {
-            background: var(--border-medium);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .booking-success {
-            display: none;
-            text-align: center;
-            padding: 28px 20px;
-            background: rgba(26, 122, 74, 0.06);
-            border: 1px solid rgba(26, 122, 74, 0.2);
-            border-radius: var(--radius-md);
-            margin-top: 18px;
-        }
-
-        .booking-success.show {
-            display: block;
-        }
-
-        .booking-success h4 {
-            color: #1A7A4A;
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-        }
-
-        .booking-success p {
-            color: var(--text-secondary);
-            font-size: 0.88rem;
-            line-height: 1.7;
-        }
-
-        /* RIGHT SIDEBAR */
-        .booking-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .info-card {
-            background: #fff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            padding: 24px;
-            box-shadow: var(--card-shadow);
-        }
-
-        .info-card h3 {
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            font-family: var(--font-body);
-            font-weight: 700;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-subtle);
-            font-size: 0.88rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .info-row-icon {
-            font-size: 1.1rem;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        .info-row strong {
-            color: var(--text-primary);
-            display: block;
-        }
-
-        .opd-tag {
-            display: inline-block;
-            background: rgba(26, 122, 74, 0.08);
-            color: #1A7A4A;
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 3px 10px;
-            border-radius: 99px;
-            border: 1px solid rgba(26, 122, 74, 0.2);
-        }
-
-        .emergency-card {
-            background: linear-gradient(135deg, #FEF3C7, #FFF7ED);
-            border: 1px solid rgba(155, 89, 43, 0.2);
-        }
-
-        .emergency-card h3 {
-            color: #92400E;
-        }
-
-        .emergency-num {
-            font-size: 1.3rem;
-            font-weight: 900;
-            color: #92400E;
-            margin: 6px 0;
-        }
-
-        .selected-slot-display {
-            background: rgba(45, 53, 130, 0.06);
-            border: 1.5px solid var(--border-accent);
-            border-radius: var(--radius-md);
-            padding: 14px 16px;
-            width: 100%;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--accent-primary);
-            display: none;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .selected-slot-display.show {
-            display: block;
-        }
-
-        @media (max-width:900px) {
-            .booking-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .slots-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width:480px) {
-            .slots-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -520,35 +77,37 @@
                 <h3>📋 Your Details</h3>
                 <div class="selected-slot-display" id="slot-display">No date/time selected yet</div>
                 <form id="booking-form">
-                    <div class="form-field">
-                        <label for="patient-name">Patient Name *</label>
-                        <input type="text" id="patient-name" placeholder="Full name of patient" required />
-                    </div>
-                    <div class="form-field">
-                        <label for="patient-phone">Contact Number *</label>
-                        <input type="tel" id="patient-phone" placeholder="+91 98765 43210" required />
-                    </div>
-                    <div class="form-field">
-                        <label for="patient-email">Email Address</label>
-                        <input type="email" id="patient-email" placeholder="for confirmation (optional)" />
-                    </div>
-                    <div class="form-field">
-                        <label for="visit-reason">Reason for Visit *</label>
-                        <select id="visit-reason" required>
-                            <option value="">Select reason…</option>
-                            <option>ICU Follow-Up Consultation</option>
-                            <option>Second Opinion — Critical Care</option>
-                            <option>ECMO / CRRT Discussion</option>
-                            <option>Family Counselling — ICU Patient</option>
-                            <option>Post-ICU Recovery Review</option>
-                            <option>Sepsis / Infection Query</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div class="form-field">
-                        <label for="notes">Additional Notes</label>
-                        <textarea id="notes"
-                            placeholder="Any relevant medical history, recent reports, or concerns…"></textarea>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="patient-name">Patient Name *</label>
+                            <input type="text" id="patient-name" placeholder="Full name of patient" required />
+                        </div>
+                        <div class="form-field">
+                            <label for="patient-phone">Contact Number *</label>
+                            <input type="tel" id="patient-phone" placeholder="+91 98765 43210" required />
+                        </div>
+                        <div class="form-field">
+                            <label for="patient-email">Email Address</label>
+                            <input type="email" id="patient-email" placeholder="for confirmation (optional)" />
+                        </div>
+                        <div class="form-field">
+                            <label for="visit-reason">Reason for Visit *</label>
+                            <select id="visit-reason" required>
+                                <option value="">Select reason…</option>
+                                <option>ICU Follow-Up Consultation</option>
+                                <option>Second Opinion — Critical Care</option>
+                                <option>ECMO / CRRT Discussion</option>
+                                <option>Family Counselling — ICU Patient</option>
+                                <option>Post-ICU Recovery Review</option>
+                                <option>Sepsis / Infection Query</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-field full-width">
+                            <label for="notes">Additional Notes</label>
+                            <textarea id="notes"
+                                placeholder="Any relevant medical history, recent reports, or concerns…"></textarea>
+                        </div>
                     </div>
                     <button type="submit" class="booking-submit" id="booking-btn" disabled>Select a date &amp; time
                         first</button>

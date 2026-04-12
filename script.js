@@ -197,6 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.45 });
     sections.forEach(s => sectionObs.observe(s));
 
+    // ── 13. DYNAMIC CONTENT LOADERS ──────────────────
+    initPeerRecognitions();
+
     // ── 12. SECTION MOUSE-FOLLOW GRADIENT ────────────
     if (!prefersReduced) {
         document.querySelectorAll('.section').forEach(sec => {
@@ -215,42 +218,100 @@ document.addEventListener('DOMContentLoaded', () => {
    SITE SETTINGS & GLOBALS
    ═══════════════════════════════════════════════════ */
 
-let WA_NUM = '919999999999';
-let WA_MSG = 'Hello%2C%20I%20would%20like%20to%20consult%20Dr.%20Jay%20Kothari';
-let ICU_PHONE = '18605001066';
+// IIFE Wrapper to prevent global scope pollution
+(function () {
+    let WA_NUM = '919999999999';
+    let WA_MSG = 'Hello%2C%20I%20would%20like%20to%20consult%20Dr.%20Jay%20Kothari';
+    let ICU_PHONE = '18605001066';
+    let OPD_LINK = 'booking.html';
 
-function applySettings(s) {
-    if (s.wa_number) WA_NUM = s.wa_number;
-    if (s.wa_message) WA_MSG = s.wa_message;
-    if (s.icu_phone) ICU_PHONE = s.icu_phone;
-
-    document.querySelectorAll('.sd-emergency, .icu-link-phone').forEach(el => { el.href = `tel:${ICU_PHONE}`; });
-    document.querySelectorAll('.sd-whatsapp, .wa-link-btn').forEach(el => { el.href = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(WA_MSG)}`; });
-
-    if (s.site_name) {
-        document.querySelectorAll('.nav-logo, .footer-doctor-name').forEach(el => {
-            if (el.classList.contains('nav-logo')) {
-                const parts = s.site_name.split(' ');
-                if (parts.length >= 2) el.innerHTML = `${parts[0]} <span class="glow-text">${parts.slice(1).join(' ')}</span>`;
-                else el.textContent = s.site_name;
-            } else el.textContent = s.site_name;
-        });
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str.toString().replace(/[&<>'"]/g, tag => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[tag] || tag));
     }
-}
 
-(function loadSettings() {
-    fetch('./api/settings.php')
-        .then(r => r.ok ? r.json() : Promise.reject())
-        .then(s => applySettings(s))
-        .catch(() => { });
-})();
+    function applySettings(s) {
+        if (s.wa_number) WA_NUM = s.wa_number;
+        if (s.wa_message) WA_MSG = s.wa_message;
+        if (s.icu_phone) ICU_PHONE = s.icu_phone;
+        if (s.opd_link) OPD_LINK = s.opd_link;
 
-// ── UNIFIED SPEED DIAL FAB ─────────────────────────
-(function createSpeedDial() {
-    const fab = document.createElement('div');
-    fab.id = 'speed-dial';
-    fab.className = 'sd-wrap';
-    fab.innerHTML = `
+        // 1. Update Contact Links
+        document.querySelectorAll('.sd-emergency, .icu-link-phone').forEach(el => { el.href = `tel:${ICU_PHONE}`; });
+        document.querySelectorAll('.sd-whatsapp, .wa-link-btn').forEach(el => { el.href = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(WA_MSG)}`; });
+        document.querySelectorAll('.sd-book').forEach(el => { el.href = OPD_LINK; });
+
+        // 2. Update Site Name / Logo
+        if (s.site_name) {
+            document.querySelectorAll('.nav-logo, .footer-doctor-name').forEach(el => {
+                if (el.classList.contains('nav-logo')) {
+                    const parts = s.site_name.split(' ');
+                    if (parts.length >= 2) el.innerHTML = `${escapeHTML(parts[0])} <span class="glow-text">${escapeHTML(parts.slice(1).join(' '))}</span>`;
+                    else el.textContent = s.site_name;
+                } else el.textContent = s.site_name;
+            });
+        }
+
+        // 3. Update Hero Content (Homepage only)
+        if (document.getElementById('hero-title')) {
+            if (s.hero_title) document.getElementById('hero-title').innerHTML = escapeHTML(s.hero_title).replace(/\*\*(.*?)\*\*/g, '<span class="glow-text">$1</span>');
+            if (s.hero_tagline) document.getElementById('hero-tagline').textContent = s.hero_tagline;
+            if (s.hero_empathy) document.getElementById('hero-empathy').textContent = s.hero_empathy;
+            if (s.hero_badge && document.getElementById('hero-badge-text')) {
+                document.getElementById('hero-badge-text').textContent = s.hero_badge;
+                document.getElementById('hero-badge-wrap').style.display = 'inline-flex';
+            }
+        }
+
+        // 4. Update Stats Band
+        for (let i = 1; i <= 4; i++) {
+            const valEl = document.getElementById(`stat${i}-val`);
+            const lblEl = document.getElementById(`stat${i}-lbl`);
+            if (valEl && s[`stat${i}_num`]) {
+                valEl.dataset.target = s[`stat${i}_num`].replace(/[^\d]/g, '');
+                valEl.dataset.suffix = s[`stat${i}_num`].replace(/[\d]/g, '');
+                valEl.textContent = s[`stat${i}_num`];
+            }
+            if (lblEl && s[`stat${i}_lbl`]) lblEl.textContent = s[`stat${i}_lbl`];
+        }
+
+        // 5. Handle Ticker
+        if (s.ticker_on && s.ticker_text) {
+            renderTicker(escapeHTML(s.ticker_text));
+        }
+    }
+
+    function renderTicker(text) {
+        if (document.getElementById('emergency-ticker')) return;
+        const ticker = document.createElement('div');
+        ticker.id = 'emergency-ticker';
+        ticker.className = 'emergency-ticker-wrap';
+        ticker.innerHTML = `
+        <div class="ticker-content">
+            <span class="ticker-item"><span class="ticker-dot"></span> ${text}</span>
+            <span class="ticker-item"><span class="ticker-dot"></span> ${text}</span>
+            <span class="ticker-item"><span class="ticker-dot"></span> ${text}</span>
+        </div>
+    `;
+        document.body.prepend(ticker);
+        document.body.classList.add('has-ticker');
+    }
+
+    (function loadSettings() {
+        fetch('./api/settings.php')
+            .then(r => r.ok ? r.json() : Promise.reject())
+            .then(s => applySettings(s))
+            .catch(() => { });
+    })();
+
+    // ── UNIFIED SPEED DIAL FAB ─────────────────────────
+    (function createSpeedDial() {
+        const fab = document.createElement('div');
+        fab.id = 'speed-dial';
+        fab.className = 'sd-wrap';
+        fab.innerHTML = `
       <div class="sd-actions">
         <a href="tel:${ICU_PHONE}" class="sd-btn sd-emergency" aria-label="ICU Emergency">
           <span class="sd-icon">🚨</span>
@@ -260,7 +321,7 @@ function applySettings(s) {
           <span class="sd-icon">💬</span>
           <span class="sd-label">WhatsApp Chat</span>
         </a>
-        <a href="booking.html" class="sd-btn sd-book" aria-label="Book OPD">
+        <a href="${OPD_LINK}" class="sd-btn sd-book" aria-label="Book OPD">
           <span class="sd-icon">📅</span>
           <span class="sd-label">Book OPD</span>
         </a>
@@ -270,58 +331,85 @@ function applySettings(s) {
         <span class="sd-pulse"></span>
       </button>
     `;
-    document.body.appendChild(fab);
-    setTimeout(() => fab.classList.add('sd-visible'), 800);
-    document.getElementById('sd-main-btn').addEventListener('click', e => { e.stopPropagation(); fab.classList.toggle('sd-open'); });
-    document.addEventListener('click', e => { if (!fab.contains(e.target)) fab.classList.remove('sd-open'); });
-})();
+        document.body.appendChild(fab);
+        setTimeout(() => fab.classList.add('sd-visible'), 800);
+        document.getElementById('sd-main-btn').addEventListener('click', e => { e.stopPropagation(); fab.classList.toggle('sd-open'); });
+        document.addEventListener('click', e => { if (!fab.contains(e.target)) fab.classList.remove('sd-open'); });
+    })();
 
-// ── PAGE FADE TRANSITIONS ―――――――――――――――――――――――――――
-(function () {
-    document.body.classList.add('page-fade-in');
-    document.querySelectorAll('a[href]').forEach(link => {
-        const href = link.getAttribute('href');
-        if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('tel:') || href.startsWith('mailto:') || link.hasAttribute('target')) return;
-        link.addEventListener('click', e => {
-            e.preventDefault();
-            document.body.classList.add('page-fade-out');
-            setTimeout(() => { window.location.href = href; }, 280);
+    // ── PAGE FADE TRANSITIONS ―――――――――――――――――――――――――――
+    (function () {
+        document.body.classList.add('page-fade-in');
+        document.querySelectorAll('a[href]').forEach(link => {
+            const href = link.getAttribute('href');
+            if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('tel:') || href.startsWith('mailto:') || link.hasAttribute('target')) return;
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                document.body.classList.add('page-fade-out');
+                setTimeout(() => { window.location.href = href; }, 280);
+            });
         });
-    });
-})();
+    })();
 
-// ── DARK / LIGHT MODE TOGGLE ――――――――――――――――――――――――
-(function () {
-    const saved = localStorage.getItem('apollo_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', saved);
-    const nav = document.querySelector('.nav-content');
-    if (!nav) return;
-    const btn = document.createElement('button');
-    btn.id = 'theme-toggle'; btn.className = 'theme-toggle-btn';
-    btn.setAttribute('aria-label', 'Toggle dark mode');
-    btn.innerHTML = saved === 'dark' ? '☀️' : '🌙';
-    btn.addEventListener('click', () => {
-        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('apollo_theme', next);
-        btn.innerHTML = next === 'dark' ? '☀️' : '🌙';
-    });
-    const toggle = nav.querySelector('.nav-toggle');
-    nav.insertBefore(btn, toggle || null);
-})();
-
-// ── FOOTER ENHANCEMENTS ―――――――――――――――――――――――――――――
-(function () {
-    document.querySelectorAll('.footer-year').forEach(el => { el.textContent = new Date().getFullYear(); });
-    document.querySelectorAll('.footer-links').forEach(nav => {
-        if (nav.querySelector('.footer-linkedin')) return;
-        [
-            { text: 'LinkedIn', href: 'https://www.linkedin.com/in/dr-jay-kothari' },
-            { text: 'Find Us on Maps', href: 'https://maps.google.com/?q=Apollo+Hospitals+International+Ahmedabad', target: '_blank' }
-        ].forEach(({ text, href, target }) => {
-            const a = document.createElement('a'); a.href = href; a.textContent = text;
-            if (target) { a.target = target; a.rel = 'noopener'; }
-            nav.appendChild(a);
+    // ── DARK / LIGHT MODE TOGGLE ――――――――――――――――――――――――
+    (function () {
+        const saved = localStorage.getItem('apollo_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        const nav = document.querySelector('.nav-content');
+        if (!nav) return;
+        const btn = document.createElement('button');
+        btn.id = 'theme-toggle'; btn.className = 'theme-toggle-btn';
+        btn.setAttribute('aria-label', 'Toggle dark mode');
+        btn.innerHTML = saved === 'dark' ? '☀️' : '🌙';
+        btn.addEventListener('click', () => {
+            const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('apollo_theme', next);
+            btn.innerHTML = next === 'dark' ? '☀️' : '🌙';
         });
-    });
+        const toggle = nav.querySelector('.nav-toggle');
+        nav.insertBefore(btn, toggle || null);
+    })();
+
+    // ── FOOTER ENHANCEMENTS ―――――――――――――――――――――――――――――
+    (function () {
+        document.querySelectorAll('.footer-year').forEach(el => { el.textContent = new Date().getFullYear(); });
+        document.querySelectorAll('.footer-links').forEach(nav => {
+            if (nav.querySelector('.footer-linkedin')) return;
+            [
+                { text: 'LinkedIn', href: 'https://www.linkedin.com/in/dr-jay-kothari' },
+                { text: 'Find Us on Maps', href: 'https://maps.google.com/?q=Apollo+Hospitals+International+Ahmedabad', target: '_blank' }
+            ].forEach(({ text, href, target }) => {
+                const a = document.createElement('a'); a.href = href; a.textContent = text;
+                if (target) { a.target = target; a.rel = 'noopener'; }
+                nav.appendChild(a);
+            });
+        });
+    })();
+
+    // ── DYNAMIC CONTENT: PEER RECOGNITIONS ――――――――――――――
+    async function initPeerRecognitions() {
+        const grid = document.getElementById('peer-recognition-grid');
+        if (!grid) return;
+
+        try {
+            const res = await fetch('./api/content.php?type=peer_recognitions');
+            const data = await res.json();
+            if (!data || !data.length) return;
+
+            grid.innerHTML = data.map((p, i) => `
+            <div class="glass-card why-card reveal reveal-delay-${(i % 4) + 1}">
+                <div class="why-icon">${escapeHTML(p.icon) || '&#127973;'}</div>
+                <h3>${escapeHTML(p.title)}</h3>
+                <p>${escapeHTML(p.text)}</p>
+                <small style="color:var(--text-muted);font-size:0.75rem;">${escapeHTML(p.source)}</small>
+            </div>
+        `).join('');
+
+            // Re-run reveal observer for new elements
+            if (window.revealNew) window.revealNew();
+        } catch (err) {
+            console.error('Error loading peer recognitions:', err);
+        }
+    }
 })();

@@ -25,3 +25,9 @@ package-lock.json
 *.tmp
 *.bak
 ~$*
+
+# Secrets — NEVER commit
+.env
+*.env
+.env.*
+api/config.php

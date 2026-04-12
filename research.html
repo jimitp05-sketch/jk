@@ -7,6 +7,15 @@
     <title>Research Library | Dr. Jay Kothari | Dr. Jay Kothari</title>
     <meta name="description"
         content="Curated landmark research and clinical guidelines in critical care medicine — reviewed and contextualised by Dr. Jay Kothari, Apollo Hospitals, Ahmedabad." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" />
+    </noscript>
     <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -264,14 +273,40 @@
             </div>
 
             <script>
+                // ── XSS ESCAPING ──
+                function escapeHTML(str) {
+                    if (!str) return '';
+                    return str.toString().replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+                }
+
                 let allResearchPapers = [];
+                let landmarkPapers = [];
 
                 async function initResearch() {
+                    // Capture landmark papers from static HTML before we potentially overwrite it
+                    const staticCards = document.querySelectorAll('#tab-papers .research-item');
+                    staticCards.forEach(card => {
+                        landmarkPapers.push({
+                            id: 'static-' + Math.random().toString(36).substr(2, 9),
+                            title: card.querySelector('h3')?.textContent || '',
+                            journal: card.querySelector('.research-topic')?.textContent.split(' · ')[1] || '',
+                            topic: card.dataset.topic || '',
+                            authors: card.querySelector('.research-authors')?.textContent || '',
+                            takeaway: card.querySelector('.research-takeaway')?.textContent.replace('Clinical Takeaway:', '').trim() || '',
+                            practice: card.querySelector('.dr-position')?.textContent.replace("Dr. Kothari's Practice:", '').trim() || '',
+                            doi: card.querySelector('a.read-more')?.href || '',
+                            _isLandmark: true
+                        });
+                    });
+
                     try {
                         const res = await fetch('./api/content.php?type=research_papers');
                         const json = await res.json();
                         const data = json.data ?? json;
-                        allResearchPapers = Array.isArray(data) ? data : [];
+                        const cmsPapers = Array.isArray(data) ? data : [];
+
+                        // Merge: CMS papers first (to show updates), then Landmark papers
+                        allResearchPapers = [...cmsPapers, ...landmarkPapers];
 
                         // Update count badge
                         const badge = document.getElementById('papers-count-badge');
@@ -284,8 +319,8 @@
                         setupFilterListeners();
                     } catch (e) {
                         console.error("Failed to load research papers:", e);
-                        const badge = document.getElementById('papers-count-badge');
-                        if (badge) badge.textContent = '!';
+                        allResearchPapers = landmarkPapers;
+                        renderPapers('all');
                         setupFilterListeners();
                     }
                 }
@@ -338,16 +373,16 @@
                     }
 
                     grid.innerHTML = filtered.map((p, i) => `
-                        <div class="glass-card research-item" data-topic="${(p.topic || '').toLowerCase()}">
+                        <div class="glass-card research-item" data-topic="${escapeHTML((p.topic || '').toLowerCase())}">
                             <div>
-                                <div class="research-topic">${p.topic ? p.topic + ' · ' : ''}${p.journal || ''} ${p.year || ''}</div>
-                                <h3>${p.title || ''}</h3>
-                                ${p.authors ? `<p class="research-authors">${p.authors}</p>` : ''}
+                                <div class="research-topic">${p.topic ? escapeHTML(p.topic) + ' · ' : ''}${escapeHTML(p.journal || '')} ${escapeHTML(p.year || '')}</div>
+                                <h3>${escapeHTML(p.title || '')}</h3>
+                                ${p.authors ? `<p class="research-authors">${escapeHTML(p.authors)}</p>` : ''}
                             </div>
-                            ${p.takeaway ? `<div class="research-takeaway"><strong>Clinical Takeaway:</strong> ${p.takeaway}</div>` : ''}
-                            ${p.practice ? `<blockquote class="dr-position"><strong>Dr. Kothari's Practice:</strong> ${p.practice}</blockquote>` : ''}
+                            ${p.takeaway ? `<div class="research-takeaway"><strong>Clinical Takeaway:</strong> ${escapeHTML(p.takeaway)}</div>` : ''}
+                            ${p.practice ? `<blockquote class="dr-position"><strong>Dr. Kothari's Practice:</strong> ${escapeHTML(p.practice)}</blockquote>` : ''}
                             <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
-                                ${p.doi ? `<a href="${p.doi}" target="_blank" rel="noopener" class="read-more">View Paper →</a>` : ''}
+                                ${p.doi ? `<a href="${escapeHTML(p.doi)}" target="_blank" rel="noopener" class="read-more">View Paper →</a>` : ''}
                             </div>
                         </div>
                     `).join('');

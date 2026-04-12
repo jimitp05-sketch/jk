@@ -7,9 +7,18 @@
     <title>Critical Care Knowledge Hub | Dr. Jay Kothari | Dr. Jay Kothari</title>
     <meta name="description"
         content="Authoritative medical education on critical care — ECMO, sepsis, CRRT, ventilation, and more. Written from the desk of Dr. Jay Kothari, Apollo Hospitals, Ahmedabad." />
-    <link rel="canonical" href="https://drjaykothari.in/knowledge.html" />
+    <link rel="canonical" href="https://foxwisdom.com/knowledge.html" />
     <script
-        type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Critical Care Knowledge Hub","description":"Authoritative medical education resource on Critical Care Medicine by Dr. Jay Kothari.","url":"https://drjaykothari.in/knowledge.html","author":{"@type":"Physician","name":"Dr. Jay Kothari"}}</script>
+        type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Critical Care Knowledge Hub","description":"Authoritative medical education resource on Critical Care Medicine by Dr. Jay Kothari.","url":"https://foxwisdom.com/knowledge.html","author":{"@type":"Physician","name":"Dr. Jay Kothari"}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" />
+    </noscript>
     <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -226,6 +235,12 @@
 
     <script src="script.js"></script>
     <script>
+        // ── XSS ESCAPING ──
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.toString().replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
         const articles = {
             sepsis: {
                 title: "The Silent Killer: Recognising Sepsis Before It's Too Late",
@@ -511,6 +526,8 @@
             }
         };
 
+        const BUILT_IN_IDS = ['sepsis', 'ecmo', 'crrt', 'ventilation', 'mof', 'family-guide', 'delirium', 'nutrition', 'antimicrobial', 'pics'];
+
         async function initKnowledgeHub() {
             try {
                 const res = await fetch('api/content.php?type=knowledge_articles');
@@ -524,6 +541,8 @@
                     const targetId = a.overridesId || a.id;
                     seen.set(targetId, a);
                 });
+
+                const newArticles = [];
 
                 seen.forEach((a, targetId) => {
                     // Build content from structured sections if body is missing/undefined
@@ -550,7 +569,30 @@
                         : [];
 
                     articles[targetId] = { title: a.title || 'Untitled', tag, subtitle, toc, related: [], content };
+
+                    // If it's a completely new article (not overriding built-in), track it
+                    if (!a.overridesId && !BUILT_IN_IDS.includes(a.id)) {
+                        newArticles.push({ id: a.id, ...articles[targetId] });
+                    }
                 });
+
+                // Inject new articles into the grid
+                const grid = document.querySelector('.pillars-grid');
+                if (grid && newArticles.length > 0) {
+                    newArticles.forEach(art => {
+                        const card = document.createElement('a');
+                        card.href = '#';
+                        card.className = 'glass-card pillar-card reveal';
+                        card.onclick = (e) => { e.preventDefault(); showArticle(art.id); };
+                        card.innerHTML = `
+                            <div class="pillar-icon">📄</div>
+                            <h3>${escapeHTML(art.title)}</h3>
+                            <p>${escapeHTML(art.subtitle.substring(0, 100))}${art.subtitle.length > 100 ? '...' : ''}</p>
+                            <span class="pillar-read-more">Read More →</span>
+                        `;
+                        grid.appendChild(card);
+                    });
+                }
 
                 if (window.location.hash) {
                     const id = window.location.hash.replace('#', '');
@@ -596,9 +638,9 @@
             // Build article content
             document.getElementById('article-content').innerHTML = `
       <button class="back-btn" onclick="showHub()">← Back to Hub</button>
-      <span class="article-tag">${a.tag}</span>
-      <h2>${a.title}</h2>
-      <p class="article-subtitle">${a.subtitle}</p>
+      <span class="article-tag">${escapeHTML(a.tag)}</span>
+      <h2>${escapeHTML(a.title)}</h2>
+      <p class="article-subtitle">${escapeHTML(a.subtitle)}</p>
       <div class="article-meta">
         <span>Dr. Jay Kothari</span><span>·</span>
         <span>Apollo Hospitals, Ahmedabad</span><span>·</span>

@@ -1,0 +1,17 @@
+# AI Apollo — Root .htaccess
+# Protect sensitive files from direct access
+
+# Block access to .env files
+<FilesMatch "^\.env">
+    Require all denied
+</FilesMatch>
+
+# Block access to config.php (should only be require'd by PHP)
+<Files "config.php">
+    Require all denied
+</Files>
+
+# Block access to .gitignore
+<Files ".gitignore">
+    Require all denied
+</Files>

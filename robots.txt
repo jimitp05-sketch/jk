@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /admin.html
+Disallow: /admin.php
 Disallow: /api/
 
-Sitemap: https://forwisdom.com/sitemap.xml
+Sitemap: https://foxwisdom.com/sitemap.xml

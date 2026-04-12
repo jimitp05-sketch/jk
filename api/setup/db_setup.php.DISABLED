@@ -1,0 +1,31 @@
+<?php
+/**
+ * Run this script ONCE to set up the MySQL tables.
+ * Then quickly remove it or secure it.
+ */
+
+require 'config.php';
+$config = require __DIR__ . '/config.php';
+
+try {
+    $pdo = new PDO("mysql:host=" . $config['db_host'] . ";dbname=" . $config['db_name'] . ";charset=utf8mb4", $config['db_user'], $config['db_pass'], [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    ]);
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS bookings (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(150) NOT NULL,
+        email VARCHAR(200) NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        booking_date DATE NOT NULL,
+        booking_time VARCHAR(20) NOT NULL,
+        reason TEXT,
+        status ENUM('pending','confirmed','completed','cancelled') DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )");
+
+    echo "Tables successfully created!";
+} catch (PDOException $e) {
+    echo "Setup failed: " . $e->getMessage();
+}
+?>

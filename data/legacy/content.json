@@ -345,5 +345,35 @@
             "url": "https://doi.org/10.1097/CCM.0000000000005337"
         }
     ],
-    "knowledge_articles": []
+    "knowledge_articles": [],
+    "peer_recognitions": [
+        {
+            "id": 1,
+            "title": "Apollo Hospitals, Ahmedabad",
+            "text": "Dr. Kothari is our reference intensivist for the most hemodynamically complex cases including cardiac failure, ECMO, and multi-organ dysfunction syndrome requiring multidisciplinary care.",
+            "source": "Department of Critical Care Medicine, Apollo Hospitals",
+            "icon": "&#127973;"
+        },
+        {
+            "id": 2,
+            "title": "Cardiology Department",
+            "text": "For post-cardiac surgery ICU management and cardiogenic shock, our team consistently seeks Dr. Kothari's input. His ECMO experience is unparalleled within Gujarat.",
+            "source": "Department of Cardiology, Apollo Hospitals International",
+            "icon": "&#128104;&#8205;&#9877;&#65039;"
+        },
+        {
+            "id": 3,
+            "title": "Medical Education",
+            "text": "Dr. Kothari mentors postgraduate residents and DNB Critical Care trainees. His evidence-based approach has shaped a generation of intensivists in Gujarat.",
+            "source": "Medical Education Committee, Apollo Hospitals",
+            "icon": "&#127891;"
+        },
+        {
+            "id": 4,
+            "title": "Press & Media",
+            "text": "Dr. Kothari has contributed to medical education forums, hospital newsletters, and health awareness campaigns across Gujarat.",
+            "source": "Apollo Hospitals Newsroom, Critical Care education publications",
+            "icon": "&#128240;"
+        }
+    ]
 }
