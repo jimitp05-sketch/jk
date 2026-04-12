@@ -18,7 +18,7 @@ try {
 }
 
 // ── Load content.json ─────────────────────────────────────
-$jsonPath = __DIR__ . '/../data/content.json';
+$jsonPath = __DIR__ . '/../data/legacy/content.json';
 if (!file_exists($jsonPath)) {
     die("[Migration] content.json not found at: $jsonPath\n");
 }
@@ -61,7 +61,7 @@ foreach ($sections as $key => $type) {
 }
 
 // ── Also migrate settings if they exist ────────────────────────
-$settingsPath = __DIR__ . '/../data/settings.json';
+$settingsPath = __DIR__ . '/../data/legacy/settings.json';
 if (file_exists($settingsPath)) {
     $settings = file_get_contents($settingsPath);
     if ($settings) {
