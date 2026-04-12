@@ -27,19 +27,40 @@
             <label>Site Name / Doctor Name</label>
             <input type="text" id="st-site-name" placeholder="Dr. Jay Kothari">
         </div>
-        <div class="form-group" style="grid-column: 1 / -1;">
-            <label>Hero Title</label>
-            <input type="text" id="st-hero-title" placeholder="When Seconds Define Survival.">
+        <div class="form-group" style="grid-column: 1 / -1; margin-top:20px;">
+            <h3 style="margin-bottom:12px;">🏠 Homepage Hero & Content</h3>
+            <label>Hero Badge Text</label>
+            <input type="text" id="st-hero-badge" placeholder="🔵 Apollo Hospitals · Gujarat's #1 Critical Care Unit">
         </div>
         <div class="form-group" style="grid-column: 1 / -1;">
-            <label>Hero Tagline</label>
-            <textarea id="st-hero-tagline" placeholder="Gujarat's frontline of critical care..."
-                style="min-height:80px;"></textarea>
+            <label>Hero Title (Main Heading)</label>
+            <input type="text" id="st-hero-title" placeholder="Your Family Deserves The Best ICU Doctor in Gujarat.">
         </div>
         <div class="form-group" style="grid-column: 1 / -1;">
-            <label>Hero Empathy Message</label>
-            <input type="text" id="st-hero-empathy"
-                placeholder="We know you're scared. You're in the right place.">
+            <label>Hero Description (Subtext)</label>
+            <textarea id="st-hero-desc" placeholder="We know you're terrified right now..." style="min-height:80px;"></textarea>
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Hero Doctor Image URL</label>
+            <input type="text" id="st-hero-img" placeholder="img-hero-doctor.png">
+        </div>
+        
+        <div class="editor-grid" style="margin-top:12px;">
+            <div class="editor-field">
+                <label>Stat 1 Value & Label</label>
+                <input type="text" id="st-hero-stat1-val" placeholder="30" style="margin-bottom:4px;" />
+                <input type="text" id="st-hero-stat1-lbl" placeholder="Years of Practice" />
+            </div>
+            <div class="editor-field">
+                <label>Stat 2 Value & Label</label>
+                <input type="text" id="st-hero-stat2-val" placeholder="10000" style="margin-bottom:4px;" />
+                <input type="text" id="st-hero-stat2-lbl" placeholder="Lives Touched" />
+            </div>
+            <div class="editor-field">
+                <label>Stat 3 Value & Label</label>
+                <input type="text" id="st-hero-stat3-val" placeholder="10" style="margin-bottom:4px;" />
+                <input type="text" id="st-hero-stat3-lbl" placeholder="ECMO Docs in Gujarat" />
+            </div>
         </div>
         <div
             style="margin: 24px 0 12px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">

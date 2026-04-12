@@ -57,8 +57,15 @@ async function loadCurrentSettings() {
         document.getElementById('st-wa-message').value = s.wa_message || '';
         document.getElementById('st-site-name').value = s.site_name || '';
         document.getElementById('st-hero-title').value = s.hero_title || '';
-        document.getElementById('st-hero-tagline').value = s.hero_tagline || '';
-        document.getElementById('st-hero-empathy').value = s.hero_empathy || '';
+        document.getElementById('st-hero-desc').value = s.hero_desc || '';
+        document.getElementById('st-hero-badge').value = s.hero_badge || '';
+        document.getElementById('st-hero-img').value = s.hero_img || '';
+        document.getElementById('st-hero-stat1-val').value = s.hero_stat1_val || '';
+        document.getElementById('st-hero-stat1-lbl').value = s.hero_stat1_lbl || '';
+        document.getElementById('st-hero-stat2-val').value = s.hero_stat2_val || '';
+        document.getElementById('st-hero-stat2-lbl').value = s.hero_stat2_lbl || '';
+        document.getElementById('st-hero-stat3-val').value = s.hero_stat3_val || '';
+        document.getElementById('st-hero-stat3-lbl').value = s.hero_stat3_lbl || '';
         document.getElementById('st-admin-user').value = s.admin_user || 'admin';
 
         // We don't pre-fill the password for security reasons (it would show up as dots),
@@ -79,8 +86,15 @@ async function saveSettings() {
         icu_phone: g('st-icu-phone'),
         site_name: g('st-site-name'),
         hero_title: g('st-hero-title'),
-        hero_tagline: g('st-hero-tagline'),
-        hero_empathy: g('st-hero-empathy'),
+        hero_desc: g('st-hero-desc'),
+        hero_badge: g('st-hero-badge'),
+        hero_img: g('st-hero-img'),
+        hero_stat1_val: g('st-hero-stat1-val'),
+        hero_stat1_lbl: g('st-hero-stat1-lbl'),
+        hero_stat2_val: g('st-hero-stat2-val'),
+        hero_stat2_lbl: g('st-hero-stat2-lbl'),
+        hero_stat3_val: g('st-hero-stat3-val'),
+        hero_stat3_lbl: g('st-hero-stat3-lbl'),
         admin_user: g('st-admin-user')
     };
     const newPass = g('st-admin-pass');

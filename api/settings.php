@@ -112,9 +112,16 @@ function readSettings(): array {
         'wa_message'  => 'Hello, I would like to consult Dr. Jay Kothari',
         'icu_phone'   => '18605001066',
         'site_name'   => 'Dr. Jay Kothari',
-        'hero_title'  => 'When Seconds Define Survival.',
-        'hero_tagline' => "Gujarat's frontline of critical care — 30 years, 10,000 lives. Dr. Jay Kothari leads the most complex cases at Apollo Hospitals, Ahmedabad.",
-        'hero_empathy' => "We know you're scared. You're in the right place.",
+        'hero_title'  => 'Your Family Deserves The Best ICU Doctor in Gujarat.',
+        'hero_desc'   => "We know you're terrified right now. Take a breath. You've found Dr. Jay Kothari — and he's ready.",
+        'hero_badge'  => "🔵 Apollo Hospitals · Gujarat's #1 Critical Care Unit",
+        'hero_stat1_val' => '30',
+        'hero_stat1_lbl' => 'Years of Practice',
+        'hero_stat2_val' => '10000',
+        'hero_stat2_lbl' => 'Lives Touched',
+        'hero_stat3_val' => '10',
+        'hero_stat3_lbl' => 'ECMO Docs in Gujarat',
+        'hero_img'    => 'img-hero-doctor.png',
         'admin_user'  => 'admin',
         'admin_pass'  => password_hash('apollo2024', PASSWORD_ARGON2ID) // Default hashed
     ];
@@ -215,25 +222,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Public settings (NEVER return admin_pass)
     echo json_encode([
+        'site_content' => [
+            'hero_title' => $settings['hero_title'],
+            'hero_desc'  => $settings['hero_desc'],
+            'hero_badge' => $settings['hero_badge'],
+            'hero_stat1_val' => $settings['hero_stat1_val'],
+            'hero_stat1_lbl' => $settings['hero_stat1_lbl'],
+            'hero_stat2_val' => $settings['hero_stat2_val'],
+            'hero_stat2_lbl' => $settings['hero_stat2_lbl'],
+            'hero_stat3_val' => $settings['hero_stat3_val'],
+            'hero_stat3_lbl' => $settings['hero_stat3_lbl'],
+            'hero_img'   => $settings['hero_img'],
+        ],
         'wa_number'  => $settings['wa_number'],
         'wa_message' => $settings['wa_message'],
         'icu_phone'  => $settings['icu_phone'],
         'site_name'  => $settings['site_name'],
-        'hero_title' => $settings['hero_title'],
-        'hero_tagline' => $settings['hero_tagline'],
-        'hero_empathy' => $settings['hero_empathy'],
-        'hero_badge' => $settings['hero_badge'] ?? '',
-        'opd_link'   => $settings['opd_link'] ?? '',
-        'ticker_text' => $settings['ticker_text'] ?? '',
-        'ticker_on'   => (bool)($settings['ticker_on'] ?? false),
-        'stat1_num'  => $settings['stat1_num'] ?? '',
-        'stat1_lbl'  => $settings['stat1_lbl'] ?? '',
-        'stat2_num'  => $settings['stat2_num'] ?? '',
-        'stat2_lbl'  => $settings['stat2_lbl'] ?? '',
-        'stat3_num'  => $settings['stat3_num'] ?? '',
-        'stat3_lbl'  => $settings['stat3_lbl'] ?? '',
-        'stat4_num'  => $settings['stat4_num'] ?? '',
-        'stat4_lbl'  => $settings['stat4_lbl'] ?? '',
     ]);
     exit;
 }
@@ -297,10 +301,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Allow updating all keys including admin credentials
     $allowed = [
         'wa_number', 'wa_message', 'icu_phone', 'site_name', 
-        'hero_title', 'hero_tagline', 'hero_empathy', 'hero_badge',
-        'opd_link', 'ticker_text', 'ticker_on',
-        'stat1_num', 'stat1_lbl', 'stat2_num', 'stat2_lbl',
-        'stat3_num', 'stat3_lbl', 'stat4_num', 'stat4_lbl',
+        'hero_title', 'hero_desc', 'hero_badge', 
+        'hero_stat1_val', 'hero_stat1_lbl', 
+        'hero_stat2_val', 'hero_stat2_lbl', 
+        'hero_stat3_val', 'hero_stat3_lbl',
+        'hero_img',
         'admin_user'
     ];
     foreach ($allowed as $key) {
