@@ -260,7 +260,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Update Hero Content (Homepage only)
         if (document.getElementById('hero-title')) {
-            if (s.hero_title) document.getElementById('hero-title').innerHTML = s.hero_title.replace(/\*\*(.*?)\*\*/g, '<span class="glow-text">$1</span>');
+            window.cmsHydrated = true;
+            if (s.hero_title) {
+                const titleEl = document.getElementById('hero-title');
+                titleEl.innerHTML = s.hero_title.replace(/\*\*(.*?)\*\*/g, '<span class="glow-text">$1</span>');
+                // Re-run stagger logic with new text
+                if (window.staggerHero) window.staggerHero();
+            }
             if (s.hero_desc || s.hero_tagline) {
                 const desc = s.hero_desc || s.hero_tagline;
                 document.getElementById('hero-empathy').textContent = desc;
