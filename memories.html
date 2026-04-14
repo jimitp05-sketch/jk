@@ -1,0 +1,2671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ICU to Home — Memories | Dr. Jay Kothari</title>
+<meta name="description" content="Stories of hope, healing, and gratitude from families who journeyed from ICU to home. Real miracles. Real people. Dr. Jay Kothari, Critical Care Specialist, Apollo Hospitals Ahmedabad." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+
+<style>
+/* ================================================================
+   MEMORIES.HTML — PAGE-SPECIFIC STYLES
+   ICU to Home — Dr. Jay Kothari
+   Production page, connects to ./api/memories.php
+================================================================ */
+
+/* ── DESIGN TOKEN EXTENSIONS ─────────────────────────────── */
+:root {
+    --font-handwritten: 'Caveat', cursive;
+    --bg-warm: #FFFBF7;
+    --bg-section: #F0F2F8;
+}
+
+/* ── BASE ────────────────────────────────────────────────── */
+body {
+    font-family: var(--font-b);
+    background: var(--bg-primary);
+    color: var(--text-body);
+    overflow-x: hidden;
+    line-height: 1.7;
+}
+
+/* ── CURSOR GLOW (matches site) ─────────────────────────── */
+#cursor-glow {
+    position: fixed;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,180,216,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: left 0.12s ease, top 0.12s ease;
+    z-index: 0;
+    left: -999px; top: -999px;
+}
+
+/* ── SCROLL REVEAL BASE ──────────────────────────────────── */
+.reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* ── SECTION LABEL ───────────────────────────────────────── */
+.section-label {
+    display: inline-block;
+    font-family: var(--font-b);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+.section-title {
+    font-family: var(--font-h);
+    font-weight: 700;
+    line-height: 1.18;
+    color: var(--text-h);
+}
+.section-sub {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+    line-height: 1.65;
+}
+
+/* ================================================================
+   SECTION 1 — HERO
+================================================================ */
+.mem-hero {
+    min-height: 100vh;
+    background: linear-gradient(165deg, #0A1628 0%, #162447 45%, #1B365C 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 24px 140px;
+}
+
+/* Ambient glows */
+.hero-glow-1 {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,168,75,0.10) 0%, transparent 70%);
+    top: -120px; left: -180px;
+    pointer-events: none;
+}
+.hero-glow-2 {
+    position: absolute;
+    width: 520px; height: 520px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,180,216,0.08) 0%, transparent 70%);
+    bottom: -80px; right: -100px;
+    pointer-events: none;
+}
+
+/* Gold particles */
+.particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+.particle {
+    position: absolute;
+    bottom: -10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #E8C171 0%, #D4A84B 60%, transparent 100%);
+    animation: floatUp linear infinite;
+    opacity: 0;
+}
+.particle:nth-child(1)  { left:  5%; width: 4px; height: 4px;  animation-duration:  8s; animation-delay: 0s;    opacity: 0.7; }
+.particle:nth-child(2)  { left: 12%; width: 7px; height: 7px;  animation-duration: 11s; animation-delay: 1.2s;  opacity: 0.5; }
+.particle:nth-child(3)  { left: 20%; width: 5px; height: 5px;  animation-duration:  9s; animation-delay: 2.4s;  opacity: 0.6; }
+.particle:nth-child(4)  { left: 30%; width: 3px; height: 3px;  animation-duration: 13s; animation-delay: 0.8s;  opacity: 0.8; }
+.particle:nth-child(5)  { left: 42%; width: 6px; height: 6px;  animation-duration:  7s; animation-delay: 3.1s;  opacity: 0.5; }
+.particle:nth-child(6)  { left: 55%; width: 4px; height: 4px;  animation-duration: 10s; animation-delay: 1.7s;  opacity: 0.7; }
+.particle:nth-child(7)  { left: 65%; width: 8px; height: 8px;  animation-duration: 12s; animation-delay: 0.3s;  opacity: 0.4; }
+.particle:nth-child(8)  { left: 75%; width: 5px; height: 5px;  animation-duration: 8.5s; animation-delay: 2.9s; opacity: 0.6; }
+.particle:nth-child(9)  { left: 85%; width: 4px; height: 4px;  animation-duration: 9.5s; animation-delay: 1.4s; opacity: 0.7; }
+.particle:nth-child(10) { left: 93%; width: 6px; height: 6px;  animation-duration: 11s; animation-delay: 0.6s;  opacity: 0.5; }
+.particle:nth-child(11) { left: 35%; width: 3px; height: 3px;  animation-duration: 14s; animation-delay: 4.0s;  opacity: 0.8; }
+.particle:nth-child(12) { left: 48%; width: 5px; height: 5px;  animation-duration:  6s; animation-delay: 2.2s;  opacity: 0.6; }
+
+@keyframes floatUp {
+    0%   { transform: translateY(0) translateX(0) scale(0.8);          opacity: 0; }
+    10%  { opacity: 1; }
+    50%  { transform: translateY(-45vh) translateX(15px) scale(1.1); }
+    90%  { opacity: 0.3; }
+    100% { transform: translateY(-100vh) translateX(-10px) scale(0.6); opacity: 0; }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 860px;
+}
+
+.hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-b);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    background: rgba(212,168,75,0.10);
+    border: 1px solid rgba(212,168,75,0.28);
+    padding: 8px 20px;
+    border-radius: 40px;
+    margin-bottom: 28px;
+    backdrop-filter: blur(8px);
+}
+.hero-tag .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold-light);
+    animation: pulseDot 1.8s ease-in-out infinite;
+}
+@keyframes pulseDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.6); opacity: 0.5; }
+}
+
+.hero-title {
+    font-family: var(--font-h);
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.0;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+}
+.hero-title .word-icu {
+    background: linear-gradient(135deg, #C9983A 0%, #E8C171 50%, #D4A84B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero-title .word-to {
+    color: rgba(255,255,255,0.5);
+    font-style: italic;
+    font-size: 0.7em;
+}
+.hero-title .word-home {
+    color: var(--teal-light);
+}
+
+/* Typing effect */
+.typing-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    margin: 32px 0 44px;
+}
+.typing-text {
+    font-family: var(--font-b);
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    font-weight: 400;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.01em;
+}
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background: var(--gold-light);
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: blinkCursor 0.8s step-end infinite;
+}
+@keyframes blinkCursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Hero counter pill */
+.hero-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-b);
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.88);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 14px 30px;
+    border-radius: 50px;
+    backdrop-filter: blur(12px);
+    margin-bottom: 52px;
+}
+.hero-counter .hc-num {
+    font-family: var(--font-h);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gold-light);
+}
+.hero-counter .hc-sep { color: rgba(255,255,255,0.25); }
+
+/* Diya CTA in hero */
+.hero-diya-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-b);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    background: rgba(212,168,75,0.12);
+    border: 1.5px solid rgba(212,168,75,0.35);
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.3s, box-shadow 0.3s, transform 0.25s;
+    backdrop-filter: blur(8px);
+}
+.hero-diya-cta:hover {
+    background: rgba(212,168,75,0.22);
+    box-shadow: 0 8px 32px rgba(212,168,75,0.3);
+    transform: translateY(-2px);
+}
+.hero-diya-cta .diya-emoji {
+    font-size: 1.2rem;
+    animation: flickerEmoji 1.5s ease-in-out infinite alternate;
+}
+@keyframes flickerEmoji {
+    0%   { filter: brightness(1); }
+    100% { filter: brightness(1.4) drop-shadow(0 0 6px rgba(255,180,0,0.7)); }
+}
+
+/* Scroll indicator */
+.scroll-down {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255,255,255,0.35);
+    font-family: var(--font-b);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    animation: bounceDn 2.2s ease-in-out infinite;
+    z-index: 2;
+}
+.scroll-down svg {
+    width: 22px; height: 22px;
+    stroke: rgba(255,255,255,0.35);
+    fill: none;
+    stroke-width: 2;
+}
+@keyframes bounceDn {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(9px); }
+}
+
+/* ================================================================
+   SECTION 2 — HEALING STORIES
+================================================================ */
+.stories-section {
+    background: var(--bg-primary);
+    padding: 100px 24px 110px;
+}
+.stories-head {
+    text-align: center;
+    margin-bottom: 60px;
+}
+.stories-head .section-label { color: var(--teal); }
+.stories-head .section-title { font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+
+.stories-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+@media (max-width: 960px)  { .stories-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px)  { .stories-grid { grid-template-columns: 1fr; } }
+
+/* Loading placeholder */
+.stories-loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 0;
+    color: var(--text-muted);
+    font-family: var(--font-b);
+    font-size: 0.95rem;
+}
+.loader-dots {
+    display: inline-flex;
+    gap: 8px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+.loader-dots span {
+    width: 7px; height: 7px;
+    background: var(--teal);
+    border-radius: 50%;
+    animation: dotBounce 1.2s ease-in-out infinite;
+}
+.loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotBounce {
+    0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+    40%           { transform: scale(1.2); opacity: 1; }
+}
+
+.story-card {
+    background: #FFFFFF;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(43,50,128,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.story-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+}
+.story-card.teal-card::before  { background: linear-gradient(135deg, #48CAE4, #0077B6); }
+.story-card.gold-card::before  { background: linear-gradient(135deg, #C9983A 0%, #E8C171 100%); }
+.story-card.green-card::before { background: linear-gradient(135deg, #10B981, #059669); }
+.story-card:hover {
+    transform: translateY(-6px) rotateX(1deg) rotateY(-0.5deg);
+    box-shadow: var(--shadow-lg), 0 0 0 1px rgba(43,50,128,0.08);
+}
+
+.story-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-b);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    width: fit-content;
+}
+.story-badge.teal-badge  { background: rgba(0,180,216,0.10); color: #0077B6; }
+.story-badge.gold-badge  { background: rgba(212,168,75,0.12); color: var(--gold-warm); }
+.story-badge.green-badge { background: rgba(16,185,129,0.10); color: #059669; }
+
+.story-title {
+    font-family: var(--font-h);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-h);
+    line-height: 1.25;
+}
+.story-excerpt {
+    font-family: var(--font-b);
+    font-size: 0.95rem;
+    color: var(--text-body);
+    line-height: 1.75;
+    flex: 1;
+}
+.story-read-more {
+    color: var(--teal);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 4px;
+    transition: color 0.2s;
+}
+.story-read-more:hover { color: var(--teal-deep); }
+
+.story-attr {
+    font-family: var(--font-b);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+.story-quote {
+    font-family: var(--font-h);
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--indigo);
+    border-left: 3px solid var(--teal);
+    padding-left: 12px;
+    line-height: 1.6;
+}
+
+/* Journey bar */
+.journey-bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+.jb-seg {
+    flex: 1;
+    height: 5px;
+    border-radius: 10px;
+}
+.jb-seg.red    { background: #E84545; }
+.jb-seg.orange { background: #FF8C00; }
+.jb-seg.teal   { background: var(--teal); }
+.jb-seg.green  { background: var(--green-ok); }
+.jb-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+.stories-share-row {
+    text-align: center;
+    margin-top: 56px;
+}
+
+.btn-ghost-teal {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-b);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--teal);
+    border: 1.5px solid var(--teal);
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.25s, color 0.25s, transform 0.25s;
+}
+.btn-ghost-teal:hover {
+    background: var(--teal);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.btn-ghost-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-b);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold-warm);
+    border: 1.5px solid var(--gold-warm);
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.25s, color 0.25s, transform 0.25s;
+}
+.btn-ghost-gold:hover {
+    background: var(--gold-warm);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* ================================================================
+   SECTION 3 — GRATITUDE WALL
+================================================================ */
+.gratitude-section {
+    background: var(--bg-warm);
+    padding: 100px 24px 110px;
+    position: relative;
+    overflow: hidden;
+}
+.gratitude-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(212,168,75,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(0,180,216,0.04) 0%, transparent 50%);
+    pointer-events: none;
+}
+.gratitude-head {
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative;
+}
+.gratitude-head .section-label { color: var(--gold-warm); }
+.gratitude-head .section-title { font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+
+.notes-masonry {
+    columns: 4;
+    column-gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+@media (max-width: 1000px) { .notes-masonry { columns: 3; } }
+@media (max-width: 700px)  { .notes-masonry { columns: 2; } }
+@media (max-width: 480px)  { .notes-masonry { columns: 1; } }
+
+.note-card {
+    break-inside: avoid;
+    margin-bottom: 20px;
+    background: #FFFDF8;
+    border-radius: 8px;
+    padding: 20px 18px 16px;
+    box-shadow: 0 2px 12px rgba(100,60,0,0.08), 0 1px 4px rgba(100,60,0,0.05);
+    border: 1px solid rgba(212,168,75,0.15);
+    position: relative;
+    display: block;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s ease;
+}
+.note-card.visible {
+    opacity: 1;
+    transform: translateY(0) rotate(var(--rot, 0deg));
+}
+.note-card:hover {
+    box-shadow: 0 8px 28px rgba(100,60,0,0.13);
+    z-index: 2;
+    position: relative;
+}
+.note-card.typed { font-family: var(--font-b); }
+
+/* Pin dot at top */
+.note-pin {
+    position: absolute;
+    top: -8px; left: 50%;
+    transform: translateX(-50%);
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.note-text {
+    font-family: var(--font-handwritten);
+    font-size: 1.08rem;
+    color: #3A2800;
+    line-height: 1.7;
+    font-weight: 400;
+}
+.note-card.typed .note-text {
+    font-family: var(--font-b);
+    font-size: 0.9rem;
+}
+.note-author {
+    font-family: var(--font-b);
+    font-size: 0.75rem;
+    color: rgba(58,40,0,0.5);
+    margin-top: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+.note-author .rel {
+    color: rgba(58,40,0,0.35);
+    font-weight: 400;
+    margin-left: 4px;
+}
+
+.gratitude-share-row {
+    text-align: center;
+    margin-top: 56px;
+}
+
+/* ================================================================
+   SECTION 4 — PHOTO MEMORIES
+================================================================ */
+.photos-section {
+    background: var(--bg-section);
+    padding: 100px 24px 110px;
+}
+.photos-head {
+    text-align: center;
+    margin-bottom: 60px;
+}
+.photos-head .section-label { color: var(--teal); }
+.photos-head .section-title { font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+
+.photos-masonry {
+    columns: 3;
+    column-gap: 18px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+@media (max-width: 900px) { .photos-masonry { columns: 2; } }
+@media (max-width: 500px) { .photos-masonry { columns: 1; } }
+
+.photo-card {
+    break-inside: avoid;
+    margin-bottom: 18px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.94);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    box-shadow: var(--shadow-sm);
+}
+.photo-card.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+.photo-card:hover .photo-overlay { opacity: 1; }
+.photo-card:hover .photo-placeholder-inner { transform: scale(1.05); }
+
+.photo-img {
+    width: 100%;
+    display: block;
+    transition: transform 0.5s ease;
+}
+.photo-card:hover .photo-img { transform: scale(1.05); }
+
+.photo-placeholder {
+    width: 100%;
+    padding-top: var(--aspect, 72%);
+    position: relative;
+}
+.photo-placeholder-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.5s ease;
+}
+.photo-icon { font-size: 2rem; opacity: 0.75; }
+.photo-label-text {
+    font-family: var(--font-b);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+    letter-spacing: 0.04em;
+    padding: 0 12px;
+}
+
+.photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(8,12,26,0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    padding: 16px;
+}
+.photo-overlay-text {
+    font-family: var(--font-b);
+    font-size: 0.85rem;
+    color: #fff;
+    text-align: center;
+    line-height: 1.55;
+    font-weight: 500;
+}
+
+.photo-badge {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: rgba(0,180,216,0.9);
+    color: #fff;
+    font-family: var(--font-b);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+}
+
+.photos-share-row {
+    text-align: center;
+    margin-top: 56px;
+}
+
+/* ================================================================
+   SECTION 5 — DR. JAY'S PROMISE
+================================================================ */
+.promise-section {
+    background: linear-gradient(165deg, #0A1628 0%, #162447 45%, #1B365C 100%);
+    padding: 110px 24px 120px;
+    position: relative;
+    overflow: hidden;
+}
+.promise-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(212,168,75,0.08) 0%, transparent 65%);
+    pointer-events: none;
+}
+.promise-section::after {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,180,216,0.06) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.promise-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+.promise-head {
+    text-align: center;
+    margin-bottom: 60px;
+}
+.promise-head .section-label { color: var(--gold-light); }
+.promise-head .section-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    color: #FFFFFF;
+}
+
+.letter-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,168,75,0.18);
+    border-radius: var(--radius-lg);
+    padding: 52px 52px 44px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 0 1px rgba(212,168,75,0.06), var(--shadow-lg);
+    position: relative;
+}
+.letter-box::before {
+    content: '"';
+    position: absolute;
+    top: 16px; left: 28px;
+    font-family: var(--font-h);
+    font-size: 6rem;
+    color: rgba(212,168,75,0.10);
+    line-height: 1;
+    pointer-events: none;
+}
+@media (max-width: 600px) { .letter-box { padding: 36px 24px 32px; } }
+
+.letter-salutation {
+    font-family: var(--font-h);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    margin-bottom: 24px;
+    font-style: italic;
+}
+.letter-body {
+    font-family: var(--font-b);
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.80);
+    line-height: 1.9;
+    margin-bottom: 22px;
+}
+.letter-body strong {
+    color: rgba(255,255,255,0.95);
+    font-weight: 600;
+}
+.letter-close {
+    font-family: var(--font-b);
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 20px;
+    font-style: italic;
+}
+.letter-sig {
+    font-family: var(--font-h);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    display: inline-block;
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+.letter-role {
+    font-family: var(--font-b);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* ================================================================
+   SECTION 6 — SHARE YOUR STORY
+================================================================ */
+.share-section {
+    background: var(--bg-warm);
+    padding: 100px 24px 110px;
+}
+.share-head {
+    text-align: center;
+    margin-bottom: 60px;
+}
+.share-head .section-label { color: var(--gold-warm); }
+.share-head .section-title { font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+
+.action-cards-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 880px;
+    margin: 0 auto 52px;
+}
+@media (max-width: 680px) { .action-cards-row { grid-template-columns: 1fr; } }
+
+.action-card {
+    background: #FFFFFF;
+    border-radius: var(--radius-lg);
+    padding: 36px 24px 30px;
+    box-shadow: var(--shadow-sm);
+    border: 1.5px solid rgba(212,168,75,0.12);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(212,168,75,0.3);
+}
+.action-card.active {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212,168,75,0.12), var(--shadow-md);
+}
+.action-card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 14px;
+    display: block;
+}
+.action-card-title {
+    font-family: var(--font-h);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-h);
+    margin-bottom: 8px;
+}
+.action-card-desc {
+    font-family: var(--font-b);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* Form box */
+.share-form-box {
+    max-width: 620px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: var(--radius-lg);
+    padding: 44px 44px 36px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(43,50,128,0.06);
+    display: none;
+}
+.share-form-box.visible { display: block; }
+@media (max-width: 600px) { .share-form-box { padding: 28px 20px 24px; } }
+
+.form-title {
+    font-family: var(--font-h);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-h);
+    margin-bottom: 28px;
+}
+
+.form-label {
+    display: block;
+    font-family: var(--font-b);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+}
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1.5px solid rgba(43,50,128,0.10);
+    border-radius: var(--radius-sm);
+    padding: 13px 18px;
+    font-family: var(--font-b);
+    font-size: 0.95rem;
+    color: var(--text-body);
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(0,180,216,0.1);
+}
+.form-textarea { min-height: 115px; resize: vertical; }
+.form-textarea.handwritten {
+    font-family: var(--font-handwritten);
+    font-size: 1.1rem;
+}
+.form-select { cursor: pointer; }
+.form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+@media (max-width: 500px) { .form-row-2 { grid-template-columns: 1fr; } }
+
+.file-upload-area {
+    border: 2px dashed rgba(43,50,128,0.15);
+    border-radius: var(--radius-sm);
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+    margin-bottom: 20px;
+}
+.file-upload-area:hover {
+    border-color: var(--teal);
+    background: rgba(0,180,216,0.03);
+}
+.file-upload-area .upload-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+.file-upload-area p {
+    font-family: var(--font-b);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+.file-upload-area p strong { color: var(--teal); }
+#file-preview {
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    display: none;
+}
+
+.btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, #48CAE4, #0077B6);
+    color: #fff;
+    font-family: var(--font-b);
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 16px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, opacity 0.25s;
+    box-shadow: 0 6px 20px rgba(0,180,216,0.3);
+    letter-spacing: 0.01em;
+}
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0,180,216,0.4);
+}
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+.form-note {
+    text-align: center;
+    font-family: var(--font-b);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 14px;
+    line-height: 1.6;
+}
+
+/* ================================================================
+   SECTION 7 — LIGHT A DIYA CTA
+================================================================ */
+.diya-cta-section {
+    background: linear-gradient(165deg, #150B00 0%, #1A1000 50%, #0F0800 100%);
+    padding: 90px 24px 100px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+.diya-cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 60%, rgba(212,168,75,0.16) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+.diya-cta-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 560px;
+    margin: 0 auto;
+}
+.diya-cta-art {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 20px;
+    animation: flickerEmoji 1.5s ease-in-out infinite alternate;
+}
+.diya-cta-title {
+    font-family: var(--font-h);
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-weight: 700;
+    color: #FFF5E0;
+    line-height: 1.25;
+    margin-bottom: 16px;
+}
+.diya-cta-sub {
+    font-family: var(--font-b);
+    font-size: 1rem;
+    color: rgba(255,245,224,0.55);
+    margin-bottom: 40px;
+    line-height: 1.65;
+}
+.btn-diya-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #C9983A 0%, #E8C171 50%, #D4A84B 100%);
+    color: #0A1628;
+    font-family: var(--font-b);
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 16px 40px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: transform 0.25s, box-shadow 0.25s;
+    box-shadow: 0 6px 24px rgba(212,168,75,0.4);
+    letter-spacing: 0.01em;
+}
+.btn-diya-gold:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 12px 36px rgba(212,168,75,0.55);
+}
+
+/* ================================================================
+   SECTION 8 — COUNTER BAR
+================================================================ */
+.counter-bar {
+    background: var(--bg-dark);
+    padding: 72px 24px;
+    position: relative;
+    overflow: hidden;
+}
+.counter-bar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(212,168,75,0.07) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+.counter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+@media (max-width: 700px) {
+    .counter-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.counter-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 20px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+}
+.counter-item:last-child { border-right: none; }
+@media (max-width: 700px) {
+    .counter-item:nth-child(2) { border-right: none; }
+    .counter-item:nth-child(3) { border-right: 1px solid rgba(255,255,255,0.06); border-top: 1px solid rgba(255,255,255,0.06); }
+    .counter-item:nth-child(4) { border-top: 1px solid rgba(255,255,255,0.06); }
+}
+
+.counter-num {
+    font-family: var(--font-h);
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+.counter-label {
+    font-family: var(--font-b);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* ================================================================
+   STORY MODAL
+================================================================ */
+.story-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8,12,26,0.85);
+    backdrop-filter: blur(6px);
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+.story-modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+.story-modal {
+    background: #FFFFFF;
+    border-radius: var(--radius-xl);
+    padding: 48px 48px 40px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.94) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: var(--shadow-lg);
+}
+.story-modal-overlay.open .story-modal {
+    transform: scale(1) translateY(0);
+}
+@media (max-width: 600px) {
+    .story-modal { padding: 32px 24px 28px; border-radius: var(--radius-lg); }
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--bg-section);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--text-muted);
+    transition: background 0.2s, color 0.2s;
+}
+.modal-close:hover { background: var(--text-h); color: #fff; }
+
+.modal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-b);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    width: fit-content;
+    background: rgba(0,180,216,0.10);
+    color: #0077B6;
+    margin-bottom: 18px;
+}
+.modal-title {
+    font-family: var(--font-h);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-h);
+    line-height: 1.25;
+    margin-bottom: 20px;
+}
+.modal-story-body {
+    font-family: var(--font-b);
+    font-size: 1rem;
+    color: var(--text-body);
+    line-height: 1.85;
+    margin-bottom: 24px;
+}
+.modal-quote {
+    font-family: var(--font-h);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--indigo);
+    border-left: 3px solid var(--teal);
+    padding: 12px 18px;
+    background: rgba(0,180,216,0.05);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 20px;
+    line-height: 1.65;
+}
+.modal-attr {
+    font-family: var(--font-b);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+.modal-journey {
+    margin-top: 24px;
+}
+
+/* ================================================================
+   LIGHTBOX
+================================================================ */
+.lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8,12,26,0.95);
+    z-index: 9100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.lightbox-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+.lightbox-img {
+    max-width: 90vw;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.lightbox-overlay.open .lightbox-img {
+    transform: scale(1);
+}
+.lightbox-caption {
+    font-family: var(--font-b);
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    max-width: 500px;
+}
+.lightbox-close {
+    position: fixed;
+    top: 20px; right: 20px;
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    backdrop-filter: blur(8px);
+}
+.lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+/* ================================================================
+   TOAST NOTIFICATIONS
+================================================================ */
+.toast-container {
+    position: fixed;
+    bottom: 32px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 14px 20px;
+    box-shadow: 0 8px 32px rgba(8,12,26,0.16), 0 2px 8px rgba(8,12,26,0.08);
+    border-left: 4px solid var(--teal);
+    font-family: var(--font-b);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-body);
+    max-width: 360px;
+    pointer-events: auto;
+    animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    min-width: 280px;
+}
+.toast.toast-error { border-left-color: #E84545; }
+.toast.toast-success { border-left-color: var(--green-ok); }
+.toast.removing { animation: toastOut 0.3s ease both; }
+.toast-icon { font-size: 1.1rem; flex-shrink: 0; }
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(40px) scale(0.9); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes toastOut {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to   { opacity: 0; transform: translateX(40px) scale(0.9); }
+}
+
+/* ================================================================
+   NAV OVERRIDE (matches scrolled state)
+================================================================ */
+.nav {
+    background: rgba(10,22,40,0.95) !important;
+    backdrop-filter: blur(16px) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+/* ================================================================
+   FOOTER
+================================================================ */
+.footer {
+    background: var(--bg-dark);
+    padding: 60px 24px 40px;
+    position: relative;
+}
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,168,75,0.3), transparent);
+}
+.footer .container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    text-align: center;
+}
+.footer-logo {
+    font-family: var(--font-h);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+.footer-logo span { color: var(--gold-light); }
+.footer-brand p {
+    font-family: var(--font-b);
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.4);
+    margin-top: 6px;
+}
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    justify-content: center;
+}
+.footer-links a {
+    font-family: var(--font-b);
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.45);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--teal-light); }
+.footer-disclaimer {
+    font-family: var(--font-b);
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.25);
+    max-width: 480px;
+    line-height: 1.6;
+}
+
+/* ================================================================
+   RESPONSIVE HELPERS
+================================================================ */
+@media (max-width: 768px) {
+    .mem-hero { padding: 100px 20px 120px; }
+    .stories-section,
+    .gratitude-section,
+    .photos-section,
+    .share-section { padding: 72px 20px 80px; }
+    .promise-section,
+    .counter-bar { padding: 72px 20px; }
+    .diya-cta-section { padding: 72px 20px 80px; }
+}
+</style>
+</head>
+
+<body>
+<div id="cursor-glow"></div>
+
+<!-- ── NAVIGATION ──────────────────────────────────────────── -->
+<nav class="nav" id="navbar">
+    <a href="index.html" class="nav-logo">Dr. Jay <span class="glow-text">Kothari</span></a>
+    <div class="nav-links">
+        <a href="index.html#about">About</a>
+        <a href="index.html#expertise">Expertise</a>
+        <a href="knowledge.html">Knowledge Hub</a>
+        <a href="research.html">Research</a>
+        <a href="quiz.html">ICU Intel</a>
+        <a href="reviews.html">Pulse</a>
+        <a href="memories.html" class="active">Memories</a>
+        <a href="diya.html">Light a Diya</a>
+        <a href="booking.html" class="nav-cta">Book Consultation</a>
+    </div>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+    <a href="index.html">Home</a>
+    <a href="index.html#about">About</a>
+    <a href="knowledge.html">Knowledge Hub</a>
+    <a href="research.html">Research</a>
+    <a href="quiz.html">ICU Intel</a>
+    <a href="reviews.html">Pulse</a>
+    <a href="memories.html" class="active">Memories</a>
+    <a href="diya.html">Light a Diya</a>
+    <a href="booking.html">Book Consultation</a>
+</div>
+
+<!-- ================================================================
+     SECTION 1 — HERO
+================================================================ -->
+<section class="mem-hero" id="hero">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+
+    <!-- Floating particles -->
+    <div class="particles" aria-hidden="true">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="hero-content">
+        <div class="hero-tag">
+            <span class="dot"></span>
+            Critical Care · Apollo Hospitals, Ahmedabad
+        </div>
+
+        <h1 class="hero-title">
+            <span class="word-icu">ICU</span>
+            <span class="word-to"> to </span>
+            <span class="word-home">Home</span>
+        </h1>
+
+        <!-- Typing effect -->
+        <div class="typing-wrap">
+            <span class="typing-text" id="typing-text"></span><span class="typing-cursor"></span>
+        </div>
+
+        <!-- Counter -->
+        <div class="hero-counter">
+            <span class="hc-num">5,000+</span>
+            <span class="hc-sep">|</span>
+            Families.
+            <span class="hc-sep">|</span>
+            <span>One Promise: Never Give Up.</span>
+        </div>
+
+        <!-- Diya CTA -->
+        <a href="diya.html" class="hero-diya-cta">
+            <span class="diya-emoji">&#127774;</span>
+            Light a Diya for someone you love &rarr;
+        </a>
+    </div>
+
+    <a href="#stories" class="scroll-down" aria-label="Scroll down">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        Scroll
+    </a>
+</section>
+
+<!-- ================================================================
+     SECTION 2 — HEALING STORIES
+================================================================ -->
+<section class="stories-section" id="stories">
+    <div class="container">
+        <div class="stories-head reveal">
+            <span class="section-label" style="color:var(--teal);">Stories of Hope</span>
+            <h2 class="section-title">Journeys That Changed Everything</h2>
+            <p class="section-sub">Real families. Real journeys. Real miracles.</p>
+        </div>
+
+        <div class="stories-grid" id="stories-grid">
+            <div class="stories-loading">
+                <span class="loader-dots"><span></span><span></span><span></span></span>
+                Loading stories&hellip;
+            </div>
+        </div>
+
+        <div class="stories-share-row reveal">
+            <a href="#share" class="btn-ghost-teal" id="stories-share-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                Share Your Story &rarr;
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 3 — GRATITUDE WALL
+================================================================ -->
+<section class="gratitude-section" id="gratitude">
+    <div class="container">
+        <div class="gratitude-head reveal">
+            <span class="section-label" style="color:var(--gold-warm);">Gratitude Wall</span>
+            <h2 class="section-title">Words from the Heart</h2>
+            <p class="section-sub">Notes of gratitude, left by families who walked this road.</p>
+        </div>
+
+        <div class="notes-masonry" id="notes-masonry">
+            <!-- loaded via JS -->
+        </div>
+
+        <div class="gratitude-share-row reveal">
+            <a href="#share" class="btn-ghost-gold" id="gratitude-leave-link">
+                &#10084; Leave a Note &rarr;
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 4 — PHOTO MEMORIES
+================================================================ -->
+<section class="photos-section" id="photos">
+    <div class="container">
+        <div class="photos-head reveal">
+            <span class="section-label" style="color:var(--teal);">Photo Memories</span>
+            <h2 class="section-title">Moments That Matter</h2>
+            <p class="section-sub">Celebrations of life, captured in frames.</p>
+        </div>
+
+        <div class="photos-masonry" id="photos-masonry">
+            <!-- loaded via JS -->
+        </div>
+
+        <div class="photos-share-row reveal">
+            <a href="#share" class="btn-ghost-teal" id="photos-share-link">
+                &#128247; Share a Photo &rarr;
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 5 — DR. JAY'S PROMISE
+================================================================ -->
+<section class="promise-section" id="promise">
+    <div class="container">
+        <div class="promise-wrap">
+            <div class="promise-head reveal">
+                <span class="section-label" style="color:var(--gold-light);">A Personal Note</span>
+                <h2 class="section-title">A Promise from Dr. Jay</h2>
+            </div>
+
+            <div class="letter-box reveal">
+                <p class="letter-salutation">Dear Families,</p>
+                <p class="letter-body">Every patient who enters my ICU becomes my responsibility — not just medically, but as a <strong>human being</strong>. I've learned that healing isn't just about ventilators and medications. It's about the hand you hold at 3 AM. The honest conversation that gives you peace. The call I make even when I'm not on duty.</p>
+                <p class="letter-body">To every family reading this — whether your loved one is in the ICU right now, or you're here remembering a journey you survived — know this: <strong>You were never alone, and you never will be.</strong></p>
+                <p class="letter-body">Every story on this page is a testament to what's possible when medicine meets compassion, and when families never stop believing. You fought alongside your loved one every single day. That courage humbles me.</p>
+                <p class="letter-close">With gratitude for your trust,</p>
+                <div class="letter-sig">Dr. Jay Kothari</div>
+                <div class="letter-role">Consultant, Critical Care Medicine &middot; Apollo Hospitals, Ahmedabad</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 6 — SHARE YOUR STORY
+================================================================ -->
+<section class="share-section" id="share">
+    <div class="container">
+        <div class="share-head reveal">
+            <span class="section-label" style="color:var(--gold-warm);">Your Journey Matters</span>
+            <h2 class="section-title">Share Your Memory</h2>
+            <p class="section-sub">Share your story, leave a note, or upload a photo. Every voice gives strength to the next family.</p>
+        </div>
+
+        <!-- 3 action cards -->
+        <div class="action-cards-row reveal">
+            <div class="action-card" id="card-story" onclick="selectForm('healing_stories')">
+                <span class="action-card-icon">&#128214;</span>
+                <div class="action-card-title">Share Story</div>
+                <p class="action-card-desc">Tell us about your journey from ICU to home. Inspire the next family.</p>
+            </div>
+            <div class="action-card" id="card-note" onclick="selectForm('gratitude_notes')">
+                <span class="action-card-icon">&#9749;</span>
+                <div class="action-card-title">Leave a Note</div>
+                <p class="action-card-desc">A few heartfelt words for Dr. Jay and the ICU team.</p>
+            </div>
+            <div class="action-card" id="card-photo" onclick="selectForm('memory_photos')">
+                <span class="action-card-icon">&#128247;</span>
+                <div class="action-card-title">Upload Photo</div>
+                <p class="action-card-desc">A discharge day smile, a family reunion, a milestone moment.</p>
+            </div>
+        </div>
+
+        <!-- Dynamic form box -->
+        <div class="share-form-box" id="share-form-box">
+            <div class="form-title" id="form-title">Share Your Story</div>
+
+            <!-- STORY FIELDS -->
+            <div id="fields-story">
+                <div class="form-row-2">
+                    <div>
+                        <label class="form-label" for="s-patient">Patient Name</label>
+                        <input class="form-input" id="s-patient" type="text" placeholder="e.g. Ramesh Uncle" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="s-relation">Your Relationship</label>
+                        <input class="form-input" id="s-relation" type="text" placeholder="e.g. Son, Daughter, Wife" />
+                    </div>
+                </div>
+                <div class="form-row-2">
+                    <div>
+                        <label class="form-label" for="s-duration">ICU Duration</label>
+                        <input class="form-input" id="s-duration" type="text" placeholder="e.g. 14 Days in ICU" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="s-tag">Category</label>
+                        <select class="form-select" id="s-tag">
+                            <option value="">Select category</option>
+                            <option>Sepsis Recovery</option>
+                            <option>ECMO Survivor</option>
+                            <option>Ventilator Recovery</option>
+                            <option>CRRT Success</option>
+                            <option>Multi-Organ Failure</option>
+                            <option>Cardiac ICU</option>
+                            <option>Post-Surgery Recovery</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <label class="form-label" for="s-title">Story Title</label>
+                <input class="form-input" id="s-title" type="text" placeholder="Give your journey a title" />
+                <label class="form-label" for="s-story">Your Story</label>
+                <textarea class="form-textarea" id="s-story" placeholder="Share what happened, what gave you strength, and what healing looked like for your family..."></textarea>
+                <label class="form-label" for="s-quote">One Memorable Line (optional)</label>
+                <input class="form-input" id="s-quote" type="text" placeholder="e.g. The best chai I ever made." />
+                <label class="form-label" for="s-family">Your Name / Family Name</label>
+                <input class="form-input" id="s-family" type="text" placeholder="e.g. Priya Mehta &amp; Family" />
+            </div>
+
+            <!-- NOTE FIELDS -->
+            <div id="fields-note" style="display:none;">
+                <div class="form-row-2">
+                    <div>
+                        <label class="form-label" for="n-name">Your Name</label>
+                        <input class="form-input" id="n-name" type="text" placeholder="e.g. Rahul K." />
+                    </div>
+                    <div>
+                        <label class="form-label" for="n-relation">Relationship</label>
+                        <input class="form-input" id="n-relation" type="text" placeholder="e.g. Son, Wife" />
+                    </div>
+                </div>
+                <label class="form-label" for="n-note">Your Note</label>
+                <textarea class="form-textarea handwritten" id="n-note" placeholder="Write your note here... (it will appear in a handwritten style)"></textarea>
+            </div>
+
+            <!-- PHOTO FIELDS -->
+            <div id="fields-photo" style="display:none;">
+                <div class="form-row-2">
+                    <div>
+                        <label class="form-label" for="p-uploader">Your Name</label>
+                        <input class="form-input" id="p-uploader" type="text" placeholder="e.g. Sharma Family" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="p-label">Photo Category</label>
+                        <select class="form-select" id="p-label">
+                            <option value="">Select category</option>
+                            <option>Discharge Day</option>
+                            <option>Recovery Milestone</option>
+                            <option>Family Reunion</option>
+                            <option>Team Celebration</option>
+                            <option>Clinical</option>
+                            <option>Gratitude</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <label class="form-label" for="p-caption">Caption</label>
+                <input class="form-input" id="p-caption" type="text" placeholder="Describe this moment" />
+                <label class="form-label">Upload Photo</label>
+                <div class="file-upload-area" onclick="document.getElementById('p-file').click()">
+                    <span class="upload-icon">&#128247;</span>
+                    <img id="file-preview" src="" alt="Preview" />
+                    <p><strong>Click to upload</strong> or drag &amp; drop<br>JPG, PNG, WEBP &middot; Max 5 MB</p>
+                </div>
+                <input type="file" id="p-file" accept="image/*" style="display:none;" onchange="handleFileSelect(event)" />
+            </div>
+
+            <button class="btn-submit" id="submit-btn" onclick="submitMemory()">Submit</button>
+            <p class="form-note">&#128274; Your submission will appear after admin review. We may reach out before publishing.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 7 — LIGHT A DIYA CTA
+================================================================ -->
+<section class="diya-cta-section" id="diya-cta">
+    <div class="diya-cta-inner reveal">
+        <span class="diya-cta-art">&#127774;</span>
+        <h2 class="diya-cta-title">Light a Diya for Someone You Love</h2>
+        <p class="diya-cta-sub">Join thousands of families in a quiet act of hope, remembrance, and gratitude. Every flame is a prayer.</p>
+        <a href="diya.html" class="btn-diya-gold">
+            &#127774; Light a Diya &rarr;
+        </a>
+    </div>
+</section>
+
+<!-- ================================================================
+     SECTION 8 — EMOTIONAL COUNTER BAR
+================================================================ -->
+<section class="counter-bar" id="counter-bar">
+    <div class="counter-grid">
+        <div class="counter-item">
+            <div class="counter-num" data-target="5000" data-suffix="+">0</div>
+            <div class="counter-label">Families</div>
+        </div>
+        <div class="counter-item">
+            <div class="counter-num" id="stories-count-display" data-target="0" data-suffix="">0</div>
+            <div class="counter-label">Stories Shared</div>
+        </div>
+        <div class="counter-item">
+            <div class="counter-num" id="notes-count-display" data-target="0" data-suffix="">0</div>
+            <div class="counter-label">Notes of Gratitude</div>
+        </div>
+        <div class="counter-item">
+            <div class="counter-num" data-target="12" data-suffix="+">0</div>
+            <div class="counter-label">Years of Care</div>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================
+     FOOTER
+================================================================ -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-brand">
+            <div class="footer-logo">Dr. Jay <span>Kothari</span></div>
+            <p>Consultant, Critical Care Medicine &middot; Apollo Hospitals, Ahmedabad</p>
+        </div>
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="knowledge.html">Knowledge</a>
+            <a href="research.html">Research</a>
+            <a href="quiz.html">ICU Intel</a>
+            <a href="reviews.html">Pulse</a>
+            <a href="memories.html">Memories</a>
+            <a href="diya.html">Light a Diya</a>
+            <a href="booking.html">Book Consultation</a>
+        </div>
+        <div class="footer-disclaimer">
+            This website is for educational purposes only. NMC Regulations 2023.
+        </div>
+    </div>
+</footer>
+
+<!-- ── STORY MODAL ──────────────────────────────────────────── -->
+<div class="story-modal-overlay" id="story-modal-overlay" onclick="handleModalOverlayClick(event)">
+    <div class="story-modal" id="story-modal">
+        <button class="modal-close" onclick="closeStoryModal()" aria-label="Close">&times;</button>
+        <div class="modal-badge" id="modal-badge">ICU Journey</div>
+        <h2 class="modal-title" id="modal-title"></h2>
+        <p class="modal-story-body" id="modal-body"></p>
+        <blockquote class="modal-quote" id="modal-quote"></blockquote>
+        <p class="modal-attr" id="modal-attr"></p>
+        <div class="modal-journey">
+            <div class="journey-bar">
+                <div class="jb-seg red"></div>
+                <div class="jb-seg orange"></div>
+                <div class="jb-seg teal"></div>
+                <div class="jb-seg green"></div>
+            </div>
+            <div class="jb-labels">
+                <span>Critical</span><span>Unstable</span><span>Recovering</span><span>Home</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── LIGHTBOX ─────────────────────────────────────────────── -->
+<div class="lightbox-overlay" id="lightbox-overlay" onclick="handleLightboxClick(event)">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close lightbox">&times;</button>
+    <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+    <p class="lightbox-caption" id="lightbox-caption"></p>
+</div>
+
+<!-- ── TOAST CONTAINER ──────────────────────────────────────── -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ================================================================
+     JAVASCRIPT
+================================================================ -->
+<script>
+/* ================================================================
+   SEED DATA — fallback when API returns no records
+================================================================ */
+const seedStories = [
+    {
+        id: 's1',
+        tag: '28 Days in ICU',
+        title: 'The Day Papa Smiled Again',
+        story: 'When my father was admitted with multi-organ failure, we were told to say our goodbyes. Dr. Jay looked at us and said, "Let me try." Every morning he came to our family, not just to give updates but to listen to our fears. He adjusted the plan every single day, watching my father's smallest signals. 28 days later, Papa walked out holding my hand. The nurses were crying. I was crying. Even the ward boy who brought food every morning had tears in his eyes.',
+        family_name: 'Priya Mehta & Family',
+        quote: 'Dr. Jay didn\'t just save my father. He saved our entire family.',
+        color: 'teal'
+    },
+    {
+        id: 's2',
+        tag: 'ECMO Survivor',
+        title: 'Second Birthday',
+        story: 'We now celebrate two birthdays for my husband — his real one, and the day Dr. Jay brought him back. 14 hours on ECMO. The longest night of our lives. I sat in the waiting room with my children, not knowing if he would make it through the morning. Dr. Jay came out at 4 AM just to tell us the machine was doing its job. That act of kindness at 4 in the morning — I will never forget it.',
+        family_name: 'Sunita Desai',
+        quote: 'The longest night became the first day of our new life.',
+        color: 'gold'
+    },
+    {
+        id: 's3',
+        tag: 'Sepsis Recovery',
+        title: 'From 6% to 100%',
+        story: 'The hospital told us survival chances were 6%. Six percent. I still remember the number. My mother lay there, dependent on machines, and everyone was preparing us for the worst. Dr. Jay was the only one who said: "The 94% doesn't matter right now. Only this 6% does, and we are going to fight for every decimal of it." My mother is now at 100%. She cooks my favourite dal every Sunday. That\'s Dr. Jay\'s real success rate.',
+        family_name: 'Rahul Sharma',
+        quote: 'She cooks my favorite dal every Sunday.',
+        color: 'green'
+    },
+    {
+        id: 's4',
+        tag: '15 Days in ICU',
+        title: 'A Mother\'s Strength',
+        story: 'My mother fought for 15 days. Every day Dr. Jay would come, explain everything, adjust the treatment. He never gave us false hope, but he also never stopped working. On day 16, she opened her eyes and asked for chai. That was the best chai I ever made — hand trembling, eyes full of tears, and the biggest smile of my life.',
+        family_name: 'Deepak Patel',
+        quote: 'The best chai I ever made.',
+        color: 'teal'
+    },
+    {
+        id: 's5',
+        tag: 'Ventilator Recovery',
+        title: 'The Voice We Almost Lost',
+        story: 'My father was on a ventilator for 10 days. The silence in the ICU was unbearable. I would talk to him every day even though he could not respond. Dr. Jay told us, "Keep talking — he can hear you." When my father finally spoke, the first thing he said was my name. I will never take a single word, a single breath, for granted again.',
+        family_name: 'Ananya Singh',
+        quote: 'The first thing he said was my name.',
+        color: 'gold'
+    },
+    {
+        id: 's6',
+        tag: 'CRRT Success',
+        title: 'The Kidneys That Came Back',
+        story: 'When both kidneys failed, we thought dialysis would be forever. The doctors at two other hospitals had given up. Dr. Jay and his team used CRRT, monitored every hour, adjusted every parameter. He called us even on his day off to update us. Three weeks later, my father\'s kidneys started working on their own. Spontaneously. The nephrologist called it a miracle. Dr. Jay just smiled and said, "I call it a great team."',
+        family_name: 'Vikram Joshi',
+        quote: 'Three weeks later, a miracle.',
+        color: 'green'
+    }
+];
+
+const seedNotes = [
+    { id: 'n1',  note: 'Dr. Jay, you didn\'t just treat my mother. You held our hands through the storm. 🙏', name: 'Sharma Family',  relationship: 'Son',      color: '#E84545', typed: false },
+    { id: 'n2',  note: 'Thank you for explaining everything every single day. That alone gave us strength.', name: 'Anonymous',      relationship: '',        color: '#00B4D8', typed: true  },
+    { id: 'n3',  note: '24 days. You never gave up. Neither did we. Thank you forever.',                      name: 'Mehta Family',   relationship: 'Daughter', color: '#D4A84B', typed: false },
+    { id: 'n4',  note: 'My kids have their grandmother back because of you.',                                 name: 'Rahul K.',       relationship: 'Son',      color: '#10B981', typed: false },
+    { id: 'n5',  note: 'The ICU team felt like family. We will never forget.',                                name: 'Anonymous',      relationship: '',        color: '#00B4D8', typed: true  },
+    { id: 'n6',  note: 'From the bottom of our hearts — THANK YOU.',                                         name: 'Desai Family',   relationship: 'Wife',     color: '#D4A84B', typed: false },
+    { id: 'n7',  note: 'You gave us hope when no one else would.',                                           name: 'Priya S.',       relationship: 'Daughter', color: '#E84545', typed: false },
+    { id: 'n8',  note: 'Maa is celebrating Diwali with us. That is your miracle. 🪔',                       name: 'Karthik',        relationship: 'Son',      color: '#D4A84B', typed: false },
+    { id: 'n9',  note: 'One call at 3 AM. You came. That changed everything.',                               name: 'Sunita D.',      relationship: 'Wife',     color: '#10B981', typed: true  },
+    { id: 'n10', note: 'I am writing this with tears of joy. Papa came home today.',                         name: 'Ansh',           relationship: 'Son',      color: '#00B4D8', typed: false },
+    { id: 'n11', note: 'Not just a doctor. A guardian angel in a white coat.',                               name: 'Joshi Family',   relationship: 'Nephew',   color: '#E84545', typed: false },
+    { id: 'n12', note: 'The way you treated my father\'s dignity, even in ICU. That is rare.',               name: 'Geeta Aunty',    relationship: 'Wife',     color: '#D4A84B', typed: true  },
+];
+
+const seedPhotos = [
+    { id: 'p1', label: 'Team',      caption: 'ICU Team Celebration',        photo_data: '', aspect: 72,  gradient: 'linear-gradient(135deg, #1E3A5F 0%, #0077B6 100%)',    icon: '&#128105;&#8205;&#9877;' },
+    { id: 'p2', label: 'Discharge', caption: 'Discharge Day Smiles',        photo_data: '', aspect: 92,  gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',    icon: '&#127968;' },
+    { id: 'p3', label: 'Recovery',  caption: 'First Steps After ICU',       photo_data: '', aspect: 110, gradient: 'linear-gradient(135deg, #C9983A 0%, #E8C171 100%)',    icon: '&#128694;' },
+    { id: 'p4', label: 'Family',    caption: 'Family Reunion',              photo_data: '', aspect: 80,  gradient: 'linear-gradient(135deg, #E84545 0%, #C73535 100%)',    icon: '&#10084;' },
+    { id: 'p5', label: 'Clinical',  caption: 'Dr. Jay with Patient Family', photo_data: '', aspect: 95,  gradient: 'linear-gradient(135deg, #162447 0%, #00B4D8 100%)',    icon: '&#129691;' },
+    { id: 'p6', label: 'Gratitude', caption: 'Thank You Card Wall',         photo_data: '', aspect: 85,  gradient: 'linear-gradient(135deg, #D4A84B 0%, #C9983A 100%)',    icon: '&#128140;' },
+];
+
+/* ================================================================
+   GLOBALS
+================================================================ */
+let currentFormType = 'healing_stories';
+let storiesCount = 0;
+let notesCount   = 0;
+let countersStarted = false;
+let photoBase64 = '';
+
+/* ================================================================
+   INIT
+================================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+    initScrollReveal();
+    initTyping();
+    initCursorGlow();
+    initNavScroll();
+    loadStories();
+    loadNotes();
+    loadPhotos();
+    initDeepLinkForms();
+});
+
+/* ================================================================
+   CURSOR GLOW
+================================================================ */
+function initCursorGlow() {
+    const glow = document.getElementById('cursor-glow');
+    if (!glow) return;
+    document.addEventListener('mousemove', (e) => {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top  = e.clientY + 'px';
+    });
+}
+
+/* ================================================================
+   NAV SCROLL
+================================================================ */
+function initNavScroll() {
+    const nav = document.getElementById('navbar');
+    if (!nav) return;
+    const onScroll = () => {
+        if (window.scrollY > 60) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+}
+
+/* ================================================================
+   SCROLL REVEAL
+================================================================ */
+function initScrollReveal() {
+    const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => observer.observe(el));
+}
+
+/* ================================================================
+   TYPING EFFECT
+================================================================ */
+function initTyping() {
+    const phrases = [
+        'From fear to hope.',
+        'From hope to healing.',
+        'From healing to home.'
+    ];
+    const el = document.getElementById('typing-text');
+    if (!el) return;
+
+    let phraseIdx = 0;
+    let charIdx   = 0;
+    let deleting  = false;
+    let pauseTimer = null;
+
+    function tick() {
+        const phrase = phrases[phraseIdx];
+        if (!deleting) {
+            el.textContent = phrase.slice(0, charIdx + 1);
+            charIdx++;
+            if (charIdx === phrase.length) {
+                deleting = true;
+                pauseTimer = setTimeout(tick, 2200);
+                return;
+            }
+        } else {
+            el.textContent = phrase.slice(0, charIdx - 1);
+            charIdx--;
+            if (charIdx === 0) {
+                deleting = false;
+                phraseIdx = (phraseIdx + 1) % phrases.length;
+                pauseTimer = setTimeout(tick, 400);
+                return;
+            }
+        }
+        const speed = deleting ? 42 : 58;
+        pauseTimer = setTimeout(tick, speed);
+    }
+    tick();
+}
+
+/* ================================================================
+   API: LOAD STORIES
+================================================================ */
+async function loadStories() {
+    try {
+        const res  = await fetch('./api/memories.php?type=healing_stories');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+            storiesCount = data.data.length;
+            renderStories(data.data);
+        } else {
+            storiesCount = seedStories.length;
+            renderStories(seedStories);
+        }
+    } catch (e) {
+        storiesCount = seedStories.length;
+        renderStories(seedStories);
+    }
+    updateCounterTargets();
+}
+
+/* ================================================================
+   RENDER STORIES
+================================================================ */
+function renderStories(stories) {
+    const grid = document.getElementById('stories-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const cardColors = ['teal-card', 'gold-card', 'green-card'];
+    const badgeColors = ['teal-badge', 'gold-badge', 'green-badge'];
+
+    stories.forEach((story, i) => {
+        const colorIdx = i % 3;
+        const cardClass = story.color ? story.color + '-card' : cardColors[colorIdx];
+        const badgeClass = story.color ? story.color + '-badge' : badgeColors[colorIdx];
+        const excerpt = (story.story || '').slice(0, 200);
+        const hasMore = (story.story || '').length > 200;
+
+        const card = document.createElement('div');
+        card.className = 'story-card ' + cardClass + ' reveal';
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'article');
+        card.setAttribute('aria-label', story.title);
+        card.innerHTML = `
+            <span class="story-badge ${badgeClass}">${escHtml(story.tag || story.duration || 'ICU Journey')}</span>
+            <h3 class="story-title">${escHtml(story.title)}</h3>
+            <p class="story-excerpt">
+                ${escHtml(excerpt)}${hasMore ? '&hellip;' : ''}
+                ${hasMore ? `<a class="story-read-more" tabindex="0">Read more</a>` : ''}
+            </p>
+            ${story.quote ? `<blockquote class="story-quote">&ldquo;${escHtml(story.quote)}&rdquo;</blockquote>` : ''}
+            <p class="story-attr">&mdash; ${escHtml(story.family_name || story.name || 'Family')}</p>
+            <div>
+                <div class="journey-bar">
+                    <div class="jb-seg red"></div>
+                    <div class="jb-seg orange"></div>
+                    <div class="jb-seg teal"></div>
+                    <div class="jb-seg green"></div>
+                </div>
+                <div class="jb-labels">
+                    <span>Critical</span><span>Unstable</span><span>Recovering</span><span>Home</span>
+                </div>
+            </div>
+        `;
+
+        card.addEventListener('click', () => openStoryModal(story, badgeClass));
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') openStoryModal(story, badgeClass);
+        });
+
+        grid.appendChild(card);
+    });
+
+    // Re-run reveal observer on newly added cards
+    const newCards = grid.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.1 });
+    newCards.forEach(el => observer.observe(el));
+}
+
+/* ================================================================
+   API: LOAD NOTES
+================================================================ */
+async function loadNotes() {
+    try {
+        const res  = await fetch('./api/memories.php?type=gratitude_notes');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+            notesCount = data.data.length;
+            renderNotes(data.data);
+        } else {
+            notesCount = seedNotes.length;
+            renderNotes(seedNotes);
+        }
+    } catch (e) {
+        notesCount = seedNotes.length;
+        renderNotes(seedNotes);
+    }
+    updateCounterTargets();
+}
+
+/* ================================================================
+   RENDER NOTES
+================================================================ */
+const NOTE_ROTATIONS = [-2, 1.5, -1, 2.5, -1.8, 0.8, -2.5, 1.2, -0.5, 2, -1.5, 1.8];
+const PIN_COLORS     = ['#E84545', '#D4A84B', '#00B4D8', '#10B981', '#C9983A', '#0077B6'];
+
+function renderNotes(notes) {
+    const masonry = document.getElementById('notes-masonry');
+    if (!masonry) return;
+    masonry.innerHTML = '';
+
+    notes.forEach((note, i) => {
+        const rot   = NOTE_ROTATIONS[i % NOTE_ROTATIONS.length];
+        const pin   = note.color || PIN_COLORS[i % PIN_COLORS.length];
+        const typed = note.typed || false;
+
+        const card = document.createElement('div');
+        card.className = 'note-card' + (typed ? ' typed' : '');
+        card.style.setProperty('--rot', rot + 'deg');
+        const delay = Math.min(i * 0.07, 1.2);
+        card.style.transitionDelay = delay + 's';
+
+        card.innerHTML = `
+            <div class="note-pin" style="background:${escHtml(pin)};"></div>
+            <p class="note-text">${escHtml(note.note || note.message || '')}</p>
+            <p class="note-author">
+                &mdash; ${escHtml(note.name || 'Anonymous')}
+                ${note.relationship ? `<span class="rel">(${escHtml(note.relationship)})</span>` : ''}
+            </p>
+        `;
+
+        masonry.appendChild(card);
+    });
+
+    // Observe notes
+    const noteEls = masonry.querySelectorAll('.note-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.05 });
+    noteEls.forEach(el => observer.observe(el));
+}
+
+/* ================================================================
+   API: LOAD PHOTOS
+================================================================ */
+async function loadPhotos() {
+    try {
+        const res  = await fetch('./api/memories.php?type=memory_photos');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+            renderPhotos(data.data);
+        } else {
+            renderPhotos(seedPhotos);
+        }
+    } catch (e) {
+        renderPhotos(seedPhotos);
+    }
+}
+
+/* ================================================================
+   RENDER PHOTOS
+================================================================ */
+function renderPhotos(photos) {
+    const masonry = document.getElementById('photos-masonry');
+    if (!masonry) return;
+    masonry.innerHTML = '';
+
+    photos.forEach((photo, i) => {
+        const card = document.createElement('div');
+        card.className = 'photo-card';
+        const delay = Math.min(i * 0.1, 1.0);
+        card.style.transitionDelay = delay + 's';
+
+        if (photo.photo_data && photo.photo_data.length > 100) {
+            // Real image
+            const src = photo.photo_data.startsWith('data:') ? photo.photo_data : 'data:image/jpeg;base64,' + photo.photo_data;
+            card.innerHTML = `
+                <img class="photo-img" src="${src}" alt="${escHtml(photo.caption || '')}" loading="lazy" />
+                <span class="photo-badge">${escHtml(photo.label || '')}</span>
+                <div class="photo-overlay">
+                    <p class="photo-overlay-text">${escHtml(photo.caption || '')}</p>
+                </div>
+            `;
+            card.addEventListener('click', () => openLightbox(src, photo.caption || ''));
+        } else {
+            // Placeholder
+            const aspect = photo.aspect || (65 + (i * 11) % 45);
+            const gradient = photo.gradient || `linear-gradient(135deg, hsl(${200 + i * 30}, 60%, 25%), hsl(${200 + i * 30}, 80%, 40%))`;
+            const icon = photo.icon || '&#128247;';
+            card.innerHTML = `
+                <div class="photo-placeholder" style="--aspect:${aspect}%">
+                    <div class="photo-placeholder-inner" style="background:${gradient};">
+                        <span class="photo-icon">${icon}</span>
+                        <span class="photo-label-text">${escHtml(photo.caption || photo.label || '')}</span>
+                    </div>
+                </div>
+                <span class="photo-badge">${escHtml(photo.label || '')}</span>
+                <div class="photo-overlay">
+                    <p class="photo-overlay-text">${escHtml(photo.caption || '')}<br><small style="opacity:0.6;font-size:0.75rem;">Be the first to share this moment</small></p>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                document.getElementById('card-photo').click();
+                setTimeout(() => document.getElementById('share').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+            });
+        }
+
+        masonry.appendChild(card);
+    });
+
+    // Observe photos
+    const photoEls = masonry.querySelectorAll('.photo-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.05 });
+    photoEls.forEach(el => observer.observe(el));
+}
+
+/* ================================================================
+   STORY MODAL
+================================================================ */
+function openStoryModal(story, badgeClass) {
+    badgeClass = badgeClass || 'teal-badge';
+    document.getElementById('modal-badge').textContent = story.tag || story.duration || 'ICU Journey';
+    document.getElementById('modal-badge').className   = 'modal-badge ' + badgeClass;
+    document.getElementById('modal-title').textContent = story.title || '';
+    document.getElementById('modal-body').textContent  = story.story || '';
+    document.getElementById('modal-quote').textContent = story.quote ? '\u201C' + story.quote + '\u201D' : '';
+    document.getElementById('modal-attr').textContent  = '\u2014 ' + (story.family_name || story.name || 'Family');
+
+    document.getElementById('modal-quote').style.display = story.quote ? '' : 'none';
+
+    document.getElementById('story-modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeStoryModal() {
+    document.getElementById('story-modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function handleModalOverlayClick(e) {
+    if (e.target === document.getElementById('story-modal-overlay')) {
+        closeStoryModal();
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeStoryModal();
+        closeLightbox();
+    }
+});
+
+/* ================================================================
+   LIGHTBOX
+================================================================ */
+function openLightbox(src, caption) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox-caption').textContent = caption || '';
+    document.getElementById('lightbox-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function handleLightboxClick(e) {
+    if (e.target === document.getElementById('lightbox-overlay')) {
+        closeLightbox();
+    }
+}
+
+/* ================================================================
+   SHARE FORM — SELECT TYPE
+================================================================ */
+function selectForm(type) {
+    currentFormType = type;
+
+    // Update action cards
+    ['card-story', 'card-note', 'card-photo'].forEach(id => document.getElementById(id).classList.remove('active'));
+    const typeToCardMap = { healing_stories: 'card-story', gratitude_notes: 'card-note', memory_photos: 'card-photo' };
+    document.getElementById(typeToCardMap[type]).classList.add('active');
+
+    // Show/hide field groups
+    document.getElementById('fields-story').style.display = type === 'healing_stories' ? '' : 'none';
+    document.getElementById('fields-note').style.display  = type === 'gratitude_notes'  ? '' : 'none';
+    document.getElementById('fields-photo').style.display = type === 'memory_photos'    ? '' : 'none';
+
+    // Update form title
+    const titles = {
+        healing_stories: 'Share Your Story',
+        gratitude_notes: 'Leave a Note',
+        memory_photos:   'Upload a Photo'
+    };
+    document.getElementById('form-title').textContent = titles[type];
+
+    // Show form box
+    document.getElementById('share-form-box').classList.add('visible');
+
+    // Scroll to form
+    setTimeout(() => {
+        document.getElementById('share-form-box').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 80);
+}
+
+/* ================================================================
+   DEEP-LINK FORMS via hash / in-page link clicks
+================================================================ */
+function initDeepLinkForms() {
+    // Stories share link
+    document.getElementById('stories-share-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        selectForm('healing_stories');
+        document.getElementById('share').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    // Gratitude leave link
+    document.getElementById('gratitude-leave-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        selectForm('gratitude_notes');
+        document.getElementById('share').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    // Photos share link
+    document.getElementById('photos-share-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        selectForm('memory_photos');
+        document.getElementById('share').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
+
+/* ================================================================
+   FILE SELECT / PREVIEW
+================================================================ */
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('File too large. Please upload an image under 5 MB.', 'error');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        photoBase64 = e.target.result; // full data URL
+        const preview = document.getElementById('file-preview');
+        preview.src   = photoBase64;
+        preview.style.display = 'block';
+        document.querySelector('.file-upload-area p').innerHTML = '<strong>' + escHtml(file.name) + '</strong> selected';
+    };
+    reader.readAsDataURL(file);
+}
+
+/* ================================================================
+   SUBMIT MEMORY
+================================================================ */
+async function submitMemory() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting\u2026';
+
+    const payload = { action: 'submit', type: currentFormType };
+
+    if (currentFormType === 'healing_stories') {
+        payload.patient_name  = document.getElementById('s-patient').value.trim();
+        payload.relationship  = document.getElementById('s-relation').value.trim();
+        payload.duration      = document.getElementById('s-duration').value.trim();
+        payload.tag           = document.getElementById('s-tag').value.trim();
+        payload.title         = document.getElementById('s-title').value.trim();
+        payload.story         = document.getElementById('s-story').value.trim();
+        payload.quote         = document.getElementById('s-quote').value.trim();
+        payload.family_name   = document.getElementById('s-family').value.trim();
+
+        if (!payload.title || !payload.story || !payload.family_name) {
+            showToast('Please fill in title, story, and your name.', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Submit';
+            return;
+        }
+    } else if (currentFormType === 'gratitude_notes') {
+        payload.name         = document.getElementById('n-name').value.trim();
+        payload.relationship = document.getElementById('n-relation').value.trim();
+        payload.note         = document.getElementById('n-note').value.trim();
+
+        if (!payload.note) {
+            showToast('Please write your note before submitting.', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Submit';
+            return;
+        }
+    } else if (currentFormType === 'memory_photos') {
+        payload.uploaded_by  = document.getElementById('p-uploader').value.trim();
+        payload.caption      = document.getElementById('p-caption').value.trim();
+        payload.label        = document.getElementById('p-label').value.trim();
+        payload.photo_data   = photoBase64;
+
+        if (!payload.photo_data) {
+            showToast('Please select a photo before submitting.', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Submit';
+            return;
+        }
+    }
+
+    try {
+        const res  = await fetch('./api/memories.php', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showToast('Thank you! Your submission will appear after review.', 'success');
+            resetForm();
+        } else {
+            showToast(data.message || 'Something went wrong. Please try again.', 'error');
+        }
+    } catch (err) {
+        showToast('Could not connect to server. Please try again shortly.', 'error');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Submit';
+}
+
+/* ================================================================
+   RESET FORM
+================================================================ */
+function resetForm() {
+    // Story
+    ['s-patient', 's-relation', 's-duration', 's-title', 's-story', 's-quote', 's-family'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    const stag = document.getElementById('s-tag');
+    if (stag) stag.selectedIndex = 0;
+
+    // Note
+    ['n-name', 'n-relation', 'n-note'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
+    // Photo
+    ['p-uploader', 'p-caption'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    const plabel = document.getElementById('p-label');
+    if (plabel) plabel.selectedIndex = 0;
+    const pfile = document.getElementById('p-file');
+    if (pfile) pfile.value = '';
+    const preview = document.getElementById('file-preview');
+    if (preview) { preview.src = ''; preview.style.display = 'none'; }
+    photoBase64 = '';
+    const uploadP = document.querySelector('.file-upload-area p');
+    if (uploadP) uploadP.innerHTML = '<strong>Click to upload</strong> or drag &amp; drop<br>JPG, PNG, WEBP &middot; Max 5 MB';
+
+    // Deactivate form box
+    document.getElementById('share-form-box').classList.remove('visible');
+    ['card-story', 'card-note', 'card-photo'].forEach(id => document.getElementById(id).classList.remove('active'));
+}
+
+/* ================================================================
+   COUNTER BAR — COUNT UP ON SCROLL
+================================================================ */
+function updateCounterTargets() {
+    const sdEl = document.getElementById('stories-count-display');
+    const ndEl = document.getElementById('notes-count-display');
+    if (sdEl) sdEl.setAttribute('data-target', storiesCount);
+    if (ndEl) ndEl.setAttribute('data-target', notesCount);
+}
+
+function startCounters() {
+    if (countersStarted) return;
+    countersStarted = true;
+
+    document.querySelectorAll('.counter-num[data-target]').forEach(el => {
+        const target = parseInt(el.getAttribute('data-target'), 10) || 0;
+        const suffix = el.getAttribute('data-suffix') || '';
+        const duration = 1800;
+        const steps = 50;
+        const increment = target / steps;
+        let current = 0;
+        let step = 0;
+
+        const timer = setInterval(() => {
+            step++;
+            current = Math.min(Math.round(increment * step), target);
+            el.textContent = formatCounterNum(current) + suffix;
+            if (step >= steps) {
+                clearInterval(timer);
+                el.textContent = formatCounterNum(target) + suffix;
+            }
+        }, duration / steps);
+    });
+}
+
+function formatCounterNum(n) {
+    if (n >= 1000) return (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1) + 'K';
+    return n.toString();
+}
+
+// Observe counter bar
+const counterBarObs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) startCounters();
+}, { threshold: 0.3 });
+const counterBarEl = document.getElementById('counter-bar');
+if (counterBarEl) counterBarObs.observe(counterBarEl);
+
+/* ================================================================
+   TOAST SYSTEM
+================================================================ */
+function showToast(msg, type) {
+    type = type || 'success';
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+
+    const icons = { success: '&#10003;', error: '&#9888;', info: '&#9432;' };
+    toast.innerHTML = `<span class="toast-icon">${icons[type] || icons.info}</span><span>${escHtml(msg)}</span>`;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('removing');
+        setTimeout(() => toast.remove(), 350);
+    }, 4200);
+}
+
+/* ================================================================
+   UTILITY
+================================================================ */
+function escHtml(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+/* ================================================================
+   DRAG & DROP PHOTO UPLOAD
+================================================================ */
+(function () {
+    const area = document.querySelector('.file-upload-area');
+    if (!area) return;
+    area.addEventListener('dragover',  (e) => { e.preventDefault(); area.style.borderColor = 'var(--teal)'; });
+    area.addEventListener('dragleave', ()  => { area.style.borderColor = ''; });
+    area.addEventListener('drop',      (e) => {
+        e.preventDefault();
+        area.style.borderColor = '';
+        const file = e.dataTransfer.files[0];
+        if (!file || !file.type.startsWith('image/')) return;
+        const fakeEvent = { target: { files: [file] } };
+        handleFileSelect(fakeEvent);
+    });
+})();
+</script>
+</body>
+</html>

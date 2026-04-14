@@ -83,6 +83,15 @@
                     </div>
                 </div>
                 <div class="admin-nav-group">
+                    <div class="admin-nav-label">Memories</div>
+                    <div class="admin-nav-link" data-panel="diya" onclick="switchPanel('diya')"><span
+                            class="nav-icon">🪔</span>Diya Prayer Wall <span class="admin-badge"
+                            id="badge-diyas">0</span></div>
+                    <div class="admin-nav-link" data-panel="memories" onclick="switchPanel('memories')"><span
+                            class="nav-icon">💝</span>Memories — ICU to Home <span class="admin-badge"
+                            id="badge-memories">0</span></div>
+                </div>
+                <div class="admin-nav-group">
                     <div class="admin-nav-label">Site Controls</div>
                     <div class="admin-nav-link" data-panel="hero" onclick="switchPanel('hero')"><span
                             class="nav-icon">🏠</span>Hero &amp; Content</div>
@@ -103,7 +112,8 @@
                 $panels = [
                     'dashboard', 'calendar', 'requests', 'knowledge', 'editor',
                     'reviews', 'photos', 'images', 'settings', 'myths',
-                    'quizeditor', 'research', 'hero', 'export', 'api_health'
+                    'quizeditor', 'research', 'hero', 'export', 'api_health',
+                    'diya', 'memories'
                 ];
                 foreach ($panels as $panel) {
                     $file = __DIR__ . "/admin/panels/{$panel}.php";

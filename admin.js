@@ -203,6 +203,27 @@ async function updateBadges() {
     if (bReq) { bReq.textContent = pb; bReq.style.display = pb > 0 ? '' : 'none'; }
     if (bRev) { bRev.textContent = pr; bRev.style.display = pr > 0 ? '' : 'none'; }
     if (bPho) { bPho.textContent = pp; bPho.style.display = pp > 0 ? '' : 'none'; }
+
+    // Diya & Memories badges
+    try {
+        const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+        const [diyaRes, memRes] = await Promise.all([
+            fetch('./api/diya.php?action=admin&admin_pass=' + encodeURIComponent(pass)).then(r => r.json()).catch(() => null),
+            fetch('./api/memories.php?action=summary').then(r => r.json()).catch(() => null)
+        ]);
+        const bDiya = document.getElementById('badge-diyas');
+        if (bDiya && diyaRes?.data) {
+            const dp = diyaRes.data.filter(d => d.status === 'pending').length;
+            bDiya.textContent = diyaRes.data.length;
+            bDiya.style.display = diyaRes.data.length > 0 ? '' : 'none';
+        }
+        const bMem = document.getElementById('badge-memories');
+        if (bMem && memRes?.data) {
+            const totalPending = (memRes.data.healing_stories?.pending || 0) + (memRes.data.gratitude_notes?.pending || 0) + (memRes.data.memory_photos?.pending || 0);
+            bMem.textContent = totalPending;
+            bMem.style.display = totalPending > 0 ? '' : 'none';
+        }
+    } catch(e) { console.error('Badge update (memories):', e); }
 }
 
 // Pending photo submissions from reviews.html upload form
@@ -1425,6 +1446,8 @@ switchPanel = function (name) {
     if (name === 'peer') renderPeerRecognitions();
     if (name === 'hero') loadHeroContent();
     if (name === 'apihealth') runAllChecks();
+    if (name === 'diya') adminLoadDiyas();
+    if (name === 'memories') { adminLoadStories(); adminLoadNotes(); adminLoadMemoryPhotos(); }
 };
 
 // ============================================================
@@ -1956,3 +1979,436 @@ document.addEventListener('DOMContentLoaded', () => {
     const uField = document.getElementById('admin-user');
     if (uField) uField.addEventListener('keydown', e => { if (e.key === 'Enter') pField.focus(); });
 });
+
+// ============================================================
+// DIYA PRAYER WALL — Admin Functions
+// ============================================================
+
+let diyaCache = [];
+
+async function adminLoadDiyas() {
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    try {
+        const res = await fetch('./api/diya.php?action=admin&admin_pass=' + encodeURIComponent(pass));
+        const data = await res.json();
+        if (!data.success) { toast('Failed to load diyas: ' + (data.error || ''), 'error'); return; }
+        diyaCache = data.data || [];
+        renderDiyaTable();
+    } catch (e) { toast('Error loading diyas', 'error'); console.error(e); }
+}
+
+function renderDiyaTable() {
+    const total = diyaCache.length;
+    const approved = diyaCache.filter(d => d.status === 'approved').length;
+    const pending = diyaCache.filter(d => d.status === 'pending').length;
+
+    const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+    el('diya-total', total);
+    el('diya-approved', approved);
+    el('diya-pending', pending);
+
+    const tbody = document.getElementById('diya-tbody');
+    if (!tbody) return;
+
+    if (total === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No diyas yet. Light the first one!</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = diyaCache.map(d => {
+        const prayer = (d.prayer || '').length > 60 ? d.prayer.substring(0, 60) + '...' : (d.prayer || '—');
+        const date = d.lit_at ? new Date(d.lit_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+        const statusClass = d.status === 'approved' ? 'badge-approved' : d.status === 'pending' ? 'badge-pending' : 'badge-rejected';
+        return `<tr>
+            <td><strong>${escH(d.name)}</strong></td>
+            <td title="${escH(d.prayer)}">${escH(prayer)}</td>
+            <td>${escH(d.lit_by || '—')}</td>
+            <td>${date}</td>
+            <td><span class="status-badge ${statusClass}">${d.status}</span></td>
+            <td>
+                ${d.status !== 'approved' ? `<button class="action-btn approve" onclick="adminDiyaAction('approve','${d.id}')">✓</button>` : ''}
+                <button class="action-btn delete" onclick="adminDiyaAction('delete','${d.id}')">✕</button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+async function adminDiyaAction(action, id) {
+    if (action === 'delete' && !confirm('Delete this diya permanently?')) return;
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    try {
+        const res = await fetch('./api/diya.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, id, admin_pass: pass })
+        });
+        const data = await res.json();
+        if (data.success) { toast(action === 'delete' ? 'Diya removed' : 'Diya ' + action + 'd', 'success'); adminLoadDiyas(); }
+        else toast(data.error || 'Failed', 'error');
+    } catch (e) { toast('Error', 'error'); }
+}
+
+async function adminAddDiya() {
+    const name = document.getElementById('admin-diya-name')?.value.trim();
+    const prayer = document.getElementById('admin-diya-prayer')?.value.trim();
+    const litBy = document.getElementById('admin-diya-litby')?.value.trim();
+    if (!name) { toast('Enter a name for the diya', 'error'); return; }
+
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    try {
+        const res = await fetch('./api/diya.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'light', name, prayer, lit_by: litBy, admin_pass: pass })
+        });
+        const data = await res.json();
+        if (data.success) {
+            toast('Diya lit! 🪔', 'success');
+            adminClearDiyaForm();
+            adminLoadDiyas();
+        } else toast(data.error || 'Failed', 'error');
+    } catch (e) { toast('Error adding diya', 'error'); }
+}
+
+function adminClearDiyaForm() {
+    ['admin-diya-name', 'admin-diya-prayer', 'admin-diya-litby'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+}
+
+// ============================================================
+// MEMORIES — Healing Stories, Gratitude Notes, Photo Memories
+// ============================================================
+
+let storiesCache = [], notesCache = [], memPhotosCache = [];
+
+function switchMemoryTab(tab) {
+    document.querySelectorAll('.memory-tab').forEach(t => t.style.display = 'none');
+    document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
+    const tabMap = { stories: 'mem-tab-stories', notes: 'mem-tab-notes', photos: 'mem-tab-photos' };
+    const el = document.getElementById(tabMap[tab]);
+    if (el) el.style.display = '';
+    // Activate the clicked button
+    event?.target?.classList.add('active');
+}
+
+// ── HEALING STORIES ──────────────────────────────────────────
+
+async function adminLoadStories() {
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    try {
+        const res = await fetch('./api/memories.php?type=healing_stories&action=admin&admin_pass=' + encodeURIComponent(pass));
+        const data = await res.json();
+        if (!data.success) return;
+        storiesCache = data.data || [];
+        renderStoriesTable();
+    } catch (e) { console.error('Load stories:', e); }
+}
+
+function renderStoriesTable() {
+    const total = storiesCache.length;
+    const pending = storiesCache.filter(s => s.status === 'pending').length;
+    const approved = storiesCache.filter(s => s.status === 'approved').length;
+
+    const el = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    el('stories-total', total);
+    el('stories-pending', pending);
+    el('stories-approved', approved);
+    el('badge-mem-stories', pending);
+
+    const tbody = document.getElementById('stories-tbody');
+    if (!tbody) return;
+
+    if (total === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No stories yet.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = storiesCache.map(s => {
+        const date = s.submitted_at ? new Date(s.submitted_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '—';
+        const statusClass = s.status === 'approved' ? 'badge-approved' : s.status === 'pending' ? 'badge-pending' : 'badge-rejected';
+        return `<tr>
+            <td><strong>${escH(s.title || '—')}</strong></td>
+            <td>${escH(s.family_name || s.patient_name || '—')}</td>
+            <td>${escH(s.tag || '—')}</td>
+            <td><span class="status-badge ${statusClass}">${s.status}</span></td>
+            <td>${date}</td>
+            <td>
+                ${s.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('healing_stories','approve','${s.id}')">✓</button>` : ''}
+                ${s.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('healing_stories','reject','${s.id}')">✗</button>` : ''}
+                <button class="action-btn edit" onclick="editStory('${s.id}')">✎</button>
+                <button class="action-btn delete" onclick="memoryAction('healing_stories','delete','${s.id}')">✕</button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function editStory(id) {
+    const s = storiesCache.find(x => x.id === id);
+    if (!s) return;
+    const setVal = (elId, val) => { const e = document.getElementById(elId); if (e) e.value = val || ''; };
+    setVal('mem-story-patient', s.patient_name);
+    setVal('mem-story-family', s.family_name);
+    setVal('mem-story-relationship', s.relationship);
+    setVal('mem-story-duration', s.duration);
+    setVal('mem-story-tag', s.tag);
+    setVal('mem-story-title', s.title);
+    setVal('mem-story-text', s.story);
+    setVal('mem-story-quote', s.quote);
+    const editId = document.getElementById('mem-story-edit-id');
+    if (editId) editId.value = id;
+}
+
+async function saveStory() {
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const getVal = id => document.getElementById(id)?.value.trim() || '';
+    const editId = getVal('mem-story-edit-id');
+
+    const item = {
+        patient_name: getVal('mem-story-patient'),
+        family_name: getVal('mem-story-family'),
+        relationship: getVal('mem-story-relationship'),
+        duration: getVal('mem-story-duration'),
+        tag: getVal('mem-story-tag'),
+        title: getVal('mem-story-title'),
+        story: getVal('mem-story-text'),
+        quote: getVal('mem-story-quote'),
+        status: 'approved'
+    };
+    if (editId) item.id = editId;
+
+    if (!item.title || !item.story) { toast('Title and story are required', 'error'); return; }
+
+    try {
+        const res = await fetch('./api/memories.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'save', type: 'healing_stories', item, admin_pass: pass })
+        });
+        const data = await res.json();
+        if (data.success) { toast('Story saved!', 'success'); clearStoryForm(); adminLoadStories(); }
+        else toast(data.error || 'Failed', 'error');
+    } catch (e) { toast('Error saving story', 'error'); }
+}
+
+function clearStoryForm() {
+    ['mem-story-patient', 'mem-story-family', 'mem-story-relationship', 'mem-story-duration',
+     'mem-story-tag', 'mem-story-title', 'mem-story-text', 'mem-story-quote', 'mem-story-edit-id'
+    ].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+}
+
+// ── GRATITUDE NOTES ──────────────────────────────────────────
+
+async function adminLoadNotes() {
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    try {
+        const res = await fetch('./api/memories.php?type=gratitude_notes&action=admin&admin_pass=' + encodeURIComponent(pass));
+        const data = await res.json();
+        if (!data.success) return;
+        notesCache = data.data || [];
+        renderNotesTable();
+    } catch (e) { console.error('Load notes:', e); }
+}
+
+function renderNotesTable() {
+    const total = notesCache.length;
+    const pending = notesCache.filter(n => n.status === 'pending').length;
+    const approved = notesCache.filter(n => n.status === 'approved').length;
+
+    const el = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    el('notes-total', total);
+    el('notes-pending', pending);
+    el('notes-approved', approved);
+    el('badge-mem-notes', pending);
+
+    const tbody = document.getElementById('notes-tbody');
+    if (!tbody) return;
+
+    if (total === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No gratitude notes yet.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = notesCache.map(n => {
+        const note = (n.note || '').length > 50 ? n.note.substring(0, 50) + '...' : (n.note || '—');
+        const date = n.submitted_at ? new Date(n.submitted_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '—';
+        const statusClass = n.status === 'approved' ? 'badge-approved' : n.status === 'pending' ? 'badge-pending' : 'badge-rejected';
+        return `<tr>
+            <td><strong>${escH(n.name || 'Anonymous')}</strong></td>
+            <td title="${escH(n.note)}">${escH(note)}</td>
+            <td>${escH(n.relationship || '—')}</td>
+            <td><span class="status-badge ${statusClass}">${n.status}</span></td>
+            <td>${date}</td>
+            <td>
+                ${n.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('gratitude_notes','approve','${n.id}')">✓</button>` : ''}
+                ${n.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('gratitude_notes','reject','${n.id}')">✗</button>` : ''}
+                <button class="action-btn delete" onclick="memoryAction('gratitude_notes','delete','${n.id}')">✕</button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+async function saveNote() {
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const getVal = id => document.getElementById(id)?.value.trim() || '';
+
+    const item = {
+        name: getVal('mem-note-name'),
+        note: getVal('mem-note-text'),
+        relationship: getVal('mem-note-relationship'),
+        status: 'approved'
+    };
+
+    if (!item.note) { toast('Please write a note', 'error'); return; }
+
+    try {
+        const res = await fetch('./api/memories.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'save', type: 'gratitude_notes', item, admin_pass: pass })
+        });
+        const data = await res.json();
+        if (data.success) { toast('Note saved!', 'success'); clearNoteForm(); adminLoadNotes(); }
+        else toast(data.error || 'Failed', 'error');
+    } catch (e) { toast('Error saving note', 'error'); }
+}
+
+function clearNoteForm() {
+    ['mem-note-name', 'mem-note-text', 'mem-note-relationship'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+    });
+}
+
+// ── MEMORY PHOTOS ────────────────────────────────────────────
+
+async function adminLoadMemoryPhotos() {
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    try {
+        const res = await fetch('./api/memories.php?type=memory_photos&action=admin&admin_pass=' + encodeURIComponent(pass));
+        const data = await res.json();
+        if (!data.success) return;
+        memPhotosCache = data.data || [];
+        renderMemoryPhotosGrid();
+    } catch (e) { console.error('Load memory photos:', e); }
+}
+
+function renderMemoryPhotosGrid() {
+    const total = memPhotosCache.length;
+    const pending = memPhotosCache.filter(p => p.status === 'pending').length;
+    const approved = memPhotosCache.filter(p => p.status === 'approved').length;
+
+    const el = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    el('photos-total', total);
+    el('photos-pending', pending);
+    el('photos-approved', approved);
+    el('badge-mem-photos', pending);
+
+    const grid = document.getElementById('photos-grid');
+    if (!grid) return;
+
+    if (total === 0) {
+        grid.innerHTML = '<p style="text-align:center;padding:28px;color:var(--ad-text-muted);">No photos yet.</p>';
+        return;
+    }
+
+    grid.innerHTML = memPhotosCache.map(p => {
+        const statusClass = p.status === 'approved' ? 'badge-approved' : p.status === 'pending' ? 'badge-pending' : 'badge-rejected';
+        const imgSrc = p.photo_data || '';
+        const hasImage = imgSrc.startsWith('data:image');
+        return `<div class="mem-photo-card" style="background:var(--ad-surface);border:1px solid var(--ad-border);border-radius:12px;overflow:hidden;margin-bottom:16px;">
+            ${hasImage ? `<img src="${imgSrc}" style="width:100%;height:160px;object-fit:cover;">` : `<div style="width:100%;height:160px;background:var(--ad-surface-hover);display:flex;align-items:center;justify-content:center;color:var(--ad-text-muted);">No image</div>`}
+            <div style="padding:12px;">
+                <div style="font-weight:600;margin-bottom:4px;">${escH(p.caption || '—')}</div>
+                <div style="font-size:0.78rem;color:var(--ad-text-muted);margin-bottom:8px;">${escH(p.label || '')} · ${escH(p.uploaded_by || 'Unknown')} · <span class="status-badge ${statusClass}">${p.status}</span></div>
+                <div style="display:flex;gap:6px;">
+                    ${p.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('memory_photos','approve','${p.id}')">✓ Approve</button>` : ''}
+                    ${p.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('memory_photos','reject','${p.id}')">✗ Reject</button>` : ''}
+                    <button class="action-btn delete" onclick="memoryAction('memory_photos','delete','${p.id}')">✕ Delete</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function previewMemoryPhoto(input) {
+    const preview = document.getElementById('mem-photo-preview');
+    const previewImg = document.getElementById('mem-photo-preview-img');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+async function uploadMemoryPhoto() {
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const getVal = id => document.getElementById(id)?.value.trim() || '';
+    const fileInput = document.getElementById('mem-photo-file');
+
+    if (!fileInput?.files?.length) { toast('Please select a photo', 'error'); return; }
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const item = {
+            caption: getVal('mem-photo-caption'),
+            label: getVal('mem-photo-label'),
+            uploaded_by: getVal('mem-photo-by'),
+            photo_data: e.target.result,
+            status: 'approved'
+        };
+
+        try {
+            const res = await fetch('./api/memories.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'save', type: 'memory_photos', item, admin_pass: pass })
+            });
+            const data = await res.json();
+            if (data.success) { toast('Photo uploaded!', 'success'); clearPhotoForm(); adminLoadMemoryPhotos(); }
+            else toast(data.error || 'Failed', 'error');
+        } catch (e) { toast('Error uploading photo', 'error'); }
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+}
+
+function clearPhotoForm() {
+    ['mem-photo-by', 'mem-photo-caption', 'mem-photo-label'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+    });
+    const fileInput = document.getElementById('mem-photo-file');
+    if (fileInput) fileInput.value = '';
+    const preview = document.getElementById('mem-photo-preview');
+    if (preview) preview.style.display = 'none';
+}
+
+// ── SHARED: Approve / Reject / Delete for all memory types ──
+
+async function memoryAction(type, action, id) {
+    if (action === 'delete' && !confirm('Delete this item permanently?')) return;
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    try {
+        const res = await fetch('./api/memories.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, type, id, admin_pass: pass })
+        });
+        const data = await res.json();
+        if (data.success) {
+            toast(action === 'delete' ? 'Removed' : (action === 'approve' ? 'Approved!' : 'Rejected'), 'success');
+            if (type === 'healing_stories') adminLoadStories();
+            if (type === 'gratitude_notes') adminLoadNotes();
+            if (type === 'memory_photos') adminLoadMemoryPhotos();
+        } else toast(data.error || 'Failed', 'error');
+    } catch (e) { toast('Error', 'error'); }
+}
+
+// ── HTML Escape helper (if not already defined) ──
+if (typeof escH === 'undefined') {
+    function escH(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+}

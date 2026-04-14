@@ -3571,88 +3571,16 @@ body.has-ticker .nav {
 }
 
 /* Myth flip cards */
-.myths-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-}
-
-.myth-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
-    height: 280px;
-    cursor: pointer;
-    perspective: 1200px;
-    transition: box-shadow var(--t-base);
-}
-
-.myth-card:hover {
-    box-shadow: var(--shadow-glow);
-}
-
-.myth-card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.myth-card.flipped .myth-card-inner {
-    transform: rotateY(180deg);
-}
-
-.myth-front,
-.myth-back {
-    position: absolute;
-    inset: 0;
-    backface-visibility: hidden;
-    border-radius: var(--radius-md);
-    padding: 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    justify-content: space-between;
-}
-
-.myth-front {
-    background: var(--bg-section);
-    border: 1px solid var(--border-light);
-}
-
-.myth-back {
-    background: linear-gradient(135deg, rgba(43, 50, 128, .05), rgba(0, 120, 212, .04));
-    border: 1px solid rgba(43, 50, 128, .12);
-    transform: rotateY(180deg);
-}
-
-.myth-label {
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 3px 12px;
-    border-radius: var(--radius-full);
-    display: inline-block;
-}
+/* (Myth card styles consolidated in final block below line 5029) */
 
 .myth-text {
-    background: rgba(220, 50, 50, .1);
+    background: rgba(185, 28, 28, 0.08);
     color: #B91C1C;
 }
 
 .fact-text {
-    background: rgba(22, 121, 74, .1);
-    color: var(--green-ok);
-}
-
-.myth-statement {
-    font-family: var(--font-h);
-    font-size: 1.05rem;
-    color: var(--text-h);
-    line-height: 1.38;
-    letter-spacing: -0.3px;
+    background: rgba(16, 185, 129, 0.08);
+    color: #047857;
 }
 
 .myth-hint {
@@ -5026,6 +4954,7 @@ body.page-fade-out {
    AI APOLLO 2.1 — MASTER STYLES (UPGRADED)
    v2.1.1 - 2026-04-08
    ======================================================== */
+/* ── MYTH CARDS — FINAL (high-contrast, replaces all prior blocks) ── */
 .myths-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -5034,7 +4963,7 @@ body.page-fade-out {
 }
 
 .myth-card {
-    min-height: 220px;
+    min-height: 230px;
     cursor: pointer;
     border: none;
     background: transparent;
@@ -5046,10 +4975,10 @@ body.page-fade-out {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 220px;
+    min-height: 230px;
     transform-style: preserve-3d;
     transition: transform 0.55s cubic-bezier(.4, 0, .2, 1);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-lg, 24px);
 }
 
 .myth-card.flipped .myth-card-inner {
@@ -5062,69 +4991,121 @@ body.page-fade-out {
     inset: 0;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-lg, 24px);
     padding: 28px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 220px;
+    min-height: 230px;
 }
 
+/* FRONT: Myth side — warm red-tinted card, solid opaque bg */
 .myth-front {
-    background: linear-gradient(135deg, rgba(43, 50, 128, 0.18) 0%, rgba(20, 25, 65, 0.35) 100%);
-    border: 1.5px solid rgba(165, 180, 252, 0.2);
-    backdrop-filter: blur(12px);
+    background: linear-gradient(145deg, #FFFFFF 0%, #FFF5F5 100%);
+    border: 1.5px solid rgba(185, 28, 28, 0.15);
+    box-shadow: 0 4px 20px rgba(185, 28, 28, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+.myth-card:hover .myth-front {
+    border-color: rgba(185, 28, 28, 0.3);
+    box-shadow: 0 8px 32px rgba(185, 28, 28, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+[data-theme="dark"] .myth-front {
+    background: linear-gradient(145deg, #2D1B1B 0%, #1A0F0F 100%);
+    border-color: rgba(248, 113, 113, 0.25);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+[data-theme="dark"] .myth-card:hover .myth-front {
+    border-color: rgba(248, 113, 113, 0.45);
+    box-shadow: 0 12px 40px rgba(248, 113, 113, 0.15);
 }
 
+/* BACK: Fact side — green-tinted card, solid opaque bg */
 .myth-back {
-    background: linear-gradient(135deg, rgba(16, 90, 70, 0.22) 0%, rgba(10, 40, 30, 0.4) 100%);
-    border: 1.5px solid rgba(52, 211, 153, 0.25);
-    backdrop-filter: blur(12px);
+    background: linear-gradient(145deg, #FFFFFF 0%, #F0FDF4 100%);
+    border: 1.5px solid rgba(16, 185, 129, 0.2);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
     transform: rotateY(180deg);
 }
+[data-theme="dark"] .myth-back {
+    background: linear-gradient(145deg, #0D2E22 0%, #071E17 100%);
+    border-color: rgba(52, 211, 153, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
 
+/* Labels */
 .myth-label {
     font-size: 0.7rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: var(--accent-secondary);
+    color: #B91C1C;
     margin-bottom: 12px;
+    display: inline-block;
+    padding: 3px 12px;
+    background: rgba(185, 28, 28, 0.08);
+    border-radius: 99px;
+    width: fit-content;
+}
+[data-theme="dark"] .myth-label {
+    color: #FCA5A5;
+    background: rgba(248, 113, 113, 0.12);
 }
 
 .myth-label.fact {
-    color: #34d399;
+    color: #047857;
+    background: rgba(16, 185, 129, 0.08);
+}
+[data-theme="dark"] .myth-label.fact {
+    color: #6EE7B7;
+    background: rgba(52, 211, 153, 0.12);
 }
 
+/* Myth statement — high contrast on light bg */
 .myth-statement {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: #1F2937;
     font-style: italic;
-    line-height: 1.55;
+    line-height: 1.6;
     flex: 1;
     margin: 0 0 16px;
 }
+[data-theme="dark"] .myth-statement {
+    color: #F3F4F6;
+}
 
+/* Fact text — readable dark green on light green bg */
 .myth-fact {
     font-size: 0.88rem;
-    color: var(--text-secondary);
-    line-height: 1.75;
+    color: #1F2937;
+    line-height: 1.8;
     flex: 1;
     margin: 0 0 12px;
 }
-
-.myth-source {
-    font-size: 0.72rem;
-    color: #34d399;
-    font-weight: 600;
-    font-style: italic;
+[data-theme="dark"] .myth-fact {
+    color: #D1FAE5;
 }
 
+/* Source citation */
+.myth-source {
+    font-size: 0.72rem;
+    color: #047857;
+    font-weight: 700;
+    font-style: italic;
+}
+[data-theme="dark"] .myth-source {
+    color: #34D399;
+}
+
+/* Tap hint */
 .myth-tap-hint {
     font-size: 0.72rem;
-    color: var(--text-muted);
+    color: #6B7280;
     text-align: right;
+    margin-top: 8px;
+}
+[data-theme="dark"] .myth-tap-hint {
+    color: rgba(209, 213, 219, 0.5);
 }
 
 /* ====== SPEED DIAL FAB ====== */
