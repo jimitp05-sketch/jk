@@ -271,6 +271,7 @@ button {
     opacity: 0;
     transform: translateY(30px);
     animation: wordUp 0.75s var(--ease-out) forwards;
+    margin-right: 0.25em;
 }
 
 @keyframes wordUp {
@@ -5216,7 +5217,8 @@ body.page-fade-out {
     position: absolute;
     inset: -4px;
     border-radius: 50%;
-    background: rgba(43, 50, 128, 0.4);
+    border: 2px solid rgba(43, 50, 128, 0.4);
+    background: transparent;
     animation: sd-pulse-ring 2s infinite;
     z-index: -1;
 }
