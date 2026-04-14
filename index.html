@@ -54,6 +54,7 @@
                 <a href="#journey">Journey</a>
                 <a href="knowledge.html">Knowledge Hub</a>
                 <a href="reviews.html">Reviews</a>
+                <a href="tel:18605001066" class="nav-phone-link">📞 1860-500-1066</a>
                 <a href="booking.html" class="nav-cta btn-book-consult">Book Consultation</a>
             </div>
             <a href="tel:18605001066" class="nav-phone-btn" aria-label="Call now">📞</a>
@@ -79,23 +80,26 @@
 
     <!-- HERO -->
     <section class="hero" id="hero">
+        <div class="hero-emergency-bar">
+            <div class="container">
+                <a href="tel:18605001066" class="emergency-bar-link">🚨 ICU Emergency? Call Now → <strong>1860-500-1066</strong></a>
+            </div>
+        </div>
         <div class="hero-glow-orb" aria-hidden="true"></div>
         <div class="container hero-container">
             <div class="hero-content reveal">
                 <span class="hero-badge" id="hero-badge-wrap"><span class="hero-badge-dot"></span> <span
                         id="hero-badge-text">🔵 Apollo Hospitals · Gujarat's #1 Critical Care Unit</span></span>
+                <p class="hero-empathy" id="hero-empathy">"We know you're terrified right now.
+                    Take a breath. You've found Dr. Jay Kothari — and he's ready."</p>
                 <h1 id="hero-title">Your Family Deserves <span class="glow-text">The
                         Best</span> ICU Doctor in Gujarat.
                 </h1>
-                <p class="hero-empathy" id="hero-empathy">We know you're terrified right now.
-                    Take a breath. You've
-                    found Dr. Jay Kothari — and he's ready.</p>
                 <div class="hero-credential-strip">
-                    <span>MBBS · MD (Anaesthesia) · FNB Critical Care</span>
-                    <span class="credential-divider">|</span>
-                    <span>One of &lt;10 ECMO Specialists in Gujarat</span>
-                    <span class="credential-divider">|</span>
-                    <span>30+ Years · 10,000+ Lives</span>
+                    <span class="credential-pill">MBBS</span>
+                    <span class="credential-pill">MD (Anaesthesia)</span>
+                    <span class="credential-pill">FNB Critical Care</span>
+                    <span class="credential-pill">ECMO Specialist</span>
                 </div>
                 <div class="hero-stats" id="hero-stats-band">
                     <div class="stat-item">
@@ -112,7 +116,9 @@
                     </div>
                 </div>
                 <div class="hero-ctas">
-                    <a href="booking.html" class="btn-cta-opd sd-book">Book OPD → Mon–Sat, 2PM</a>
+                    <a href="tel:18605001066" class="btn-cta-call sd-call">📞 Call Now</a>
+                    <a href="https://wa.me/919999999999?text=Hello%2C%20I%20need%20to%20consult%20Dr.%20Jay%20Kothari" class="btn-cta-whatsapp sd-whatsapp" target="_blank" rel="noopener">💬 WhatsApp</a>
+                    <a href="booking.html" class="btn-cta-opd sd-book">📅 Book OPD</a>
                 </div>
             </div>
             <div class="hero-image-wrapper reveal reveal-delay-2">
@@ -120,7 +126,7 @@
                     <source srcset="img-hero-doctor.webp" type="image/webp" />
                     <img src="img-hero-doctor.png"
                         alt="Dr. Jay Kothari, Critical Care Specialist at Apollo Hospitals, Ahmedabad"
-                        class="hero-doctor-img" />
+                        class="hero-doctor-img" loading="eager" fetchpriority="high" />
                 </picture>
                 <div class="hero-float-badge hero-float-top">
                     <div class="float-icon">🫀</div>
@@ -146,26 +152,47 @@
             </div>
         </div>
 
-        <!-- SOCIAL PROOF STRIP -->
+        <!-- SOCIAL PROOF TICKER -->
         <div class="social-proof-strip">
-            <div class="container social-proof-inner">
-                <div class="social-proof-item">
+            <div class="container social-proof-ticker" id="social-proof-ticker">
+                <div class="social-proof-item active">
                     <span class="social-proof-stars">★★★★★</span>
                     <span class="social-proof-text"><strong>Practo</strong> Recommended</span>
                 </div>
-                <div class="social-proof-divider"></div>
                 <div class="social-proof-item">
                     <span class="social-proof-icon">🏆</span>
                     <span class="social-proof-text"><strong>Gujarat's Top</strong> Intensivist</span>
                 </div>
-                <div class="social-proof-divider"></div>
                 <div class="social-proof-item">
                     <span class="social-proof-icon">👨‍👩‍👧‍👦</span>
                     <span class="social-proof-text"><strong>10,000+</strong> Patient Families Helped</span>
                 </div>
+                <div class="social-proof-item">
+                    <span class="social-proof-icon">📰</span>
+                    <span class="social-proof-text"><strong>20+ Years</strong> at Apollo Hospitals</span>
+                </div>
             </div>
         </div>
     </section>
+
+    <!-- DOCTOR'S PROMISE -->
+    <section class="section doctor-promise-section" id="promise">
+        <div class="container">
+            <div class="doctor-promise reveal">
+                <div class="promise-quote">
+                    <p>"I understand that your family is going through the most difficult time of their lives. My promise to you: I will explain everything clearly, I will be available when you need me, and I will fight for your loved one with everything modern medicine has to offer."</p>
+                    <div class="promise-author">
+                        <span class="promise-dash">—</span> Dr. Jay Kothari
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCROLL HOOK: Hero → About -->
+    <div class="scroll-hook reveal">
+        <p>But credentials are just the beginning. Here's who Dr. Kothari really is.</p>
+    </div>
 
     <!-- ABOUT -->
     <section class="section" id="about">
@@ -227,6 +254,11 @@
             </div>
         </div>
     </section>
+
+    <!-- SCROLL HOOK: About → Expertise -->
+    <div class="scroll-hook reveal">
+        <p>What makes a Critical Care specialist different from every other doctor?</p>
+    </div>
 
     <!-- EXPERTISE -->
     <section class="section" id="expertise" style="background:var(--bg-section);">
@@ -291,6 +323,11 @@
         </div>
     </section>
 
+    <!-- SCROLL HOOK: Expertise → Why Us -->
+    <div class="scroll-hook reveal">
+        <p>Knowing the procedures is one thing. Knowing when and how to apply them is another.</p>
+    </div>
+
     <!-- WHY DR. KOTHARI -->
     <section class="section" id="why-us">
         <div class="container">
@@ -330,6 +367,11 @@
             </div>
         </div>
     </section>
+
+    <!-- SCROLL HOOK: Why Us → Process -->
+    <div class="scroll-hook reveal">
+        <p>Convinced? Here's exactly what happens when you reach out.</p>
+    </div>
 
     <!-- WHAT HAPPENS WHEN YOU CALL -->
     <section class="section" id="process" style="background:var(--bg-section);">
@@ -384,6 +426,11 @@
         </div>
     </section>
 
+    <!-- SCROLL HOOK: Process → Timeline -->
+    <div class="scroll-hook reveal">
+        <p>30 years of discipline made this possible.</p>
+    </div>
+
     <!-- JOURNEY / TIMELINE -->
     <section class="section" id="journey">
         <div class="container">
@@ -433,6 +480,11 @@
             </div>
         </div>
     </section>
+
+    <!-- SCROLL HOOK: Timeline → Scenarios -->
+    <div class="scroll-hook reveal">
+        <p>Want to understand what's happening to your loved one? Start here.</p>
+    </div>
 
     <!-- CLINICAL SCENARIOS (NMC Compliant) -->
     <section class="section" id="scenarios" style="background:var(--bg-section);">
@@ -535,6 +587,11 @@
             </div>
         </div>
     </section>
+
+    <!-- SCROLL HOOK: Knowledge → FAQ -->
+    <div class="scroll-hook reveal">
+        <p>Still have questions? Families always do.</p>
+    </div>
 
     <!-- FAQ -->
     <section class="section" id="faq" style="background:var(--bg-section);">
@@ -708,7 +765,7 @@
 
 
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 
 </html>

@@ -1,8 +1,6 @@
 ﻿// ============================================================
 // AUTH
 // ============================================================
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'apollo2024';
 
 async function doLogin() {
     const u = document.getElementById('admin-user').value.trim();
@@ -37,6 +35,8 @@ document.getElementById('admin-pass').addEventListener('keydown', e => { if (e.k
 document.getElementById('admin-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('admin-pass').focus(); });
 
 function doLogout() {
+    localStorage.removeItem('apollo_admin_logged');
+    localStorage.removeItem('apollo_admin_temp_pass');
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('admin-layout').style.display = 'none';
     document.getElementById('admin-user').value = '';

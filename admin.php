@@ -27,9 +27,6 @@
             </div>
             <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In →</button>
             <div class="login-error" id="login-error"></div>
-            <div style="margin-top:18px; font-size:0.74rem; color:var(--ad-text-muted);">Default: <code
-                    style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;">admin</code> / <code
-                    style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;">apollo2024</code></div>
         </div>
     </div>
 

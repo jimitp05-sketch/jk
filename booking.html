@@ -31,6 +31,7 @@
                 <a href="research.html">Research</a>
                 <a href="quiz.html">ICU Intel</a>
                 <a href="reviews.html">Reviews</a>
+                <a href="tel:18605001066" class="nav-phone-link">📞 1860-500-1066</a>
                 <a href="booking.html" class="active nav-cta">Book Consultation</a>
             </div>
             <button class="nav-toggle" id="nav-toggle"
@@ -319,38 +320,51 @@
             renderCalendar();
         });
 
-        document.getElementById('booking-form').addEventListener('submit', function (e) {
+        document.getElementById('booking-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             const name = document.getElementById('patient-name').value.trim();
             const phone = document.getElementById('patient-phone').value.trim();
             const reason = document.getElementById('visit-reason').value;
             if (!name || !phone || !reason || !selectedDate || !selectedSlot) return;
 
-            // Save to localStorage
-            const bookings = getBookedSlots();
-            if (!bookings[selectedDate]) bookings[selectedDate] = [];
-            bookings[selectedDate].push(selectedSlot);
-            localStorage.setItem('apollo_bookings', JSON.stringify(bookings));
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
 
-            // Save request to pending list
-            const requests = JSON.parse(localStorage.getItem('apollo_booking_requests') || '[]');
-            const [y, m, d] = selectedDate.split('-');
-            requests.push({
-                id: Date.now(), name, phone,
-                email: document.getElementById('patient-email').value,
-                reason, notes: document.getElementById('notes').value,
-                date: selectedDate, dateLabel: `${parseInt(d)} ${monthName(parseInt(m) - 1)} ${y}`,
-                slot: selectedSlot, status: 'pending',
-                submitted: new Date().toISOString()
-            });
-            localStorage.setItem('apollo_booking_requests', JSON.stringify(requests));
-
-            // Show success
-            document.getElementById('success-details').textContent = `${name} · ${selectedSlot} · ${parseInt(d)} ${monthName(parseInt(m) - 1)} ${y}`;
-            document.getElementById('booking-success').classList.add('show');
-            document.getElementById('booking-form').style.display = 'none';
-            selectedDate = null; selectedSlot = null;
-            renderCalendar(); renderSlots(); updateSlotDisplay();
+            try {
+                const res = await fetch('api/booking.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'create_booking',
+                        name,
+                        phone,
+                        email: document.getElementById('patient-email').value.trim(),
+                        reason,
+                        notes: document.getElementById('notes').value.trim(),
+                        preferred_date: selectedDate,
+                        preferred_slot: selectedSlot
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const [y, m, d] = selectedDate.split('-');
+                    document.getElementById('success-details').textContent = `${name} · ${selectedSlot} · ${parseInt(d)} ${monthName(parseInt(m) - 1)} ${y}`;
+                    document.getElementById('booking-success').classList.add('show');
+                    document.getElementById('booking-form').style.display = 'none';
+                    selectedDate = null; selectedSlot = null;
+                    renderCalendar(); renderSlots(); updateSlotDisplay();
+                } else {
+                    alert(data.message || 'Booking failed. Please try again or call 1860-500-1066.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            } catch (err) {
+                alert('Network error. Please try again or call 1860-500-1066.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         });
 
         renderCalendar();

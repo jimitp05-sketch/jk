@@ -124,7 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── 7. CARD 3D TILT ──────────────────────────────
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!prefersReduced) {
+    const isMobileDevice = window.innerWidth <= 768 || 'ontouchstart' in window;
+    if (!prefersReduced && !isMobileDevice) {
         document.querySelectorAll('.glass-card, .myth-card').forEach(card => {
             card.addEventListener('mousemove', e => {
                 const r = card.getBoundingClientRect();
@@ -203,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sections.forEach(s => sectionObs.observe(s));
 
     // ── 13. DYNAMIC CONTENT LOADERS ──────────────────
-    initPeerRecognitions();
+    // initPeerRecognitions moved to IIFE scope — see below
 
     // ── 12. SECTION MOUSE-FOLLOW GRADIENT ────────────
     if (!prefersReduced) {
@@ -328,35 +329,66 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => { });
     })();
 
-    // ── UNIFIED SPEED DIAL FAB ─────────────────────────
+    // ── UNIFIED SPEED DIAL FAB + MOBILE BOTTOM BAR ─────────────────────────
     (function createSpeedDial() {
-        const fab = document.createElement('div');
-        fab.id = 'speed-dial';
-        fab.className = 'sd-wrap';
-        fab.innerHTML = `
-      <div class="sd-actions">
-        <a href="tel:${ICU_PHONE}" class="sd-btn sd-emergency" aria-label="ICU Emergency">
-          <span class="sd-icon">🚨</span>
-          <span class="sd-label">ICU Emergency</span>
-        </a>
-        <a href="https://wa.me/${WA_NUM}?text=${WA_MSG}" class="sd-btn sd-whatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-          <span class="sd-icon">💬</span>
-          <span class="sd-label">WhatsApp Chat</span>
-        </a>
-        <a href="${OPD_LINK}" class="sd-btn sd-book" aria-label="Book OPD">
-          <span class="sd-icon">📅</span>
-          <span class="sd-label">Book OPD</span>
-        </a>
-      </div>
-      <button class="sd-main" id="sd-main-btn" aria-label="Open quick actions">
-        <span class="sd-main-icon">＋</span>
-        <span class="sd-pulse"></span>
-      </button>
-    `;
-        document.body.appendChild(fab);
-        setTimeout(() => fab.classList.add('sd-visible'), 800);
-        document.getElementById('sd-main-btn').addEventListener('click', e => { e.stopPropagation(); fab.classList.toggle('sd-open'); });
-        document.addEventListener('click', e => { if (!fab.contains(e.target)) fab.classList.remove('sd-open'); });
+        const isMobile = window.innerWidth <= 768;
+
+        if (isMobile) {
+            // Mobile: sticky bottom action bar instead of FAB
+            const bar = document.createElement('div');
+            bar.className = 'mobile-action-bar';
+            bar.innerHTML = `
+              <a href="tel:${ICU_PHONE}" class="mab-btn mab-call sd-emergency icu-link-phone" aria-label="Call now">📞 Call</a>
+              <a href="https://wa.me/${WA_NUM}?text=${WA_MSG}" class="mab-btn mab-wa sd-whatsapp" target="_blank" rel="noopener" aria-label="WhatsApp">💬 WhatsApp</a>
+              <a href="${OPD_LINK}" class="mab-btn mab-book sd-book" aria-label="Book OPD">📅 Book</a>
+            `;
+            document.body.appendChild(bar);
+            document.body.classList.add('has-mobile-bar');
+            setTimeout(() => bar.classList.add('mab-visible'), 600);
+        } else {
+            // Desktop: keep the FAB
+            const fab = document.createElement('div');
+            fab.id = 'speed-dial';
+            fab.className = 'sd-wrap';
+            fab.innerHTML = `
+          <div class="sd-actions">
+            <a href="tel:${ICU_PHONE}" class="sd-btn sd-emergency" aria-label="ICU Emergency">
+              <span class="sd-icon">🚨</span>
+              <span class="sd-label">ICU Emergency</span>
+            </a>
+            <a href="https://wa.me/${WA_NUM}?text=${WA_MSG}" class="sd-btn sd-whatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+              <span class="sd-icon">💬</span>
+              <span class="sd-label">WhatsApp Chat</span>
+            </a>
+            <a href="${OPD_LINK}" class="sd-btn sd-book" aria-label="Book OPD">
+              <span class="sd-icon">📅</span>
+              <span class="sd-label">Book OPD</span>
+            </a>
+          </div>
+          <button class="sd-main" id="sd-main-btn" aria-label="Open quick actions">
+            <span class="sd-main-icon">＋</span>
+            <span class="sd-pulse"></span>
+          </button>
+        `;
+            document.body.appendChild(fab);
+            setTimeout(() => fab.classList.add('sd-visible'), 800);
+            document.getElementById('sd-main-btn').addEventListener('click', e => { e.stopPropagation(); fab.classList.toggle('sd-open'); });
+            document.addEventListener('click', e => { if (!fab.contains(e.target)) fab.classList.remove('sd-open'); });
+        }
+    })();
+
+    // ── SOCIAL PROOF TICKER ────────────────────────────
+    (function initTicker() {
+        const ticker = document.getElementById('social-proof-ticker');
+        if (!ticker) return;
+        const items = ticker.querySelectorAll('.social-proof-item');
+        if (items.length < 2) return;
+        let current = 0;
+        setInterval(() => {
+            items[current].classList.remove('active');
+            current = (current + 1) % items.length;
+            items[current].classList.add('active');
+        }, 4000);
     })();
 
     // ── PAGE FADE TRANSITIONS ―――――――――――――――――――――――――――
@@ -433,5 +465,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error('Error loading peer recognitions:', err);
         }
+    }
+
+    // Call initPeerRecognitions (moved from DOMContentLoaded to IIFE scope)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => initPeerRecognitions());
+    } else {
+        initPeerRecognitions();
     }
 })();

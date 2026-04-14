@@ -6492,3 +6492,489 @@ body.page-fade-out {
     color: var(--text-muted) !important;
     line-height: 1.7 !important;
 }
+
+/* === EMERGENCY BAR === */
+.hero-emergency-bar {
+    background: rgba(232, 69, 69, 0.12);
+    border-bottom: 1px solid rgba(232, 69, 69, 0.25);
+    padding: 8px 0;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
+.emergency-bar-link {
+    color: #E84545;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
+.emergency-bar-link:hover {
+    text-decoration: underline;
+}
+.emergency-bar-link strong {
+    color: #fff;
+}
+
+/* === NAV PHONE LINK === */
+.nav-phone-link {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    font-size: 0.88rem;
+    white-space: nowrap;
+}
+.nav-phone-link:hover {
+    color: #E84545 !important;
+}
+@media (max-width: 768px) {
+    .nav-phone-link {
+        display: none;
+    }
+}
+
+/* === CREDENTIAL PILLS === */
+.credential-pill {
+    display: inline-block;
+    padding: 5px 14px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 99px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.5px;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+.credential-pill:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+/* === HERO ANIMATION REORDER (empathy before h1) === */
+.hero-content > .hero-badge {
+    animation: fadeSlideUp 0.8s var(--ease-out) 0.1s both;
+}
+.hero-content > .hero-empathy {
+    animation: fadeSlideUp 0.8s var(--ease-out) 0.2s both;
+}
+.hero-content > h1 {
+    animation: fadeSlideUp 0.9s var(--ease-out) 0.35s both;
+}
+.hero-content > .hero-credential-strip {
+    animation: none;
+}
+.hero-content > .hero-stats {
+    animation: fadeSlideUp 0.8s var(--ease-out) 0.6s both;
+}
+.hero-content > .hero-ctas {
+    animation: fadeSlideUp 0.8s var(--ease-out) 0.7s both;
+}
+
+/* === EMERGENCY BAR PULSE === */
+@keyframes emergencyBarPulse {
+    0%, 100% { background: rgba(232, 69, 69, 0.10); }
+    50% { background: rgba(232, 69, 69, 0.18); }
+}
+.hero-emergency-bar {
+    animation: emergencyBarPulse 3s ease-in-out infinite;
+}
+
+/* === CREDENTIAL PILLS STAGGER === */
+.credential-pill:nth-child(1) { animation: fadeSlideUp 0.5s var(--ease-out) 0.5s both; }
+.credential-pill:nth-child(2) { animation: fadeSlideUp 0.5s var(--ease-out) 0.6s both; }
+.credential-pill:nth-child(3) { animation: fadeSlideUp 0.5s var(--ease-out) 0.7s both; }
+.credential-pill:nth-child(4) { animation: fadeSlideUp 0.5s var(--ease-out) 0.8s both; }
+
+/* === HERO EMPATHY ENHANCED === */
+.hero-empathy {
+    font-size: 1.15rem !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-style: italic;
+    line-height: 1.85;
+    max-width: 540px;
+    margin-bottom: 18px;
+    position: relative;
+    padding-left: 16px;
+    border-left: 2px solid rgba(0, 180, 216, 0.4);
+}
+
+/* === 3 DIFFERENTIATED HERO CTAs === */
+.hero-ctas .btn-cta-call {
+    background: linear-gradient(135deg, #E84545, #C73535);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(232, 69, 69, 0.35);
+}
+.hero-ctas .btn-cta-call:hover {
+    box-shadow: 0 6px 28px rgba(232, 69, 69, 0.5);
+    transform: translateY(-2px);
+}
+.hero-ctas .btn-cta-whatsapp {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+}
+.hero-ctas .btn-cta-whatsapp:hover {
+    box-shadow: 0 6px 28px rgba(37, 211, 102, 0.45);
+    transform: translateY(-2px);
+}
+.hero-ctas .btn-cta-opd {
+    background: linear-gradient(135deg, var(--teal), #0096B4);
+    color: #0B0F1A;
+    box-shadow: 0 4px 20px rgba(0, 180, 216, 0.3);
+}
+.hero-ctas .btn-cta-opd:hover {
+    box-shadow: 0 6px 28px rgba(0, 180, 216, 0.45);
+    transform: translateY(-2px);
+}
+.hero-ctas .btn-cta-call,
+.hero-ctas .btn-cta-whatsapp,
+.hero-ctas .btn-cta-opd {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    letter-spacing: 0.3px;
+}
+
+@media (max-width: 768px) {
+    .credential-pill {
+        font-size: 0.72rem;
+        padding: 4px 10px;
+    }
+    .hero-ctas .btn-cta-call,
+    .hero-ctas .btn-cta-whatsapp,
+    .hero-ctas .btn-cta-opd {
+        flex: 1;
+        justify-content: center;
+        padding: 12px 16px;
+        font-size: 0.82rem;
+    }
+}
+/* === MOBILE ACTION BAR === */
+.mobile-action-bar {
+    display: none;
+}
+@media (max-width: 768px) {
+    .mobile-action-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9998;
+        background: rgba(11, 15, 26, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 8px 6px;
+        gap: 6px;
+        transform: translateY(100%);
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mobile-action-bar.mab-visible {
+        transform: translateY(0);
+    }
+    .mab-btn {
+        flex: 1;
+        text-align: center;
+        padding: 12px 8px;
+        border-radius: 10px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .mab-btn:active {
+        transform: scale(0.96);
+    }
+    .mab-call {
+        background: linear-gradient(135deg, #E84545, #C73535);
+        color: #fff;
+    }
+    .mab-wa {
+        background: linear-gradient(135deg, #25D366, #128C7E);
+        color: #fff;
+    }
+    .mab-book {
+        background: linear-gradient(135deg, #00B4D8, #0096B4);
+        color: #0B0F1A;
+    }
+    /* Add bottom padding to body so content isn't hidden behind bar */
+    body.has-mobile-bar {
+        padding-bottom: 70px;
+    }
+}
+
+/* === DOCTOR'S PROMISE SECTION === */
+.doctor-promise-section {
+    padding: 60px 0;
+    background: #FFFBF7;
+}
+[data-theme="dark"] .doctor-promise-section,
+.doctor-promise-section {
+    background: linear-gradient(135deg, rgba(255, 251, 247, 0.03), rgba(61, 90, 91, 0.06));
+}
+.doctor-promise {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+}
+.promise-quote {
+    position: relative;
+    padding: 40px 32px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.promise-quote::before {
+    content: '\201C';
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 4rem;
+    color: rgba(0, 180, 216, 0.3);
+    line-height: 1;
+}
+.promise-quote p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.9;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+.promise-author {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.5px;
+}
+.promise-dash {
+    color: rgba(0, 180, 216, 0.6);
+    margin-right: 6px;
+}
+
+/* Promise reveal animation */
+.doctor-promise {
+    animation: none;
+}
+.doctor-promise.visible {
+    animation: fadeSlideUp 0.9s var(--ease-out) both;
+}
+
+/* === SCROLL HOOKS (Curiosity Bridges) === */
+.scroll-hook {
+    text-align: center;
+    padding: 50px 24px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.scroll-hook p {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.7;
+    position: relative;
+}
+.scroll-hook p::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.4), transparent);
+    margin: 0 auto 20px;
+}
+.scroll-hook p::after {
+    content: '↓';
+    display: block;
+    margin-top: 16px;
+    font-size: 1rem;
+    color: rgba(0, 180, 216, 0.4);
+    font-style: normal;
+    animation: scrollArrowBounce 2s ease-in-out infinite;
+}
+@keyframes scrollArrowBounce {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(6px); opacity: 0.8; }
+}
+
+@media (max-width: 768px) {
+    .scroll-hook {
+        padding: 35px 20px;
+    }
+    .scroll-hook p {
+        font-size: 0.95rem;
+    }
+    .doctor-promise-section {
+        padding: 40px 0;
+    }
+    .promise-quote {
+        padding: 28px 20px;
+    }
+    .promise-quote p {
+        font-size: 0.95rem;
+    }
+}
+
+/* === TYPOGRAPHY REFINEMENTS === */
+/* Body text breathing room */
+body {
+    line-height: 1.78;
+}
+
+/* Section labels consistency */
+.section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+/* FAQ tapability indicator */
+.faq-question {
+    cursor: pointer;
+    position: relative;
+    padding-right: 36px;
+}
+.faq-question::after {
+    content: '+';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: rgba(0, 180, 216, 0.6);
+    transition: transform 0.3s ease;
+}
+.faq-item.active .faq-question::after {
+    content: '−';
+    transform: translateY(-50%) rotate(0deg);
+}
+
+/* Section title hover micro-animation */
+.section-title {
+    transition: letter-spacing 0.3s ease;
+}
+.section-title:hover {
+    letter-spacing: -0.01em;
+}
+
+/* Smooth card hover transitions globally */
+.glass-card {
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+}
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Stat counter pulse on hover */
+.stat-number {
+    transition: transform 0.3s ease;
+}
+.stat-item:hover .stat-number {
+    transform: scale(1.08);
+}
+
+/* Trust strip item hover */
+.trust-item {
+    transition: transform 0.2s ease;
+}
+.trust-item:hover {
+    transform: translateY(-1px);
+}
+
+/* Smooth link underline transitions */
+.nav-links a {
+    position: relative;
+}
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1.5px;
+    background: var(--teal, #00B4D8);
+    transition: width 0.3s ease;
+}
+.nav-links a:hover::after {
+    width: 100%;
+}
+.nav-links a.nav-cta::after,
+.nav-links a.nav-phone-link::after {
+    display: none;
+}
+
+/* === SOCIAL PROOF TICKER === */
+.social-proof-ticker {
+    position: relative;
+    height: 28px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.social-proof-ticker .social-proof-item {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+.social-proof-ticker .social-proof-item.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* === DARK MODE REFINEMENTS === */
+[data-theme="dark"] .glass-card {
+    background: rgba(255, 255, 255, 0.04);
+}
+[data-theme="dark"] .section-label {
+    color: var(--text-body);
+}
+[data-theme="dark"] .promise-quote {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+[data-theme="dark"] .promise-quote p {
+    color: rgba(255, 255, 255, 0.8);
+}
+[data-theme="dark"] .scroll-hook p {
+    color: rgba(255, 255, 255, 0.45);
+}
+[data-theme="dark"] .credential-pill {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Gold accent brightening in dark mode */
+[data-theme="dark"] .glow-text {
+    filter: drop-shadow(0 0 24px rgba(0, 180, 216, 0.5));
+}
+
+/* Hero stays dark regardless of mode */
+.hero {
+    background: linear-gradient(165deg, #0A1628 0%, #162447 40%, #1B365C 70%, #0F2341 100%) !important;
+    color: #fff !important;
+}
+
+/* === PERFORMANCE: Disable cursor glow on mobile === */
+@media (max-width: 768px) {
+    #cursor-glow,
+    #secondary-glow {
+        display: none !important;
+    }
+}
