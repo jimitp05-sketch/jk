@@ -6455,3 +6455,30 @@ body.page-fade-out {
     background: rgba(0, 180, 216, 0.25);
     color: var(--text-h);
 }
+
+/* ── AUDIT FIX OVERRIDES (2026-04-14) ─────────────────────── */
+/* Force hero credential strip white text — overrides any inherited color */
+.hero .hero-credential-strip,
+.hero .hero-credential-strip span,
+.hero-credential-strip,
+.hero-credential-strip span {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.hero .credential-divider,
+.credential-divider {
+    color: rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Ensure hero CTA gap */
+.hero .hero-ctas,
+.hero-ctas {
+    gap: 16px !important;
+}
+
+/* NMC compliance text readability */
+.nmc-note {
+    font-size: 0.82rem !important;
+    color: var(--text-muted) !important;
+    line-height: 1.7 !important;
+}

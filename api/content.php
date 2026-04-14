@@ -36,6 +36,13 @@ require_once __DIR__ . '/db.php';
 
 $VALID_TYPES = ['quiz_questions', 'knowledge_articles', 'research_papers', 'myth_busters', 'peer_recognitions', 'photo_wall'];
 
+// ── RESPOND HELPER ───────────────────────────────────────────────────────────
+function respond(array $payload, int $code = 200): void {
+    http_response_code($code);
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 // ── DATABASE HELPERS ─────────────────────────────────────────────────────────
 
 function getPDO() {
