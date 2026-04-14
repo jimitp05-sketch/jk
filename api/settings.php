@@ -329,11 +329,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $current['admin_pass'] = password_hash(trim((string)$input['new_admin_pass']), PASSWORD_DEFAULT);
     }
 
-    if (writeSettings($current)) {
-        echo json_encode(['success' => true]);
-    } else {
+    try {
+        if (writeSettings($current)) {
+            echo json_encode(['success' => true]);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Failed to write settings. DB write returned false.']);
+        }
+    } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(['error' => 'Failed to write settings.']);
+        echo json_encode(['error' => 'Server error: ' . $e->getMessage()]);
     }
     exit;
 }
