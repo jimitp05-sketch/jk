@@ -1105,13 +1105,21 @@ button {
     stroke-width: 1.5;
     stroke-dasharray: 2000;
     stroke-dashoffset: 2000;
-    animation: ecgDraw 5s ease-in-out 1s forwards;
+    animation: ecgDraw 4s linear 1s infinite;
     filter: drop-shadow(0 0 4px rgba(0, 180, 216, .5));
 }
 
 @keyframes ecgDraw {
-    to {
+    0% {
+        stroke-dashoffset: 2000;
+    }
+
+    50% {
         stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dashoffset: -2000;
     }
 }
 
