@@ -53,8 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
     progressBar.id = 'scroll-progress';
     progressBar.style.cssText = `
     position:fixed;top:0;left:0;height:3px;width:0%;z-index:9999;
-    background:linear-gradient(90deg,#ff4b2b,#ff416c);
+    background:linear-gradient(90deg,#00B4D8,#48CAE4);
     transition:width .1s linear;pointer-events:none;
+    box-shadow: 0 0 10px rgba(0,180,216,0.5);
   `;
     document.body.prepend(progressBar);
 

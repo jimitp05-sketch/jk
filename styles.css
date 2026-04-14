@@ -7,25 +7,35 @@
 
 /* ── DESIGN TOKENS ─────────────────────────────────────── */
 :root {
-    /* Backgrounds */
-    --bg-primary: #F5F7FC;
+    /* Backgrounds - Warmer, more distinctive */
+    --bg-primary: #FAFBFE;
     --bg-secondary: #FFFFFF;
-    --bg-section: #EEF1FA;
-    --bg-dark: #080C1A;
-    --bg-dark2: #0D1328;
+    --bg-section: #F0F2F8;
+    --bg-warm: #FFFBF7;
+    --bg-dark: #0A1628;
+    --bg-dark2: #162447;
+    --bg-midnight: #0D1B2A;
 
-    /* Accent system */
-    --indigo: #2B3280;
-    --indigo-deep: #1B2260;
-    --teal: #0078D4;
-    --teal-light: #38ABFF;
-    --gold: #96682A;
-    --gold-light: #C08B45;
-    --green-ok: #16794A;
+    /* Accent system - Richer, warmer tones */
+    --indigo: #1E3A5F;
+    --indigo-deep: #0D2240;
+    --navy-depth: #162447;
+    --teal: #00B4D8;
+    --teal-light: #48CAE4;
+    --teal-deep: #0077B6;
+    --gold: #D4A84B;
+    --gold-light: #E8C171;
+    --gold-warm: #C9983A;
+    --green-ok: #10B981;
+    --pulse-red: #E84545;
+    --pulse-red-light: #FF6B6B;
+    --sage: #3D5A5B;
 
     /* Glow / shadow layers */
-    --glow-indigo: rgba(43, 50, 128, 0.18);
-    --glow-teal: rgba(0, 120, 212, 0.22);
+    --glow-indigo: rgba(30, 58, 95, 0.22);
+    --glow-teal: rgba(0, 180, 216, 0.25);
+    --glow-red: rgba(232, 69, 69, 0.35);
+    --glow-gold: rgba(212, 168, 75, 0.25);
 
     /* Text */
     --text-h: #080C1A;
@@ -46,15 +56,18 @@
     --shadow-lg: 0 20px 60px rgba(8, 12, 26, 0.16), 0 4px 16px rgba(43, 50, 128, 0.12);
     --shadow-glow: 0 0 0 1px rgba(43, 50, 128, .12), 0 12px 40px rgba(43, 50, 128, .16);
 
-    /* Gradients */
-    --grad-primary: linear-gradient(135deg, #2B3280 0%, #0078D4 100%);
-    --grad-gold: linear-gradient(135deg, #96682A 0%, #C08B45 100%);
-    --grad-hero: linear-gradient(155deg, #070B1A 0%, #0F1830 55%, #16285E 100%);
-    --grad-text: linear-gradient(135deg, #6B88FF 0%, #38ABFF 100%);
-    --grad-teal: linear-gradient(135deg, #38ABFF, #0078D4);
+    /* Gradients - Richer, more dramatic */
+    --grad-primary: linear-gradient(135deg, #1E3A5F 0%, #00B4D8 100%);
+    --grad-gold: linear-gradient(135deg, #C9983A 0%, #E8C171 100%);
+    --grad-hero: linear-gradient(165deg, #0A1628 0%, #162447 45%, #1B365C 100%);
+    --grad-text: linear-gradient(135deg, #48CAE4 0%, #00B4D8 100%);
+    --grad-teal: linear-gradient(135deg, #48CAE4, #0077B6);
+    --grad-emergency: linear-gradient(135deg, #E84545, #C73535);
+    --grad-authority: linear-gradient(165deg, #0A1628 0%, #162447 50%, #1B365C 100%);
 
-    /* Typography */
-    --font-h: 'Manrope', system-ui, sans-serif;
+    /* Typography - Distinctive pairing */
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-h: 'Playfair Display', Georgia, serif;
     --font-b: 'Manrope', system-ui, sans-serif;
 
     /* Layout */
@@ -123,13 +136,32 @@ body {
     overflow-x: hidden;
 }
 
+/* Grain texture overlay for premium atmosphere */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.018;
+    pointer-events: none;
+    z-index: 10000;
+    mix-blend-mode: overlay;
+}
+
 h1,
-h2,
+h2 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+    line-height: 1.08;
+    color: var(--text-h);
+    font-weight: 700;
+}
+
 h3,
 h4 {
-    font-family: var(--font-h);
-    letter-spacing: -0.02em;
-    line-height: 1.15;
+    font-family: var(--font-b);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
     color: var(--text-h);
     font-weight: 700;
 }
@@ -166,6 +198,42 @@ button {
 
 .section {
     padding: var(--sec-pad) 0;
+    position: relative;
+}
+
+/* Diagonal section divider - creates angled transitions */
+.section-diagonal {
+    position: relative;
+}
+
+.section-diagonal::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: inherit;
+    clip-path: polygon(0 50%, 100% 0, 100% 100%, 0 100%);
+    z-index: -1;
+}
+
+/* Alternate diagonal direction */
+.section-diagonal-alt::before {
+    clip-path: polygon(0 0, 100% 50%, 100% 100%, 0 100%);
+}
+
+/* Subtle wave divider */
+.section-wave::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: inherit;
+    clip-path: ellipse(60% 100% at 50% 100%);
+    z-index: -1;
 }
 
 /* ── SCROLL REVEAL (web-animation skill) ────────────────── */
@@ -212,6 +280,79 @@ button {
     }
 }
 
+/* Enhanced page load animation system */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Staggered hero content reveal */
+.hero-content > .hero-badge {
+    animation: fadeSlideUp 0.8s var(--ease-out) 0.1s both;
+}
+
+.hero-content > h1 {
+    animation: fadeSlideUp 0.9s var(--ease-out) 0.2s both;
+}
+
+.hero-content > .hero-empathy {
+    animation: fadeSlideUp 0.8s var(--ease-out) 0.35s both;
+}
+
+.hero-content > .hero-credential-strip {
+    animation: fadeSlideUp 0.8s var(--ease-out) 0.45s both;
+}
+
+.hero-content > .hero-stats {
+    animation: fadeSlideUp 0.8s var(--ease-out) 0.55s both;
+}
+
+.hero-content > .hero-ctas {
+    animation: fadeSlideUp 0.8s var(--ease-out) 0.65s both;
+}
+
+/* Hero image dramatic entrance */
+.hero-image-wrapper {
+    animation: scaleIn 1s var(--ease-out) 0.3s both;
+}
+
+/* Float badges staggered */
+.hero-float-badge:nth-child(2) {
+    animation: fadeSlideIn 0.8s var(--ease-out) 0.7s both, floatBadge 7s ease-in-out 1.5s infinite;
+}
+
+.hero-float-badge:nth-child(3) {
+    animation: fadeSlideIn 0.8s var(--ease-out) 0.85s both, floatBadge 7s ease-in-out 2s infinite;
+}
+
 /* Cursor glows — disabled on light theme */
 #cursor-glow,
 #secondary-glow {
@@ -238,13 +379,39 @@ button {
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(43, 50, 128, .25) 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, var(--teal) 50%, transparent 100%);
     opacity: 0;
     transition: opacity var(--t-base);
 }
 
+/* Light sweep/shine effect on hover */
+.glass-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.03) 35%,
+        rgba(255, 255, 255, 0.12) 50%,
+        rgba(255, 255, 255, 0.03) 65%,
+        transparent 80%
+    );
+    transform: skewX(-25deg);
+    transition: left 0.7s var(--ease-out);
+    pointer-events: none;
+    z-index: 1;
+}
+
 .glass-card:hover::before {
     opacity: 1;
+}
+
+.glass-card:hover::after {
+    left: 150%;
 }
 
 .glass-card:hover {
@@ -267,7 +434,7 @@ button {
     font-size: 0.9rem;
     letter-spacing: 0.01em;
     transition: var(--t-base);
-    box-shadow: 0 4px 20px var(--glow-indigo);
+    box-shadow: 0 4px 20px var(--glow-teal);
     position: relative;
     overflow: hidden;
 }
@@ -282,7 +449,7 @@ button {
 
 .btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 36px var(--glow-indigo);
+    box-shadow: 0 10px 36px var(--glow-teal);
     color: #fff;
 }
 
@@ -394,7 +561,7 @@ button {
     color: #fff !important;
     border-radius: var(--radius-sm) !important;
     font-weight: 700 !important;
-    box-shadow: 0 3px 14px var(--glow-indigo);
+    box-shadow: 0 3px 14px var(--glow-teal);
     transition: var(--t-base) !important;
 }
 
@@ -404,7 +571,7 @@ button {
 
 .nav-cta:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 28px var(--glow-indigo) !important;
+    box-shadow: 0 8px 28px var(--glow-teal) !important;
     color: #fff !important;
 }
 
@@ -475,6 +642,7 @@ button {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 8px rgba(0, 180, 216, .2));
 }
 
 .gold-text {
@@ -492,12 +660,13 @@ button {
 }
 
 .section-title {
-    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
     color: var(--text-h);
-    margin-bottom: 14px;
-    line-height: 1.2;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.025em;
 }
 
 .section-subtitle {
@@ -609,10 +778,10 @@ button {
 .hero-badge-dot {
     width: 7px;
     height: 7px;
-    background: #38ABFF;
+    background: var(--teal);
     border-radius: 50%;
     animation: dot-blink 2s ease-in-out infinite;
-    box-shadow: 0 0 8px rgba(56, 171, 255, .7);
+    box-shadow: 0 0 10px rgba(0, 180, 216, .8);
 }
 
 @keyframes dot-blink {
@@ -628,12 +797,14 @@ button {
 }
 
 .hero h1 {
-    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
-    line-height: 1.12;
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    margin-bottom: 24px;
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    line-height: 1.05;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 28px;
     color: #FFF;
+    text-shadow: 0 4px 40px rgba(0, 0, 0, 0.3);
 }
 
 .hero h1 .glow-text {
@@ -641,7 +812,7 @@ button {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 16px rgba(56, 171, 255, .35));
+    filter: drop-shadow(0 0 20px rgba(0, 180, 216, .4));
 }
 
 .hero-role {
@@ -688,7 +859,7 @@ button {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 10px rgba(56, 171, 255, .4));
+    filter: drop-shadow(0 0 12px rgba(0, 180, 216, .45));
 }
 
 .stat-label {
@@ -708,16 +879,106 @@ button {
     animation: wordUp 0.6s var(--ease-out) 0.7s both;
 }
 
+/* Emergency Call CTA - Distinctive red pulse */
+.btn-cta-call {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--grad-emergency);
+    color: #fff;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
+    box-shadow: 0 6px 28px var(--glow-red);
+    position: relative;
+    overflow: hidden;
+    transition: var(--t-base);
+    animation: emergencyPulse 2.5s ease-in-out infinite;
+}
+
+.btn-cta-call::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: var(--grad-emergency);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    animation: emergencyGlow 2.5s ease-in-out infinite;
+}
+
+.btn-cta-call:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 40px var(--glow-red);
+    color: #fff;
+}
+
+@keyframes emergencyPulse {
+    0%, 100% { box-shadow: 0 6px 28px var(--glow-red); }
+    50% { box-shadow: 0 8px 36px rgba(232, 69, 69, 0.5); }
+}
+
+@keyframes emergencyGlow {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.05); }
+}
+
+/* WhatsApp CTA - Green confidence */
+.btn-cta-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: #fff;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+    transition: var(--t-base);
+}
+
+.btn-cta-whatsapp:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 32px rgba(37, 211, 102, 0.45);
+    color: #fff;
+}
+
+/* OPD Booking CTA - Ghost style */
+.btn-cta-opd {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 26px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.85);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.88rem;
+    backdrop-filter: blur(8px);
+    transition: var(--t-base);
+}
+
+.btn-cta-opd:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
 .hero .btn-primary {
-    background: linear-gradient(135deg, #38ABFF, #0078D4);
-    color: #070B1A;
+    background: linear-gradient(135deg, #48CAE4, #0077B6);
+    color: #0A1628;
     font-weight: 800;
-    box-shadow: 0 6px 28px rgba(56, 171, 255, .45);
+    box-shadow: 0 6px 28px rgba(0, 180, 216, .45);
 }
 
 .hero .btn-primary:hover {
-    color: #070B1A;
-    box-shadow: 0 12px 40px rgba(56, 171, 255, .6);
+    color: #0A1628;
+    box-shadow: 0 12px 40px rgba(0, 180, 216, .6);
 }
 
 .hero .btn-outline {
@@ -737,9 +998,8 @@ button {
     flex-shrink: 0;
     border-radius: var(--radius-xl);
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, .1);
-    box-shadow: 0 40px 100px rgba(0, 0, 0, .55), 0 0 0 1px rgba(56, 171, 255, .08);
-    animation: wordUp 0.8s var(--ease-out) 0.2s both;
+    border: 1px solid rgba(255, 255, 255, .12);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, .55), 0 0 0 1px rgba(0, 180, 216, .1);
 }
 
 .hero-image-wrapper img {
@@ -756,33 +1016,21 @@ button {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: rgba(8, 12, 26, .7);
+    background: rgba(10, 22, 40, .75);
     backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, .12);
     border-radius: var(--radius-md);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, .4), 0 0 0 1px rgba(56, 171, 255, .06);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .4), 0 0 0 1px rgba(0, 180, 216, .1);
     will-change: transform;
 }
 
-.hero-float-badge:nth-child(2) {
-    top: 22px;
-    right: -22px;
-    animation: floatBadge 7s ease-in-out infinite;
-}
-
-.hero-float-badge:nth-child(3) {
-    bottom: 52px;
-    left: -34px;
-    animation: floatBadge 7s ease-in-out -3s infinite;
-}
+/* Float badge positions handled above with enhanced entrance animations */
 
 @keyframes floatBadge {
-
     0%,
     100% {
         transform: translateY(0);
     }
-
     50% {
         transform: translateY(-12px);
     }
@@ -791,8 +1039,8 @@ button {
 .float-icon {
     width: 36px;
     height: 36px;
-    background: rgba(56, 171, 255, .14);
-    border: 1px solid rgba(56, 171, 255, .2);
+    background: rgba(0, 180, 216, .14);
+    border: 1px solid rgba(0, 180, 216, .25);
     border-radius: 9px;
     display: flex;
     align-items: center;
@@ -831,11 +1079,12 @@ button {
 
 .ecg-line {
     fill: none;
-    stroke: #38ABFF;
+    stroke: var(--teal);
     stroke-width: 1.5;
     stroke-dasharray: 2000;
     stroke-dashoffset: 2000;
     animation: ecgDraw 5s ease-in-out 1s forwards;
+    filter: drop-shadow(0 0 4px rgba(0, 180, 216, .5));
 }
 
 @keyframes ecgDraw {
@@ -5063,13 +5312,14 @@ body.page-fade-out {
 
 /* Mobile emergency links in nav */
 .mobile-link-emergency {
-    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    background: var(--grad-emergency) !important;
     color: #fff !important;
     border-radius: var(--radius-sm) !important;
     text-align: center;
     font-weight: 700 !important;
     border-bottom: none !important;
     padding: 12px 16px !important;
+    box-shadow: 0 4px 16px var(--glow-red);
 }
 
 .mobile-link-wa {
@@ -5101,13 +5351,13 @@ body.page-fade-out {
 .hero-float-top {
     top: 20px;
     right: -24px;
-    animation: floatBadge 7s ease-in-out infinite;
+    /* Animation handled by enhanced entrance in .hero-float-badge:nth-child rules */
 }
 
 .hero-float-bottom {
     bottom: 50px;
     left: -36px;
-    animation: floatBadge 7s ease-in-out -3s infinite;
+    /* Animation handled by enhanced entrance in .hero-float-badge:nth-child rules */
 }
 
 /* ── HERO CREDENTIAL STRIP ──────────────────────────────────── */
@@ -5138,74 +5388,6 @@ body.page-fade-out {
     line-height: 1.8;
     animation: wordUp 0.6s var(--ease-out) 0.3s both;
     font-style: italic;
-}
-
-/* ── DIFFERENTIATED CTA BUTTONS ─────────────────────────────── */
-.btn-cta-call {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 15px 28px;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #fff;
-    border-radius: var(--radius-sm);
-    font-weight: 800;
-    font-size: 0.92rem;
-    letter-spacing: 0.01em;
-    transition: var(--t-base);
-    box-shadow: 0 6px 24px rgba(245, 158, 11, 0.45);
-    text-decoration: none;
-}
-
-.btn-cta-call:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(245, 158, 11, 0.6);
-    color: #fff;
-}
-
-.btn-cta-whatsapp {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 15px 28px;
-    background: #25D366;
-    color: #fff;
-    border-radius: var(--radius-sm);
-    font-weight: 800;
-    font-size: 0.92rem;
-    letter-spacing: 0.01em;
-    transition: var(--t-base);
-    box-shadow: 0 6px 24px rgba(37, 211, 102, 0.4);
-    text-decoration: none;
-}
-
-.btn-cta-whatsapp:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(37, 211, 102, 0.55);
-    background: #22c55e;
-    color: #fff;
-}
-
-.btn-cta-opd {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 26px;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.85);
-    border: 1.5px solid rgba(255, 255, 255, 0.28);
-    border-radius: var(--radius-sm);
-    font-weight: 700;
-    font-size: 0.88rem;
-    transition: var(--t-base);
-    text-decoration: none;
-}
-
-.btn-cta-opd:hover {
-    border-color: rgba(255, 255, 255, 0.6);
-    color: #fff;
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
 }
 
 /* Light section CTA button variants */
@@ -6018,4 +6200,213 @@ body.page-fade-out {
     .slots-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ENHANCED DESIGN SYSTEM ADDITIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── GRADIENT MESH BACKGROUNDS ─────────────────────────────── */
+
+/* About section - subtle depth */
+#about {
+    background:
+        radial-gradient(ellipse at 20% 30%, rgba(0, 180, 216, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(30, 58, 95, 0.03) 0%, transparent 45%),
+        var(--bg-primary);
+}
+
+/* Expertise section - professional authority */
+#expertise {
+    background:
+        radial-gradient(ellipse at 10% 20%, rgba(0, 180, 216, 0.05) 0%, transparent 40%),
+        radial-gradient(ellipse at 90% 80%, rgba(212, 168, 75, 0.04) 0%, transparent 40%),
+        radial-gradient(ellipse at 50% 50%, rgba(30, 58, 95, 0.02) 0%, transparent 60%),
+        var(--bg-section);
+}
+
+/* Why section - trust gradient */
+#why-us {
+    background:
+        radial-gradient(ellipse at 75% 25%, rgba(0, 180, 216, 0.04) 0%, transparent 45%),
+        radial-gradient(ellipse at 25% 75%, rgba(30, 58, 95, 0.03) 0%, transparent 50%),
+        var(--bg-primary);
+}
+
+/* Process section - clinical precision */
+#process {
+    background:
+        radial-gradient(ellipse at 30% 20%, rgba(0, 180, 216, 0.05) 0%, transparent 40%),
+        radial-gradient(ellipse at 70% 80%, rgba(232, 69, 69, 0.03) 0%, transparent 35%),
+        var(--bg-section);
+}
+
+/* Journey section - timeline depth */
+#journey {
+    background:
+        radial-gradient(ellipse at 15% 50%, rgba(30, 58, 95, 0.04) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 30%, rgba(0, 180, 216, 0.03) 0%, transparent 40%),
+        var(--bg-primary);
+}
+
+/* ── ENHANCED STAT NUMBERS ─────────────────────────────────── */
+.stat-number {
+    position: relative;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-number::after {
+    content: '';
+    position: absolute;
+    inset: -15px -10px;
+    background: radial-gradient(circle, rgba(0, 180, 216, 0.15) 0%, transparent 70%);
+    opacity: 0;
+    border-radius: 50%;
+    z-index: -1;
+    animation: statGlow 3s ease-in-out infinite;
+    animation-delay: var(--glow-delay, 0s);
+}
+
+.stat-item:nth-child(1) .stat-number::after { --glow-delay: 0s; }
+.stat-item:nth-child(2) .stat-number::after { --glow-delay: 1s; }
+.stat-item:nth-child(3) .stat-number::after { --glow-delay: 2s; }
+
+@keyframes statGlow {
+    0%, 100% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* ── ENHANCED TIMELINE ─────────────────────────────────────── */
+.timeline-dot.active {
+    background: var(--pulse-red);
+    border-color: var(--pulse-red);
+    box-shadow:
+        0 0 0 4px rgba(232, 69, 69, 0.2),
+        0 0 20px rgba(232, 69, 69, 0.4);
+    animation: timelinePulse 2s ease-in-out infinite;
+}
+
+@keyframes timelinePulse {
+    0%, 100% {
+        box-shadow: 0 0 0 4px rgba(232, 69, 69, 0.2), 0 0 16px rgba(232, 69, 69, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(232, 69, 69, 0.1), 0 0 28px rgba(232, 69, 69, 0.5);
+    }
+}
+
+/* ── BUTTON RIPPLE EFFECT ─────────────────────────────────── */
+.btn-primary,
+.btn-cta-call,
+.btn-cta-whatsapp,
+.nav-cta {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary:active::before,
+.btn-cta-call:active::before,
+.btn-cta-whatsapp:active::before {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: buttonRipple 0.6s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes buttonRipple {
+    to {
+        transform: translate(-50%, -50%) scale(4);
+        opacity: 0;
+    }
+}
+
+/* ── ACCESSIBILITY - REDUCED MOTION ────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .hero-word {
+        opacity: 1;
+        transform: none;
+    }
+
+    .reveal {
+        opacity: 1;
+        transform: none;
+    }
+
+    .glass-card::after {
+        display: none;
+    }
+}
+
+/* ── FOCUS STATES (Accessibility) ──────────────────────────── */
+:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+.btn-primary:focus-visible,
+.btn-cta-call:focus-visible,
+.btn-cta-whatsapp:focus-visible,
+.btn-cta-opd:focus-visible {
+    outline-offset: 4px;
+    box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.3);
+}
+
+/* ── ENHANCED HOVER STATES ─────────────────────────────────── */
+.expertise-card:hover {
+    border-color: var(--teal);
+}
+
+.expertise-card:hover .expertise-icon {
+    background: linear-gradient(135deg, rgba(0, 180, 216, 0.15), rgba(30, 58, 95, 0.1));
+    border-color: rgba(0, 180, 216, 0.3);
+}
+
+.why-card:hover {
+    border-color: var(--teal);
+}
+
+/* ── SMOOTH SCROLLBAR (webkit browsers) ────────────────────── */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-section);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--indigo), var(--teal-deep));
+    border-radius: 5px;
+    border: 2px solid var(--bg-section);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--teal), var(--indigo));
+}
+
+/* ── SELECTION STYLING ─────────────────────────────────────── */
+::selection {
+    background: rgba(0, 180, 216, 0.25);
+    color: var(--text-h);
+}
+
+::-moz-selection {
+    background: rgba(0, 180, 216, 0.25);
+    color: var(--text-h);
 }
