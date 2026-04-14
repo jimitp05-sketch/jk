@@ -694,6 +694,8 @@ button {
 .hero {
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
     background: var(--grad-hero);
     position: relative;
@@ -5365,6 +5367,7 @@ body.page-fade-out {
     gap: 60px;
     position: relative;
     z-index: 2;
+    width: 100%;
 }
 
 .hero-doctor-img {
