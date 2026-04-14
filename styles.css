@@ -4628,12 +4628,10 @@ body.has-ticker .nav {
 @keyframes pageFadeIn {
     from {
         opacity: 0;
-        transform: translateY(8px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
@@ -4643,8 +4641,7 @@ body.page-fade-in {
 
 body.page-fade-out {
     opacity: 0;
-    transform: translateY(-6px);
-    transition: opacity 0.28s ease, transform 0.28s ease;
+    transition: opacity 0.28s ease;
 }
 
 /* ── DARK MODE ─────────────────────────────────────── */
