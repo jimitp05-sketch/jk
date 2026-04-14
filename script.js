@@ -329,52 +329,35 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => { });
     })();
 
-    // ── UNIFIED SPEED DIAL FAB + MOBILE BOTTOM BAR ─────────────────────────
+    // ── UNIFIED SPEED DIAL FAB ─────────────────────────
     (function createSpeedDial() {
-        const isMobile = window.innerWidth <= 768;
-
-        if (isMobile) {
-            // Mobile: sticky bottom action bar instead of FAB
-            const bar = document.createElement('div');
-            bar.className = 'mobile-action-bar';
-            bar.innerHTML = `
-              <a href="tel:${ICU_PHONE}" class="mab-btn mab-call sd-emergency icu-link-phone" aria-label="Call now">📞 Call</a>
-              <a href="https://wa.me/${WA_NUM}?text=${WA_MSG}" class="mab-btn mab-wa sd-whatsapp" target="_blank" rel="noopener" aria-label="WhatsApp">💬 WhatsApp</a>
-              <a href="${OPD_LINK}" class="mab-btn mab-book sd-book" aria-label="Book OPD">📅 Book</a>
-            `;
-            document.body.appendChild(bar);
-            document.body.classList.add('has-mobile-bar');
-            setTimeout(() => bar.classList.add('mab-visible'), 600);
-        } else {
-            // Desktop: keep the FAB
-            const fab = document.createElement('div');
-            fab.id = 'speed-dial';
-            fab.className = 'sd-wrap';
-            fab.innerHTML = `
-          <div class="sd-actions">
-            <a href="tel:${ICU_PHONE}" class="sd-btn sd-emergency" aria-label="ICU Emergency">
-              <span class="sd-icon">🚨</span>
-              <span class="sd-label">ICU Emergency</span>
-            </a>
-            <a href="https://wa.me/${WA_NUM}?text=${WA_MSG}" class="sd-btn sd-whatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-              <span class="sd-icon">💬</span>
-              <span class="sd-label">WhatsApp Chat</span>
-            </a>
-            <a href="${OPD_LINK}" class="sd-btn sd-book" aria-label="Book OPD">
-              <span class="sd-icon">📅</span>
-              <span class="sd-label">Book OPD</span>
-            </a>
-          </div>
-          <button class="sd-main" id="sd-main-btn" aria-label="Open quick actions">
-            <span class="sd-main-icon">＋</span>
-            <span class="sd-pulse"></span>
-          </button>
-        `;
-            document.body.appendChild(fab);
-            setTimeout(() => fab.classList.add('sd-visible'), 800);
-            document.getElementById('sd-main-btn').addEventListener('click', e => { e.stopPropagation(); fab.classList.toggle('sd-open'); });
-            document.addEventListener('click', e => { if (!fab.contains(e.target)) fab.classList.remove('sd-open'); });
-        }
+        const fab = document.createElement('div');
+        fab.id = 'speed-dial';
+        fab.className = 'sd-wrap';
+        fab.innerHTML = `
+      <div class="sd-actions">
+        <a href="tel:${ICU_PHONE}" class="sd-btn sd-emergency" aria-label="ICU Emergency">
+          <span class="sd-icon">🚨</span>
+          <span class="sd-label">ICU Emergency</span>
+        </a>
+        <a href="https://wa.me/${WA_NUM}?text=${WA_MSG}" class="sd-btn sd-whatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+          <span class="sd-icon">💬</span>
+          <span class="sd-label">WhatsApp Chat</span>
+        </a>
+        <a href="${OPD_LINK}" class="sd-btn sd-book" aria-label="Book OPD">
+          <span class="sd-icon">📅</span>
+          <span class="sd-label">Book OPD</span>
+        </a>
+      </div>
+      <button class="sd-main" id="sd-main-btn" aria-label="Open quick actions">
+        <span class="sd-main-icon">＋</span>
+        <span class="sd-pulse"></span>
+      </button>
+    `;
+        document.body.appendChild(fab);
+        setTimeout(() => fab.classList.add('sd-visible'), 800);
+        document.getElementById('sd-main-btn').addEventListener('click', e => { e.stopPropagation(); fab.classList.toggle('sd-open'); });
+        document.addEventListener('click', e => { if (!fab.contains(e.target)) fab.classList.remove('sd-open'); });
     })();
 
     // ── SOCIAL PROOF TICKER ────────────────────────────

@@ -318,30 +318,7 @@ button {
     }
 }
 
-/* Staggered hero content reveal */
-.hero-content>.hero-badge {
-    animation: fadeSlideUp 0.8s var(--ease-out) 0.1s both;
-}
-
-.hero-content>h1 {
-    animation: fadeSlideUp 0.9s var(--ease-out) 0.2s both;
-}
-
-.hero-content>.hero-empathy {
-    animation: fadeSlideUp 0.8s var(--ease-out) 0.35s both;
-}
-
-.hero-content>.hero-credential-strip {
-    animation: fadeSlideUp 0.8s var(--ease-out) 0.45s both;
-}
-
-.hero-content>.hero-stats {
-    animation: fadeSlideUp 0.8s var(--ease-out) 0.55s both;
-}
-
-.hero-content>.hero-ctas {
-    animation: fadeSlideUp 0.8s var(--ease-out) 0.65s both;
-}
+/* Staggered hero content reveal — see end of file for current animation order */
 
 /* Hero image dramatic entrance */
 .hero-image-wrapper {
@@ -1881,10 +1858,10 @@ button {
 .myth-card {
     min-height: 230px;
     cursor: pointer;
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
 }
 
 .myth-card-inner {
@@ -1916,21 +1893,35 @@ button {
 }
 
 .myth-front {
+    background: var(--bg-section, #F0F2F8);
+    border: 1.5px solid var(--border-accent, rgba(43, 50, 128, 0.22));
+    box-shadow: var(--shadow-sm);
+}
+[data-theme="dark"] .myth-front {
     background: linear-gradient(145deg, #1a1f4e 0%, #0f1235 100%);
-    border: 1.5px solid rgba(165, 180, 252, 0.25);
+    border-color: rgba(165, 180, 252, 0.25);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .myth-card:hover .myth-front {
+    border-color: var(--border-accent);
+    box-shadow: var(--shadow-md);
+}
+[data-theme="dark"] .myth-card:hover .myth-front {
     border-color: rgba(165, 180, 252, 0.5);
     box-shadow: 0 12px 40px rgba(94, 106, 210, 0.3);
 }
 
 .myth-back {
-    background: linear-gradient(145deg, #0d3b2e 0%, #071e17 100%);
-    border: 1.5px solid rgba(52, 211, 153, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.02));
+    border: 1.5px solid rgba(16, 185, 129, 0.2);
+    box-shadow: var(--shadow-sm);
     transform: rotateY(180deg);
+}
+[data-theme="dark"] .myth-back {
+    background: linear-gradient(145deg, #0d3b2e 0%, #071e17 100%);
+    border-color: rgba(52, 211, 153, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 .myth-label {
@@ -1938,45 +1929,63 @@ button {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 2.5px;
-    color: #a5b4fc;
+    color: var(--indigo, #1E3A5F);
     margin-bottom: 14px;
+}
+[data-theme="dark"] .myth-label {
+    color: #a5b4fc;
 }
 
 .myth-label.fact {
+    color: var(--green-ok, #10B981);
+}
+[data-theme="dark"] .myth-label.fact {
     color: #34d399;
 }
 
 .myth-statement {
     font-size: 1rem;
     font-weight: 700;
-    color: #e2e8f8;
+    color: var(--text-h, #080C1A);
     font-style: italic;
     line-height: 1.6;
     flex: 1;
     margin: 0 0 16px;
 }
+[data-theme="dark"] .myth-statement {
+    color: #e2e8f8;
+}
 
 .myth-fact {
     font-size: 0.87rem;
-    color: #a7f3d0;
+    color: var(--green-ok, #10B981);
     line-height: 1.8;
     flex: 1;
     margin: 0 0 14px;
 }
+[data-theme="dark"] .myth-fact {
+    color: #a7f3d0;
+}
 
 .myth-source {
     font-size: 0.7rem;
-    color: #34d399;
+    color: var(--green-ok, #10B981);
     font-weight: 700;
     font-style: italic;
     opacity: 0.85;
 }
+[data-theme="dark"] .myth-source {
+    color: #34d399;
+}
 
 .myth-tap-hint {
     font-size: 0.7rem;
-    color: rgba(165, 180, 252, 0.6);
+    color: var(--text-muted, #6A7099);
     text-align: right;
     margin-top: 8px;
+}
+[data-theme="dark"] .myth-tap-hint {
+    color: rgba(165, 180, 252, 0.6);
 }
 
 .score-badge {
@@ -4755,13 +4764,7 @@ body.page-fade-out {
    PHASE 2 — HOMEPAGE ENHANCEMENTS
    ═══════════════════════════════════════════════════ */
 
-.hero-empathy {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-style: italic;
-    margin-top: -8px;
-    margin-bottom: 22px;
-}
+/* .hero-empathy — see unified definition at end of file */
 
 /* Institution strip */
 .institution-strip {
@@ -5033,10 +5036,10 @@ body.page-fade-out {
 .myth-card {
     min-height: 220px;
     cursor: pointer;
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
 }
 
 .myth-card-inner {
@@ -5401,11 +5404,6 @@ body.page-fade-out {
     gap: 10px;
     flex-wrap: wrap;
     margin-bottom: 28px;
-    font-size: 0.88rem;
-    color: rgba(255, 255, 255, 0.88);
-    font-weight: 500;
-    letter-spacing: 0.2px;
-    animation: wordUp 0.6s var(--ease-out) 0.35s both;
 }
 
 .credential-divider {
@@ -5413,16 +5411,7 @@ body.page-fade-out {
     font-weight: 300;
 }
 
-/* ── HERO EMPATHY (moved up, bigger) ────────────────────────── */
-.hero-empathy {
-    font-size: 1.12rem;
-    color: rgba(255, 255, 255, 0.72);
-    margin-bottom: 20px;
-    max-width: 540px;
-    line-height: 1.8;
-    animation: wordUp 0.6s var(--ease-out) 0.3s both;
-    font-style: italic;
-}
+/* ── HERO EMPATHY — see unified definition at end of file ──── */
 
 /* Light section CTA button variants */
 .section-cta .btn-cta-whatsapp,
@@ -6587,8 +6576,8 @@ body.page-fade-out {
 
 /* === HERO EMPATHY ENHANCED === */
 .hero-empathy {
-    font-size: 1.15rem !important;
-    color: rgba(255, 255, 255, 0.75) !important;
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.75);
     font-style: italic;
     line-height: 1.85;
     max-width: 540px;
@@ -6655,68 +6644,14 @@ body.page-fade-out {
         font-size: 0.82rem;
     }
 }
-/* === MOBILE ACTION BAR === */
-.mobile-action-bar {
-    display: none;
-}
-@media (max-width: 768px) {
-    .mobile-action-bar {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 9998;
-        background: rgba(11, 15, 26, 0.95);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
-        padding: 8px 6px;
-        gap: 6px;
-        transform: translateY(100%);
-        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .mobile-action-bar.mab-visible {
-        transform: translateY(0);
-    }
-    .mab-btn {
-        flex: 1;
-        text-align: center;
-        padding: 12px 8px;
-        border-radius: 10px;
-        font-size: 0.82rem;
-        font-weight: 700;
-        text-decoration: none;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .mab-btn:active {
-        transform: scale(0.96);
-    }
-    .mab-call {
-        background: linear-gradient(135deg, #E84545, #C73535);
-        color: #fff;
-    }
-    .mab-wa {
-        background: linear-gradient(135deg, #25D366, #128C7E);
-        color: #fff;
-    }
-    .mab-book {
-        background: linear-gradient(135deg, #00B4D8, #0096B4);
-        color: #0B0F1A;
-    }
-    /* Add bottom padding to body so content isn't hidden behind bar */
-    body.has-mobile-bar {
-        padding-bottom: 70px;
-    }
-}
+/* Mobile action bar removed — FAB restored on all viewports */
 
 /* === DOCTOR'S PROMISE SECTION === */
 .doctor-promise-section {
     padding: 60px 0;
-    background: #FFFBF7;
+    background: var(--bg-warm, #FFFBF7);
 }
-[data-theme="dark"] .doctor-promise-section,
-.doctor-promise-section {
+[data-theme="dark"] .doctor-promise-section {
     background: linear-gradient(135deg, rgba(255, 251, 247, 0.03), rgba(61, 90, 91, 0.06));
 }
 .doctor-promise {
@@ -6728,8 +6663,14 @@ body.page-fade-out {
     position: relative;
     padding: 40px 32px;
     border-radius: 16px;
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+}
+[data-theme="dark"] .promise-quote {
     background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
 }
 .promise-quote::before {
     content: '\201C';
@@ -6738,12 +6679,13 @@ body.page-fade-out {
     left: 24px;
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 4rem;
-    color: rgba(0, 180, 216, 0.3);
+    color: var(--teal, #00B4D8);
+    opacity: 0.3;
     line-height: 1;
 }
 .promise-quote p {
     font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-body, #2E3455);
     line-height: 1.9;
     font-style: italic;
     margin-bottom: 20px;
@@ -6751,7 +6693,7 @@ body.page-fade-out {
 .promise-author {
     font-size: 0.95rem;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--text-h, #080C1A);
     letter-spacing: 0.5px;
 }
 .promise-dash {
@@ -6777,9 +6719,12 @@ body.page-fade-out {
 .scroll-hook p {
     font-size: 1.1rem;
     font-style: italic;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-muted, #6A7099);
     line-height: 1.7;
     position: relative;
+}
+[data-theme="dark"] .scroll-hook p {
+    color: rgba(255, 255, 255, 0.45);
 }
 .scroll-hook p::before {
     content: '';
@@ -6794,7 +6739,8 @@ body.page-fade-out {
     display: block;
     margin-top: 16px;
     font-size: 1rem;
-    color: rgba(0, 180, 216, 0.4);
+    color: var(--teal, #00B4D8);
+    opacity: 0.4;
     font-style: normal;
     animation: scrollArrowBounce 2s ease-in-out infinite;
 }
@@ -6867,10 +6813,9 @@ body {
 
 /* Smooth card hover transitions globally */
 .glass-card {
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+    transition: box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
 }
 .glass-card:hover {
-    transform: translateY(-4px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
@@ -6945,15 +6890,8 @@ body {
 [data-theme="dark"] .section-label {
     color: var(--text-body);
 }
-[data-theme="dark"] .promise-quote {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.06);
-}
 [data-theme="dark"] .promise-quote p {
     color: rgba(255, 255, 255, 0.8);
-}
-[data-theme="dark"] .scroll-hook p {
-    color: rgba(255, 255, 255, 0.45);
 }
 [data-theme="dark"] .credential-pill {
     background: rgba(255, 255, 255, 0.07);
@@ -6965,11 +6903,7 @@ body {
     filter: drop-shadow(0 0 24px rgba(0, 180, 216, 0.5));
 }
 
-/* Hero stays dark regardless of mode */
-.hero {
-    background: linear-gradient(165deg, #0A1628 0%, #162447 40%, #1B365C 70%, #0F2341 100%) !important;
-    color: #fff !important;
-}
+/* Hero stays dark — uses var(--grad-hero) from :root tokens */
 
 /* === PERFORMANCE: Disable cursor glow on mobile === */
 @media (max-width: 768px) {
