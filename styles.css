@@ -4441,22 +4441,22 @@ body.has-ticker .nav {
 /* ── SPEED DIAL FAB (Unified 3-in-1 Popup) ─────────── */
 .sd-wrap {
     position: fixed;
-    bottom: 28px;
+    top: 50%;
     right: 24px;
+    transform: translateY(-50%) translateY(12px);
     z-index: 1060;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 12px;
     opacity: 0;
-    transform: translateY(12px);
     pointer-events: none;
     transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
 .sd-wrap.sd-visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(-50%);
     pointer-events: all;
 }
 
@@ -5122,8 +5122,9 @@ body.page-fade-out {
 /* ====== SPEED DIAL FAB ====== */
 .sd-wrap {
     position: fixed;
-    bottom: 30px;
+    top: 50%;
     right: 30px;
+    transform: translateY(-50%);
     z-index: 10000;
     display: flex;
     flex-direction: column;
