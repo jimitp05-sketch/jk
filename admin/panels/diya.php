@@ -46,6 +46,16 @@
         </div>
     </div>
 
+    <!-- Date Filter -->
+    <div class="editor-card" style="margin-top:16px;padding:16px 20px;">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <label style="font-weight:600;color:var(--ad-text-dim);font-size:0.85rem;">Filter by Date:</label>
+            <input type="date" id="admin-diya-date-filter" style="padding:6px 10px;border-radius:8px;border:1px solid var(--ad-border);background:var(--ad-bg);color:var(--ad-text);font-size:0.85rem;" />
+            <button class="btn-save-draft" onclick="adminFilterDiyasByDate()" style="padding:6px 14px;font-size:0.82rem;">Apply</button>
+            <button class="btn-save-draft" onclick="adminResetDiyaFilter()" style="padding:6px 14px;font-size:0.82rem;">Show All</button>
+        </div>
+    </div>
+
     <!-- Diya Table -->
     <div class="admin-table-wrap" style="margin-top:24px;">
         <div class="table-header">
@@ -66,6 +76,47 @@
             <tbody id="diya-tbody">
                 <tr>
                     <td colspan="6" style="text-align:center;color:var(--ad-text-muted);padding:28px;">Loading diyas…</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Diya Quotes Management -->
+    <div class="editor-card" style="margin-top:28px;">
+        <h3>💬 Diya Quotes</h3>
+        <p style="color:var(--ad-text-dim);font-size:0.85rem;margin-bottom:16px;">Manage inspirational quotes shown on the Diya Memories calendar view.</p>
+        <div class="editor-grid">
+            <div class="editor-field" style="grid-column:1/-1;">
+                <label>Quote Text</label>
+                <textarea id="admin-quote-text" rows="2" placeholder="Even a single flame can hold back the darkness..."></textarea>
+            </div>
+            <div class="editor-field">
+                <label>Author</label>
+                <input type="text" id="admin-quote-author" placeholder="e.g., Ancient Proverb" />
+            </div>
+        </div>
+        <div class="editor-actions">
+            <button class="btn-publish" onclick="adminAddQuote()">Add Quote</button>
+            <button class="btn-save-draft" onclick="adminClearQuoteForm()">Clear</button>
+        </div>
+    </div>
+
+    <div class="admin-table-wrap" style="margin-top:16px;">
+        <div class="table-header">
+            <div class="table-title">All Quotes (<span id="quote-count">0</span>)</div>
+            <button class="action-btn action-btn-edit" onclick="adminLoadQuotes()">↻ Refresh</button>
+        </div>
+        <table id="quote-table">
+            <thead>
+                <tr>
+                    <th>Quote</th>
+                    <th>Author</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="quote-tbody">
+                <tr>
+                    <td colspan="3" style="text-align:center;color:var(--ad-text-muted);padding:28px;">Loading quotes…</td>
                 </tr>
             </tbody>
         </table>

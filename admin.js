@@ -1446,7 +1446,7 @@ switchPanel = function (name) {
     if (name === 'peer') renderPeerRecognitions();
     if (name === 'hero') loadHeroContent();
     if (name === 'apihealth') runAllChecks();
-    if (name === 'diya') adminLoadDiyas();
+    if (name === 'diya') { adminLoadDiyas(); adminLoadQuotes(); }
     if (name === 'memories') { adminLoadStories(); adminLoadNotes(); adminLoadMemoryPhotos(); }
 };
 
@@ -2072,6 +2072,144 @@ async function adminAddDiya() {
 
 function adminClearDiyaForm() {
     ['admin-diya-name', 'admin-diya-prayer', 'admin-diya-litby'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+}
+
+// ============================================================
+// DIYA — Date Filter
+// ============================================================
+
+function adminFilterDiyasByDate() {
+    const dateInput = document.getElementById('admin-diya-date-filter');
+    if (!dateInput || !dateInput.value) { toast('Select a date first', 'error'); return; }
+    const dateStr = dateInput.value; // 'YYYY-MM-DD'
+    const filtered = diyaCache.filter(d => d.lit_at && d.lit_at.substring(0, 10) === dateStr);
+    renderDiyaTableFiltered(filtered);
+}
+
+function adminResetDiyaFilter() {
+    const dateInput = document.getElementById('admin-diya-date-filter');
+    if (dateInput) dateInput.value = '';
+    renderDiyaTable();
+}
+
+function renderDiyaTableFiltered(diyas) {
+    const total = diyas.length;
+    const approved = diyas.filter(d => d.status === 'approved').length;
+    const pending = diyas.filter(d => d.status === 'pending').length;
+
+    const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+    el('diya-total', total);
+    el('diya-approved', approved);
+    el('diya-pending', pending);
+
+    const tbody = document.getElementById('diya-tbody');
+    if (!tbody) return;
+
+    if (total === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No diyas found for this date.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = diyas.map(d => {
+        const prayer = (d.prayer || '').length > 60 ? d.prayer.substring(0, 60) + '...' : (d.prayer || '—');
+        const date = d.lit_at ? new Date(d.lit_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+        const statusClass = d.status === 'approved' ? 'badge-approved' : d.status === 'pending' ? 'badge-pending' : 'badge-rejected';
+        return `<tr>
+            <td><strong>${escH(d.name)}</strong></td>
+            <td title="${escH(d.prayer)}">${escH(prayer)}</td>
+            <td>${escH(d.lit_by || '—')}</td>
+            <td>${date}</td>
+            <td><span class="status-badge ${statusClass}">${d.status}</span></td>
+            <td>
+                ${d.status !== 'approved' ? `<button class="action-btn approve" onclick="adminDiyaAction('approve','${d.id}')">✓</button>` : ''}
+                <button class="action-btn delete" onclick="adminDiyaAction('delete','${d.id}')">✕</button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+// ============================================================
+// DIYA — Quotes CRUD
+// ============================================================
+
+let quotesAdminCache = [];
+
+async function adminLoadQuotes() {
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    try {
+        const res = await fetch('./api/diya.php?action=get_quotes');
+        const data = await res.json();
+        if (!data.success) { toast('Failed to load quotes', 'error'); return; }
+        quotesAdminCache = data.data || [];
+        renderQuoteTable();
+    } catch (e) { toast('Error loading quotes', 'error'); console.error(e); }
+}
+
+function renderQuoteTable() {
+    const countEl = document.getElementById('quote-count');
+    if (countEl) countEl.textContent = quotesAdminCache.length;
+
+    const tbody = document.getElementById('quote-tbody');
+    if (!tbody) return;
+
+    if (quotesAdminCache.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No quotes yet. Add the first one!</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = quotesAdminCache.map(q => {
+        const text = (q.text || '').length > 80 ? q.text.substring(0, 80) + '...' : (q.text || '—');
+        return `<tr>
+            <td title="${escH(q.text)}">${escH(text)}</td>
+            <td>${escH(q.author || '—')}</td>
+            <td>
+                <button class="action-btn delete" onclick="adminDeleteQuote('${q.id}')">✕</button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+async function adminAddQuote() {
+    const text = document.getElementById('admin-quote-text')?.value.trim();
+    const author = document.getElementById('admin-quote-author')?.value.trim();
+    if (!text) { toast('Enter quote text', 'error'); return; }
+
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    try {
+        const res = await fetch('./api/diya.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'add_quote', text, author, admin_pass: pass })
+        });
+        const data = await res.json();
+        if (data.success) {
+            toast('Quote added!', 'success');
+            adminClearQuoteForm();
+            adminLoadQuotes();
+        } else toast(data.error || 'Failed', 'error');
+    } catch (e) { toast('Error adding quote', 'error'); }
+}
+
+async function adminDeleteQuote(id) {
+    if (!confirm('Delete this quote?')) return;
+    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    try {
+        const res = await fetch('./api/diya.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete_quote', id, admin_pass: pass })
+        });
+        const data = await res.json();
+        if (data.success) { toast('Quote removed', 'success'); adminLoadQuotes(); }
+        else toast(data.error || 'Failed', 'error');
+    } catch (e) { toast('Error', 'error'); }
+}
+
+function adminClearQuoteForm() {
+    ['admin-quote-text', 'admin-quote-author'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
     });

@@ -64,6 +64,25 @@ function writeDiyas(array $diyas): bool {
     return $stmt->execute([json_encode($diyas, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
 }
 
+// ── READ / WRITE QUOTES ─────────────────────────────────────────────────
+function readQuotes(): array {
+    $pdo = getPDO();
+    $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'diya_quotes' LIMIT 1");
+    $stmt->execute();
+    $row = $stmt->fetch();
+    return $row ? (json_decode($row['data'], true) ?: []) : [];
+}
+
+function writeQuotes(array $quotes): bool {
+    $pdo = getPDO();
+    $stmt = $pdo->prepare("
+        INSERT INTO content (content_type, content_key, data)
+        VALUES ('community', 'diya_quotes', ?)
+        ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
+    ");
+    return $stmt->execute([json_encode($quotes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+}
+
 // ── AUTH CHECK ───────────────────────────────────────────────────────────
 function isAdmin(array $input = []): bool {
     $pdo = getPDO();
@@ -137,6 +156,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
         respond(['success' => true, 'data' => $diyas]);
+    }
+
+    // Public: all active quotes
+    if ($action === 'get_quotes') {
+        $quotes = readQuotes();
+        $active = array_values(array_filter($quotes, fn($q) => ($q['status'] ?? '') === 'active'));
+        respond(['success' => true, 'data' => $active]);
     }
 
     // Default: all approved diyas (public)
@@ -238,6 +264,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         writeDiyas($items);
         respond(['success' => true, 'count' => count($items)]);
+    }
+
+    // ── ADMIN: Add Quote ─────────────────────────────────────────────────
+    if ($action === 'add_quote') {
+        if (!isAdmin($input)) {
+            respond(['success' => false, 'error' => 'Unauthorized'], 401);
+        }
+
+        $text = clean($input['text'] ?? '', 500);
+        $author = clean($input['author'] ?? '', 100);
+
+        if (empty($text)) {
+            respond(['success' => false, 'error' => 'Quote text is required'], 400);
+        }
+
+        $quotes = readQuotes();
+        $newQuote = [
+            'id' => 'quote_' . bin2hex(random_bytes(8)),
+            'text' => $text,
+            'author' => $author,
+            'status' => 'active',
+        ];
+
+        $quotes[] = $newQuote;
+        writeQuotes($quotes);
+
+        respond(['success' => true, 'data' => $newQuote]);
+    }
+
+    // ── ADMIN: Edit Quote ────────────────────────────────────────────────
+    if ($action === 'edit_quote') {
+        if (!isAdmin($input)) {
+            respond(['success' => false, 'error' => 'Unauthorized'], 401);
+        }
+
+        $targetId = $input['id'] ?? '';
+        if (empty($targetId)) {
+            respond(['success' => false, 'error' => 'Missing quote ID'], 400);
+        }
+
+        $text = clean($input['text'] ?? '', 500);
+        $author = clean($input['author'] ?? '', 100);
+
+        $quotes = readQuotes();
+        $found = false;
+        $updatedQuote = null;
+
+        foreach ($quotes as &$quote) {
+            if (($quote['id'] ?? '') === $targetId) {
+                $found = true;
+                $quote['text'] = $text;
+                $quote['author'] = $author;
+                $updatedQuote = $quote;
+                break;
+            }
+        }
+        unset($quote);
+
+        if (!$found) {
+            respond(['success' => false, 'error' => 'Quote not found'], 404);
+        }
+
+        writeQuotes($quotes);
+        respond(['success' => true, 'data' => $updatedQuote]);
+    }
+
+    // ── ADMIN: Delete Quote ──────────────────────────────────────────────
+    if ($action === 'delete_quote') {
+        if (!isAdmin($input)) {
+            respond(['success' => false, 'error' => 'Unauthorized'], 401);
+        }
+
+        $targetId = $input['id'] ?? '';
+        if (empty($targetId)) {
+            respond(['success' => false, 'error' => 'Missing quote ID'], 400);
+        }
+
+        $quotes = readQuotes();
+        $found = false;
+
+        foreach ($quotes as $i => $quote) {
+            if (($quote['id'] ?? '') === $targetId) {
+                $found = true;
+                array_splice($quotes, $i, 1);
+                break;
+            }
+        }
+
+        if (!$found) {
+            respond(['success' => false, 'error' => 'Quote not found'], 404);
+        }
+
+        writeQuotes($quotes);
+        respond(['success' => true, 'id' => $targetId]);
     }
 
     respond(['success' => false, 'error' => 'Invalid action'], 400);
