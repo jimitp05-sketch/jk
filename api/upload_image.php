@@ -7,20 +7,20 @@
  * version for performance consistency.
  */
 
-require_once 'config.php';
+require_once __DIR__ . '/auth.php';
 
 header('Content-Type: application/json');
 
-// 1. Authenticate Request
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
     echo json_encode(['success' => false, 'error' => 'Method not allowed']);
     exit;
 }
 
-$admin_pass = $_POST['admin_pass'] ?? '';
-$expected_pass = getenv('ADMIN_PASS') ?: 'apollo2024';
-
-if ($admin_pass !== $expected_pass) {
+// Authenticate using session token from header or POST body
+$token = $_SERVER['HTTP_X_ADMIN_TOKEN'] ?? $_POST['session_token'] ?? '';
+if (!validateSessionToken($token)) {
+    http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Authentication failed']);
     exit;
 }
@@ -49,11 +49,23 @@ if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
     exit;
 }
 
+// File size limit: 10MB
+if ($_FILES['image']['size'] > 10 * 1024 * 1024) {
+    echo json_encode(['success' => false, 'error' => 'Image too large. Maximum 10MB.']);
+    exit;
+}
+
 $tmp_name = $_FILES['image']['tmp_name'];
 $file_info = getimagesize($tmp_name);
 
 if (!$file_info) {
     echo json_encode(['success' => false, 'error' => 'Invalid image file']);
+    exit;
+}
+
+$allowedTypes = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP];
+if (!in_array($file_info[2], $allowedTypes, true)) {
+    echo json_encode(['success' => false, 'error' => 'Only JPG, PNG, and WebP images are allowed.']);
     exit;
 }
 
@@ -91,5 +103,5 @@ if (move_uploaded_file($tmp_name, $target_path)) {
         'path' => $target_filename
     ]);
 } else {
-    echo json_encode(['success' => false, 'error' => 'Failed to move uploaded file to ' . $target_filename]);
+    echo json_encode(['success' => false, 'error' => 'Failed to save uploaded image. Please try again.']);
 }

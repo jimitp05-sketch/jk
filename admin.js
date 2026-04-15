@@ -1,12 +1,38 @@
 ﻿// ============================================================
-// AUTH
+// AUTH — Session Token Based
 // ============================================================
 
+// Session token stored in memory (not localStorage for security)
+let _sessionToken = '';
+
+function getSessionToken() {
+    if (!_sessionToken) _sessionToken = sessionStorage.getItem('apollo_session_token') || '';
+    return _sessionToken;
+}
+
+function setSessionToken(token) {
+    _sessionToken = token;
+    sessionStorage.setItem('apollo_session_token', token);
+    localStorage.setItem('apollo_admin_logged', 'true');
+}
+
+function clearSession() {
+    _sessionToken = '';
+    sessionStorage.removeItem('apollo_session_token');
+    localStorage.removeItem('apollo_admin_logged');
+}
+
+// HTML escape helper (defined early so it's available everywhere)
+function escH(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
 async function doLogin() {
+    const btn = document.getElementById('login-btn');
+    const err = document.getElementById('login-error');
     const u = document.getElementById('admin-user').value.trim();
     const p = document.getElementById('admin-pass').value.trim();
-    const err = document.getElementById('login-error');
+    err.style.display = 'none';
     if (!u || !p) { err.textContent = 'Enter username and password'; err.style.display = 'block'; return; }
+    btn.textContent = 'Signing in...'; btn.disabled = true;
 
     try {
         const r = await fetch('./api/settings.php', {
@@ -14,33 +40,70 @@ async function doLogin() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'check_auth', admin_pass: p })
         });
-        if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const d = await r.json();
-        if (d.success) {
-            localStorage.setItem('apollo_admin_logged', 'true');
-            localStorage.setItem('apollo_admin_temp_pass', p);
+        if (d.success && d.session_token) {
+            setSessionToken(d.session_token);
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('admin-layout').style.display = 'flex';
             loadAll();
+            toast('Welcome back, Dr. Kothari!', 'success');
         } else {
-            err.textContent = 'Invalid credentials'; err.style.display = 'block';
+            err.textContent = d.error || 'Invalid credentials'; err.style.display = 'block';
         }
     } catch (e) {
         console.error('Auth Error:', e);
-        err.innerHTML = `Server error: ${e.message}<br><small>Check if <b>api/settings.php</b> was uploaded to Hostinger.</small>`;
+        err.innerHTML = `Server error: ${e.message}<br><small>Check that <b>api/settings.php</b> is uploaded to Hostinger.</small>`;
         err.style.display = 'block';
     }
+    btn.textContent = 'Sign In \u2192'; btn.disabled = false;
 }
-document.getElementById('admin-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-document.getElementById('admin-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('admin-pass').focus(); });
 
 function doLogout() {
-    localStorage.removeItem('apollo_admin_logged');
-    localStorage.removeItem('apollo_admin_temp_pass');
+    clearSession();
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('admin-layout').style.display = 'none';
     document.getElementById('admin-user').value = '';
     document.getElementById('admin-pass').value = '';
+}
+
+// Admin credential change
+async function changeAdminCredentials() {
+    const currentPass = document.getElementById('cred-current-pass')?.value.trim();
+    const newUser = document.getElementById('cred-new-user')?.value.trim();
+    const newPass = document.getElementById('cred-new-pass')?.value.trim();
+    const confirmPass = document.getElementById('cred-confirm-pass')?.value.trim();
+
+    if (!currentPass) { toast('Enter your current password to make changes', 'error'); return; }
+    if (newPass && newPass !== confirmPass) { toast('New passwords do not match', 'error'); return; }
+    if (newPass && newPass.length < 6) { toast('New password must be at least 6 characters', 'error'); return; }
+    if (!newPass && !newUser) { toast('Enter a new username or password to update', 'error'); return; }
+
+    try {
+        const res = await fetch('./api/settings.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': getSessionToken() },
+            body: JSON.stringify({
+                action: 'change_credentials',
+                session_token: getSessionToken(),
+                current_password: currentPass,
+                new_password: newPass || undefined,
+                new_username: newUser || undefined
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            toast('Credentials updated! Please log in again.', 'success');
+            // Clear form
+            ['cred-current-pass', 'cred-new-user', 'cred-new-pass', 'cred-confirm-pass'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.value = '';
+            });
+            // Force re-login
+            setTimeout(() => doLogout(), 1500);
+        } else {
+            toast(data.error || 'Failed to update credentials', 'error');
+        }
+    } catch (e) { toast('Connection error: ' + e.message, 'error'); }
 }
 
 // ============================================================
@@ -77,10 +140,10 @@ async function loadCurrentSettings() {
 }
 
 async function saveSettings() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     const g = id => document.getElementById(id).value;
     const body = {
-        admin_pass: pass,
+        session_token: token,
         wa_number: g('st-wa-number'),
         wa_message: g('st-wa-message'),
         icu_phone: g('st-icu-phone'),
@@ -97,8 +160,7 @@ async function saveSettings() {
         hero_stat3_lbl: g('st-hero-stat3-lbl'),
         admin_user: g('st-admin-user')
     };
-    const newPass = g('st-admin-pass');
-    if (newPass) body.new_admin_pass = newPass;
+    // Password changes now handled via changeAdminCredentials()
 
     try {
         const res = await fetch('./api/settings.php', {
@@ -109,7 +171,7 @@ async function saveSettings() {
         const data = await res.json();
         if (data.success) {
             toast('âœ… Settings updated successfully!', 'success');
-            if (newPass) localStorage.setItem('apollo_admin_temp_pass', newPass);
+            // Password changes handled separately via changeAdminCredentials()
             loadCurrentSettings(); // Sync local fields
             loadHeroContent();    // Sync hero panel too
         } else {
@@ -148,10 +210,10 @@ function switchPanel(name) {
 let serverBookingsCache = [];
 
 async function getBookingsFromServer() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
         const res = await fetch('./api/get_bookings.php', {
-            headers: { 'X-Admin-Token': pass }
+            headers: { 'X-Admin-Token': token }
         });
         const data = await res.json();
         if (data.success) {
@@ -168,10 +230,10 @@ async function getBookingsFromServer() {
 // BACKWARD COMPAT: Map server bookings to expected local format if needed
 const getBookings = () => serverBookingsCache;
 const saveBookings = async (id, status) => {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
         const res = await fetch(`./api/get_bookings.php?action=update_status&id=${id}&status=${status}`, {
-            headers: { 'X-Admin-Token': pass }
+            headers: { 'X-Admin-Token': token }
         });
         const data = await res.json();
         return data.success;
@@ -206,9 +268,9 @@ async function updateBadges() {
 
     // Diya & Memories badges
     try {
-        const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+        const token = getSessionToken();
         const [diyaRes, memRes] = await Promise.all([
-            fetch('./api/diya.php?action=admin&admin_pass=' + encodeURIComponent(pass)).then(r => r.json()).catch(() => null),
+            fetch('./api/diya.php?action=admin', { headers: { 'X-Admin-Token': getSessionToken() } }).then(r => r.json()).catch(() => null),
             fetch('./api/memories.php?action=summary').then(r => r.json()).catch(() => null)
         ]);
         const bDiya = document.getElementById('badge-diyas');
@@ -244,10 +306,10 @@ async function renderDashboard() {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">No bookings yet.</td></tr>';
     } else {
         tbody.innerHTML = recent.map(b => `<tr>
-        <td><strong>${b.name}</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">${b.phone}</span></td>
-        <td>${b.booking_date}</td><td>${b.booking_time}</td>
-        <td><span style="font-size:0.83rem;">${b.reason}</span></td>
-        <td><span class="status-badge badge-${b.status}">${b.status}</span></td>
+        <td><strong>${escH(b.name)}</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">${escH(b.phone)}</span></td>
+        <td>${escH(b.booking_date)}</td><td>${escH(b.booking_time)}</td>
+        <td><span style="font-size:0.83rem;">${escH(b.reason)}</span></td>
+        <td><span class="status-badge badge-${escH(b.status)}">${escH(b.status)}</span></td>
       </tr>`).join('');
     }
     updateBadges();
@@ -264,11 +326,11 @@ async function renderRequests() {
         return;
     }
     tbody.innerHTML = bookings.map((b, i) => `<tr>
-      <td><strong>${b.name}</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">${b.phone}</span></td>
-      <td>${b.phone}</td>
-      <td>${b.booking_date}<br><span style="color:var(--accent-primary);font-weight:700;">${b.booking_time}</span></td>
-      <td style="max-width:200px;">${b.reason}</td>
-      <td><span class="status-badge badge-${b.status}">${b.status}</span></td>
+      <td><strong>${escH(b.name)}</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">${escH(b.phone)}</span></td>
+      <td>${escH(b.phone)}</td>
+      <td>${escH(b.booking_date)}<br><span style="color:var(--accent-primary);font-weight:700;">${escH(b.booking_time)}</span></td>
+      <td style="max-width:200px;">${escH(b.reason)}</td>
+      <td><span class="status-badge badge-${escH(b.status)}">${escH(b.status)}</span></td>
       <td><div class="action-btns">
         ${b.status === 'pending' ? `<button class="action-btn action-btn-approve" onclick="updateBookingStatus(${b.id},'confirmed')">✓ Confirm</button>
         <button class="action-btn action-btn-reject" onclick="updateBookingStatus(${b.id},'cancelled')">✕ Reject</button>` : ''}
@@ -344,8 +406,8 @@ function adminSelectDate(dateKey, label) {
         el.innerHTML = '<div class="empty-bookings">No confirmed bookings for this date.</div>';
     } else {
         el.innerHTML = bookings.map(b => `<div class="booking-list-item">
-        <div class="booking-time">${b.booking_time}</div>
-        <div><div class="booking-patient">${b.name}</div><div class="booking-reason-sm">${b.reason}</div></div>
+        <div class="booking-time">${escH(b.booking_time)}</div>
+        <div><div class="booking-patient">${escH(b.name)}</div><div class="booking-reason-sm">${escH(b.reason)}</div></div>
         <span class="status-badge badge-approved">Confirmed</span>
       </div>`).join('');
     }
@@ -522,8 +584,8 @@ function buildArticleHTML(structured) {
 // ARTICLE CRUD
 // ============================================================
 async function saveArticle() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
-    if (!pass) return; // Silent return if no pass
+    const token = getSessionToken();
+    if (!token) return; // Silent return if no pass
 
     const id = document.getElementById('editor-id').value || ('art-' + Date.now());
     const title = document.getElementById('editor-title').value.trim();
@@ -549,7 +611,7 @@ async function saveArticle() {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'knowledge_articles', items: updatedList })
+            body: JSON.stringify({ session_token: token, type: 'knowledge_articles', items: updatedList })
         });
         const result = await res.json();
         if (result.success) {
@@ -766,8 +828,8 @@ function editBuiltInArticle(id) {
 
 async function deleteArticle(id) {
     if (!confirm('Delete this article?')) return;
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
-    if (!pass) return;
+    const token = getSessionToken();
+    if (!token) return;
 
     const updatedList = currentArticles.filter(a => a.id !== id);
 
@@ -775,7 +837,7 @@ async function deleteArticle(id) {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'knowledge_articles', items: updatedList })
+            body: JSON.stringify({ session_token: token, type: 'knowledge_articles', items: updatedList })
         });
         const result = await res.json();
         if (result.success) { toast('ðŸ—‘ï¸ Article deleted.', 'success'); renderKnowledge(); }
@@ -795,10 +857,10 @@ function clearEditor() {
 // REVIEWS
 // ============================================================
 async function renderReviews() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
         const res = await fetch('./api/content.php?type=peer_recognitions', {
-            headers: { 'X-Admin-Token': pass }
+            headers: { 'X-Admin-Token': token }
         });
         const d = await res.json();
         const reviews = d.data || [];
@@ -827,15 +889,15 @@ async function renderReviews() {
 }
 
 async function updateReviewStatus(index, status) {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
-        const res = await fetch('./api/content.php?type=peer_recognitions', { headers: { 'X-Admin-Token': pass } });
+        const res = await fetch('./api/content.php?type=peer_recognitions', { headers: { 'X-Admin-Token': token } });
         const d = await res.json();
         let reviews = d.data || [];
         reviews[index].status = status;
         const res2 = await fetch('./api/content.php', {
             method: 'POST',
-            body: JSON.stringify({ type: 'peer_recognitions', items: reviews, admin_token: pass }),
+            body: JSON.stringify({ type: 'peer_recognitions', items: reviews, session_token: token }),
             headers: { 'Content-Type': 'application/json' }
         });
         if ((await res2.json()).success) {
@@ -847,15 +909,15 @@ async function updateReviewStatus(index, status) {
 
 async function deleteReview(index) {
     if (!confirm('Are you sure you want to delete this review?')) return;
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
-        const res = await fetch('./api/content.php?type=peer_recognitions', { headers: { 'X-Admin-Token': pass } });
+        const res = await fetch('./api/content.php?type=peer_recognitions', { headers: { 'X-Admin-Token': token } });
         const d = await res.json();
         let reviews = d.data || [];
         reviews.splice(index, 1);
         const res2 = await fetch('./api/content.php', {
             method: 'POST',
-            body: JSON.stringify({ type: 'peer_recognitions', items: reviews, admin_token: pass }),
+            body: JSON.stringify({ type: 'peer_recognitions', items: reviews, session_token: token }),
             headers: { 'Content-Type': 'application/json' }
         });
         if ((await res2.json()).success) {
@@ -883,10 +945,10 @@ function submitTestReview() {
 // PHOTOS
 // ============================================================
 async function renderPhotos() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
         const res = await fetch('./api/content.php?type=photo_wall', {
-            headers: { 'X-Admin-Token': pass }
+            headers: { 'X-Admin-Token': token }
         });
         const d = await res.json();
         const photos = d.data || [];
@@ -1001,10 +1063,10 @@ async function saveMythCard() {
     const stmt = document.getElementById('myth-statement').value.trim();
     const fact = document.getElementById('myth-fact').value.trim();
     const source = document.getElementById('myth-source').value.trim();
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
 
     if (!stmt || !fact) { alert('Required fields missing.'); return; }
-    if (!pass) return;
+    if (!token) return;
 
     const editId = parseInt(document.getElementById('myth-edit-id').value);
     let updatedList = [...currentMyths];
@@ -1020,7 +1082,7 @@ async function saveMythCard() {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'myth_busters', items: updatedList })
+            body: JSON.stringify({ session_token: token, type: 'myth_busters', items: updatedList })
         });
         if ((await res.json()).success) { clearMythForm(); renderMyths(); }
     } catch (err) { alert('Error saving.'); }
@@ -1028,14 +1090,14 @@ async function saveMythCard() {
 
 async function deleteMyth(id) {
     if (!confirm(`Delete this card?`)) return;
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     const updatedList = currentMyths.filter(x => x.id !== id);
 
     try {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'myth_busters', items: updatedList })
+            body: JSON.stringify({ session_token: token, type: 'myth_busters', items: updatedList })
         });
         if ((await res.json()).success) { renderMyths(); }
     } catch (err) { alert('Error deleting.'); }
@@ -1115,10 +1177,10 @@ async function saveQuizQuestion() {
     const quest = document.getElementById('q-question').value.trim();
     const optA = document.getElementById('q-a').value.trim();
     const optB = document.getElementById('q-b').value.trim();
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
 
     if (!quest || !optA || !optB) { alert('Question and at least options A & B are required.'); return; }
-    if (!pass) return;
+    if (!token) return;
 
     const options = [optA, optB, document.getElementById('q-c').value.trim(), document.getElementById('q-d').value.trim()].filter(Boolean);
     const correct = parseInt(document.getElementById('q-correct').value);
@@ -1136,7 +1198,7 @@ async function saveQuizQuestion() {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: updatedBank })
+            body: JSON.stringify({ session_token: token, type: 'quiz_questions', items: updatedBank })
         });
         if ((await res.json()).success) { clearQuizForm(); renderQuizEditor(); }
     } catch (err) { alert('Error saving.'); }
@@ -1144,14 +1206,14 @@ async function saveQuizQuestion() {
 
 async function deleteQuizQ(idx) {
     if (!confirm(`Delete this question?`)) return;
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     let updatedBank = currentQuizBank.filter((_, i) => i !== idx);
 
     try {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: updatedBank })
+            body: JSON.stringify({ session_token: token, type: 'quiz_questions', items: updatedBank })
         });
         if ((await res.json()).success) { renderQuizEditor(); }
     } catch (err) { alert('Error deleting.'); }
@@ -1164,8 +1226,8 @@ function clearQuizForm() {
 
 async function resetQuizToDefault() {
     if (!confirm('This will load the 50 default questions to the server. Continue?')) return;
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
-    if (!pass) return;
+    const token = getSessionToken();
+    if (!token) return;
 
     const defaults = [
         { q: "What does ECMO stand for?", options: ["Extracorporeal Membrane Oxygenation", "Extended Cardiac Monitoring Operation", "Emergency Cardiac Muscle Oxygenation", "External Cardio-Metabolic Oxygenator"], correct: 0, explanation: "ECMO temporarily replaces heart/lung function by circulating blood outside the body through an artificial lung." },
@@ -1177,7 +1239,7 @@ async function resetQuizToDefault() {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: defaults })
+            body: JSON.stringify({ session_token: token, type: 'quiz_questions', items: defaults })
         });
         if ((await res.json()).success) { renderQuizEditor(); alert('â†º Reset done.'); }
     } catch (err) { alert('Error resetting.'); }
@@ -1243,10 +1305,10 @@ async function saveResearchPaper() {
     const title = document.getElementById('rp-title').value.trim();
     const journal = document.getElementById('rp-journal').value.trim();
     const year = parseInt(document.getElementById('rp-year').value);
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
 
     if (!title || !journal || !year) { toast('Required fields missing.', 'error'); return; }
-    if (!pass) return;
+    if (!token) return;
 
     const editId = parseInt(document.getElementById('rp-edit-id').value);
     const newPaper = {
@@ -1269,7 +1331,7 @@ async function saveResearchPaper() {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'research_papers', items: updatedList })
+            body: JSON.stringify({ session_token: token, type: 'research_papers', items: updatedList })
         });
         if ((await res.json()).success) { toast('Research paper saved!', 'success'); clearResearchForm(); renderResearch(); }
     } catch (err) { toast('Error saving research.', 'error'); }
@@ -1277,14 +1339,14 @@ async function saveResearchPaper() {
 
 async function deleteResearch(id) {
     if (!confirm(`Delete this research paper?`)) return;
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     const updatedList = currentResearchList.filter(x => x.id !== id);
 
     try {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'research_papers', items: updatedList })
+            body: JSON.stringify({ session_token: token, type: 'research_papers', items: updatedList })
         });
         if ((await res.json()).success) { toast('Paper deleted.', 'success'); renderResearch(); }
     } catch (err) { toast('Error deleting research.', 'error'); }
@@ -1350,10 +1412,10 @@ async function savePeerRecognition() {
     const icon = document.getElementById('peer-icon').value.trim();
     const source = document.getElementById('peer-source').value.trim();
     const text = document.getElementById('peer-text').value.trim();
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
 
     if (!title || !text) { toast('Title and Recognition Text are required.', 'error'); return; }
-    if (!pass) { toast('Admin session error. Please log in again.', 'error'); return; }
+    if (!token) { toast('Admin session error. Please log in again.', 'error'); return; }
 
     const editIdx = document.getElementById('peer-edit-id').value;
     const newBlock = { title, icon, source, text };
@@ -1369,7 +1431,7 @@ async function savePeerRecognition() {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'peer_recognitions', items: updatedList })
+            body: JSON.stringify({ session_token: token, type: 'peer_recognitions', items: updatedList })
         });
         const result = await res.json();
         if (result.success) {
@@ -1386,8 +1448,8 @@ async function savePeerRecognition() {
 
 async function deletePeer(idx) {
     if (!confirm('Are you sure you want to delete this recognition block?')) return;
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
-    if (!pass) return;
+    const token = getSessionToken();
+    if (!token) return;
 
     let updatedList = currentPeerList.filter((_, i) => i !== idx);
 
@@ -1395,7 +1457,7 @@ async function deletePeer(idx) {
         const res = await fetch('./api/content.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type: 'peer_recognitions', items: updatedList })
+            body: JSON.stringify({ session_token: token, type: 'peer_recognitions', items: updatedList })
         });
         if ((await res.json()).success) {
             toast('ðŸ—‘ï¸ Recognition block deleted.', 'success');
@@ -1467,42 +1529,7 @@ function toast(msg, type = 'info', duration = 3500) {
     }, duration);
 }
 
-// Override doLogin to use new styling + toast
-document.getElementById('admin-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-document.getElementById('admin-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('admin-pass').focus(); });
-
-const _origDoLogin = doLogin;
-doLogin = async function () {
-    const btn = document.getElementById('login-btn');
-    const err = document.getElementById('login-error');
-    const u = document.getElementById('admin-user').value.trim();
-    const p = document.getElementById('admin-pass').value.trim();
-    err.style.display = 'none';
-    if (!u || !p) { err.textContent = 'Enter username and password'; err.style.display = 'block'; return; }
-    btn.textContent = 'Signing in...'; btn.disabled = true;
-    try {
-        const r = await fetch('./api/settings.php', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'check_auth', admin_pass: p })
-        });
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        const d = await r.json();
-        if (d.success) {
-            localStorage.setItem('apollo_admin_logged', 'true');
-            localStorage.setItem('apollo_admin_temp_pass', p);
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('admin-layout').style.display = 'flex';
-            loadAll();
-            toast('Welcome back, Dr. Kothari!', 'success');
-        } else {
-            err.textContent = 'Invalid credentials'; err.style.display = 'block';
-        }
-    } catch (e) {
-        err.innerHTML = `Server error: ${e.message}<br><small>Check that <b>api/settings.php</b> is uploaded to Hostinger.</small>`;
-        err.style.display = 'block';
-    }
-    btn.textContent = 'Sign In â†’'; btn.disabled = false;
-};
+// Duplicate doLogin override removed — single definition at top of file
 
 // ============================================================
 // API STATUS CHECK
@@ -1604,11 +1631,11 @@ async function loadHeroContent() {
 }
 
 async function saveHeroContent() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
-    if (!pass) { toast('Not authenticated', 'error'); return; }
+    const token = getSessionToken();
+    if (!token) { toast('Not authenticated', 'error'); return; }
     const g = id => document.getElementById(id).value;
     const body = {
-        admin_pass: pass,
+        session_token: token,
         site_name: g('hc-site-name'), hero_title: g('hc-hero-title'),
         hero_tagline: g('hc-hero-tagline'), hero_empathy: g('hc-hero-empathy'),
         hero_badge: g('hc-hero-badge'), wa_number: g('hc-wa-number'),
@@ -1662,10 +1689,10 @@ async function exportAll() {
 async function importContent() {
     const type = document.getElementById('import-type').value;
     const file = document.getElementById('import-file').files[0];
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     const status = document.getElementById('import-status');
     if (!file) { toast('Select a JSON file first', 'error'); return; }
-    if (!pass) { toast('Not authenticated', 'error'); return; }
+    if (!token) { toast('Not authenticated', 'error'); return; }
     if (!confirm(`⚠️ This will OVERWRITE all ${type} on the server. Continue?`)) return;
     try {
         const text = await file.text();
@@ -1673,7 +1700,7 @@ async function importContent() {
         if (!Array.isArray(items)) throw new Error('File must contain a JSON array');
         const r = await fetch('./api/content.php', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ admin_pass: pass, type, items })
+            body: JSON.stringify({ session_token: token, type, items })
         });
         const d = await r.json();
         if (d.success) {
@@ -1713,9 +1740,9 @@ saveMythCard = async function () {
     const stmt = document.getElementById('myth-statement').value.trim();
     const fact = document.getElementById('myth-fact').value.trim();
     const source = document.getElementById('myth-source').value.trim();
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     if (!stmt || !fact) { toast('Statement and Fact are required', 'error'); return; }
-    if (!pass) { toast('Not authenticated', 'error'); return; }
+    if (!token) { toast('Not authenticated', 'error'); return; }
     const editId = parseInt(document.getElementById('myth-edit-id').value);
     let updatedList = [...currentMyths];
     if (editId) {
@@ -1723,7 +1750,7 @@ saveMythCard = async function () {
         if (idx > -1) updatedList[idx] = { id: editId, statement: stmt, fact, source };
     } else { updatedList.push({ id: Date.now(), statement: stmt, fact, source }); }
     try {
-        const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ admin_pass: pass, type: 'myth_busters', items: updatedList }) });
+        const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_token: token, type: 'myth_busters', items: updatedList }) });
         const d = await res.json();
         if (d.success) { toast('Myth card saved!', 'success'); clearMythForm(); renderMyths(); }
         else toast('Save failed: ' + (d.error || '?'), 'error');
@@ -1735,9 +1762,9 @@ saveQuizQuestion = async function () {
     const quest = document.getElementById('q-question').value.trim();
     const optA = document.getElementById('q-a').value.trim();
     const optB = document.getElementById('q-b').value.trim();
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     if (!quest || !optA || !optB) { toast('Question and Options A & B are required', 'error'); return; }
-    if (!pass) { toast('Not authenticated', 'error'); return; }
+    if (!token) { toast('Not authenticated', 'error'); return; }
     const options = [optA, optB, document.getElementById('q-c').value.trim(), document.getElementById('q-d').value.trim()].filter(Boolean);
     const correct = parseInt(document.getElementById('q-correct').value);
     const explanation = document.getElementById('q-explanation').value.trim();
@@ -1746,7 +1773,7 @@ saveQuizQuestion = async function () {
     if (editIdx !== '') updatedBank[parseInt(editIdx)] = { q: quest, options, correct, explanation };
     else updatedBank.push({ q: quest, options, correct, explanation });
     try {
-        const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ admin_pass: pass, type: 'quiz_questions', items: updatedBank }) });
+        const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_token: token, type: 'quiz_questions', items: updatedBank }) });
         const d = await res.json();
         if (d.success) { toast('Question saved!', 'success'); clearQuizForm(); renderQuizEditor(); }
         else toast('Save failed: ' + (d.error || '?'), 'error');
@@ -1758,15 +1785,15 @@ saveResearchPaper = async function () {
     const title = document.getElementById('rp-title').value.trim();
     const journal = document.getElementById('rp-journal').value.trim();
     const year = parseInt(document.getElementById('rp-year').value);
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     if (!title || !journal || !year) { toast('Title, Journal and Year are required', 'error'); return; }
-    if (!pass) { toast('Not authenticated', 'error'); return; }
+    if (!token) { toast('Not authenticated', 'error'); return; }
     const editId = parseInt(document.getElementById('rp-edit-id').value);
     const newPaper = { id: editId || Date.now(), title, journal, year, topic: document.getElementById('rp-topic').value, doi: document.getElementById('rp-doi').value.trim(), takeaway: document.getElementById('rp-takeaway').value.trim(), practice: document.getElementById('rp-practice').value.trim() };
     let updatedList = [...currentResearchList];
     if (editId) { const idx = updatedList.findIndex(p => p.id === editId); if (idx > -1) updatedList[idx] = newPaper; } else updatedList.push(newPaper);
     try {
-        const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ admin_pass: pass, type: 'research_papers', items: updatedList }) });
+        const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_token: token, type: 'research_papers', items: updatedList }) });
         const d = await res.json();
         if (d.success) { toast('Research paper saved!', 'success'); clearResearchForm(); renderResearch(); }
         else toast('Save failed: ' + (d.error || '?'), 'error');
@@ -1856,8 +1883,8 @@ window.uploadSiteImage = async function (type, inputId) {
         return;
     }
 
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
-    if (!pass) {
+    const token = getSessionToken();
+    if (!token) {
         toast('Authentication required', 'error');
         return;
     }
@@ -1865,7 +1892,7 @@ window.uploadSiteImage = async function (type, inputId) {
     const formData = new FormData();
     formData.append('image', fileInput.files[0]);
     formData.append('type', type);
-    formData.append('admin_pass', pass);
+    formData.append('session_token', token);
 
     const btn = fileInput.closest('.editor-card').querySelector('button');
     const originalText = btn.textContent;
@@ -1895,87 +1922,34 @@ window.uploadSiteImage = async function (type, inputId) {
         btn.disabled = false;
     }
 };
-// ============================================================
-// AUTH & SESSION
-// ============================================================
-window.doLogin = async function () {
-    const u = document.getElementById('admin-user').value.trim();
-    const p = document.getElementById('admin-pass').value.trim();
-    const err = document.getElementById('login-error');
-    if (!u || !p) { err.textContent = 'Enter username and password'; err.style.display = 'block'; return; }
+// Duplicate doLogin/doLogout/loadCurrentSettings removed — single definitions at top of file
 
-    try {
-        const r = await fetch('./api/settings.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'check_auth', admin_pass: p })
-        });
-        if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
-        const d = await r.json();
-        if (d.success) {
-            localStorage.setItem('apollo_admin_logged', 'true');
-            localStorage.setItem('apollo_admin_temp_pass', p);
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('admin-layout').style.display = 'flex';
-            loadAll();
-        } else {
-            err.textContent = 'Invalid credentials'; err.style.display = 'block';
-        }
-    } catch (e) {
-        console.error('Auth Error:', e);
-        err.innerHTML = `Server error: ${e.message}<br><small>Check if <b>api/settings.php</b> was uploaded to Hostinger.</small>`;
-        err.style.display = 'block';
-    }
-};
-
-window.doLogout = function () {
-    localStorage.removeItem('apollo_admin_logged');
-    localStorage.removeItem('apollo_admin_temp_pass');
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('admin-layout').style.display = 'none';
-    document.getElementById('admin-user').value = '';
-    document.getElementById('admin-pass').value = '';
-};
-
-// ============================================================
-// SITE SETTINGS
-// ============================================================
-window.loadCurrentSettings = async function () {
-    try {
-        const r = await fetch('./api/settings.php');
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        const s = await r.json();
-
-        const map = {
-            'st-wa-number': s.wa_number,
-            'st-icu-phone': s.icu_phone,
-            'st-wa-message': s.wa_message,
-            'st-site-name': s.site_name,
-            'st-hero-title': s.hero_title,
-            'st-hero-tagline': s.hero_tagline,
-            'st-hero-empathy': s.hero_empathy,
-            'st-admin-user': s.admin_user
-        };
-
-        for (const [id, val] of Object.entries(map)) {
-            const el = document.getElementById(id);
-            if (el) el.value = val || '';
-        }
-    } catch (err) { console.error('Error loading settings:', err); }
-};
-
-// Auto-run on load if logged in
-document.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('apollo_admin_logged') === 'true') {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('admin-layout').style.display = 'flex';
-        loadAll();
+// Auto-run on load: validate session with server before showing admin
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = getSessionToken();
+    if (token && localStorage.getItem('apollo_admin_logged') === 'true') {
+        // Validate token with server
+        try {
+            const r = await fetch('./api/settings.php?action=check_auth', {
+                headers: { 'X-Admin-Token': token }
+            });
+            if (r.ok) {
+                const d = await r.json();
+                if (d.success) {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('admin-layout').style.display = 'flex';
+                    loadAll();
+                    return;
+                }
+            }
+        } catch (e) { /* Server unreachable - show login */ }
+        // Token invalid - clear and show login
+        clearSession();
     }
 
-    // Auth Enter Listeners
+    // Auth Enter Listeners (registered once)
     const pField = document.getElementById('admin-pass');
     if (pField) pField.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-
     const uField = document.getElementById('admin-user');
     if (uField) uField.addEventListener('keydown', e => { if (e.key === 'Enter') pField.focus(); });
 });
@@ -1987,9 +1961,9 @@ document.addEventListener('DOMContentLoaded', () => {
 let diyaCache = [];
 
 async function adminLoadDiyas() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
-        const res = await fetch('./api/diya.php?action=admin&admin_pass=' + encodeURIComponent(pass));
+        const res = await fetch('./api/diya.php?action=admin', { headers: { 'X-Admin-Token': getSessionToken() } });
         const data = await res.json();
         if (!data.success) { toast('Failed to load diyas: ' + (data.error || ''), 'error'); return; }
         diyaCache = data.data || [];
@@ -2035,12 +2009,12 @@ function renderDiyaTable() {
 
 async function adminDiyaAction(action, id) {
     if (action === 'delete' && !confirm('Delete this diya permanently?')) return;
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
         const res = await fetch('./api/diya.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action, id, admin_pass: pass })
+            body: JSON.stringify({ action, id, session_token: token })
         });
         const data = await res.json();
         if (data.success) { toast(action === 'delete' ? 'Diya removed' : 'Diya ' + action + 'd', 'success'); adminLoadDiyas(); }
@@ -2054,12 +2028,12 @@ async function adminAddDiya() {
     const litBy = document.getElementById('admin-diya-litby')?.value.trim();
     if (!name) { toast('Enter a name for the diya', 'error'); return; }
 
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
         const res = await fetch('./api/diya.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'light', name, prayer, lit_by: litBy, admin_pass: pass })
+            body: JSON.stringify({ action: 'light', name, prayer, lit_by: litBy, session_token: token })
         });
         const data = await res.json();
         if (data.success) {
@@ -2138,7 +2112,7 @@ function renderDiyaTableFiltered(diyas) {
 let quotesAdminCache = [];
 
 async function adminLoadQuotes() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
         const res = await fetch('./api/diya.php?action=get_quotes');
         const data = await res.json();
@@ -2177,12 +2151,12 @@ async function adminAddQuote() {
     const author = document.getElementById('admin-quote-author')?.value.trim();
     if (!text) { toast('Enter quote text', 'error'); return; }
 
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
         const res = await fetch('./api/diya.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'add_quote', text, author, admin_pass: pass })
+            body: JSON.stringify({ action: 'add_quote', text, author, session_token: token })
         });
         const data = await res.json();
         if (data.success) {
@@ -2195,12 +2169,12 @@ async function adminAddQuote() {
 
 async function adminDeleteQuote(id) {
     if (!confirm('Delete this quote?')) return;
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
         const res = await fetch('./api/diya.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'delete_quote', id, admin_pass: pass })
+            body: JSON.stringify({ action: 'delete_quote', id, session_token: token })
         });
         const data = await res.json();
         if (data.success) { toast('Quote removed', 'success'); adminLoadQuotes(); }
@@ -2234,9 +2208,9 @@ function switchMemoryTab(tab) {
 // ── HEALING STORIES ──────────────────────────────────────────
 
 async function adminLoadStories() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
-        const res = await fetch('./api/memories.php?type=healing_stories&action=admin&admin_pass=' + encodeURIComponent(pass));
+        const res = await fetch('./api/memories.php?type=healing_stories&action=admin', { headers: { 'X-Admin-Token': token } });
         const data = await res.json();
         if (!data.success) return;
         storiesCache = data.data || [];
@@ -2299,7 +2273,7 @@ function editStory(id) {
 }
 
 async function saveStory() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     const getVal = id => document.getElementById(id)?.value.trim() || '';
     const editId = getVal('mem-story-edit-id');
 
@@ -2322,7 +2296,7 @@ async function saveStory() {
         const res = await fetch('./api/memories.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'save', type: 'healing_stories', item, admin_pass: pass })
+            body: JSON.stringify({ action: 'save', type: 'healing_stories', item, session_token: token })
         });
         const data = await res.json();
         if (data.success) { toast('Story saved!', 'success'); clearStoryForm(); adminLoadStories(); }
@@ -2339,9 +2313,9 @@ function clearStoryForm() {
 // ── GRATITUDE NOTES ──────────────────────────────────────────
 
 async function adminLoadNotes() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
-        const res = await fetch('./api/memories.php?type=gratitude_notes&action=admin&admin_pass=' + encodeURIComponent(pass));
+        const res = await fetch('./api/memories.php?type=gratitude_notes&action=admin', { headers: { 'X-Admin-Token': token } });
         const data = await res.json();
         if (!data.success) return;
         notesCache = data.data || [];
@@ -2388,7 +2362,7 @@ function renderNotesTable() {
 }
 
 async function saveNote() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     const getVal = id => document.getElementById(id)?.value.trim() || '';
 
     const item = {
@@ -2404,7 +2378,7 @@ async function saveNote() {
         const res = await fetch('./api/memories.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'save', type: 'gratitude_notes', item, admin_pass: pass })
+            body: JSON.stringify({ action: 'save', type: 'gratitude_notes', item, session_token: token })
         });
         const data = await res.json();
         if (data.success) { toast('Note saved!', 'success'); clearNoteForm(); adminLoadNotes(); }
@@ -2421,9 +2395,9 @@ function clearNoteForm() {
 // ── MEMORY PHOTOS ────────────────────────────────────────────
 
 async function adminLoadMemoryPhotos() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
-        const res = await fetch('./api/memories.php?type=memory_photos&action=admin&admin_pass=' + encodeURIComponent(pass));
+        const res = await fetch('./api/memories.php?type=memory_photos&action=admin', { headers: { 'X-Admin-Token': token } });
         const data = await res.json();
         if (!data.success) return;
         memPhotosCache = data.data || [];
@@ -2485,7 +2459,7 @@ function previewMemoryPhoto(input) {
 }
 
 async function uploadMemoryPhoto() {
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     const getVal = id => document.getElementById(id)?.value.trim() || '';
     const fileInput = document.getElementById('mem-photo-file');
 
@@ -2505,7 +2479,7 @@ async function uploadMemoryPhoto() {
             const res = await fetch('./api/memories.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'save', type: 'memory_photos', item, admin_pass: pass })
+                body: JSON.stringify({ action: 'save', type: 'memory_photos', item, session_token: token })
             });
             const data = await res.json();
             if (data.success) { toast('Photo uploaded!', 'success'); clearPhotoForm(); adminLoadMemoryPhotos(); }
@@ -2529,12 +2503,12 @@ function clearPhotoForm() {
 
 async function memoryAction(type, action, id) {
     if (action === 'delete' && !confirm('Delete this item permanently?')) return;
-    const pass = localStorage.getItem('apollo_admin_temp_pass') || '';
+    const token = getSessionToken();
     try {
         const res = await fetch('./api/memories.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action, type, id, admin_pass: pass })
+            body: JSON.stringify({ action, type, id, session_token: token })
         });
         const data = await res.json();
         if (data.success) {
@@ -2546,7 +2520,4 @@ async function memoryAction(type, action, id) {
     } catch (e) { toast('Error', 'error'); }
 }
 
-// ── HTML Escape helper (if not already defined) ──
-if (typeof escH === 'undefined') {
-    function escH(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
-}
+// escH() defined at the top of this file

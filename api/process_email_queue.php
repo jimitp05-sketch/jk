@@ -9,6 +9,12 @@
  * On Hostinger: Set up via hPanel → Advanced → Cron Jobs
  */
 
+if (php_sapi_name() !== 'cli') {
+    http_response_code(403);
+    echo 'This script can only be run from the command line.';
+    exit(1);
+}
+
 $config = require __DIR__ . '/config.php';
 
 try {

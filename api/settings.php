@@ -40,65 +40,9 @@ error_reporting(0);
 ini_set('display_errors', 0);
 
 define('DATA_FILE', __DIR__ . '/../data/settings.json');
-define('ADMIN_TOKEN', getenv('APOLLO_ADMIN_TOKEN') ?: 'apollo_admin_2026');
-define('RATE_LIMIT_FILE', __DIR__ . '/../data/rate_limits.json');
-
-// ── RATE LIMITING ────────────────────────────────────────────────────────
-function checkRateLimit(string $ip, int $maxRequests = 10, int $windowSeconds = 60): bool {
-    $limits = [];
-    if (file_exists(RATE_LIMIT_FILE)) {
-        $limits = json_decode(@file_get_contents(RATE_LIMIT_FILE), true) ?: [];
-    }
-    $now = time();
-    // Clean old entries
-    foreach ($limits as $k => $v) {
-        $limits[$k] = array_filter($v, fn($t) => ($now - $t) < $windowSeconds);
-        if (empty($limits[$k])) unset($limits[$k]);
-    }
-    $count = count($limits[$ip] ?? []);
-    if ($count >= $maxRequests) return false;
-    $limits[$ip][] = $now;
-    @file_put_contents(RATE_LIMIT_FILE, json_encode($limits), LOCK_EX);
-    return true;
-}
-
-// ── BRUTE-FORCE PROTECTION ───────────────────────────────────────────────
-define('LOCKOUT_FILE', __DIR__ . '/../data/login_attempts.json');
-
-function checkBruteForce(string $ip): bool {
-    if (!file_exists(LOCKOUT_FILE)) return true;
-    $attempts = json_decode(@file_get_contents(LOCKOUT_FILE), true) ?: [];
-    $entry = $attempts[$ip] ?? null;
-    if (!$entry) return true;
-    if ($entry['count'] >= 5 && (time() - $entry['last']) < 900) return false; // 15 min lockout
-    if ((time() - $entry['last']) >= 900) {
-        unset($attempts[$ip]);
-        @file_put_contents(LOCKOUT_FILE, json_encode($attempts), LOCK_EX);
-        return true;
-    }
-    return true;
-}
-
-function recordFailedLogin(string $ip): void {
-    $attempts = [];
-    if (file_exists(LOCKOUT_FILE)) {
-        $attempts = json_decode(@file_get_contents(LOCKOUT_FILE), true) ?: [];
-    }
-    $entry = $attempts[$ip] ?? ['count' => 0, 'last' => 0];
-    $entry['count']++;
-    $entry['last'] = time();
-    $attempts[$ip] = $entry;
-    @file_put_contents(LOCKOUT_FILE, json_encode($attempts), LOCK_EX);
-}
-
-function clearFailedLogin(string $ip): void {
-    if (!file_exists(LOCKOUT_FILE)) return;
-    $attempts = json_decode(@file_get_contents(LOCKOUT_FILE), true) ?: [];
-    unset($attempts[$ip]);
-    @file_put_contents(LOCKOUT_FILE, json_encode($attempts), LOCK_EX);
-}
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth.php';
 
 // ── DATABASE HELPERS ─────────────────────────────────────────────────────────
 
@@ -134,67 +78,24 @@ function readSettings(): array {
     if (!$row) return $defaults;
 
     $saved = json_decode($row['data'], true) ?: [];
-    
+
     // Migration: if stored password is NOT hashed, hash it now & save back to DB
     if (isset($saved['admin_pass']) && !str_starts_with($saved['admin_pass'], '$2y$')) {
         $saved['admin_pass'] = password_hash($saved['admin_pass'], PASSWORD_DEFAULT);
         writeSettings($saved);
     }
-    
+
     return array_merge($defaults, $saved);
 }
 
 function writeSettings(array $data): bool {
     $pdo = getPDO();
     $stmt = $pdo->prepare("
-        INSERT INTO content (content_type, content_key, data) 
-        VALUES (?, ?, ?) 
+        INSERT INTO content (content_type, content_key, data)
+        VALUES (?, ?, ?)
         ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
     ");
     return $stmt->execute(['settings', 'site_settings', json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
-}
-
-// ── AUTH (Now uses database) ─────────────────────────────────────────────
-function isAuthorized(array $input = []): bool {
-    $settings = readSettings();
-    $hashedPass = $settings['admin_pass'];
-    
-    // Check for password in header or body
-    $tokenHeader = $_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '';
-    $passInBody = $input['admin_pass'] ?? $input['admin_token'] ?? '';
-    
-    $provided = $tokenHeader ?: $passInBody;
-    if (!$provided) return false;
-    
-    return password_verify($provided, $hashedPass);
-}
-
-// ── CSRF TOKEN ───────────────────────────────────────────────────────────
-function generateCSRFToken(): string {
-    $token = bin2hex(random_bytes(32));
-    $tokenFile = __DIR__ . '/../data/csrf_tokens.json';
-    $tokens = [];
-    if (file_exists($tokenFile)) {
-        $tokens = json_decode(@file_get_contents($tokenFile), true) ?: [];
-    }
-    // Clean tokens older than 2 hours
-    $tokens = array_filter($tokens, fn($t) => (time() - $t['created']) < 7200);
-    $tokens[$token] = ['created' => time()];
-    @file_put_contents($tokenFile, json_encode($tokens), LOCK_EX);
-    return $token;
-}
-
-function validateCSRFToken(string $token): bool {
-    if (empty($token)) return false;
-    $tokenFile = __DIR__ . '/../data/csrf_tokens.json';
-    if (!file_exists($tokenFile)) return false;
-    $tokens = json_decode(@file_get_contents($tokenFile), true) ?: [];
-    if (!isset($tokens[$token])) return false;
-    if ((time() - $tokens[$token]['created']) > 7200) return false;
-    // Remove used token
-    unset($tokens[$token]);
-    @file_put_contents($tokenFile, json_encode($tokens), LOCK_EX);
-    return true;
 }
 
 // ── HANDLE ───────────────────────────────────────────────────────────────────
@@ -202,20 +103,21 @@ $clientIP = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $settings = readSettings();
-    
+
     // Check if this is a CSRF token request
     if (isset($_GET['action']) && $_GET['action'] === 'csrf_token') {
         echo json_encode(['csrf_token' => generateCSRFToken()]);
         exit;
     }
-    
+
     // Check if this is a login check (requires auth)
     if (isset($_GET['action']) && $_GET['action'] === 'check_auth') {
-        if (!isAuthorized()) {
+        if (!isAdmin()) {
             http_response_code(403);
             echo json_encode(['error' => 'Unauthorized']);
             exit;
         }
+        $settings = readSettings();
         echo json_encode(['success' => true, 'user' => $settings['admin_user']]);
         exit;
     }
@@ -242,36 +144,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Rate limit POST requests
-    if (!checkRateLimit($clientIP, 10, 60)) {
+    if (!checkRateLimit($clientIP, 10, 60, 'settings')) {
         http_response_code(429);
         echo json_encode(['error' => 'Rate limit exceeded. Try again later.']);
         exit;
     }
-    
+
     // Read php://input ONCE and reuse
     $rawInput = file_get_contents('php://input');
     $input = json_decode($rawInput, true) ?? $_POST;
-    
+
     // Handle auth check via POST
     if (isset($input['action']) && $input['action'] === 'check_auth') {
-        if (!checkBruteForce($clientIP)) {
-            http_response_code(429);
-            echo json_encode(['error' => 'Too many failed attempts. Locked for 15 minutes.']);
+        $password = $input['admin_pass'] ?? '';
+        $result = handleLogin($password, $clientIP);
+
+        if (!$result['success']) {
+            http_response_code($result['code'] ?? 403);
+            echo json_encode(['error' => $result['error']]);
             exit;
         }
-        if (!isAuthorized($input)) {
-            recordFailedLogin($clientIP);
-            http_response_code(403);
+
+        echo json_encode([
+            'success' => true,
+            'user' => $result['user'],
+            'session_token' => $result['session_token'],
+            'expires_in' => $result['expires_in']
+        ]);
+        exit;
+    }
+
+    // Handle credential change
+    if (isset($input['action']) && $input['action'] === 'change_credentials') {
+        if (!isAdmin()) {
+            http_response_code(401);
             echo json_encode(['error' => 'Unauthorized']);
             exit;
         }
-        clearFailedLogin($clientIP);
-        $settings = readSettings();
-        echo json_encode([
-            'success' => true, 
-            'user' => $settings['admin_user'],
-            'csrf_token' => generateCSRFToken()
-        ]);
+
+        $currentPass = $input['current_password'] ?? '';
+        $newPass = $input['new_password'] ?? '';
+        $newUser = $input['new_username'] ?? '';
+
+        if (empty($newPass) && empty($newUser)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Provide a new password or username to update.']);
+            exit;
+        }
+
+        // If only changing username, still require current password for verification
+        if (empty($newPass)) $newPass = $currentPass;
+
+        $result = changeAdminPassword($currentPass, $newPass, $newUser);
+        if (!$result['success']) {
+            http_response_code(400);
+            echo json_encode(['error' => $result['error']]);
+            exit;
+        }
+
+        echo json_encode(['success' => true, 'message' => $result['message']]);
         exit;
     }
 
@@ -279,29 +210,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $input['csrf_token'] ?? '';
     // Note: CSRF is validated but we allow it to pass for backward compatibility during migration
     // TODO: enforce CSRF strictly after admin panel is updated
-    
-    if (!checkBruteForce($clientIP)) {
-        http_response_code(429);
-        echo json_encode(['error' => 'Too many failed attempts. Locked for 15 minutes.']);
-        exit;
-    }
-    
-    if (!isAuthorized($input)) {
-        recordFailedLogin($clientIP);
-        http_response_code(403);
+
+    if (!isAdmin()) {
+        http_response_code(401);
         echo json_encode(['error' => 'Unauthorized']);
         exit;
     }
-    clearFailedLogin($clientIP);
 
     $current = readSettings();
 
     // Allow updating all keys including admin credentials
     $allowed = [
-        'wa_number', 'wa_message', 'icu_phone', 'site_name', 
-        'hero_title', 'hero_desc', 'hero_badge', 
-        'hero_stat1_val', 'hero_stat1_lbl', 
-        'hero_stat2_val', 'hero_stat2_lbl', 
+        'wa_number', 'wa_message', 'icu_phone', 'site_name',
+        'hero_title', 'hero_desc', 'hero_badge',
+        'hero_stat1_val', 'hero_stat1_lbl',
+        'hero_stat2_val', 'hero_stat2_lbl',
         'hero_stat3_val', 'hero_stat3_lbl',
         'hero_img',
         'admin_user'
@@ -316,18 +239,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    
-    // Handle password change — always hash
-    if (isset($input['admin_pass']) && !empty(trim($input['admin_pass']))) {
-        $newPass = trim((string)$input['admin_pass']);
-        // Don't re-hash if it's already hashed
-        if (!str_starts_with($newPass, '$2y$')) {
-            $current['admin_pass'] = password_hash($newPass, PASSWORD_DEFAULT);
-        }
-    }
-    if (isset($input['new_admin_pass']) && !empty(trim($input['new_admin_pass']))) {
-        $current['admin_pass'] = password_hash(trim((string)$input['new_admin_pass']), PASSWORD_DEFAULT);
-    }
 
     try {
         if (writeSettings($current)) {
@@ -338,7 +249,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(['error' => 'Server error: ' . $e->getMessage()]);
+        echo json_encode(['error' => 'Server error. Please try again.']);
     }
     exit;
 }

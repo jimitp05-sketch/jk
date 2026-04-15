@@ -218,10 +218,17 @@
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // Simulated booked slots (from localStorage / admin panel)
-        function getBookedSlots() {
-            try { return JSON.parse(localStorage.getItem('apollo_bookings') || '{}'); } catch { return {}; }
+        let cachedBookedSlots = {};
+        async function fetchBookedSlots(yearMonth) {
+            try {
+                const res = await fetch(`api/booking.php?month=${yearMonth}`);
+                const data = await res.json();
+                if (data.success) cachedBookedSlots = data.booked_slots || {};
+                else cachedBookedSlots = {};
+            } catch { cachedBookedSlots = {}; }
+            return cachedBookedSlots;
         }
+        function getBookedSlots() { return cachedBookedSlots; }
 
         const ALL_SLOTS = ['2:00 PM', '2:20 PM', '2:40 PM', '3:00 PM', '3:20 PM', '3:40 PM', '4:00 PM'];
 
@@ -229,9 +236,11 @@
             return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][m];
         }
 
-        function renderCalendar() {
+        async function renderCalendar() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
+            const yearMonth = `${year}-${String(month + 1).padStart(2, '0')}`;
+            await fetchBookedSlots(yearMonth);
             document.getElementById('cal-month-label').textContent = `${monthName(month)} ${year}`;
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -274,6 +283,14 @@
             renderSlots();
         }
 
+        function timeToSlotLabel(time24) {
+            const [h, m] = time24.split(':');
+            const hour = parseInt(h);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const h12 = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+            return `${h12}:${m} ${ampm}`;
+        }
+
         function renderSlots() {
             if (!selectedDate) { document.getElementById('slots-grid').innerHTML = ''; return; }
             const bookedSlots = getBookedSlots();
@@ -282,7 +299,7 @@
             const dateLabel = `${parseInt(d)} ${monthName(parseInt(m) - 1)} ${y}`;
             document.getElementById('slots-title').textContent = `Available slots — ${dateLabel}`;
             const html = ALL_SLOTS.map(s => {
-                const isBooked = booked.includes(s);
+                const isBooked = booked.some(t => timeToSlotLabel(t) === s || t === s);
                 const isSelected = selectedSlot === s;
                 let cls = 'slot-btn';
                 if (isBooked) cls += ' booked';

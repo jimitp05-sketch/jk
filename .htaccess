@@ -16,6 +16,19 @@
     Require all denied
 </Files>
 
+# Block direct access to admin panels directory
+<Files "*.php">
+    # Allow PHP execution normally
+</Files>
+<DirectoryMatch "^.*/admin/panels">
+    Require all denied
+</DirectoryMatch>
+
+# Block access to auth tokens and rate limit data
+<FilesMatch "\.(json)$">
+    Require all denied
+</FilesMatch>
+
 # ── PERFORMANCE: Browser Caching ──
 <IfModule mod_expires.c>
     ExpiresActive On
@@ -38,4 +51,7 @@
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set X-XSS-Protection "1; mode=block"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 </IfModule>

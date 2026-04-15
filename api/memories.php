@@ -38,6 +38,7 @@ header('X-Frame-Options: DENY');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth.php';
 
 $VALID_TYPES = ['healing_stories', 'gratitude_notes', 'memory_photos'];
 
@@ -47,11 +48,9 @@ function respond(array $payload, int $code = 200): void {
     exit;
 }
 
-function getPDO() { return get_db_connection(); }
-
 // ── READ / WRITE ─────────────────────────────────────────────────────────
 function readItems(string $type): array {
-    $pdo = getPDO();
+    $pdo = get_db_connection();
     $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = ? LIMIT 1");
     $stmt->execute([$type]);
     $row = $stmt->fetch();
@@ -59,48 +58,13 @@ function readItems(string $type): array {
 }
 
 function writeItems(string $type, array $items): bool {
-    $pdo = getPDO();
+    $pdo = get_db_connection();
     $stmt = $pdo->prepare("
         INSERT INTO content (content_type, content_key, data)
         VALUES ('community', ?, ?)
         ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
     ");
     return $stmt->execute([$type, json_encode($items, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
-}
-
-// ── AUTH ──────────────────────────────────────────────────────────────────
-function isAdmin(array $input = []): bool {
-    $pdo = getPDO();
-    $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'site_settings' LIMIT 1");
-    $stmt->execute();
-    $row = $stmt->fetch();
-    if (!$row) return false;
-    $st = json_decode($row['data'], true);
-    $savedPass = $st['admin_pass'] ?? '';
-    $provided = $input['admin_pass'] ?? $input['admin_token'] ?? $_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '';
-    if (empty($provided)) return false;
-    if (str_starts_with($savedPass, '$2y$') || str_starts_with($savedPass, '$argon2id$')) {
-        return password_verify($provided, $savedPass);
-    }
-    return $provided === $savedPass;
-}
-
-// ── RATE LIMITING ────────────────────────────────────────────────────────
-function checkSubmitLimit(string $ip): bool {
-    $file = __DIR__ . '/../data/memories_rate_limits.json';
-    $limits = [];
-    if (file_exists($file)) {
-        $limits = json_decode(@file_get_contents($file), true) ?: [];
-    }
-    $now = time();
-    foreach ($limits as $k => $v) {
-        $limits[$k] = array_filter($v, fn($t) => ($now - $t) < 3600); // 1 hour window
-        if (empty($limits[$k])) unset($limits[$k]);
-    }
-    if (count($limits[$ip] ?? []) >= 5) return false; // max 5 submissions per hour
-    $limits[$ip][] = $now;
-    @file_put_contents($file, json_encode($limits), LOCK_EX);
-    return true;
 }
 
 // ── SANITIZER ────────────────────────────────────────────────────────────
@@ -141,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Admin view: return all
     if ($action === 'admin') {
-        if (!isAdmin($_GET)) {
+        if (!isAdmin()) {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
         respond(['success' => true, 'data' => $items]);
@@ -168,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             respond(['success' => false, 'error' => 'Invalid type'], 400);
         }
 
-        if (!checkSubmitLimit($clientIP)) {
+        if (!checkRateLimit($clientIP, 5, 3600, 'memories')) {
             respond(['success' => false, 'error' => 'Too many submissions. Please try again later.'], 429);
         }
 
@@ -235,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── ADMIN: Approve / Reject / Delete ──────────────────────────────────
     if (in_array($action, ['approve', 'reject', 'delete'])) {
-        if (!isAdmin($input)) {
+        if (!isAdmin()) {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
 
@@ -274,7 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── ADMIN: Save (create or edit) ──────────────────────────────────────
     if ($action === 'save') {
-        if (!isAdmin($input)) {
+        if (!isAdmin()) {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
 
@@ -308,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── ADMIN: Bulk update ────────────────────────────────────────────────
     if ($action === 'bulk_update') {
-        if (!isAdmin($input)) {
+        if (!isAdmin()) {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
         if (!in_array($type, $VALID_TYPES, true)) {

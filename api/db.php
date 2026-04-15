@@ -28,6 +28,7 @@ function get_db_connection() {
     } catch (PDOException $e) {
         // Log error and return null or throw depending on context
         // In API context, we'll throw to be caught by the handler
-        throw new Exception("Database connection failed: " . $e->getMessage());
+        error_log("Database connection failed: " . $e->getMessage());
+        throw new Exception("Database connection failed. Please try again later.");
     }
 }

@@ -36,6 +36,7 @@ header('X-Frame-Options: DENY');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth.php';
 
 function respond(array $payload, int $code = 200): void {
     http_response_code($code);
@@ -43,11 +44,9 @@ function respond(array $payload, int $code = 200): void {
     exit;
 }
 
-function getPDO() { return get_db_connection(); }
-
 // ── READ / WRITE DIYAS ──────────────────────────────────────────────────
 function readDiyas(): array {
-    $pdo = getPDO();
+    $pdo = get_db_connection();
     $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'diyas' LIMIT 1");
     $stmt->execute();
     $row = $stmt->fetch();
@@ -55,7 +54,7 @@ function readDiyas(): array {
 }
 
 function writeDiyas(array $diyas): bool {
-    $pdo = getPDO();
+    $pdo = get_db_connection();
     $stmt = $pdo->prepare("
         INSERT INTO content (content_type, content_key, data)
         VALUES ('community', 'diyas', ?)
@@ -66,7 +65,7 @@ function writeDiyas(array $diyas): bool {
 
 // ── READ / WRITE QUOTES ─────────────────────────────────────────────────
 function readQuotes(): array {
-    $pdo = getPDO();
+    $pdo = get_db_connection();
     $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'diya_quotes' LIMIT 1");
     $stmt->execute();
     $row = $stmt->fetch();
@@ -74,48 +73,13 @@ function readQuotes(): array {
 }
 
 function writeQuotes(array $quotes): bool {
-    $pdo = getPDO();
+    $pdo = get_db_connection();
     $stmt = $pdo->prepare("
         INSERT INTO content (content_type, content_key, data)
         VALUES ('community', 'diya_quotes', ?)
         ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
     ");
     return $stmt->execute([json_encode($quotes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
-}
-
-// ── AUTH CHECK ───────────────────────────────────────────────────────────
-function isAdmin(array $input = []): bool {
-    $pdo = getPDO();
-    $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'site_settings' LIMIT 1");
-    $stmt->execute();
-    $row = $stmt->fetch();
-    if (!$row) return false;
-    $st = json_decode($row['data'], true);
-    $savedPass = $st['admin_pass'] ?? '';
-    $provided = $input['admin_pass'] ?? $input['admin_token'] ?? $_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '';
-    if (empty($provided)) return false;
-    if (str_starts_with($savedPass, '$2y$') || str_starts_with($savedPass, '$argon2id$')) {
-        return password_verify($provided, $savedPass);
-    }
-    return $provided === $savedPass;
-}
-
-// ── RATE LIMITING (for public diya lighting) ─────────────────────────────
-function checkDiyaRateLimit(string $ip, int $max = 5, int $window = 300): bool {
-    $file = __DIR__ . '/../data/diya_rate_limits.json';
-    $limits = [];
-    if (file_exists($file)) {
-        $limits = json_decode(@file_get_contents($file), true) ?: [];
-    }
-    $now = time();
-    foreach ($limits as $k => $v) {
-        $limits[$k] = array_filter($v, fn($t) => ($now - $t) < $window);
-        if (empty($limits[$k])) unset($limits[$k]);
-    }
-    if (count($limits[$ip] ?? []) >= $max) return false;
-    $limits[$ip][] = $now;
-    @file_put_contents($file, json_encode($limits), LOCK_EX);
-    return true;
 }
 
 // ── INPUT SANITIZER ──────────────────────────────────────────────────────
@@ -152,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Admin: all diyas (including pending)
     if ($action === 'admin') {
-        if (!isAdmin($_GET)) {
+        if (!isAdmin()) {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
         respond(['success' => true, 'data' => $diyas]);
@@ -183,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ── PUBLIC: Light a Diya ──────────────────────────────────────────────
     if ($action === 'light') {
         // Rate limit: 5 diyas per 5 minutes per IP
-        if (!checkDiyaRateLimit($clientIP)) {
+        if (!checkRateLimit($clientIP, 5, 300, 'diya')) {
             respond(['success' => false, 'error' => 'You can light up to 5 diyas every 5 minutes. Please wait.'], 429);
         }
 
@@ -220,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── ADMIN: Approve / Reject / Delete ──────────────────────────────────
     if (in_array($action, ['approve', 'reject', 'delete'])) {
-        if (!isAdmin($input)) {
+        if (!isAdmin()) {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
 
@@ -255,7 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── ADMIN: Bulk update (for import) ───────────────────────────────────
     if ($action === 'bulk_update') {
-        if (!isAdmin($input)) {
+        if (!isAdmin()) {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
         $items = $input['items'] ?? [];
@@ -268,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── ADMIN: Add Quote ─────────────────────────────────────────────────
     if ($action === 'add_quote') {
-        if (!isAdmin($input)) {
+        if (!isAdmin()) {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
 
@@ -295,7 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── ADMIN: Edit Quote ────────────────────────────────────────────────
     if ($action === 'edit_quote') {
-        if (!isAdmin($input)) {
+        if (!isAdmin()) {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
 
@@ -332,7 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── ADMIN: Delete Quote ──────────────────────────────────────────────
     if ($action === 'delete_quote') {
-        if (!isAdmin($input)) {
+        if (!isAdmin()) {
             respond(['success' => false, 'error' => 'Unauthorized'], 401);
         }
 

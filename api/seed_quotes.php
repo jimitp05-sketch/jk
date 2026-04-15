@@ -9,28 +9,10 @@
 header('Content-Type: application/json');
 require_once __DIR__ . '/db.php';
 
-// Auth check (same pattern as diya.php)
-function checkAdmin(): bool {
-    $pdo = get_db_connection();
-    $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'site_settings' LIMIT 1");
-    $stmt->execute();
-    $row = $stmt->fetch();
-    if (!$row) return false;
-    $st = json_decode($row['data'], true);
-    $savedPass = $st['admin_pass'] ?? '';
-    $provided = $_GET['admin_pass'] ?? $_POST['admin_pass'] ?? '';
-    if (empty($provided)) return false;
-    if (str_starts_with($savedPass, '$2y$') || str_starts_with($savedPass, '$argon2id$')) {
-        return password_verify($provided, $savedPass);
-    }
-    return $provided === $savedPass;
-}
-
-// Allow CLI or admin auth
-if (php_sapi_name() !== 'cli' && !checkAdmin()) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized. Pass admin_pass as query parameter.']);
-    exit;
+if (php_sapi_name() !== 'cli') {
+    http_response_code(403);
+    echo json_encode(['error' => 'This script can only be run from the command line.']);
+    exit(1);
 }
 
 $pdo = get_db_connection();

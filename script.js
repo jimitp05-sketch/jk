@@ -265,7 +265,8 @@ document.addEventListener('DOMContentLoaded', () => {
             window.cmsHydrated = true;
             if (s.hero_title) {
                 const titleEl = document.getElementById('hero-title');
-                titleEl.innerHTML = s.hero_title.replace(/\*\*(.*?)\*\*/g, '<span class="glow-text">$1</span>');
+                titleEl.innerHTML = s.hero_title.replace(/\*\*(.*?)\*\*/g, (_, match) =>
+                    `<span class="glow-text">${escapeHTML(match)}</span>`);
                 // Re-run stagger logic with new text
                 if (window.staggerHero) window.staggerHero();
             }
@@ -381,6 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const href = link.getAttribute('href');
             if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('tel:') || href.startsWith('mailto:') || link.hasAttribute('target')) return;
             link.addEventListener('click', e => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
                 e.preventDefault();
                 document.body.classList.add('page-fade-out');
                 setTimeout(() => { window.location.href = href; }, 280);

@@ -20,12 +20,42 @@ if (in_array($origin, $allowed_origins, true)) {
 } elseif (php_sapi_name() === 'cli' || strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false) {
     header('Access-Control-Allow-Origin: *');
 }
-header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
+
+// ── GET: Return booked slots for calendar ────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $month = $_GET['month'] ?? '';
+    if (!preg_match('/^\d{4}-\d{2}$/', $month)) {
+        $month = date('Y-m');
+    }
+
+    try {
+        $config = require __DIR__ . '/config.php';
+        $pdo = new PDO("mysql:host={$config['db_host']};dbname={$config['db_name']};charset=utf8mb4", $config['db_user'], $config['db_pass'], [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
+
+        $stmt = $pdo->prepare("SELECT booking_date, booking_time FROM bookings WHERE booking_date LIKE ? AND status IN ('pending', 'confirmed') AND (deleted_at IS NULL OR deleted_at = '0000-00-00 00:00:00')");
+        $stmt->execute([$month . '%']);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $slots = [];
+        foreach ($rows as $row) {
+            $slots[$row['booking_date']][] = $row['booking_time'];
+        }
+
+        echo json_encode(['success' => true, 'booked_slots' => $slots]);
+    } catch (PDOException $e) {
+        error_log('Booking slots query error: ' . $e->getMessage());
+        echo json_encode(['success' => true, 'booked_slots' => []]);
+    }
+    exit;
+}
 
 // ── RATE LIMITING ────────────────────────────────────────
 function checkBookingRateLimit(string $ip): bool {
@@ -62,6 +92,15 @@ $DB_NAME = $config['db_name'];
 $SMTP_FROM = $config['smtp_from'];
 $NOTIFY_TO = $config['notify_to'];
 
+// ── INPUT PARSING ─────────────────────────────────────────
+// Support both JSON body and form-encoded POST
+$input = $_POST;
+if (empty($input) || !isset($input['name'])) {
+    $rawBody = file_get_contents('php://input');
+    $jsonInput = json_decode($rawBody, true);
+    if (is_array($jsonInput)) $input = $jsonInput;
+}
+
 // ── INPUT VALIDATION ──────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -69,12 +108,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$name    = trim($_POST['name'] ?? '');
-$email   = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
-$phone   = trim($_POST['phone'] ?? '');
-$date    = trim($_POST['date'] ?? '');
-$time    = trim($_POST['time'] ?? '');
-$reason  = trim($_POST['reason'] ?? '');
+$name    = trim($input['name'] ?? '');
+$email   = filter_var(trim($input['email'] ?? ''), FILTER_VALIDATE_EMAIL);
+$phone   = trim($input['phone'] ?? '');
+$date    = trim($input['preferred_date'] ?? $input['date'] ?? '');
+$time    = trim($input['preferred_slot'] ?? $input['time'] ?? '');
+$reason  = trim($input['reason'] ?? '');
 
 if (!$name || !$email || !$phone || !$date || !$time) {
     http_response_code(400);
@@ -85,7 +124,7 @@ if (!$name || !$email || !$phone || !$date || !$time) {
 // ── reCAPTCHA v3 VERIFICATION (optional — activate by adding recaptcha_secret to config.php) ───
 $recaptchaSecret = $config['recaptcha_secret'] ?? '';
 if ($recaptchaSecret) {
-    $recaptchaToken = $_POST['g-recaptcha-response'] ?? '';
+    $recaptchaToken = $input['g-recaptcha-response'] ?? '';
     if (!$recaptchaToken) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'reCAPTCHA verification failed. Please try again.']);
@@ -180,6 +219,9 @@ try {
     exit;
 }
 
+// Sanitize email for headers (prevent injection)
+$safeEmail = str_replace(["\r", "\n", "%0a", "%0d"], '', $email);
+
 // ── QUEUE EMAIL: Notification to Dr. Kothari's team ──────
 $notifySubject = "New OPD Booking: $name — $date at $time";
 $notifyBody = "New booking received via AI Apollo website.\n\n"
@@ -192,7 +234,7 @@ $notifyBody = "New booking received via AI Apollo website.\n\n"
     . "Booking ID   : #$bookingId\n"
     . "Status       : Pending\n\n"
     . "Log in to admin panel to update status.";
-$notifyHeaders = "From: $SMTP_FROM\r\nReply-To: $email\r\nX-Mailer: PHP/" . phpversion();
+$notifyHeaders = "From: $SMTP_FROM\r\nReply-To: $safeEmail\r\nX-Mailer: ApolloBookings";
 
 // ── QUEUE EMAIL: Auto-reply to patient ───────────────────
 $patientSubject = "Your OPD Appointment Request — Dr. Jay Kothari, Apollo Hospitals";
@@ -209,7 +251,7 @@ $patientBody = "Dear $name,\n\n"
     . "Warm regards,\n"
     . "Dr. Jay Kothari's Office\n"
     . "AI Apollo — Critical Care, Apollo Hospitals, Ahmedabad";
-$patientHeaders = "From: $SMTP_FROM\r\nX-Mailer: PHP/" . phpversion();
+$patientHeaders = "From: $SMTP_FROM\r\nX-Mailer: ApolloBookings";
 
 // Insert into email queue (processed by cron job)
 try {

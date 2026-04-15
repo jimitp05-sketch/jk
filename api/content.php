@@ -33,6 +33,7 @@ header('X-Frame-Options: DENY');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth.php';
 
 $VALID_TYPES = ['quiz_questions', 'knowledge_articles', 'research_papers', 'myth_busters', 'peer_recognitions', 'photo_wall'];
 
@@ -45,12 +46,8 @@ function respond(array $payload, int $code = 200): void {
 
 // ── DATABASE HELPERS ─────────────────────────────────────────────────────────
 
-function getPDO() {
-    return get_db_connection();
-}
-
 function readContentFromDB(string $type = ''): array {
-    $pdo = getPDO();
+    $pdo = get_db_connection();
     if ($type) {
         $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = ? LIMIT 1");
         $stmt->execute([$type]);
@@ -67,7 +64,7 @@ function readContentFromDB(string $type = ''): array {
 }
 
 function writeContentToDB(string $type, array $data): bool {
-    $pdo = getPDO();
+    $pdo = get_db_connection();
     // Map section type to content_type column (optional categorization)
     $typeMap = [
         'quiz_questions'     => 'quiz',
@@ -85,54 +82,6 @@ function writeContentToDB(string $type, array $data): bool {
         ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
     ");
     return $stmt->execute([$contentType, $type, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
-}
-
-// ── AUTH (Centralized in settings.php or shared- remains mostly same but uses DB credentials) ───────────
-function isAuthorized(array $input = []): bool {
-    // During migration, we still read the password from settings.json or its DB equivalent
-    // Ideally, this should pull from the 'settings' row in 'content' table now.
-    $pdo = getPDO();
-    $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'site_settings' LIMIT 1");
-    $stmt->execute();
-    $row = $stmt->fetch();
-    
-    $savedPass = null;
-    if ($row) {
-        $st = json_decode($row['data'], true);
-        if (isset($st['admin_pass'])) $savedPass = $st['admin_pass'];
-    }
-    
-    // Fallback to config or default
-    if ($savedPass === null) {
-        $config = require __DIR__ . '/config.php';
-        $savedPass = $config['admin_token'] ?: password_hash('apollo2024', PASSWORD_ARGON2ID);
-    }
-    
-    $provided = $input['admin_pass'] ?? $input['admin_token'] ?? $_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '';
-    if (empty($provided)) return false;
-    
-    if (str_starts_with($savedPass, '$argon2id$') || str_starts_with($savedPass, '$2y$')) {
-        return password_verify($provided, $savedPass);
-    }
-    return $provided === $savedPass;
-}
-
-// ── RATE LIMITING ────────────────────────────────────────────────────────
-function checkRateLimit(string $ip, int $max = 10, int $window = 60): bool {
-    $file = __DIR__ . '/../data/rate_limits.json';
-    $limits = [];
-    if (file_exists($file)) {
-        $limits = json_decode(@file_get_contents($file), true) ?: [];
-    }
-    $now = time();
-    foreach ($limits as $k => $v) {
-        $limits[$k] = array_filter($v, fn($t) => ($now - $t) < $window);
-        if (empty($limits[$k])) unset($limits[$k]);
-    }
-    if (count($limits[$ip] ?? []) >= $max) return false;
-    $limits[$ip][] = $now;
-    @file_put_contents($file, json_encode($limits), LOCK_EX);
-    return true;
 }
 
 // ── HANDLE: GET ─────────────────────────────────────────────────────────────
@@ -166,12 +115,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $clientIP = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
     
     // Rate limit
-    if (!checkRateLimit($clientIP)) {
+    if (!checkRateLimit($clientIP, 10, 60, 'content')) {
         respond(['success' => false, 'data' => null, 'error' => 'Rate limit exceeded'], 429);
     }
-    
+
     $input = json_decode(file_get_contents('php://input'), true) ?? [];
-    if (!isAuthorized($input)) {
+    if (!isAdmin()) {
         respond(['success' => false, 'data' => null, 'error' => 'Unauthorized'], 401);
     }
     $type = $input['type'] ?? '';
