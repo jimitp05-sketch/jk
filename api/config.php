@@ -41,8 +41,6 @@ return [
     'smtp_from' => env('SMTP_FROM', 'bookings@foxwisdom.com'),
     'notify_to' => env('NOTIFY_TO', 'drjaykothari@gmail.com'),
 
-    'admin_token' => env('ADMIN_TOKEN', ''),
-
     // reCAPTCHA v3 (leave empty to disable)
     'recaptcha_secret'   => env('RECAPTCHA_SECRET', ''),
     'recaptcha_site_key' => env('RECAPTCHA_SITE_KEY', ''),

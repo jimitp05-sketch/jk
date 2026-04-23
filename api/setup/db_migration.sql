@@ -39,7 +39,38 @@ CREATE TABLE IF NOT EXISTS email_queue (
     INDEX idx_status_created (status, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 4. CMS content table (migrate from JSON files)
+-- 4. Auth sessions (replaces data/auth_tokens.json)
+CREATE TABLE IF NOT EXISTS auth_sessions (
+    token CHAR(64) NOT NULL PRIMARY KEY,
+    ip VARCHAR(45) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_used TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 5. Login attempts / brute-force tracking (replaces data/login_attempts.json)
+CREATE TABLE IF NOT EXISTS login_attempts (
+    ip VARCHAR(45) NOT NULL PRIMARY KEY,
+    count INT NOT NULL DEFAULT 0,
+    last_attempt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 6. CSRF tokens (replaces data/csrf_tokens.json)
+CREATE TABLE IF NOT EXISTS csrf_tokens (
+    token CHAR(64) NOT NULL PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 7. Rate limits (replaces data/rate_limits.json)
+CREATE TABLE IF NOT EXISTS rate_limits (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    prefix_ip VARCHAR(200) NOT NULL,
+    hit_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_prefix_ip_hit (prefix_ip, hit_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 8. CMS content table (migrate from JSON files)
 CREATE TABLE IF NOT EXISTS content (
     id INT AUTO_INCREMENT PRIMARY KEY,
     content_type VARCHAR(50) NOT NULL,

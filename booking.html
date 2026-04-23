@@ -17,7 +17,9 @@
             href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" />
     </noscript>
     <link rel="stylesheet" href="styles.css?v=20260414b" />
-
+    <link rel="canonical" href="https://foxwisdom.com/booking.html" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a1628'/><text x='50' y='68' font-family='system-ui' font-size='50' font-weight='700' fill='%2300d4aa' text-anchor='middle'>FK</text></svg>" />
+    <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('apollo_theme')||'light');</script>
 </head>
 
 <body>
@@ -212,6 +214,18 @@
         // ============================================================
         // BOOKING CALENDAR SYSTEM
         // ============================================================
+
+        // Fetch a CSRF token on load; refreshed after every submission attempt
+        let csrfToken = null;
+        async function fetchCsrfToken() {
+            try {
+                const res = await fetch('api/settings.php?action=csrf_token');
+                const data = await res.json();
+                csrfToken = data.csrf_token || null;
+            } catch { csrfToken = null; }
+        }
+        fetchCsrfToken();
+
         let currentDate = new Date();
         let selectedDate = null;
         let selectedSlot = null;
@@ -353,6 +367,7 @@
             submitBtn.textContent = 'Submitting...';
 
             try {
+                if (!csrfToken) await fetchCsrfToken();
                 const res = await fetch('api/booking.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -364,10 +379,12 @@
                         reason,
                         notes: document.getElementById('notes').value.trim(),
                         preferred_date: selectedDate,
-                        preferred_slot: selectedSlot
+                        preferred_slot: selectedSlot,
+                        csrf_token: csrfToken
                     })
                 });
                 const data = await res.json();
+                fetchCsrfToken(); // Refresh token for next attempt
                 if (data.success) {
                     const [y, m, d] = selectedDate.split('-');
                     document.getElementById('success-details').textContent = `${name} · ${selectedSlot} · ${parseInt(d)} ${monthName(parseInt(m) - 1)} ${y}`;

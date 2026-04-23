@@ -1,0 +1,485 @@
+
+/* ═══════════════════════════════════════════════════════════════
+   PROFESSIONAL UI/UX IMPROVEMENTS — v2.2
+   Accessibility · Motion Safety · Visual Polish · Print
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── SKIP NAVIGATION LINK ─────────────────────────────────── */
+.skip-nav {
+    position: fixed;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    padding: 12px 28px;
+    background: var(--indigo);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: top 0.25s var(--ease-out);
+    box-shadow: var(--shadow-md);
+}
+
+.skip-nav:focus,
+.skip-nav:focus-visible {
+    top: 0;
+    outline: 3px solid var(--teal);
+    outline-offset: 3px;
+}
+
+/* ── KEYBOARD FOCUS VISIBLE SYSTEM ────────────────────────── */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+:focus-visible {
+    outline: 2.5px solid var(--teal);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+a:focus-visible,
+button:focus-visible,
+.tab-btn:focus-visible,
+.platform-tab:focus-visible,
+.quiz-option:focus-visible,
+.slot-btn:focus-visible,
+.cal-day:focus-visible {
+    outline: 2.5px solid var(--teal);
+    outline-offset: 3px;
+    border-radius: 4px;
+    box-shadow: 0 0 0 5px rgba(0, 180, 216, 0.14);
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: none;
+    border-color: var(--teal) !important;
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.14) !important;
+}
+
+/* ── BACK TO TOP BUTTON ───────────────────────────────────── */
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    width: 44px;
+    height: 44px;
+    background: #fff;
+    color: var(--indigo);
+    border: 1.5px solid var(--border-mid);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 899;
+    font-size: 0.9rem;
+    line-height: 1;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease,
+                background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    pointer-events: none;
+    text-decoration: none;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+}
+
+.back-to-top:hover {
+    background: var(--indigo);
+    color: #fff;
+    border-color: var(--indigo);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+[data-theme="dark"] .back-to-top {
+    background: var(--card-bg);
+    color: var(--text-h);
+    border-color: var(--border-mid);
+}
+
+[data-theme="dark"] .back-to-top:hover {
+    background: var(--teal);
+    color: #fff;
+    border-color: var(--teal);
+}
+
+/* ── PREFERS REDUCED MOTION ───────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.1ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .reveal.visible {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .hero-word {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+    }
+
+    .fact-ticker {
+        animation: none !important;
+        overflow-x: auto;
+    }
+
+    .hero-glow-orb,
+    .hero-float-badge,
+    .ecg-line,
+    .sd-pulse,
+    .hero-badge-dot {
+        animation: none !important;
+    }
+
+    .myth-card-inner {
+        transition: none !important;
+    }
+
+    .glass-card {
+        transition: box-shadow 0.1ms, border-color 0.1ms !important;
+    }
+
+    .glass-card:hover {
+        transform: none !important;
+    }
+
+    .glass-card::after {
+        display: none;
+    }
+}
+
+/* ── MOBILE NAV BACKDROP OVERLAY ─────────────────────────── */
+.nav-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 12, 26, 0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 997;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    cursor: pointer;
+}
+
+.nav-backdrop.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+@media (max-width: 900px) {
+    .nav-backdrop {
+        display: block;
+    }
+}
+
+/* ── ENHANCED SCROLL HOOK ─────────────────────────────────── */
+.scroll-hook {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 28px;
+    position: relative;
+    overflow: hidden;
+}
+
+.scroll-hook::before,
+.scroll-hook::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border-accent));
+    max-width: 200px;
+    margin: 0 20px;
+    flex-shrink: 0;
+}
+
+.scroll-hook::after {
+    background: linear-gradient(to left, transparent, var(--border-accent));
+}
+
+.scroll-hook p {
+    font-family: var(--font-display);
+    font-size: 0.87rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    max-width: 440px;
+    letter-spacing: 0.02em;
+    line-height: 1.65;
+    position: relative;
+}
+
+[data-theme="dark"] .scroll-hook::before {
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1));
+}
+
+[data-theme="dark"] .scroll-hook::after {
+    background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.1));
+}
+
+/* ── BOOKING STEP PROGRESS INDICATOR ─────────────────────── */
+.booking-steps {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    margin: 0 0 32px;
+    padding: 28px 24px 0;
+}
+
+.booking-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    flex: 1;
+    max-width: 120px;
+}
+
+.booking-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 17px;
+    left: calc(50% + 20px);
+    right: calc(-50% + 20px);
+    height: 2px;
+    background: var(--border-light);
+    z-index: 0;
+    transition: background 0.4s ease;
+}
+
+.booking-step.completed:not(:last-child)::after {
+    background: var(--teal);
+}
+
+.booking-step.active:not(:last-child)::after {
+    background: linear-gradient(90deg, var(--teal) 0%, var(--border-light) 100%);
+}
+
+.step-circle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--border-mid);
+    background: #fff;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    transition: border-color 0.35s ease, background 0.35s ease,
+                color 0.35s ease, box-shadow 0.35s ease;
+    flex-shrink: 0;
+}
+
+.booking-step.active .step-circle {
+    border-color: var(--indigo);
+    background: var(--indigo);
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(30, 58, 95, 0.14);
+}
+
+.booking-step.completed .step-circle {
+    border-color: var(--teal);
+    background: var(--teal);
+    color: #fff;
+}
+
+.step-label {
+    font-size: 0.67rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: center;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+}
+
+.booking-step.active .step-label {
+    color: var(--indigo);
+}
+
+.booking-step.completed .step-label {
+    color: var(--teal);
+}
+
+[data-theme="dark"] .step-circle {
+    background: var(--card-bg);
+    border-color: var(--border-mid);
+}
+
+[data-theme="dark"] .booking-step.active .step-circle {
+    background: var(--indigo);
+    border-color: var(--indigo);
+}
+
+[data-theme="dark"] .booking-step.completed .step-circle {
+    background: var(--teal);
+    border-color: var(--teal);
+}
+
+/* ── IMPROVED FORM FOCUS RING ─────────────────────────────── */
+.booking-form-card input:focus,
+.booking-form-card select:focus,
+.booking-form-card textarea:focus {
+    outline: none;
+    border-color: var(--teal) !important;
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.12) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ── PRINT STYLES — Medical information pages ─────────────── */
+@media print {
+    .nav,
+    .nav-mobile,
+    .nav-backdrop,
+    .sd-wrap,
+    .back-to-top,
+    .skip-nav,
+    #scroll-progress,
+    .hero-ctas,
+    .section-cta,
+    .final-cta-section,
+    #cursor-glow,
+    #secondary-glow,
+    .hero-float-badge,
+    .scroll-hook,
+    .social-proof-strip,
+    .trust-strip {
+        display: none !important;
+    }
+
+    body {
+        color: #000 !important;
+        background: #fff !important;
+        font-size: 11pt;
+        line-height: 1.6;
+    }
+
+    .glass-card {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        background: #fff !important;
+    }
+
+    h1, h2, h3, h4 {
+        color: #000 !important;
+        -webkit-text-fill-color: #000 !important;
+    }
+
+    .glow-text {
+        background: none !important;
+        -webkit-background-clip: unset !important;
+        background-clip: unset !important;
+        -webkit-text-fill-color: #000 !important;
+        color: #000 !important;
+    }
+
+    .section {
+        padding: 32px 0 !important;
+    }
+
+    .hero {
+        min-height: auto !important;
+        padding: 24px 0 !important;
+    }
+
+    a[href^="http"]::after {
+        content: " (" attr(href) ")";
+        font-size: 8pt;
+        color: #666;
+        word-break: break-all;
+    }
+
+    a[href^="tel:"]::after,
+    a[href^="#"]::after,
+    .btn-primary::after,
+    .nav-cta::after {
+        content: none !important;
+    }
+}
+
+/* ── READING TIME BADGE ────────────────────────────────────── */
+.reading-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--bg-section);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    letter-spacing: 0.03em;
+}
+
+/* ── HERO EMERGENCY BAR ANIMATION POLISH ───────────────────── */
+.hero-emergency-bar .emergency-bar-link {
+    background-size: 200% 100%;
+    animation: emergencyBarShift 4s ease-in-out infinite;
+}
+
+@keyframes emergencyBarShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* ── CALENDAR KEYBOARD ACCESSIBILITY ─────────────────────── */
+.cal-day[data-date] {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ── SLOT BUTTON FOCUS ────────────────────────────────────── */
+.slot-btn:focus-visible {
+    outline: 2.5px solid var(--teal);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.14);
+}
+
+/* ── QUIZ OPTION KEYBOARD FOCUS ───────────────────────────── */
+.quiz-option:focus-visible {
+    outline: 2.5px solid var(--teal);
+    outline-offset: 2px;
+}
+
+/* ── NAV LINK ACTIVE UNDERLINE USING TEAL ─────────────────── */
+.nav-links a::after {
+    background: linear-gradient(90deg, var(--teal), var(--teal-deep));
+}

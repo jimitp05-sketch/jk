@@ -265,8 +265,9 @@ document.addEventListener('DOMContentLoaded', () => {
             window.cmsHydrated = true;
             if (s.hero_title) {
                 const titleEl = document.getElementById('hero-title');
-                titleEl.innerHTML = s.hero_title.replace(/\*\*(.*?)\*\*/g, (_, match) =>
-                    `<span class="glow-text">${escapeHTML(match)}</span>`);
+                // Escape the full string first, then apply bold markdown — prevents XSS from untrusted settings
+                titleEl.innerHTML = escapeHTML(s.hero_title).replace(/\*\*(.*?)\*\*/g, (_, match) =>
+                    `<span class="glow-text">${match}</span>`);
                 // Re-run stagger logic with new text
                 if (window.staggerHero) window.staggerHero();
             }

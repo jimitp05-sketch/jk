@@ -129,11 +129,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         respond(['success' => true, 'data' => $active]);
     }
 
-    // Default: all approved diyas (public)
+    // Default: approved diyas (public) with pagination
     $approved = array_values(array_filter($diyas, fn($d) => ($d['status'] ?? '') === 'approved'));
+    $total    = count($approved);
+    $perPage  = min(50, max(10, (int)($_GET['per_page'] ?? 20)));
+    $page     = max(1, (int)($_GET['page'] ?? 1));
+    $offset   = ($page - 1) * $perPage;
+    $paged    = array_slice($approved, $offset, $perPage);
     // Strip ip_hash
-    $approved = array_map(fn($d) => array_diff_key($d, ['ip_hash' => 1]), $approved);
-    respond(['success' => true, 'data' => $approved, 'count' => count($approved)]);
+    $paged = array_map(fn($d) => array_diff_key($d, ['ip_hash' => 1]), $paged);
+    respond([
+        'success'     => true,
+        'data'        => $paged,
+        'count'       => $total,
+        'page'        => $page,
+        'per_page'    => $perPage,
+        'total_pages' => (int)ceil($total / $perPage),
+    ]);
 }
 
 // ══════════════════════════════════════════════════════════════════════════
