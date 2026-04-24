@@ -30,13 +30,14 @@ $articles         = $articlesRow ? (json_decode($articlesRow['data'], true) ?: [
 $publishedArticles = array_filter($articles, fn($a) => ($a['status'] ?? '') === 'published');
 $totalArticles    = count($publishedArticles);
 
-// Top 5 by view_count
-usort($articles, fn($a, $b) => ($b['view_count'] ?? 0) - ($a['view_count'] ?? 0));
+// Top 5 published articles by view_count
+$publishedList = array_values($publishedArticles);
+usort($publishedList, fn($a, $b) => ($b['view_count'] ?? 0) - ($a['view_count'] ?? 0));
 $topArticles = array_map(fn($a) => [
     'title'      => $a['title'] ?? 'Untitled',
     'pillar'     => $a['pillar'] ?? '',
     'view_count' => (int)($a['view_count'] ?? 0),
-], array_slice($articles, 0, 5));
+], array_slice($publishedList, 0, 5));
 
 // Pending community items
 $diyaRow    = $pdo->query("SELECT data FROM content WHERE content_key = 'diyas' LIMIT 1")->fetch();
