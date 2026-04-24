@@ -1501,10 +1501,68 @@ function clearPeerForm() {
 }
 
 
+async function loadDashboardStats() {
+    try {
+        const r = await fetch('./api/dashboard_stats.php', {
+            headers: { 'X-Admin-Token': getSessionToken() }
+        });
+        const d = await r.json();
+        if (!d.success) return;
+        const s = d.data;
+
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        set('stat-bookings', s.bookings);
+        set('stat-pending-books', s.pending_bookings);
+        set('stat-articles', s.articles);
+        set('stat-pending-reviews', s.pending_reviews + s.pending_diyas + s.pending_memories);
+        set('stat-subscribers', s.subscribers);
+
+        const tbody = document.getElementById('dash-top-articles');
+        if (tbody) {
+            tbody.innerHTML = s.top_articles.length
+                ? s.top_articles.map(a => `
+                    <tr>
+                        <td>${escH(a.title)}</td>
+                        <td><span style="font-size:0.75rem;color:var(--text-muted)">${escH(a.pillar)}</span></td>
+                        <td>${a.view_count}</td>
+                    </tr>`).join('')
+                : '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:20px;">No article views tracked yet.</td></tr>';
+        }
+
+        loadSEOHealthSummary();
+    } catch (e) {
+        console.error('Dashboard stats error:', e);
+    }
+}
+
+async function loadSEOHealthSummary() {
+    const el = document.getElementById('dash-seo-summary');
+    if (!el) return;
+    try {
+        const r = await fetch('./api/content.php?type=knowledge_articles');
+        const d = await r.json();
+        const articles = d.data || [];
+        const missingMeta  = articles.filter(a => !a.meta_description).length;
+        const shortArticles = articles.filter(a => {
+            const words = (a.structured?.sections || []).map(s => s.content || '').join(' ').split(/\s+/).filter(Boolean).length;
+            return words < 500;
+        }).length;
+        const noKeyword = articles.filter(a => !a.focus_keyword).length;
+        el.innerHTML = `
+            <span style="margin-right:20px;">📄 Missing meta: <strong>${missingMeta}</strong></span>
+            <span style="margin-right:20px;">📝 Under 500 words: <strong>${shortArticles}</strong></span>
+            <span>🔑 No keyword: <strong>${noKeyword}</strong></span>
+        `;
+    } catch (e) {
+        el.textContent = 'Could not load SEO summary.';
+    }
+}
+
 // ============================================================
 // INIT
 // ============================================================
 function loadAll() {
+    loadDashboardStats();
     renderDashboard();
     renderAdminCal();
     updateBadges();
