@@ -5,13 +5,12 @@
  */
 require_once __DIR__ . '/db.php';
 
+header('Content-Type: application/json');
 $secret = $_GET['secret'] ?? '';
-if ($secret !== 'apollo_migrate_2026') {
+if (!hash_equals('apollo_migrate_2026', $secret)) {
     http_response_code(403);
     die(json_encode(['error' => 'Forbidden']));
 }
-
-header('Content-Type: application/json');
 $pdo = get_db_connection();
 $results = [];
 
@@ -77,4 +76,5 @@ foreach ($migrations as $name => $sql) {
     }
 }
 
-echo json_encode(['success' => true, 'results' => $results], JSON_PRETTY_PRINT);
+$anyError = count(array_filter($results, fn($v) => str_starts_with($v, 'ERROR:'))) > 0;
+echo json_encode(['success' => !$anyError, 'results' => $results], JSON_PRETTY_PRINT);
