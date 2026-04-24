@@ -28,7 +28,11 @@ if (file_exists($envFile)) {
 
 // ── Helper: get env with fallback ─────────────────────────
 function env(string $key, string $default = ''): string {
-    return $_ENV[$key] ?? getenv($key) ?: $default;
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+        return $_ENV[$key];
+    }
+    $envVal = getenv($key);
+    return ($envVal !== false && $envVal !== '') ? $envVal : $default;
 }
 
 // ── Return config array ───────────────────────────────────

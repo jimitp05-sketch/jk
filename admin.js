@@ -13,6 +13,7 @@ function getSessionToken() {
 function setSessionToken(token) {
     _sessionToken = token;
     sessionStorage.setItem('apollo_session_token', token);
+    sessionStorage.setItem('apollo_session_start', Date.now().toString());
     localStorage.setItem('apollo_admin_logged', 'true');
 }
 
@@ -53,7 +54,7 @@ async function doLogin() {
         }
     } catch (e) {
         console.error('Auth Error:', e);
-        err.innerHTML = `Server error: ${e.message}<br><small>Check that <b>api/settings.php</b> is uploaded to Hostinger.</small>`;
+        err.innerHTML = `Server error: ${escH(e.message)}<br><small>Check that <b>api/settings.php</b> is uploaded to Hostinger.</small>`;
         err.style.display = 'block';
     }
     btn.textContent = 'Sign In \u2192'; btn.disabled = false;
@@ -76,7 +77,7 @@ async function changeAdminCredentials() {
 
     if (!currentPass) { toast('Enter your current password to make changes', 'error'); return; }
     if (newPass && newPass !== confirmPass) { toast('New passwords do not match', 'error'); return; }
-    if (newPass && newPass.length < 6) { toast('New password must be at least 6 characters', 'error'); return; }
+    if (newPass && newPass.length < 12) { toast('New password must be at least 12 characters', 'error'); return; }
     if (!newPass && !newUser) { toast('Enter a new username or password to update', 'error'); return; }
 
     try {
@@ -115,50 +116,24 @@ async function loadCurrentSettings() {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const s = await r.json();
 
-        document.getElementById('st-wa-number').value = s.wa_number || '';
-        document.getElementById('st-icu-phone').value = s.icu_phone || '';
-        document.getElementById('st-wa-message').value = s.wa_message || '';
-        document.getElementById('st-site-name').value = s.site_name || '';
-        document.getElementById('st-hero-title').value = s.hero_title || '';
-        document.getElementById('st-hero-desc').value = s.hero_desc || '';
-        document.getElementById('st-hero-badge').value = s.hero_badge || '';
-        document.getElementById('st-hero-img').value = s.hero_img || '';
-        document.getElementById('st-hero-stat1-val').value = s.hero_stat1_val || '';
-        document.getElementById('st-hero-stat1-lbl').value = s.hero_stat1_lbl || '';
-        document.getElementById('st-hero-stat2-val').value = s.hero_stat2_val || '';
-        document.getElementById('st-hero-stat2-lbl').value = s.hero_stat2_lbl || '';
-        document.getElementById('st-hero-stat3-val').value = s.hero_stat3_val || '';
-        document.getElementById('st-hero-stat3-lbl').value = s.hero_stat3_lbl || '';
-        document.getElementById('st-admin-user').value = s.admin_user || 'admin';
-
-        // We don't pre-fill the password for security reasons (it would show up as dots),
-        // but we'll show a placeholder indicating it's not required to save.
-        document.getElementById('st-admin-pass').placeholder = 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢ (Leave blank to keep same)';
-        document.getElementById('st-admin-pass').value = '';
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+        set('st-wa-number', s.wa_number || '');
+        set('st-icu-phone', s.icu_phone || '');
+        set('st-wa-message', s.wa_message || '');
+        set('st-site-name', s.site_name || '');
 
     } catch (err) { console.error('Failed to load settings'); }
 }
 
 async function saveSettings() {
     const token = getSessionToken();
-    const g = id => document.getElementById(id).value;
+    const g = id => { const el = document.getElementById(id); return el ? el.value : ''; };
     const body = {
         session_token: token,
         wa_number: g('st-wa-number'),
         wa_message: g('st-wa-message'),
         icu_phone: g('st-icu-phone'),
         site_name: g('st-site-name'),
-        hero_title: g('st-hero-title'),
-        hero_desc: g('st-hero-desc'),
-        hero_badge: g('st-hero-badge'),
-        hero_img: g('st-hero-img'),
-        hero_stat1_val: g('st-hero-stat1-val'),
-        hero_stat1_lbl: g('st-hero-stat1-lbl'),
-        hero_stat2_val: g('st-hero-stat2-val'),
-        hero_stat2_lbl: g('st-hero-stat2-lbl'),
-        hero_stat3_val: g('st-hero-stat3-val'),
-        hero_stat3_lbl: g('st-hero-stat3-lbl'),
-        admin_user: g('st-admin-user')
     };
     // Password changes now handled via changeAdminCredentials()
 
@@ -232,7 +207,9 @@ const getBookings = () => serverBookingsCache;
 const saveBookings = async (id, status) => {
     const token = getSessionToken();
     try {
-        const res = await fetch(`./api/get_bookings.php?action=update_status&id=${id}&status=${status}`, {
+        const params = new URLSearchParams({ action: 'update_status', id, status });
+        const res = await fetch(`./api/get_bookings.php?${params}`, {
+            method: 'POST',
             headers: { 'X-Admin-Token': token }
         });
         const data = await res.json();
@@ -243,20 +220,22 @@ const saveBookings = async (id, status) => {
     }
 };
 
-const getPendingReviews = () => { try { return JSON.parse(localStorage.getItem('apollo_pending_reviews') || '[]'); } catch { return []; } };
-const savePendingReviews = d => localStorage.setItem('apollo_pending_reviews', JSON.stringify(d));
-const getAdminArticles = () => { console.warn('getAdminArticles is deprecated. Use fetch instead.'); return []; };
-const saveAdminArticles = () => { console.warn('saveAdminArticles is deprecated. Use fetch instead.'); };
-const getAdminPhotos = () => { try { return JSON.parse(localStorage.getItem('apollo_admin_photos') || '[]'); } catch { return []; } };
-const saveAdminPhotos = d => localStorage.setItem('apollo_admin_photos', JSON.stringify(d));
 
 async function updateBadges() {
     const bookings = await getBookingsFromServer();
     const pb = bookings.filter(b => b.status === 'pending').length;
 
-    // Reviews and Photos still use localStorage for now as they don't have a DB table yet
-    const pr = getPendingReviews().filter(r => r.status === 'pending').length;
-    const pp = getPendingPhotos().filter(p => p.status === 'pending').length;
+    // Reviews and Photos now use server API
+    let pr = 0, pp = 0;
+    try {
+        const token = getSessionToken();
+        const [revRes, phoRes] = await Promise.all([
+            fetch('./api/content.php?type=peer_recognitions', { headers: { 'X-Admin-Token': token } }).then(r => r.json()).catch(() => ({})),
+            fetch('./api/content.php?type=photo_wall', { headers: { 'X-Admin-Token': token } }).then(r => r.json()).catch(() => ({}))
+        ]);
+        pr = (revRes.data || []).filter(r => r.status === 'pending').length;
+        pp = (phoRes.data || []).filter(p => p.status === 'pending').length;
+    } catch (e) { console.error('Badge fetch error:', e); }
 
     const bReq = document.getElementById('badge-requests');
     const bRev = document.getElementById('badge-reviews');
@@ -288,9 +267,6 @@ async function updateBadges() {
     } catch(e) { console.error('Badge update (memories):', e); }
 }
 
-// Pending photo submissions from reviews.html upload form
-const getPendingPhotos = () => { try { return JSON.parse(localStorage.getItem('apollo_pending_photos') || '[]'); } catch { return []; } };
-const savePendingPhotos = d => localStorage.setItem('apollo_pending_photos', JSON.stringify(d));
 
 // ============================================================
 // DASHBOARD
@@ -299,7 +275,11 @@ async function renderDashboard() {
     const bookings = await getBookingsFromServer();
     document.getElementById('stat-bookings').textContent = bookings.length;
     document.getElementById('stat-pending-books').textContent = bookings.filter(b => b.status === 'pending').length;
-    document.getElementById('stat-pending-reviews').textContent = getPendingReviews().filter(r => r.status === 'pending').length;
+    try {
+        const token = getSessionToken();
+        const revRes = await fetch('./api/content.php?type=peer_recognitions', { headers: { 'X-Admin-Token': token } }).then(r => r.json()).catch(() => ({}));
+        document.getElementById('stat-pending-reviews').textContent = (revRes.data || []).filter(r => r.status === 'pending').length;
+    } catch (e) { document.getElementById('stat-pending-reviews').textContent = '0'; }
     const recent = bookings.slice(0, 5); // Already sorted by created_at DESC from server
     const tbody = document.getElementById('dashboard-recent-bookings');
     if (recent.length === 0) {
@@ -872,10 +852,10 @@ async function renderReviews() {
         grid.innerHTML = reviews.map((r, i) => `
         <div class="photo-review-item">
           <div class="photo-review-body">
-            <div class="photo-review-name">${r.name || 'Anonymous'}</div>
-            <div class="photo-review-date">${r.date || ''}</div>
-            <div style="font-size:0.85rem;margin:8px 0;line-height:1.5;">${r.text}</div>
-            <div style="margin-top:6px;"><span class="status-badge badge-${r.status}">${r.status}</span></div>
+            <div class="photo-review-name">${escH(r.name || 'Anonymous')}</div>
+            <div class="photo-review-date">${escH(r.date || '')}</div>
+            <div style="font-size:0.85rem;margin:8px 0;line-height:1.5;">${escH(r.text)}</div>
+            <div style="margin-top:6px;"><span class="status-badge badge-${escH(r.status)}">${escH(r.status)}</span></div>
             <div class="photo-review-actions" style="margin-top:12px;">
               ${r.status === 'pending' ? `<button class="action-btn action-btn-approve" onclick="updateReviewStatus(${i},'approved')">✓ Approve</button>
               <button class="action-btn action-btn-reject" onclick="updateReviewStatus(${i},'rejected')">✕ Reject</button>` : ''}
@@ -927,18 +907,30 @@ async function deleteReview(index) {
     } catch (e) { toast('Failed to delete review', 'error'); }
 }
 
-function submitTestReview() {
+async function submitTestReview() {
     const name = document.getElementById('rv-name').value.trim();
     const platform = document.getElementById('rv-platform').value;
     const text = document.getElementById('rv-text').value.trim();
-    if (!name || !text) { alert('Name and review text are required.'); return; }
-    const reviews = getPendingReviews();
-    reviews.push({ id: Date.now(), name, platform, text, status: 'pending', submitted: new Date().toISOString() });
-    savePendingReviews(reviews);
-    document.getElementById('rv-name').value = '';
-    document.getElementById('rv-text').value = '';
-    renderReviews();
-    alert('Test review submitted for approval!');
+    if (!name || !text) { toast('Name and review text are required.', 'error'); return; }
+    const token = getSessionToken();
+    if (!token) return;
+    try {
+        const res = await fetch('./api/content.php?type=peer_recognitions', { headers: { 'X-Admin-Token': token } });
+        const d = await res.json();
+        const reviews = d.data || [];
+        reviews.push({ id: Date.now(), name, platform, text, status: 'pending', date: new Date().toISOString().slice(0, 10) });
+        const res2 = await fetch('./api/content.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_token: token, type: 'peer_recognitions', items: reviews })
+        });
+        if ((await res2.json()).success) {
+            document.getElementById('rv-name').value = '';
+            document.getElementById('rv-text').value = '';
+            renderReviews();
+            toast('Review submitted!', 'success');
+        }
+    } catch (e) { toast('Failed to submit review', 'error'); }
 }
 
 // ============================================================
@@ -958,10 +950,10 @@ async function renderPhotos() {
         if (photos.length > 0) {
             html += `<div style="grid-column:1/-1;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);padding:12px 0 8px;border-bottom:1px solid var(--border-subtle);margin-bottom:4px;">📸 Photo Gallery (${photos.length})</div>`;
             html += photos.map((p, i) => `<div class="photo-review-item">
-          <div class="photo-review-img">${p.url ? `<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" />` : '📸'}</div>
+          <div class="photo-review-img">${p.url ? `<img src="${escH(p.url)}" style="width:100%;height:100%;object-fit:cover;" />` : '📸'}</div>
           <div class="photo-review-body">
-            <div class="photo-review-name">${p.caption || 'Untitled'}</div>
-            <div class="photo-review-date">${p.label || 'General'} · ${p.status || 'Active'}</div>
+            <div class="photo-review-name">${escH(p.caption || 'Untitled')}</div>
+            <div class="photo-review-date">${escH(p.label || 'General')} · ${escH(p.status || 'Active')}</div>
             <div class="photo-review-actions" style="margin-top:8px;">
               <button class="action-btn action-btn-delete" onclick="deletePhoto(${i})">Delete</button>
             </div>
@@ -979,24 +971,59 @@ async function addPhoto() {
     const url = document.getElementById('photo-url').value.trim();
     const caption = document.getElementById('photo-caption').value.trim();
     const label = document.getElementById('photo-label').value.trim() || 'General';
-    if (!caption) { alert('Caption is required.'); return; }
-    const photos = getAdminPhotos();
-    photos.push({ id: Date.now(), url, caption, label, status: 'approved', added: new Date().toISOString() });
-    saveAdminPhotos(photos);
-    document.getElementById('photo-url').value = '';
-    document.getElementById('photo-caption').value = '';
-    document.getElementById('photo-label').value = '';
-    renderPhotos();
+    if (!caption) { toast('Caption is required.', 'error'); return; }
+    const token = getSessionToken();
+    if (!token) return;
+    try {
+        const res = await fetch('./api/content.php?type=photo_wall', { headers: { 'X-Admin-Token': token } });
+        const d = await res.json();
+        const photos = d.data || [];
+        photos.push({ id: Date.now(), url, caption, label, status: 'approved', added: new Date().toISOString() });
+        const res2 = await fetch('./api/content.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_token: token, type: 'photo_wall', items: photos })
+        });
+        if ((await res2.json()).success) {
+            document.getElementById('photo-url').value = '';
+            document.getElementById('photo-caption').value = '';
+            document.getElementById('photo-label').value = '';
+            renderPhotos();
+            toast('Photo added!', 'success');
+        }
+    } catch (e) { toast('Failed to add photo', 'error'); }
 }
 
-function updatePhotoStatus(id, status) {
-    saveAdminPhotos(getAdminPhotos().map(p => p.id === id ? { ...p, status } : p));
-    renderPhotos();
+async function updatePhotoStatus(index, status) {
+    const token = getSessionToken();
+    try {
+        const res = await fetch('./api/content.php?type=photo_wall', { headers: { 'X-Admin-Token': token } });
+        const d = await res.json();
+        let photos = d.data || [];
+        photos[index].status = status;
+        const res2 = await fetch('./api/content.php', {
+            method: 'POST',
+            body: JSON.stringify({ type: 'photo_wall', items: photos, session_token: token }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        if ((await res2.json()).success) { toast(`Photo ${status}`, 'success'); renderPhotos(); }
+    } catch (e) { toast('Failed to update photo', 'error'); }
 }
-function deletePhoto(id) {
+async function deletePhoto(index) {
     if (!confirm('Delete this photo?')) return;
-    saveAdminPhotos(getAdminPhotos().filter(p => p.id !== id));
-    renderPhotos();
+    const token = getSessionToken();
+    try {
+        const res = await fetch('./api/content.php?type=photo_wall', { headers: { 'X-Admin-Token': token } });
+        const d = await res.json();
+        let photos = d.data || [];
+        photos.splice(index, 1);
+        const res2 = await fetch('./api/content.php', {
+            method: 'POST',
+            body: JSON.stringify({ type: 'photo_wall', items: photos, session_token: token }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        if ((await res2.json()).success) { toast('Photo deleted', 'success'); renderPhotos(); }
+    } catch (e) { toast('Failed to delete photo', 'error'); }
 }
 
 // ============================================================
@@ -1025,9 +1052,9 @@ async function renderMyths() {
         document.getElementById('myth-table-body').innerHTML = currentMyths.map(m => `
                   <div style="border-bottom:1px solid var(--border-subtle);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;">
                     <div>
-                      <div style="font-size:0.84rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;">⚠️ ${m.statement}</div>
-                      <div style="font-size:0.78rem;color:var(--text-secondary);">âœ… ${m.fact.substring(0, 100)}...</div>
-                      <div style="font-size:0.72rem;color:var(--accent-secondary);margin-top:4px;">â€” ${m.source}</div>
+                      <div style="font-size:0.84rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;">⚠️ ${escH(m.statement)}</div>
+                      <div style="font-size:0.78rem;color:var(--text-secondary);">âœ… ${escH(m.fact.substring(0, 100))}...</div>
+                      <div style="font-size:0.72rem;color:var(--accent-secondary);margin-top:4px;">â€” ${escH(m.source)}</div>
                     </div>
                     <div class="action-btns">
                       <button class="action-btn action-btn-edit myth-edit-btn" data-id="${m.id}">Edit</button>
@@ -1065,7 +1092,7 @@ async function saveMythCard() {
     const source = document.getElementById('myth-source').value.trim();
     const token = getSessionToken();
 
-    if (!stmt || !fact) { alert('Required fields missing.'); return; }
+    if (!stmt || !fact) { toast('Required fields missing.', 'error'); return; }
     if (!token) return;
 
     const editId = parseInt(document.getElementById('myth-edit-id').value);
@@ -1085,7 +1112,7 @@ async function saveMythCard() {
             body: JSON.stringify({ session_token: token, type: 'myth_busters', items: updatedList })
         });
         if ((await res.json()).success) { clearMythForm(); renderMyths(); }
-    } catch (err) { alert('Error saving.'); }
+    } catch (err) { toast('Error saving.', 'error'); }
 }
 
 async function deleteMyth(id) {
@@ -1100,7 +1127,7 @@ async function deleteMyth(id) {
             body: JSON.stringify({ session_token: token, type: 'myth_busters', items: updatedList })
         });
         if ((await res.json()).success) { renderMyths(); }
-    } catch (err) { alert('Error deleting.'); }
+    } catch (err) { toast('Error deleting.', 'error'); }
 }
 
 function clearMythForm() {
@@ -1138,8 +1165,8 @@ async function renderQuizEditor() {
             const letters = ['A', 'B', 'C', 'D'];
             return `<tr>
                       <td style="width:40px;">${i + 1}</td>
-                      <td style="font-size:0.84rem;">${q.q.substring(0, 80)}${q.q.length > 80 ? '...' : ''}</td>
-                      <td><span class="status-badge badge-published">${letters[q.correct]}: ${q.options[q.correct]?.substring?.(0, 30) ?? ''}...</span></td>
+                      <td style="font-size:0.84rem;">${escH(q.q.substring(0, 80))}${q.q.length > 80 ? '...' : ''}</td>
+                      <td><span class="status-badge badge-published">${letters[q.correct]}: ${escH(q.options[q.correct]?.substring?.(0, 30) ?? '')}...</span></td>
                       <td><div class="action-btns">
                         <button class="action-btn action-btn-edit quiz-edit-btn" data-idx="${i}">Edit</button>
                         <button class="action-btn action-btn-delete quiz-delete-btn" data-idx="${i}">Delete</button>
@@ -1179,7 +1206,7 @@ async function saveQuizQuestion() {
     const optB = document.getElementById('q-b').value.trim();
     const token = getSessionToken();
 
-    if (!quest || !optA || !optB) { alert('Question and at least options A & B are required.'); return; }
+    if (!quest || !optA || !optB) { toast('Question and at least options A & B are required.', 'error'); return; }
     if (!token) return;
 
     const options = [optA, optB, document.getElementById('q-c').value.trim(), document.getElementById('q-d').value.trim()].filter(Boolean);
@@ -1201,7 +1228,7 @@ async function saveQuizQuestion() {
             body: JSON.stringify({ session_token: token, type: 'quiz_questions', items: updatedBank })
         });
         if ((await res.json()).success) { clearQuizForm(); renderQuizEditor(); }
-    } catch (err) { alert('Error saving.'); }
+    } catch (err) { toast('Error saving.', 'error'); }
 }
 
 async function deleteQuizQ(idx) {
@@ -1216,7 +1243,7 @@ async function deleteQuizQ(idx) {
             body: JSON.stringify({ session_token: token, type: 'quiz_questions', items: updatedBank })
         });
         if ((await res.json()).success) { renderQuizEditor(); }
-    } catch (err) { alert('Error deleting.'); }
+    } catch (err) { toast('Error deleting.', 'error'); }
 }
 
 function clearQuizForm() {
@@ -1241,8 +1268,8 @@ async function resetQuizToDefault() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ session_token: token, type: 'quiz_questions', items: defaults })
         });
-        if ((await res.json()).success) { renderQuizEditor(); alert('â†º Reset done.'); }
-    } catch (err) { alert('Error resetting.'); }
+        if ((await res.json()).success) { renderQuizEditor(); toast('â†º Reset done.', 'success'); }
+    } catch (err) { toast('Error resetting.', 'error'); }
 }
 
 
@@ -1261,12 +1288,12 @@ async function renderResearch() {
 
         document.getElementById('rp-count').textContent = currentResearchList.length + ' papers';
         document.getElementById('rp-table').innerHTML = currentResearchList.map(p => `<tr>
-                  <td style="font-weight:700;font-size:0.84rem;">${p.title}</td>
-                  <td style="font-size:0.78rem;color:var(--text-muted);">${p.journal}</td>
-                  <td>${p.year}</td>
-                  <td><span class="status-badge badge-published" style="font-size:0.66rem;">${p.topic}</span></td>
+                  <td style="font-weight:700;font-size:0.84rem;">${escH(p.title)}</td>
+                  <td style="font-size:0.78rem;color:var(--text-muted);">${escH(p.journal)}</td>
+                  <td>${escH(String(p.year))}</td>
+                  <td><span class="status-badge badge-published" style="font-size:0.66rem;">${escH(p.topic)}</span></td>
                   <td><div class="action-btns">
-                    ${p.doi ? `<a href="${p.doi}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View â†—</a>` : ''}
+                    ${p.doi ? `<a href="${escH(p.doi)}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View â†—</a>` : ''}
                     <button class="action-btn action-btn-edit res-edit-btn" data-id="${p.id}">Edit</button>
                     <button class="action-btn action-btn-delete res-del-btn" data-id="${p.id}">Delete</button>
                   </div></td>
@@ -1377,10 +1404,10 @@ async function renderPeerRecognitions() {
 
         tbody.innerHTML = currentPeerList.map((p, i) => `
                     <tr>
-                        <td style="font-size:1.5rem;">${p.icon}</td>
-                        <td style="font-weight:700;">${p.title}</td>
-                        <td style="font-size:0.8rem;color:var(--accent-secondary);">${p.source}</td>
-                        <td style="font-size:0.8rem;max-width:300px;">${p.text.substring(0, 100)}${p.text.length > 100 ? '...' : ''}</td>
+                        <td style="font-size:1.5rem;">${escH(p.icon)}</td>
+                        <td style="font-weight:700;">${escH(p.title)}</td>
+                        <td style="font-size:0.8rem;color:var(--accent-secondary);">${escH(p.source)}</td>
+                        <td style="font-size:0.8rem;max-width:300px;">${escH(p.text.substring(0, 100))}${p.text.length > 100 ? '...' : ''}</td>
                         <td>
                             <div class="action-btns">
                                 <button class="action-btn action-btn-edit" onclick="editPeer(${i})">Edit</button>
@@ -1510,6 +1537,7 @@ switchPanel = function (name) {
     if (name === 'apihealth') runAllChecks();
     if (name === 'diya') { adminLoadDiyas(); adminLoadQuotes(); }
     if (name === 'memories') { adminLoadStories(); adminLoadNotes(); adminLoadMemoryPhotos(); }
+    if (name === 'faq') renderFaqEditor();
 };
 
 // ============================================================
@@ -1606,28 +1634,33 @@ async function runManualTest() {
 // HERO & CONTACT â€” load/save
 // ============================================================
 async function loadHeroContent() {
+    const g = id => document.getElementById(id);
     try {
         const r = await fetch('./api/settings.php');
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const s = await r.json();
-        g('hc-hero-tagline').value = s.hero_tagline || '';
-        g('hc-hero-empathy').value = s.hero_empathy || '';
-        g('hc-hero-badge').value = s.hero_badge || '';
-        g('hc-wa-number').value = s.wa_number || '';
-        g('hc-wa-msg').value = s.wa_message || '';
-        g('hc-icu-phone').value = s.icu_phone || '';
-        g('hc-opd-link').value = s.opd_link || '';
-        g('hc-ticker').value = s.ticker_text || '';
-        g('hc-ticker-on').checked = !!s.ticker_on;
-        g('hc-stat1-num').value = s.stat1_num || '';
-        g('hc-stat1-lbl').value = s.stat1_lbl || '';
-        g('hc-stat2-num').value = s.stat2_num || '';
-        g('hc-stat2-lbl').value = s.stat2_lbl || '';
-        g('hc-stat3-num').value = s.stat3_num || '';
-        g('hc-stat3-lbl').value = s.stat3_lbl || '';
-        g('hc-stat4-num').value = s.stat4_num || '';
-        g('hc-stat4-lbl').value = s.stat4_lbl || '';
-    } catch { }
+        const set = (id, val) => { const el = g(id); if (el) el.value = val; };
+        set('hc-site-name', s.site_name || '');
+        set('hc-hero-title', s.hero_title || '');
+        set('hc-hero-tagline', s.hero_tagline || '');
+        set('hc-hero-empathy', s.hero_empathy || '');
+        set('hc-hero-badge', s.hero_badge || '');
+        set('hc-wa-number', s.wa_number || '');
+        set('hc-wa-msg', s.wa_message || '');
+        set('hc-icu-phone', s.icu_phone || '');
+        set('hc-opd-link', s.opd_link || '');
+        set('hc-ticker', s.ticker_text || '');
+        const tickerEl = g('hc-ticker-on');
+        if (tickerEl) tickerEl.checked = !!s.ticker_on;
+        set('hc-stat1-num', s.stat1_num || '');
+        set('hc-stat1-lbl', s.stat1_lbl || '');
+        set('hc-stat2-num', s.stat2_num || '');
+        set('hc-stat2-lbl', s.stat2_lbl || '');
+        set('hc-stat3-num', s.stat3_num || '');
+        set('hc-stat3-lbl', s.stat3_lbl || '');
+        set('hc-stat4-num', s.stat4_num || '');
+        set('hc-stat4-lbl', s.stat4_lbl || '');
+    } catch (e) { console.error('Failed to load hero content:', e); }
 }
 
 async function saveHeroContent() {
@@ -1812,9 +1845,9 @@ renderMyths = async function () {
         document.getElementById('myth-table-body').innerHTML = currentMyths.map(m => `
                   <div style="border-bottom:1px solid var(--ad-border);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;">
                     <div>
-                      <div style="font-size:0.84rem;font-weight:700;color:var(--ad-text);margin-bottom:4px;">⚠️ ${m.statement}</div>
-                      <div style="font-size:0.78rem;color:var(--ad-text-muted);">âœ… ${m.fact.substring(0, 100)}...</div>
-                      <div style="font-size:0.72rem;color:var(--ad-indigo);margin-top:4px;">â€” ${m.source}</div>
+                      <div style="font-size:0.84rem;font-weight:700;color:var(--ad-text);margin-bottom:4px;">⚠️ ${escH(m.statement)}</div>
+                      <div style="font-size:0.78rem;color:var(--ad-text-muted);">âœ… ${escH(m.fact.substring(0, 100))}...</div>
+                      <div style="font-size:0.72rem;color:var(--ad-indigo);margin-top:4px;">â€” ${escH(m.source)}</div>
                     </div>
                     <div class="action-btns">
                       <button class="action-btn action-btn-edit myth-edit-btn" data-id="${m.id}">Edit</button>
@@ -1833,12 +1866,12 @@ renderResearch = async function () {
         currentResearchList = (serverData && serverData.length) ? serverData : DEFAULT_RESEARCH_SEED;
         document.getElementById('rp-count').textContent = currentResearchList.length + ' papers';
         document.getElementById('rp-table').innerHTML = currentResearchList.map(p => `<tr>
-                  <td style="font-weight:700;font-size:0.84rem;">${p.title}</td>
-                  <td style="font-size:0.78rem;color:var(--ad-text-muted);">${p.journal}</td>
-                  <td>${p.year}</td>
-                  <td><span class="status-badge badge-published" style="font-size:0.66rem;">${p.topic}</span></td>
+                  <td style="font-weight:700;font-size:0.84rem;">${escH(p.title)}</td>
+                  <td style="font-size:0.78rem;color:var(--ad-text-muted);">${escH(p.journal)}</td>
+                  <td>${escH(String(p.year))}</td>
+                  <td><span class="status-badge badge-published" style="font-size:0.66rem;">${escH(p.topic)}</span></td>
                   <td><div class="action-btns">
-                    ${p.doi ? `<a href="${p.doi}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View â†—</a>` : ''}
+                    ${p.doi ? `<a href="${escH(p.doi)}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View â†—</a>` : ''}
                     <button class="action-btn action-btn-edit res-edit-btn" data-id="${p.id}">Edit</button>
                     <button class="action-btn action-btn-delete res-del-btn" data-id="${p.id}">Delete</button>
                   </div></td>
@@ -1860,7 +1893,7 @@ renderQuizEditor = async function () {
         currentQuizBank = serverData; countEl.textContent = currentQuizBank.length + ' questions';
         tbody.innerHTML = currentQuizBank.map((q, i) => {
             const letters = ['A', 'B', 'C', 'D'];
-            return `<tr><td style="width:40px;">${i + 1}</td><td style="font-size:0.84rem;">${q.q.substring(0, 80)}${q.q.length > 80 ? '...' : ''}</td><td><span class="status-badge badge-published">${letters[q.correct]}: ${(q.options[q.correct] || '').substring(0, 25)}...</span></td><td><div class="action-btns"><button class="action-btn action-btn-edit quiz-edit-btn" data-idx="${i}">Edit</button><button class="action-btn action-btn-delete quiz-delete-btn" data-idx="${i}">Delete</button></div></td></tr>`;
+            return `<tr><td style="width:40px;">${i + 1}</td><td style="font-size:0.84rem;">${escH(q.q.substring(0, 80))}${q.q.length > 80 ? '...' : ''}</td><td><span class="status-badge badge-published">${escH(letters[q.correct])}: ${escH((q.options[q.correct] || '').substring(0, 25))}...</span></td><td><div class="action-btns"><button class="action-btn action-btn-edit quiz-edit-btn" data-idx="${i}">Edit</button><button class="action-btn action-btn-delete quiz-delete-btn" data-idx="${i}">Delete</button></div></td></tr>`;
         }).join('');
     } catch (err) { toast('Failed to load quiz bank', 'error'); }
 };
@@ -2000,8 +2033,8 @@ function renderDiyaTable() {
             <td>${date}</td>
             <td><span class="status-badge ${statusClass}">${d.status}</span></td>
             <td>
-                ${d.status !== 'approved' ? `<button class="action-btn approve" onclick="adminDiyaAction('approve','${d.id}')">✓</button>` : ''}
-                <button class="action-btn delete" onclick="adminDiyaAction('delete','${d.id}')">✕</button>
+                ${d.status !== 'approved' ? `<button class="action-btn approve" onclick="adminDiyaAction('approve','${escH(d.id)}')">✓</button>` : ''}
+                <button class="action-btn delete" onclick="adminDiyaAction('delete','${escH(d.id)}')">✕</button>
             </td>
         </tr>`;
     }).join('');
@@ -2098,8 +2131,8 @@ function renderDiyaTableFiltered(diyas) {
             <td>${date}</td>
             <td><span class="status-badge ${statusClass}">${d.status}</span></td>
             <td>
-                ${d.status !== 'approved' ? `<button class="action-btn approve" onclick="adminDiyaAction('approve','${d.id}')">✓</button>` : ''}
-                <button class="action-btn delete" onclick="adminDiyaAction('delete','${d.id}')">✕</button>
+                ${d.status !== 'approved' ? `<button class="action-btn approve" onclick="adminDiyaAction('approve','${escH(d.id)}')">✓</button>` : ''}
+                <button class="action-btn delete" onclick="adminDiyaAction('delete','${escH(d.id)}')">✕</button>
             </td>
         </tr>`;
     }).join('');
@@ -2140,7 +2173,7 @@ function renderQuoteTable() {
             <td title="${escH(q.text)}">${escH(text)}</td>
             <td>${escH(q.author || '—')}</td>
             <td>
-                <button class="action-btn delete" onclick="adminDeleteQuote('${q.id}')">✕</button>
+                <button class="action-btn delete" onclick="adminDeleteQuote('${escH(q.id)}')">✕</button>
             </td>
         </tr>`;
     }).join('');
@@ -2247,10 +2280,10 @@ function renderStoriesTable() {
             <td><span class="status-badge ${statusClass}">${s.status}</span></td>
             <td>${date}</td>
             <td>
-                ${s.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('healing_stories','approve','${s.id}')">✓</button>` : ''}
-                ${s.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('healing_stories','reject','${s.id}')">✗</button>` : ''}
-                <button class="action-btn edit" onclick="editStory('${s.id}')">✎</button>
-                <button class="action-btn delete" onclick="memoryAction('healing_stories','delete','${s.id}')">✕</button>
+                ${s.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('healing_stories','approve','${escH(s.id)}')">✓</button>` : ''}
+                ${s.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('healing_stories','reject','${escH(s.id)}')">✗</button>` : ''}
+                <button class="action-btn edit" onclick="editStory('${escH(s.id)}')">✎</button>
+                <button class="action-btn delete" onclick="memoryAction('healing_stories','delete','${escH(s.id)}')">✕</button>
             </td>
         </tr>`;
     }).join('');
@@ -2353,9 +2386,9 @@ function renderNotesTable() {
             <td><span class="status-badge ${statusClass}">${n.status}</span></td>
             <td>${date}</td>
             <td>
-                ${n.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('gratitude_notes','approve','${n.id}')">✓</button>` : ''}
-                ${n.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('gratitude_notes','reject','${n.id}')">✗</button>` : ''}
-                <button class="action-btn delete" onclick="memoryAction('gratitude_notes','delete','${n.id}')">✕</button>
+                ${n.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('gratitude_notes','approve','${escH(n.id)}')">✓</button>` : ''}
+                ${n.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('gratitude_notes','reject','${escH(n.id)}')">✗</button>` : ''}
+                <button class="action-btn delete" onclick="memoryAction('gratitude_notes','delete','${escH(n.id)}')">✕</button>
             </td>
         </tr>`;
     }).join('');
@@ -2426,7 +2459,7 @@ function renderMemoryPhotosGrid() {
 
     grid.innerHTML = memPhotosCache.map(p => {
         const statusClass = p.status === 'approved' ? 'badge-approved' : p.status === 'pending' ? 'badge-pending' : 'badge-rejected';
-        const imgSrc = p.photo_data || '';
+        const imgSrc = (p.photo_data && p.photo_data.startsWith('data:image')) ? p.photo_data : '';
         const hasImage = imgSrc.startsWith('data:image');
         return `<div class="mem-photo-card" style="background:var(--ad-surface);border:1px solid var(--ad-border);border-radius:12px;overflow:hidden;margin-bottom:16px;">
             ${hasImage ? `<img src="${imgSrc}" style="width:100%;height:160px;object-fit:cover;">` : `<div style="width:100%;height:160px;background:var(--ad-surface-hover);display:flex;align-items:center;justify-content:center;color:var(--ad-text-muted);">No image</div>`}
@@ -2434,9 +2467,9 @@ function renderMemoryPhotosGrid() {
                 <div style="font-weight:600;margin-bottom:4px;">${escH(p.caption || '—')}</div>
                 <div style="font-size:0.78rem;color:var(--ad-text-muted);margin-bottom:8px;">${escH(p.label || '')} · ${escH(p.uploaded_by || 'Unknown')} · <span class="status-badge ${statusClass}">${p.status}</span></div>
                 <div style="display:flex;gap:6px;">
-                    ${p.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('memory_photos','approve','${p.id}')">✓ Approve</button>` : ''}
-                    ${p.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('memory_photos','reject','${p.id}')">✗ Reject</button>` : ''}
-                    <button class="action-btn delete" onclick="memoryAction('memory_photos','delete','${p.id}')">✕ Delete</button>
+                    ${p.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('memory_photos','approve','${escH(p.id)}')">✓ Approve</button>` : ''}
+                    ${p.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('memory_photos','reject','${escH(p.id)}')">✗ Reject</button>` : ''}
+                    <button class="action-btn delete" onclick="memoryAction('memory_photos','delete','${escH(p.id)}')">✕ Delete</button>
                 </div>
             </div>
         </div>`;
@@ -2521,3 +2554,140 @@ async function memoryAction(type, action, id) {
 }
 
 // escH() defined at the top of this file
+
+// ============================================================
+// FAQ EDITOR CRUD
+// ============================================================
+let currentFaqList = [];
+
+async function renderFaqEditor() {
+    const container = document.getElementById('faq-table-body');
+    const countEl = document.getElementById('faq-count');
+    try {
+        const res = await fetch('./api/content.php?type=faq_items');
+        const data = await res.json();
+        currentFaqList = data.data ?? data ?? [];
+        if (!Array.isArray(currentFaqList)) currentFaqList = [];
+
+        if (countEl) countEl.textContent = currentFaqList.length + ' questions';
+
+        if (currentFaqList.length === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--ad-text-muted);">No FAQs yet. Add your first question above.</div>';
+            return;
+        }
+        container.innerHTML = currentFaqList.map((f, i) => `
+            <div style="border-bottom:1px solid var(--ad-border);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;">
+                <div>
+                    <div style="font-size:0.84rem;font-weight:700;color:var(--ad-text);margin-bottom:4px;">${escH(f.question)}</div>
+                    <div style="font-size:0.78rem;color:var(--ad-text-muted);">${escH((f.answer || '').substring(0, 120))}${(f.answer || '').length > 120 ? '...' : ''}</div>
+                </div>
+                <div class="action-btns">
+                    <button class="action-btn action-btn-edit" onclick="editFaq(${i})">Edit</button>
+                    <button class="action-btn action-btn-delete" onclick="deleteFaq(${i})">Delete</button>
+                </div>
+            </div>`).join('');
+    } catch (err) {
+        console.error('Error loading FAQs:', err);
+        container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--ad-red);">Failed to load FAQs.</div>';
+    }
+}
+
+function editFaq(index) {
+    const f = currentFaqList[index];
+    if (!f) return;
+    document.getElementById('faq-edit-id').value = index;
+    document.getElementById('faq-question').value = f.question;
+    document.getElementById('faq-answer').value = f.answer;
+    document.getElementById('faq-form-title').textContent = '✏️ Edit FAQ';
+    document.getElementById('panel-faq').scrollTop = 0;
+}
+
+async function saveFaqItem() {
+    const question = document.getElementById('faq-question').value.trim();
+    const answer = document.getElementById('faq-answer').value.trim();
+    const token = getSessionToken();
+
+    if (!question || !answer) { toast('Both question and answer are required.', 'error'); return; }
+    if (!token) return;
+
+    const editIdx = document.getElementById('faq-edit-id').value;
+    let updatedList = [...currentFaqList];
+
+    if (editIdx !== '') {
+        updatedList[parseInt(editIdx)] = { id: currentFaqList[parseInt(editIdx)]?.id || Date.now(), question, answer };
+    } else {
+        updatedList.push({ id: Date.now(), question, answer });
+    }
+
+    try {
+        const res = await fetch('./api/content.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_token: token, type: 'faq_items', items: updatedList })
+        });
+        if ((await res.json()).success) {
+            toast('FAQ saved!', 'success');
+            clearFaqForm();
+            renderFaqEditor();
+        }
+    } catch (err) { toast('Error saving FAQ.', 'error'); }
+}
+
+async function deleteFaq(index) {
+    if (!confirm('Delete this FAQ?')) return;
+    const token = getSessionToken();
+    const updatedList = currentFaqList.filter((_, i) => i !== index);
+
+    try {
+        const res = await fetch('./api/content.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_token: token, type: 'faq_items', items: updatedList })
+        });
+        if ((await res.json()).success) {
+            toast('FAQ deleted.', 'success');
+            renderFaqEditor();
+        }
+    } catch (err) { toast('Error deleting FAQ.', 'error'); }
+}
+
+function clearFaqForm() {
+    document.getElementById('faq-edit-id').value = '';
+    document.getElementById('faq-question').value = '';
+    document.getElementById('faq-answer').value = '';
+    document.getElementById('faq-form-title').textContent = '➕ Add New FAQ';
+}
+
+// ── SESSION TIMEOUT WARNING ──
+(function() {
+    setInterval(() => {
+        const start = parseInt(sessionStorage.getItem('apollo_session_start') || '0', 10);
+        if (!start) return;
+        const elapsed = (Date.now() - start) / 1000;
+        const remaining = 86400 - elapsed;
+        if (remaining < 300 && remaining > 0) {
+            const mins = Math.ceil(remaining / 60);
+            const existing = document.getElementById('session-timeout-warning');
+            if (!existing) {
+                toast('Session expires in ' + mins + ' minute(s). Save your work.', 'error');
+            }
+        }
+    }, 60000);
+})();
+
+// ── ADMIN MOBILE NAV ──
+(function() {
+    const hamburger = document.createElement('button');
+    hamburger.className = 'admin-hamburger';
+    hamburger.innerHTML = '<span></span><span></span><span></span>';
+    hamburger.setAttribute('aria-label', 'Toggle sidebar');
+    document.body.appendChild(hamburger);
+
+    const sidebar = document.querySelector('.admin-sidebar');
+    if (hamburger && sidebar) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            sidebar.classList.toggle('mobile-open');
+        });
+    }
+})();

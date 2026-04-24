@@ -8,6 +8,7 @@
     <meta name="description"
         content="Bust medical myths, test your ICU knowledge, and explore fascinating critical care facts — an interactive, playful educational experience from Dr. Jay Kothari's desk." />
     <link rel="stylesheet" href="styles.css?v=20260414b" />
+    <link rel="stylesheet" href="improvements.css?v=20260424" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style"
@@ -18,11 +19,12 @@
             href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" />
     </noscript>
     <link rel="canonical" href="https://foxwisdom.com/quiz.html" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a1628'/><text x='50' y='68' font-family='system-ui' font-size='50' font-weight='700' fill='%2300d4aa' text-anchor='middle'>FK</text></svg>" />
-    <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('apollo_theme')||'light');</script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a1628'/><text x='50' y='68' font-family='system-ui' font-size='50' font-weight='700' fill='%2300d4aa' text-anchor='middle'>JK</text></svg>" />
+    <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('apollo_theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));</script>
 </head>
 
 <body>
+    <a href="#main-content" class="skip-nav">Skip to main content</a>
     <div id="cursor-glow"></div>
     <div id="secondary-glow"></div>
 
@@ -55,7 +57,7 @@
     </div>
 
     <!-- HERO — Prestige White page-hero -->
-    <section class="page-hero">
+    <section class="page-hero" id="main-content">
         <div class="container" style="position:relative; z-index:2;">
             <span class="section-label" style="color:rgba(255,255,255,0.55);">Interactive · Playful · Educational</span>
             <h1 style="margin-bottom:18px;">ICU <span
@@ -173,8 +175,7 @@
                                 →</button>
                         </div>
                     </div>
-                    <div id="quiz-result" style="display:none;" class="glass-card"
-                        style="padding:60px; text-align:center;">
+                    <div id="quiz-result" style="display:none; padding:60px; text-align:center;" class="glass-card">
                         <div class="quiz-score-display">
                             <div class="quiz-score-num glow-text" id="final-score">0/10</div>
                             <div class="quiz-score-label">Your ICU Intelligence Score</div>
@@ -338,7 +339,7 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
     <script>
         // ── XSS ESCAPING ──
         function escapeHTML(str) {

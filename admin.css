@@ -58,7 +58,7 @@ body {
     backdrop-filter: blur(16px);
     transform: translateX(100px);
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     pointer-events: auto;
     max-width: 320px;
 }
@@ -912,7 +912,7 @@ tr:hover td {
     font-size: 0.84rem;
 }
 
-/* â”€â”€ PHOTO GRID â”€â”€ */
+/* ── PHOTO GRID ── */
 .photo-review-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -959,7 +959,7 @@ tr:hover td {
     gap: 6px;
 }
 
-/* â”€â”€ SETTINGS PANEL â”€â”€ */
+/* ── SETTINGS PANEL ── */
 .settings-section {
     background: var(--ad-surface);
     border: 1px solid var(--ad-border);
@@ -999,7 +999,7 @@ tr:hover td {
     border: 1px solid rgba(248, 113, 113, 0.25);
 }
 
-/* â”€â”€ API STATUS INDICATOR â”€â”€ */
+/* ── API STATUS INDICATOR ── */
 .api-status {
     display: inline-flex;
     align-items: center;
@@ -1041,12 +1041,12 @@ tr:hover td {
     }
 }
 
-/* â”€â”€ PLATFORM TABS (quiz.html tab strip) â”€â”€ */
+/* ── PLATFORM TABS (quiz.html tab strip) ── */
 .platform-tabs-wrap {
     display: none;
 }
 
-/* â”€â”€ SPINNER â”€â”€ */
+/* ── SPINNER ── */
 .spinner {
     display: inline-block;
     width: 14px;
@@ -1063,7 +1063,7 @@ tr:hover td {
     }
 }
 
-/* â”€â”€ RESPONSIVE â”€â”€ */
+/* ── RESPONSIVE ── */
 @media (max-width: 900px) {
     .admin-sidebar {
         display: none;
@@ -1080,5 +1080,56 @@ tr:hover td {
 
     .stats-builder {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ── ADMIN MOBILE NAV ── */
+.admin-hamburger {
+    display: none;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 2000;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--ad-surface);
+    border: 1px solid var(--ad-border);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0;
+}
+
+.admin-hamburger span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--ad-text);
+    border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+.admin-hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+.admin-hamburger.active span:nth-child(2) { opacity: 0; }
+.admin-hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+
+@media (max-width: 900px) {
+    .admin-hamburger {
+        display: flex;
+    }
+    .admin-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1999;
+    }
+    .admin-sidebar.mobile-open {
+        transform: translateX(0);
     }
 }

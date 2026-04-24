@@ -22,10 +22,10 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://foxwisdom.com/img-hero-doctor.png" />
     <script type="application/ld+json">
-  {"@context":"https://schema.org","@graph":[{"@type":"Physician","name":"Dr. Jay Kothari","jobTitle":"Consultant — Critical Care Medicine","worksFor":{"@type":"MedicalOrganization","name":"Apollo Hospitals"},"knowsAbout":["Critical Care Medicine","ECMO","CRRT","Sepsis Management","Multi-Organ Failure"],"hasCredential":[{"@type":"EducationalOccupationalCredential","name":"MBBS"},{"@type":"EducationalOccupationalCredential","name":"MD (Anaesthesia)"},{"@type":"EducationalOccupationalCredential","name":"FNB (Critical Care Medicine)"}],"address":{"@type":"PostalAddress","addressLocality":"Ahmedabad","addressRegion":"Gujarat","addressCountry":"IN"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a Critical Care Specialist do?","acceptedAnswer":{"@type":"Answer","text":"A critical care specialist (intensivist) manages life-threatening conditions in the ICU — respiratory failure, septic shock, multi-organ failure, and post-operative complications."}},{"@type":"Question","name":"What is ECMO?","acceptedAnswer":{"@type":"Answer","text":"ECMO temporarily replaces heart and lung function, allowing organs to rest and recover in the most severe cardiac and respiratory failure cases."}}]}]}
+  {"@context":"https://schema.org","@graph":[{"@type":"Physician","name":"Dr. Jay Kothari","jobTitle":"Consultant — Critical Care Medicine","worksFor":{"@type":"MedicalOrganization","name":"Apollo Hospitals"},"knowsAbout":["Critical Care Medicine","ECMO","CRRT","Sepsis Management","Multi-Organ Failure"],"hasCredential":[{"@type":"EducationalOccupationalCredential","name":"MBBS"},{"@type":"EducationalOccupationalCredential","name":"MD (Anaesthesia)"},{"@type":"EducationalOccupationalCredential","name":"FNB (Critical Care Medicine)"}],"address":{"@type":"PostalAddress","addressLocality":"Ahmedabad","addressRegion":"Gujarat","addressCountry":"IN"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a Critical Care Specialist actually do — and why is it different from a regular doctor?","acceptedAnswer":{"@type":"Answer","text":"A critical care specialist (intensivist) is a physician trained exclusively to manage life-threatening conditions. Unlike a general physician, an intensivist directly manages every system simultaneously: respiratory, cardiovascular, renal, neurological, and metabolic."}},{"@type":"Question","name":"What is ECMO, and when would it be recommended for a patient?","acceptedAnswer":{"@type":"Answer","text":"ECMO (Extracorporeal Membrane Oxygenation) temporarily replaces the function of the heart and lungs — circulating blood outside the body, oxygenating it, and returning it — allowing the organs to rest and potentially recover."}},{"@type":"Question","name":"My family member is on a ventilator in the ICU — what does that mean for their recovery?","acceptedAnswer":{"@type":"Answer","text":"Mechanical ventilation is a life-support measure, not a permanent state. The goal is always to wean the patient off the ventilator as safely and quickly as possible using lung-protective ventilation strategies."}},{"@type":"Question","name":"How can I book an OPD consultation with Dr. Jay Kothari at Apollo Hospitals?","acceptedAnswer":{"@type":"Answer","text":"Dr. Jay Kothari holds outpatient consultations at Apollo Hospitals, Ahmedabad, Monday to Saturday, 2:00 PM – 4:00 PM. Walk-in appointments are possible, or call 1860-500-1066."}},{"@type":"Question","name":"What should I expect as a family member when my loved one is in Dr. Kothari's ICU?","acceptedAnswer":{"@type":"Answer","text":"You can expect daily briefings on your loved one's condition and treatment progress. Family members are encouraged to ask questions, and the team explains in Gujarati, Hindi, or English."}}]}]}
   </script>
     <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a1628'/><text x='50' y='68' font-family='system-ui' font-size='50' font-weight='700' fill='%2300d4aa' text-anchor='middle'>FK</text></svg>" />
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a1628'/><text x='50' y='68' font-family='system-ui' font-size='50' font-weight='700' fill='%2300d4aa' text-anchor='middle'>JK</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style"
@@ -36,10 +36,12 @@
             href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" />
     </noscript>
     <link rel="stylesheet" href="styles.css?v=20260414b" />
-    <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('apollo_theme')||'light');</script>
+    <link rel="stylesheet" href="improvements.css?v=20260424" />
+    <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('apollo_theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));</script>
 </head>
 
 <body>
+    <a href="#main-content" class="skip-nav">Skip to main content</a>
     <div id="cursor-glow"></div>
     <div id="secondary-glow"></div>
 
@@ -84,6 +86,7 @@
             Mon–Sat, 2PM</a>
     </div>
 
+    <main id="main-content">
     <!-- HERO -->
     <section class="hero" id="hero">
         <div class="hero-emergency-bar">
@@ -131,7 +134,7 @@
                     <source srcset="img-hero-doctor.webp" type="image/webp" />
                     <img src="img-hero-doctor.png"
                         alt="Dr. Jay Kothari, Critical Care Specialist at Apollo Hospitals, Ahmedabad"
-                        class="hero-doctor-img" loading="eager" fetchpriority="high" />
+                        class="hero-doctor-img" loading="eager" fetchpriority="high" width="600" height="700" />
                 </picture>
                 <div class="hero-float-badge hero-float-top">
                     <div class="float-icon">🫀</div>
@@ -549,7 +552,7 @@
                     <picture>
                         <source srcset="img-ecmo.webp" type="image/webp" />
                         <img src="img-ecmo.png" alt="ECMO machine representing advanced critical care"
-                            class="insight-card-image" loading="lazy" />
+                            class="insight-card-image" loading="lazy" width="600" height="400" />
                     </picture>
                     <div class="insight-card-body">
                         <span class="insight-tag">Sepsis & Infection</span>
@@ -563,7 +566,7 @@
                     <picture>
                         <source srcset="img-team.webp" type="image/webp" />
                         <img src="img-team.png" alt="Critical care team at Apollo Hospitals" class="insight-card-image"
-                            loading="lazy" />
+                            loading="lazy" width="600" height="400" />
                     </picture>
                     <div class="insight-card-body">
                         <span class="insight-tag">Advanced Life Support</span>
@@ -577,7 +580,7 @@
                     <picture>
                         <source srcset="img-knowledge.webp" type="image/webp" />
                         <img src="img-knowledge.png" alt="Medical knowledge and critical care education"
-                            class="insight-card-image" loading="lazy" />
+                            class="insight-card-image" loading="lazy" width="800" height="450" />
                     </picture>
                     <div class="insight-card-body">
                         <span class="insight-tag">Family Guide</span>
@@ -742,6 +745,7 @@
             </div>
         </div>
     </section>
+    </main>
 
     <!-- FOOTER -->
     <footer class="footer">
@@ -773,6 +777,39 @@
 
 
     <script src="script.js" defer></script>
+    <script>
+    (function() {
+        function escH(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+        fetch('./api/content.php?type=faq_items')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var faqs = data.data || data || [];
+                if (!Array.isArray(faqs) || faqs.length === 0) return;
+                var container = document.getElementById('faq-list');
+                if (!container) return;
+                container.innerHTML = faqs.map(function(f, i) {
+                    var delay = i < 4 ? ' reveal-delay-' + (i + 1) : '';
+                    return '<div class="faq-item reveal' + delay + '">' +
+                        '<button class="faq-question" aria-expanded="false">' +
+                        escH(f.question) +
+                        '<span class="faq-icon">+</span></button>' +
+                        '<div class="faq-answer"><div class="faq-answer-inner">' +
+                        escH(f.answer) + '</div></div></div>';
+                }).join('');
+                container.querySelectorAll('.faq-question').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        var item = this.parentElement;
+                        var expanded = item.classList.toggle('active');
+                        this.setAttribute('aria-expanded', expanded);
+                    });
+                });
+                container.querySelectorAll('.faq-item').forEach(function(el) {
+                    el.classList.add('visible');
+                });
+            })
+            .catch(function() {});
+    })();
+    </script>
 </body>
 
 </html>

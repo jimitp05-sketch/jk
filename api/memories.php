@@ -16,24 +16,10 @@
  * Database: Uses 'content' table with content_key = 'healing_stories' | 'gratitude_notes' | 'memory_photos'
  */
 
-header('Content-Type: application/json');
+require_once __DIR__ . '/utils.php';
 
-// ── CORS ─────────────────────────────────────────────────────────────────
-$allowed_origins = [
-    'https://foxwisdom.com', 'https://www.foxwisdom.com',
-    'https://drjaykothari.in', 'https://www.drjaykothari.in',
-];
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if (in_array($origin, $allowed_origins, true)) {
-    header("Access-Control-Allow-Origin: $origin");
-} elseif (php_sapi_name() === 'cli' || strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false) {
-    header('Access-Control-Allow-Origin: *');
-}
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-Admin-Token');
-header('Access-Control-Allow-Credentials: true');
-header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: DENY');
+header('Content-Type: application/json');
+setCORSHeaders();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
@@ -41,12 +27,6 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/auth.php';
 
 $VALID_TYPES = ['healing_stories', 'gratitude_notes', 'memory_photos'];
-
-function respond(array $payload, int $code = 200): void {
-    http_response_code($code);
-    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    exit;
-}
 
 // ── READ / WRITE ─────────────────────────────────────────────────────────
 function readItems(string $type): array {
@@ -65,15 +45,6 @@ function writeItems(string $type, array $items): bool {
         ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
     ");
     return $stmt->execute([$type, json_encode($items, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
-}
-
-// ── SANITIZER ────────────────────────────────────────────────────────────
-function clean(string $val, int $maxLen = 500): string {
-    $val = trim($val);
-    $val = strip_tags($val);
-    $val = htmlspecialchars($val, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    if (mb_strlen($val) > $maxLen) $val = mb_substr($val, 0, $maxLen);
-    return $val;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -136,7 +107,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             respond(['success' => false, 'error' => 'Too many submissions. Please try again later.'], 429);
         }
 
-        $items = readItems($type);
+        $pdo = get_db_connection();
+        $pdo->beginTransaction();
+        $stmtLock = $pdo->prepare("SELECT data FROM content WHERE content_key = ? LIMIT 1 FOR UPDATE");
+        $stmtLock->execute([$type]);
+        $rowLock = $stmtLock->fetch();
+        $items = $rowLock ? (json_decode($rowLock['data'], true) ?: []) : [];
+
         $newItem = [
             'id' => $type . '_' . bin2hex(random_bytes(8)),
             'status' => 'pending',
@@ -185,14 +162,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 respond(['success' => false, 'error' => 'Invalid image format. Use JPG, PNG, or WebP.'], 400);
             }
 
-            // Limit file size (~5MB in base64)
-            if (strlen($newItem['photo_data']) > 7 * 1024 * 1024) {
+            // Limit actual decoded image size to 5MB
+            $b64Data = substr($newItem['photo_data'], strpos($newItem['photo_data'], ',') + 1);
+            $decodedSize = (int)(strlen($b64Data) * 3 / 4);
+            if ($decodedSize > 5 * 1024 * 1024) {
                 respond(['success' => false, 'error' => 'Image too large. Maximum 5MB.'], 400);
             }
         }
 
         array_unshift($items, $newItem);
-        writeItems($type, $items);
+        $writeStmt = $pdo->prepare("
+            INSERT INTO content (content_type, content_key, data)
+            VALUES ('community', ?, ?)
+            ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
+        ");
+        $writeStmt->execute([$type, json_encode($items, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+        $pdo->commit();
 
         respond(['success' => true, 'message' => 'Submitted successfully! It will appear after admin review.']);
     }
@@ -212,7 +197,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             respond(['success' => false, 'error' => 'Missing item ID'], 400);
         }
 
-        $items = readItems($type);
+        $pdo = get_db_connection();
+        $pdo->beginTransaction();
+        $stmtLock = $pdo->prepare("SELECT data FROM content WHERE content_key = ? LIMIT 1 FOR UPDATE");
+        $stmtLock->execute([$type]);
+        $rowLock = $stmtLock->fetch();
+        $items = $rowLock ? (json_decode($rowLock['data'], true) ?: []) : [];
         $found = false;
 
         foreach ($items as $i => &$item) {
@@ -229,10 +219,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($item);
 
         if (!$found) {
+            $pdo->rollBack();
             respond(['success' => false, 'error' => 'Item not found'], 404);
         }
 
-        writeItems($type, $items);
+        $writeStmt = $pdo->prepare("
+            INSERT INTO content (content_type, content_key, data)
+            VALUES ('community', ?, ?)
+            ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
+        ");
+        $writeStmt->execute([$type, json_encode($items, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+        $pdo->commit();
         respond(['success' => true, 'action' => $action, 'id' => $targetId]);
     }
 
@@ -247,7 +244,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $itemData = $input['item'] ?? [];
-        $items = readItems($type);
+        $pdo = get_db_connection();
+        $pdo->beginTransaction();
+        $stmtLock = $pdo->prepare("SELECT data FROM content WHERE content_key = ? LIMIT 1 FOR UPDATE");
+        $stmtLock->execute([$type]);
+        $rowLock = $stmtLock->fetch();
+        $items = $rowLock ? (json_decode($rowLock['data'], true) ?: []) : [];
 
         // If item has an ID, update existing; otherwise create new
         $editId = $itemData['id'] ?? '';
@@ -266,7 +268,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             array_unshift($items, $itemData);
         }
 
-        writeItems($type, $items);
+        $writeStmt = $pdo->prepare("
+            INSERT INTO content (content_type, content_key, data)
+            VALUES ('community', ?, ?)
+            ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
+        ");
+        $writeStmt->execute([$type, json_encode($items, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+        $pdo->commit();
         respond(['success' => true, 'id' => $itemData['id']]);
     }
 

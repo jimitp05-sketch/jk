@@ -16,6 +16,14 @@
     Require all denied
 </Files>
 
+# Block access to SQL files and backups
+<FilesMatch "\.(sql|bak|log)$">
+    Require all denied
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
 # Block direct access to admin panels directory
 <Files "*.php">
     # Allow PHP execution normally

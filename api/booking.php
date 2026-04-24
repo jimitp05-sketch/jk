@@ -144,7 +144,7 @@ if ($recaptchaSecret) {
 
 // ── FIELD VALIDATION ─────────────────────────────────────────
 // Name: 2-100 chars, no HTML
-$name = htmlspecialchars(mb_substr($name, 0, 100));
+$name = mb_substr($name, 0, 100);
 if (mb_strlen($name) < 2) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Please enter a valid name (at least 2 characters).']);
@@ -186,24 +186,34 @@ if (!preg_match('/^\d{2}:\d{2}$/', $time)) {
 }
 
 // Reason: max 500 chars
-$reason = htmlspecialchars(mb_substr($reason, 0, 500));
+$reason = mb_substr($reason, 0, 500);
 
 // ── DATABASE SAVE ─────────────────────────────────────────
 try {
     $pdo = get_db_connection();
 
-    // Check for duplicate booking (same date + time slot)
-    $dupCheck = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE booking_date = ? AND booking_time = ? AND (deleted_at IS NULL OR deleted_at = '0000-00-00 00:00:00')");
-    $dupCheck->execute([$date, $time]);
-    if ($dupCheck->fetchColumn() > 0) {
-        http_response_code(409);
-        echo json_encode(['success' => false, 'message' => 'This time slot is already booked. Please select a different time.', 'code' => 'DUPLICATE_BOOKING']);
-        exit;
-    }
+    $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("INSERT INTO bookings (name, email, phone, booking_date, booking_time, reason) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$name, $email ?: '', $phone, $date, $time, $reason]);
-    $bookingId = $pdo->lastInsertId();
+    try {
+        // Check for duplicate booking (same date + time slot)
+        $dupCheck = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE booking_date = ? AND booking_time = ? AND (deleted_at IS NULL OR deleted_at = '0000-00-00 00:00:00')");
+        $dupCheck->execute([$date, $time]);
+        if ($dupCheck->fetchColumn() > 0) {
+            $pdo->rollBack();
+            http_response_code(409);
+            echo json_encode(['success' => false, 'message' => 'This time slot is already booked. Please select a different time.', 'code' => 'DUPLICATE_BOOKING']);
+            exit;
+        }
+
+        $stmt = $pdo->prepare("INSERT INTO bookings (name, email, phone, booking_date, booking_time, reason) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$name, $email ?: '', $phone, $date, $time, $reason]);
+        $bookingId = $pdo->lastInsertId();
+
+        $pdo->commit();
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
 
 } catch (PDOException $e) {
     if ($e->getCode() === '23000' && strpos($e->getMessage(), 'uk_slot') !== false) {

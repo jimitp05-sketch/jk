@@ -139,7 +139,7 @@ function checkBruteForce(string $ip): bool {
         return true;
     } catch (Exception $e) {
         error_log('Auth: checkBruteForce failed: ' . $e->getMessage());
-        return true; // Fail open to avoid locking out users on DB error
+        return false; // Fail closed — block login attempts when DB is unavailable
     }
 }
 
@@ -224,8 +224,8 @@ function changeAdminPassword(string $currentPassword, string $newPassword, strin
         return ['success' => false, 'error' => 'Current password is incorrect.'];
     }
 
-    if (strlen($newPassword) < 6) {
-        return ['success' => false, 'error' => 'New password must be at least 6 characters.'];
+    if (strlen($newPassword) < 12) {
+        return ['success' => false, 'error' => 'New password must be at least 12 characters.'];
     }
 
     try {
@@ -289,7 +289,7 @@ function validateCSRFToken(string $token): bool {
         return true;
     } catch (Exception $e) {
         error_log('Auth: validateCSRFToken failed: ' . $e->getMessage());
-        return true; // Fail open on DB error — rate limiting still guards the endpoint
+        return false; // Fail closed — reject requests when DB is unavailable
     }
 }
 
@@ -297,6 +297,10 @@ function validateCSRFToken(string $token): bool {
 function checkRateLimit(string $ip, int $max = 10, int $window = 60, string $prefix = 'default'): bool {
     try {
         $pdo = get_db_connection();
+        // Probabilistic global cleanup (~1% of calls) to prevent unbounded growth
+        if (mt_rand(1, 100) === 1) {
+            $pdo->exec("DELETE FROM rate_limits WHERE hit_at < DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+        }
         $key = $prefix . '_' . $ip;
         $pdo->prepare("DELETE FROM rate_limits WHERE prefix_ip = ? AND hit_at < DATE_SUB(NOW(), INTERVAL ? SECOND)")
             ->execute([$key, $window]);
@@ -307,6 +311,6 @@ function checkRateLimit(string $ip, int $max = 10, int $window = 60, string $pre
         return true;
     } catch (Exception $e) {
         error_log('Auth: checkRateLimit failed: ' . $e->getMessage());
-        return true; // Fail open on DB error
+        return false; // Fail closed — reject requests when DB is unavailable
     }
 }

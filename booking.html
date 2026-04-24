@@ -17,12 +17,14 @@
             href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" />
     </noscript>
     <link rel="stylesheet" href="styles.css?v=20260414b" />
+    <link rel="stylesheet" href="improvements.css?v=20260424" />
     <link rel="canonical" href="https://foxwisdom.com/booking.html" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a1628'/><text x='50' y='68' font-family='system-ui' font-size='50' font-weight='700' fill='%2300d4aa' text-anchor='middle'>FK</text></svg>" />
-    <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('apollo_theme')||'light');</script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a1628'/><text x='50' y='68' font-family='system-ui' font-size='50' font-weight='700' fill='%2300d4aa' text-anchor='middle'>JK</text></svg>" />
+    <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('apollo_theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));</script>
 </head>
 
 <body>
+    <a href="#main-content" class="skip-nav">Skip to main content</a>
     <nav class="nav scrolled" id="navbar">
         <div class="container nav-content">
             <a href="index.html" class="nav-logo">Dr. Jay <span class="glow-text">Kothari</span></a>
@@ -50,6 +52,7 @@
         <a href="booking.html" class="btn-primary" style="margin-top:16px;text-align:center;">Book Consultation</a>
     </div>
 
+    <main id="main-content">
     <div class="booking-hero">
         <div class="container" style="position:relative;z-index:2;">
             <span class="section-label" style="color:rgba(255,255,255,0.5);">Schedule Your Visit</span>
@@ -189,6 +192,7 @@
             </div>
         </div>
     </div>
+    </main>
 
     <footer class="footer">
         <div class="container">
@@ -209,7 +213,7 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
     <script>
         // ============================================================
         // BOOKING CALENDAR SYSTEM
@@ -284,7 +288,7 @@
                     if (hasSlots) cls += ' has-slots';
                 }
                 const clickable = !isSun && !isPast;
-                html += `<div class="${cls}" data-date="${dateKey}" ${clickable ? `onclick="selectDate('${dateKey}')"` : ''}>${day}</div>`;
+                html += `<div class="${cls}" data-date="${dateKey}" ${clickable ? `onclick="selectDate('${dateKey}')" tabindex="0" role="button" aria-label="${dateKey}${isSelected ? ', selected' : ''}"` : 'aria-hidden="true"'}>${day}</div>`;
             }
             document.getElementById('cal-grid').innerHTML = html;
         }
@@ -352,6 +356,16 @@
         document.getElementById('cal-next').addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() + 1);
             renderCalendar();
+        });
+
+        document.getElementById('cal-grid').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const cell = e.target.closest('.cal-day[tabindex="0"]');
+                if (cell) {
+                    e.preventDefault();
+                    cell.click();
+                }
+            }
         });
 
         document.getElementById('booking-form').addEventListener('submit', async function (e) {

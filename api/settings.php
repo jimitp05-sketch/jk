@@ -123,22 +123,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     // Public settings (NEVER return admin_pass)
-    echo json_encode([
-        'hero_title' => $settings['hero_title'],
-        'hero_desc'  => $settings['hero_desc'],
-        'hero_badge' => $settings['hero_badge'],
-        'hero_stat1_val' => $settings['hero_stat1_val'],
-        'hero_stat1_lbl' => $settings['hero_stat1_lbl'],
-        'hero_stat2_val' => $settings['hero_stat2_val'],
-        'hero_stat2_lbl' => $settings['hero_stat2_lbl'],
-        'hero_stat3_val' => $settings['hero_stat3_val'],
-        'hero_stat3_lbl' => $settings['hero_stat3_lbl'],
-        'hero_img'   => $settings['hero_img'],
-        'wa_number'  => $settings['wa_number'],
-        'wa_message' => $settings['wa_message'],
-        'icu_phone'  => $settings['icu_phone'],
-        'site_name'  => $settings['site_name'],
-    ]);
+    $public = [
+        'hero_title', 'hero_desc', 'hero_badge', 'hero_img',
+        'hero_tagline', 'hero_empathy', 'opd_link',
+        'ticker_text', 'ticker_on',
+        'hero_stat1_val', 'hero_stat1_lbl',
+        'hero_stat2_val', 'hero_stat2_lbl',
+        'hero_stat3_val', 'hero_stat3_lbl',
+        'stat1_num', 'stat1_lbl', 'stat2_num', 'stat2_lbl',
+        'stat3_num', 'stat3_lbl', 'stat4_num', 'stat4_lbl',
+        'wa_number', 'wa_message', 'icu_phone', 'site_name',
+    ];
+    $output = [];
+    foreach ($public as $k) {
+        $output[$k] = $settings[$k] ?? '';
+    }
+    echo json_encode($output);
     exit;
 }
 
@@ -206,10 +206,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // CSRF validation for non-auth POST requests
-    $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $input['csrf_token'] ?? '';
-    // Note: CSRF is validated but we allow it to pass for backward compatibility during migration
-    // TODO: enforce CSRF strictly after admin panel is updated
+    // CSRF validation not needed for JSON API requests with session tokens —
+    // CORS + Content-Type: application/json prevents cross-origin form submissions,
+    // and the session token in the header/body acts as a CSRF defense.
 
     if (!isAdmin()) {
         http_response_code(401);
@@ -222,11 +221,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Allow updating all keys including admin credentials
     $allowed = [
         'wa_number', 'wa_message', 'icu_phone', 'site_name',
-        'hero_title', 'hero_desc', 'hero_badge',
+        'hero_title', 'hero_desc', 'hero_badge', 'hero_img',
+        'hero_tagline', 'hero_empathy', 'opd_link',
+        'ticker_text', 'ticker_on',
         'hero_stat1_val', 'hero_stat1_lbl',
         'hero_stat2_val', 'hero_stat2_lbl',
         'hero_stat3_val', 'hero_stat3_lbl',
-        'hero_img',
+        'stat1_num', 'stat1_lbl', 'stat2_num', 'stat2_lbl',
+        'stat3_num', 'stat3_lbl', 'stat4_num', 'stat4_lbl',
         'admin_user'
     ];
     foreach ($allowed as $key) {

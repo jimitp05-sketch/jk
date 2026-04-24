@@ -7,42 +7,17 @@
  * SECURITY HARDENED: Password hashing, CORS whitelist, rate limiting
  */
 
+require_once __DIR__ . '/utils.php';
+
 header('Content-Type: application/json');
-
-// ── CORS WHITELIST ───────────────────────────────────────────────────────
-$allowed_origins = [
-    'https://foxwisdom.com',
-    'https://www.foxwisdom.com',
-    'https://drjaykothari.in',
-    'https://www.drjaykothari.in',
-];
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if (in_array($origin, $allowed_origins, true)) {
-    header("Access-Control-Allow-Origin: $origin");
-} elseif (php_sapi_name() === 'cli' || strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false) {
-    header('Access-Control-Allow-Origin: *');
-}
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-Admin-Token, X-CSRF-Token');
-header('Access-Control-Allow-Credentials: true');
-
-// ── SECURITY HEADERS ─────────────────────────────────────────────────────
-header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: DENY');
+setCORSHeaders();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/auth.php';
 
-$VALID_TYPES = ['quiz_questions', 'knowledge_articles', 'research_papers', 'myth_busters', 'peer_recognitions', 'photo_wall'];
-
-// ── RESPOND HELPER ───────────────────────────────────────────────────────────
-function respond(array $payload, int $code = 200): void {
-    http_response_code($code);
-    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    exit;
-}
+$VALID_TYPES = ['quiz_questions', 'knowledge_articles', 'research_papers', 'myth_busters', 'peer_recognitions', 'photo_wall', 'faq_items'];
 
 // ── DATABASE HELPERS ─────────────────────────────────────────────────────────
 
@@ -72,7 +47,8 @@ function writeContentToDB(string $type, array $data): bool {
         'research_papers'    => 'research',
         'knowledge_articles' => 'knowledge',
         'peer_recognitions'  => 'reviews',
-        'photo_wall'         => 'gallery'
+        'photo_wall'         => 'gallery',
+        'faq_items'          => 'faq'
     ];
     $contentType = $typeMap[$type] ?? 'other';
     

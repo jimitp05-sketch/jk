@@ -93,6 +93,8 @@
                 </div>
                 <div class="admin-nav-group">
                     <div class="admin-nav-label">Site Controls</div>
+                    <div class="admin-nav-link" data-panel="faq" onclick="switchPanel('faq')"><span
+                            class="nav-icon">❓</span>FAQ Manager</div>
                     <div class="admin-nav-link" data-panel="hero" onclick="switchPanel('hero')"><span
                             class="nav-icon">🏠</span>Hero &amp; Content</div>
                     <div class="admin-nav-link" data-panel="images" onclick="switchPanel('images')"><span
@@ -112,7 +114,7 @@
                 $panels = [
                     'dashboard', 'calendar', 'requests', 'knowledge', 'editor',
                     'reviews', 'photos', 'images', 'settings', 'myths',
-                    'quizeditor', 'research', 'hero', 'export', 'api_health',
+                    'quizeditor', 'research', 'hero', 'faq', 'export', 'api_health',
                     'diya', 'memories'
                 ];
                 foreach ($panels as $panel) {

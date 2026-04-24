@@ -20,6 +20,7 @@ window.revealNew = function () {
 };
 
 // 2. COUNTER ANIMATION
+const _activeTimers = [];
 function animateCountEl(el) {
     const useTarget = el.dataset.target !== undefined;
     const target = parseInt(useTarget ? el.dataset.target : el.dataset.count, 10);
@@ -32,6 +33,7 @@ function animateCountEl(el) {
         el.textContent = current.toLocaleString() + suffix;
         if (current >= target) clearInterval(timer);
     }, 20);
+    _activeTimers.push(timer);
 }
 
 const counterObs = new IntersectionObserver((entries) => {
@@ -42,6 +44,10 @@ const counterObs = new IntersectionObserver((entries) => {
         }
     });
 }, { threshold: 0.5 });
+
+window.addEventListener('beforeunload', () => {
+    _activeTimers.forEach(t => clearInterval(t));
+});
 
 // ── DOM CONTENT LOADED ──────────────────────────────────────────────────
 
@@ -141,12 +147,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const heroImg = document.querySelector('.hero-image-wrapper');
+        const heroBadges = document.querySelectorAll('.hero-float-badge');
         document.addEventListener('mousemove', e => {
             if (!heroImg) return;
             const x = (e.clientX / window.innerWidth - 0.5) * 14;
             const y = (e.clientY / window.innerHeight - 0.5) * 8;
             heroImg.style.transform = `translate(${x * 0.5}px, ${y * 0.5}px)`;
-            document.querySelectorAll('.hero-float-badge').forEach((b, i) => {
+            heroBadges.forEach((b, i) => {
                 const d = i === 0 ? 1.5 : 1;
                 b.style.transform = `translate(${x * d}px, ${y * d}px)`;
             });
@@ -242,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (s.wa_number) WA_NUM = s.wa_number;
         if (s.wa_message) WA_MSG = s.wa_message;
         if (s.icu_phone) ICU_PHONE = s.icu_phone;
-        if (s.opd_link) OPD_LINK = s.opd_link;
+        if (s.opd_link && (s.opd_link.startsWith('/') || s.opd_link.startsWith('http'))) OPD_LINK = s.opd_link;
 
         // 1. Update Contact Links
         document.querySelectorAll('.sd-emergency, .icu-link-phone').forEach(el => { el.href = `tel:${ICU_PHONE}`; });
@@ -393,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── DARK / LIGHT MODE TOGGLE ――――――――――――――――――――――――
     (function () {
-        const saved = localStorage.getItem('apollo_theme') || 'light';
+        const saved = localStorage.getItem('apollo_theme') || (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', saved);
         const nav = document.querySelector('.nav-content');
         if (!nav) return;

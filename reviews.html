@@ -17,13 +17,14 @@
             href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" />
     </noscript>
     <link rel="stylesheet" href="styles.css?v=20260414b" />
-    <link rel="stylesheet" href="pulse.css" />
+    <link rel="stylesheet" href="improvements.css?v=20260424" />
     <link rel="canonical" href="https://foxwisdom.com/reviews.html" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a1628'/><text x='50' y='68' font-family='system-ui' font-size='50' font-weight='700' fill='%2300d4aa' text-anchor='middle'>FK</text></svg>" />
-    <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('apollo_theme')||'light');</script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a1628'/><text x='50' y='68' font-family='system-ui' font-size='50' font-weight='700' fill='%2300d4aa' text-anchor='middle'>JK</text></svg>" />
+    <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('apollo_theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));</script>
 </head>
 
 <body>
+    <a href="#main-content" class="skip-nav">Skip to main content</a>
     <div id="cursor-glow"></div>
     <div id="secondary-glow"></div>
 
@@ -57,6 +58,7 @@
     </div>
 
     <!-- HERO -->
+    <main id="main-content">
     <div class="pulse-hero">
         <div class="container" style="position:relative;z-index:2;">
             <span class="section-label" style="color:rgba(255,255,255,0.5);">Social Proof & Community</span>
@@ -308,6 +310,7 @@
                 collaboration and educational contributions per NMC guidelines.</p>
         </div>
     </section>
+    </main>
 
     <footer class="footer">
         <div class="container">
@@ -329,14 +332,19 @@
                     educational, not personal endorsements or outcome guarantees.</em></div>
         </div>
     </footer>
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
     <!-- Combined Data and Logic Scripts -->
     <script>
         // ============================================================
-        // REVIEWS DATA
+        // XSS HELPER
+        // ============================================================
+        function escH(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+        // ============================================================
+        // REVIEWS DATA — DEFAULT FALLBACK
         // Each item: { id, platform, author, role, avatar, color, date, year, text, image, imageCaption, likes, comments }
         // ============================================================
-        const reviews = [
+        const DEFAULT_REVIEWS = [
             {
                 id: 1, platform: "linkedin",
                 author: "Dr. S. Sharma", role: "Senior Intensivist, Ahmedabad", avatar: "SS", color: "#DBEAFE", avatarText: "#1e40af",
@@ -403,6 +411,9 @@
             }
         ];
 
+        // Live reviews — starts as fallback, replaced by API data if available
+        let reviews = DEFAULT_REVIEWS;
+
         // ============================================================
         // PHOTO WALL DATA
         // ============================================================
@@ -453,27 +464,42 @@
                 feed.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🔍</div><p>No mentions found for this filter combination.<br>Try a different platform or year.</p></div>`;
                 return;
             }
-            feed.innerHTML = items.map(r => `
-      <article class="review-card-v2 reveal" data-platform="${r.platform}" data-year="${r.year}">
+            feed.innerHTML = items.map(r => {
+                const safePlatform = escH(r.platform);
+                const safeColor = escH(r.color);
+                const safeAvatarText = escH(r.avatarText);
+                const safeAvatar = escH(r.avatar);
+                const safeAuthor = escH(r.author);
+                const safeRole = escH(r.role);
+                const safeText = escH(r.text);
+                const safeDate = escH(r.date);
+                const safeImage = r.image ? escH(r.image) : null;
+                const safeImageCaption = escH(r.imageCaption || '');
+                const safeLikes = escH(String(r.likes));
+                const safeComments = escH(String(r.comments));
+                const badgeClass = safePlatform === 'twitter' ? 'twitter' : safePlatform;
+                return `
+      <article class="review-card-v2 reveal" data-platform="${safePlatform}" data-year="${escH(String(r.year))}">
         <div class="rc-header">
-          <div class="rc-avatar" style="background:${r.color};color:${r.avatarText};">${r.avatar}</div>
+          <div class="rc-avatar" style="background:${safeColor};color:${safeAvatarText};">${safeAvatar}</div>
           <div class="rc-meta">
-            <div class="rc-name">${r.author}</div>
-            <div class="rc-role">${r.role}</div>
+            <div class="rc-name">${safeAuthor}</div>
+            <div class="rc-role">${safeRole}</div>
           </div>
-          <span class="rc-platform-badge badge-${r.platform === 'twitter' ? 'twitter' : r.platform}">${platformIcon(r.platform)} ${platformLabel(r.platform)}</span>
+          <span class="rc-platform-badge badge-${badgeClass}">${platformIcon(r.platform)} ${platformLabel(r.platform)}</span>
         </div>
-        ${r.image ? `<div class="rc-image-wrap"><img class="rc-image lightbox-trigger" src="${r.image}" alt="${r.imageCaption || ''}" data-caption="${r.imageCaption || ''}" /></div>` : ''}
-        <div class="rc-body"><p class="rc-text">${r.text}</p></div>
+        ${safeImage ? `<div class="rc-image-wrap"><img class="rc-image lightbox-trigger" src="${safeImage}" alt="${safeImageCaption}" data-caption="${safeImageCaption}" /></div>` : ''}
+        <div class="rc-body"><p class="rc-text">${safeText}</p></div>
         <div class="rc-footer">
-          <span class="rc-date">📅 ${r.date}</span>
+          <span class="rc-date">📅 ${safeDate}</span>
           <div class="rc-reactions">
-            <span class="rc-reaction">👍 ${r.likes}</span>
-            <span class="rc-reaction">💬 ${r.comments}</span>
+            <span class="rc-reaction">👍 ${safeLikes}</span>
+            <span class="rc-reaction">💬 ${safeComments}</span>
           </div>
         </div>
       </article>
-    `).join('');
+    `;
+            }).join('');
 
             // Re-observe reveal items
             document.querySelectorAll('.review-card-v2.reveal').forEach(el => {
@@ -574,11 +600,83 @@
         });
 
         // ============================================================
-        // INIT
+        // API DATA NORMALISER
+        // Maps a peer_recognition record from the API to the local review shape.
         // ============================================================
-        updateCounts();
-        renderReviews();
-        renderPhotoWall();
+        function normaliseApiReview(item, index) {
+            const platformMap = {
+                linkedin: 'linkedin', facebook: 'facebook',
+                instagram: 'instagram', twitter: 'twitter', x: 'twitter'
+            };
+            const platform = platformMap[(item.platform || '').toLowerCase()] || 'others';
+
+            // Derive avatar initials from author name
+            const name = item.author || item.name || '';
+            const initials = name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '??';
+
+            // Avatar colour palette (cycles by index)
+            const palettes = [
+                { color: '#DBEAFE', avatarText: '#1e40af' },
+                { color: '#DCFCE7', avatarText: '#166534' },
+                { color: '#F5F5F5', avatarText: '#374151' },
+                { color: '#D1FAE5', avatarText: '#065F46' },
+                { color: '#FFE4E6', avatarText: '#9f1239' },
+                { color: '#E0E7FF', avatarText: '#3730a3' },
+                { color: '#CFFAFE', avatarText: '#155E75' },
+                { color: '#F0ABFC', avatarText: '#7e22ce' },
+                { color: '#FEF9C3', avatarText: '#854d0e' },
+            ];
+            const palette = palettes[index % palettes.length];
+
+            // Parse year from date string
+            const dateStr = item.date || item.created_at || '';
+            const yearMatch = dateStr.match(/\b(20\d{2})\b/);
+            const year = yearMatch ? parseInt(yearMatch[1]) : new Date().getFullYear();
+
+            return {
+                id: item.id || (1000 + index),
+                platform,
+                author: item.author || item.name || 'Anonymous',
+                role: item.role || item.designation || '',
+                avatar: initials,
+                color: palette.color,
+                avatarText: palette.avatarText,
+                date: dateStr,
+                year,
+                text: item.text || item.content || item.body || '',
+                image: item.image || null,
+                imageCaption: item.image_caption || item.imageCaption || null,
+                likes: parseInt(item.likes) || 0,
+                comments: parseInt(item.comments) || 0,
+            };
+        }
+
+        // ============================================================
+        // INIT — fetch from API, fall back to DEFAULT_REVIEWS
+        // ============================================================
+        async function init() {
+            renderPhotoWall();
+
+            try {
+                const response = await fetch('./api/content.php?type=peer_recognitions');
+                if (response.ok) {
+                    const data = await response.json();
+                    // Support both { data: [...] } envelope and bare array
+                    const raw = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
+                    if (raw.length > 0) {
+                        reviews = raw.map((item, i) => normaliseApiReview(item, i));
+                    }
+                    // If raw is empty, reviews stays as DEFAULT_REVIEWS
+                }
+            } catch (e) {
+                // Network/parse error — silently use DEFAULT_REVIEWS
+            }
+
+            updateCounts();
+            renderReviews();
+        }
+
+        init();
 
         // ============================================================
         // PHOTO SUBMISSION MODAL

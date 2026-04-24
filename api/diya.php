@@ -12,37 +12,15 @@
  * Each diya: { id, name, prayer, lit_by, lit_at, status: approved|pending|rejected, ip_hash }
  */
 
+require_once __DIR__ . '/utils.php';
+
 header('Content-Type: application/json');
-
-// ── CORS ─────────────────────────────────────────────────────────────────
-$allowed_origins = [
-    'https://foxwisdom.com', 'https://www.foxwisdom.com',
-    'https://drjaykothari.in', 'https://www.drjaykothari.in',
-];
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if (in_array($origin, $allowed_origins, true)) {
-    header("Access-Control-Allow-Origin: $origin");
-} elseif (php_sapi_name() === 'cli' || strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false) {
-    header('Access-Control-Allow-Origin: *');
-}
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-Admin-Token');
-header('Access-Control-Allow-Credentials: true');
-
-// ── SECURITY HEADERS ─────────────────────────────────────────────────────
-header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: DENY');
+setCORSHeaders();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/auth.php';
-
-function respond(array $payload, int $code = 200): void {
-    http_response_code($code);
-    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    exit;
-}
 
 // ── READ / WRITE DIYAS ──────────────────────────────────────────────────
 function readDiyas(): array {
@@ -80,15 +58,6 @@ function writeQuotes(array $quotes): bool {
         ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
     ");
     return $stmt->execute([json_encode($quotes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
-}
-
-// ── INPUT SANITIZER ──────────────────────────────────────────────────────
-function clean(string $val, int $maxLen = 500): string {
-    $val = trim($val);
-    $val = strip_tags($val);
-    $val = htmlspecialchars($val, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    if (mb_strlen($val) > $maxLen) $val = mb_substr($val, 0, $maxLen);
-    return $val;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -171,7 +140,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             respond(['success' => false, 'error' => 'Please tell us who this diya is for.'], 400);
         }
 
-        $diyas = readDiyas();
+        $pdo = get_db_connection();
+        $pdo->beginTransaction();
+        $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'diyas' LIMIT 1 FOR UPDATE");
+        $stmt->execute();
+        $row = $stmt->fetch();
+        $diyas = $row ? (json_decode($row['data'], true) ?: []) : [];
+
         $newDiya = [
             'id' => 'diya_' . bin2hex(random_bytes(8)),
             'name' => $name,
@@ -183,7 +158,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
 
         array_unshift($diyas, $newDiya); // newest first
-        writeDiyas($diyas);
+        $writeStmt = $pdo->prepare("
+            INSERT INTO content (content_type, content_key, data)
+            VALUES ('community', 'diyas', ?)
+            ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
+        ");
+        $writeStmt->execute([json_encode($diyas, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+        $pdo->commit();
 
         // Return the diya (without ip_hash)
         $publicDiya = array_diff_key($newDiya, ['ip_hash' => 1]);
@@ -205,7 +186,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             respond(['success' => false, 'error' => 'Missing diya ID'], 400);
         }
 
-        $diyas = readDiyas();
+        $pdo = get_db_connection();
+        $pdo->beginTransaction();
+        $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'diyas' LIMIT 1 FOR UPDATE");
+        $stmt->execute();
+        $row = $stmt->fetch();
+        $diyas = $row ? (json_decode($row['data'], true) ?: []) : [];
         $found = false;
 
         foreach ($diyas as $i => &$diya) {
@@ -222,10 +208,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($diya);
 
         if (!$found) {
+            $pdo->rollBack();
             respond(['success' => false, 'error' => 'Diya not found'], 404);
         }
 
-        writeDiyas($diyas);
+        $writeStmt = $pdo->prepare("
+            INSERT INTO content (content_type, content_key, data)
+            VALUES ('community', 'diyas', ?)
+            ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
+        ");
+        $writeStmt->execute([json_encode($diyas, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+        $pdo->commit();
         respond(['success' => true, 'action' => $action, 'id' => $targetId]);
     }
 
@@ -255,7 +248,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             respond(['success' => false, 'error' => 'Quote text is required'], 400);
         }
 
-        $quotes = readQuotes();
+        $pdo = get_db_connection();
+        $pdo->beginTransaction();
+        $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'diya_quotes' LIMIT 1 FOR UPDATE");
+        $stmt->execute();
+        $row = $stmt->fetch();
+        $quotes = $row ? (json_decode($row['data'], true) ?: []) : [];
+
         $newQuote = [
             'id' => 'quote_' . bin2hex(random_bytes(8)),
             'text' => $text,
@@ -264,7 +263,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
 
         $quotes[] = $newQuote;
-        writeQuotes($quotes);
+        $writeStmt = $pdo->prepare("
+            INSERT INTO content (content_type, content_key, data)
+            VALUES ('community', 'diya_quotes', ?)
+            ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
+        ");
+        $writeStmt->execute([json_encode($quotes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+        $pdo->commit();
 
         respond(['success' => true, 'data' => $newQuote]);
     }
@@ -283,7 +288,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $text = clean($input['text'] ?? '', 500);
         $author = clean($input['author'] ?? '', 100);
 
-        $quotes = readQuotes();
+        $pdo = get_db_connection();
+        $pdo->beginTransaction();
+        $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'diya_quotes' LIMIT 1 FOR UPDATE");
+        $stmt->execute();
+        $row = $stmt->fetch();
+        $quotes = $row ? (json_decode($row['data'], true) ?: []) : [];
         $found = false;
         $updatedQuote = null;
 
@@ -299,10 +309,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($quote);
 
         if (!$found) {
+            $pdo->rollBack();
             respond(['success' => false, 'error' => 'Quote not found'], 404);
         }
 
-        writeQuotes($quotes);
+        $writeStmt = $pdo->prepare("
+            INSERT INTO content (content_type, content_key, data)
+            VALUES ('community', 'diya_quotes', ?)
+            ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
+        ");
+        $writeStmt->execute([json_encode($quotes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+        $pdo->commit();
         respond(['success' => true, 'data' => $updatedQuote]);
     }
 
@@ -317,7 +334,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             respond(['success' => false, 'error' => 'Missing quote ID'], 400);
         }
 
-        $quotes = readQuotes();
+        $pdo = get_db_connection();
+        $pdo->beginTransaction();
+        $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'diya_quotes' LIMIT 1 FOR UPDATE");
+        $stmt->execute();
+        $row = $stmt->fetch();
+        $quotes = $row ? (json_decode($row['data'], true) ?: []) : [];
         $found = false;
 
         foreach ($quotes as $i => $quote) {
@@ -329,10 +351,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (!$found) {
+            $pdo->rollBack();
             respond(['success' => false, 'error' => 'Quote not found'], 404);
         }
 
-        writeQuotes($quotes);
+        $writeStmt = $pdo->prepare("
+            INSERT INTO content (content_type, content_key, data)
+            VALUES ('community', 'diya_quotes', ?)
+            ON DUPLICATE KEY UPDATE data = VALUES(data), updated_at = NOW()
+        ");
+        $writeStmt->execute([json_encode($quotes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+        $pdo->commit();
         respond(['success' => true, 'id' => $targetId]);
     }
 
