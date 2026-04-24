@@ -467,3 +467,31 @@ document.addEventListener('DOMContentLoaded', () => {
         initPeerRecognitions();
     }
 })();
+
+async function subscribeNewsletter(e) {
+    e.preventDefault();
+    const emailEl = document.getElementById('nl-email');
+    const msg     = document.getElementById('nl-msg');
+    const email   = emailEl?.value.trim();
+    if (!email) return;
+    const btn = e.submitter || e.target.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+    try {
+        const r = await fetch('./api/subscribers.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, source: 'homepage' })
+        });
+        const d = await r.json();
+        if (msg) {
+            msg.style.display = 'block';
+            msg.textContent   = d.success ? '✅ Guide on its way — check your inbox!' : (d.error || 'Something went wrong.');
+            msg.style.color   = d.success ? 'var(--color-teal)' : '#e74c3c';
+        }
+        if (d.success && emailEl) emailEl.value = '';
+    } catch (err) {
+        if (msg) { msg.style.display = 'block'; msg.textContent = 'Connection error. Please try again.'; }
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Send me the guide →'; }
+    }
+}

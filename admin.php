@@ -92,6 +92,10 @@
                             id="badge-memories">0</span></div>
                 </div>
                 <div class="admin-nav-group">
+                    <div class="admin-nav-label">Growth</div>
+                    <div class="admin-nav-link" data-panel="subscribers" onclick="switchPanel('subscribers')"><span class="nav-icon">📧</span>Subscribers</div>
+                </div>
+                <div class="admin-nav-group">
                     <div class="admin-nav-label">Site Controls</div>
                     <div class="admin-nav-link" data-panel="faq" onclick="switchPanel('faq')"><span
                             class="nav-icon">❓</span>FAQ Manager</div>
@@ -115,7 +119,7 @@
                     'dashboard', 'calendar', 'requests', 'knowledge', 'editor',
                     'reviews', 'photos', 'images', 'settings', 'myths',
                     'quizeditor', 'research', 'hero', 'faq', 'export', 'api_health',
-                    'diya', 'memories'
+                    'diya', 'memories', 'subscribers'
                 ];
                 foreach ($panels as $panel) {
                     $file = __DIR__ . "/admin/panels/{$panel}.php";

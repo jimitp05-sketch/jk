@@ -745,6 +745,25 @@
             </div>
         </div>
     </section>
+
+        <!-- Newsletter Strip -->
+        <section class="newsletter-strip" aria-label="Newsletter signup">
+            <div class="container">
+                <div class="newsletter-inner">
+                    <div class="newsletter-text">
+                        <h3>Free: The ICU Family Survival Guide</h3>
+                        <p>What every family needs to know during a loved one's critical illness — written by Dr. Jay Kothari.</p>
+                    </div>
+                    <div>
+                        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                            <input type="email" id="nl-email" placeholder="Your email address" required autocomplete="email" />
+                            <button type="submit" class="btn-primary">Send me the guide →</button>
+                        </form>
+                        <p id="nl-msg" style="display:none;margin-top:10px;font-weight:600;"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- FOOTER -->

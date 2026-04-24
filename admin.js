@@ -1655,6 +1655,74 @@ async function loadSEOHealthSummary() {
 }
 
 // ============================================================
+// SUBSCRIBERS
+// ============================================================
+let _allSubscribers = [];
+
+async function loadSubscribers() {
+    try {
+        const r = await fetch('./api/subscribers.php', {
+            headers: { 'X-Admin-Token': getSessionToken() }
+        });
+        const d = await r.json();
+        _allSubscribers = d.data || [];
+        renderSubscribers(_allSubscribers);
+        const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+        const newCount   = _allSubscribers.filter(s => new Date(s.subscribed_at).getTime() > oneWeekAgo).length;
+        const total = document.getElementById('sub-total');
+        const week  = document.getElementById('sub-new-week');
+        if (total) total.textContent = _allSubscribers.length;
+        if (week)  week.textContent  = newCount;
+    } catch (e) { console.error('Subscribers load error:', e); }
+}
+
+function renderSubscribers(subs) {
+    const tbody = document.getElementById('sub-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = subs.length
+        ? subs.map(s => `
+            <tr>
+                <td>${escH(s.email)}</td>
+                <td>${escH(s.name || '—')}</td>
+                <td>${escH(s.source || 'homepage')}</td>
+                <td style="font-size:0.8rem;color:var(--text-muted)">${new Date(s.subscribed_at).toLocaleDateString()}</td>
+                <td><button class="action-btn action-btn-reject" onclick="deleteSubscriber(${parseInt(s.id,10)})">Delete</button></td>
+            </tr>`).join('')
+        : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">No subscribers yet.</td></tr>';
+}
+
+function filterSubscribers() {
+    const q = (document.getElementById('sub-search')?.value || '').toLowerCase();
+    renderSubscribers(q ? _allSubscribers.filter(s => s.email.toLowerCase().includes(q)) : _allSubscribers);
+}
+
+async function deleteSubscriber(id) {
+    if (!confirm('Remove this subscriber?')) return;
+    try {
+        const res = await fetch('./api/subscribers.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': getSessionToken() },
+            body: JSON.stringify({ action: 'delete', id, session_token: getSessionToken() })
+        });
+        const d = await res.json();
+        if (d.success) { toast('Subscriber removed', 'success'); loadSubscribers(); }
+        else toast('Error: ' + (d.error || 'Unknown'), 'error');
+    } catch (e) { toast('Error: ' + e.message, 'error'); }
+}
+
+function exportSubscribersCSV() {
+    if (!_allSubscribers.length) { toast('No subscribers to export', 'error'); return; }
+    const rows = [['Email', 'Name', 'Source', 'Subscribed At']];
+    _allSubscribers.forEach(s => rows.push([s.email, s.name || '', s.source || '', s.subscribed_at || '']));
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    a.download = `subscribers-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============================================================
 // INIT
 // ============================================================
 function loadAll() {
@@ -1692,6 +1760,7 @@ switchPanel = function (name) {
     if (name === 'diya') { adminLoadDiyas(); adminLoadQuotes(); }
     if (name === 'memories') { adminLoadStories(); adminLoadNotes(); adminLoadMemoryPhotos(); }
     if (name === 'faq') renderFaqEditor();
+    if (name === 'subscribers') loadSubscribers();
 };
 
 // ============================================================
