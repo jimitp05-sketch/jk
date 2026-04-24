@@ -23,6 +23,97 @@ function clearSession() {
     localStorage.removeItem('apollo_admin_logged');
 }
 
+// ============================================================
+// BULK MODERATION
+// ============================================================
+
+function toggleSelectAll(type, checked) {
+    document.querySelectorAll(`.bulk-check-${type}`).forEach(cb => { cb.checked = checked; });
+    updateBulkBar(type);
+}
+
+function updateBulkBar(type) {
+    const selected = document.querySelectorAll(`.bulk-check-${type}:checked`);
+    const bar = document.getElementById(`${type}-bulk-bar`);
+    const countEl = document.getElementById(`${type}-bulk-count`);
+    if (!bar) return;
+    if (selected.length > 0) {
+        bar.style.display = 'flex';
+        if (countEl) countEl.textContent = `${selected.length} selected`;
+    } else {
+        bar.style.display = 'none';
+    }
+}
+
+function clearBulkSelection(type) {
+    document.querySelectorAll(`.bulk-check-${type}`).forEach(cb => { cb.checked = false; });
+    const selectAll = document.getElementById(`${type}-select-all`);
+    if (selectAll) selectAll.checked = false;
+    updateBulkBar(type);
+}
+
+async function bulkModerate(type, newStatus) {
+    const checkboxes = document.querySelectorAll(`.bulk-check-${type}:checked`);
+    if (!checkboxes.length) return;
+    const ids = Array.from(checkboxes).map(cb => String(cb.dataset.id));
+    if (newStatus === 'deleted' && !confirm(`Delete ${ids.length} item(s)? This cannot be undone.`)) return;
+
+    const keyMap = { reviews: 'peer_recognitions', diya: 'diyas', memories: 'memories' };
+    const contentKey = keyMap[type] || type;
+
+    try {
+        const r = await fetch('./api/content.php?type=' + contentKey);
+        const d = await r.json();
+        let items = (d.data || []).map(item => {
+            if (!ids.includes(String(item.id))) return item;
+            return newStatus === 'deleted' ? null : { ...item, status: newStatus };
+        }).filter(Boolean);
+
+        const res = await fetch('./api/content.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': getSessionToken() },
+            body: JSON.stringify({ type: contentKey, items, session_token: getSessionToken() })
+        });
+        const result = await res.json();
+        if (result.success) {
+            toast(`✅ ${ids.length} item(s) ${newStatus === 'deleted' ? 'deleted' : newStatus}`, 'success');
+            clearBulkSelection(type);
+            if (type === 'reviews') renderReviews();
+            if (type === 'diya') renderDiyas();
+            if (type === 'memories') renderMemories();
+        } else {
+            toast('Error: ' + (result.error || 'Unknown'), 'error');
+        }
+    } catch (e) {
+        toast('Connection error: ' + e.message, 'error');
+    }
+}
+
+async function bulkApproveAll(contentKey) {
+    if (!confirm('Approve all pending items?')) return;
+    try {
+        const r = await fetch('./api/content.php?type=' + contentKey);
+        const d = await r.json();
+        const items = (d.data || []).map(item =>
+            item.status === 'pending' ? { ...item, status: 'approved' } : item
+        );
+        const res = await fetch('./api/content.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': getSessionToken() },
+            body: JSON.stringify({ type: contentKey, items, session_token: getSessionToken() })
+        });
+        const result = await res.json();
+        if (result.success) {
+            toast('✅ All pending items approved', 'success');
+            loadDashboardStats();
+        } else {
+            toast('Error: ' + (result.error || 'Unknown'), 'error');
+        }
+    } catch (e) {
+        toast('Error: ' + e.message, 'error');
+    }
+}
+
 // HTML escape helper (defined early so it's available everywhere)
 function escH(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 
@@ -844,25 +935,30 @@ async function renderReviews() {
         });
         const d = await res.json();
         const reviews = d.data || [];
-        const grid = document.getElementById('reviews-grid');
+        const tbody = document.getElementById('reviews-table-body');
+        if (!tbody) return;
+        const badge = document.getElementById('badge-reviews');
+        if (badge) { badge.textContent = reviews.length; badge.style.display = reviews.length > 0 ? '' : 'none'; }
         if (reviews.length === 0) {
-            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">No reviews yet.</div>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:28px;">No reviews yet.</td></tr>';
             return;
         }
-        grid.innerHTML = reviews.map((r, i) => `
-        <div class="photo-review-item">
-          <div class="photo-review-body">
-            <div class="photo-review-name">${escH(r.name || 'Anonymous')}</div>
-            <div class="photo-review-date">${escH(r.date || '')}</div>
-            <div style="font-size:0.85rem;margin:8px 0;line-height:1.5;">${escH(r.text)}</div>
-            <div style="margin-top:6px;"><span class="status-badge badge-${escH(r.status)}">${escH(r.status)}</span></div>
-            <div class="photo-review-actions" style="margin-top:12px;">
-              ${r.status === 'pending' ? `<button class="action-btn action-btn-approve" onclick="updateReviewStatus(${i},'approved')">✓ Approve</button>
-              <button class="action-btn action-btn-reject" onclick="updateReviewStatus(${i},'rejected')">✕ Reject</button>` : ''}
-              <button class="action-btn action-btn-delete" onclick="deleteReview(${i})">Delete</button>
-            </div>
-          </div>
-        </div>`).join('');
+        tbody.innerHTML = reviews.map((r, idx) => {
+            const statusClass = r.status === 'approved' ? 'badge-approved' : r.status === 'pending' ? 'badge-pending' : 'badge-rejected';
+            const submitted = r.date || r.timestamp || '';
+            return `<tr>
+                <td><input type="checkbox" class="bulk-check-reviews" data-id="${escH(String(r.id || r.timestamp || idx))}" onchange="updateBulkBar('reviews')" /></td>
+                <td><strong>${escH(r.name || 'Anonymous')}</strong>${r.platform ? `<br><small style="color:var(--text-muted);">${escH(r.platform)}</small>` : ''}</td>
+                <td title="${escH(r.text || r.content || '')}" style="max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escH((r.text || r.content || '').substring(0, 80))}${(r.text || r.content || '').length > 80 ? '…' : ''}</td>
+                <td>${escH(submitted)}</td>
+                <td><span class="status-badge ${statusClass}">${escH(r.status)}</span></td>
+                <td>
+                    ${r.status === 'pending' ? `<button class="action-btn action-btn-approve" onclick="updateReviewStatus(${idx},'approved')">✓ Approve</button>
+                    <button class="action-btn action-btn-reject" onclick="updateReviewStatus(${idx},'rejected')">✕ Reject</button>` : ''}
+                    <button class="action-btn action-btn-delete" onclick="deleteReview(${idx})">Delete</button>
+                </td>
+            </tr>`;
+        }).join('');
     } catch (e) {
         console.error('Failed to fetch reviews:', e);
     }
@@ -2076,15 +2172,16 @@ function renderDiyaTable() {
     if (!tbody) return;
 
     if (total === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No diyas yet. Light the first one!</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No diyas yet. Light the first one!</td></tr>';
         return;
     }
 
-    tbody.innerHTML = diyaCache.map(d => {
+    tbody.innerHTML = diyaCache.map((d, idx) => {
         const prayer = (d.prayer || '').length > 60 ? d.prayer.substring(0, 60) + '...' : (d.prayer || '—');
         const date = d.lit_at ? new Date(d.lit_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
         const statusClass = d.status === 'approved' ? 'badge-approved' : d.status === 'pending' ? 'badge-pending' : 'badge-rejected';
         return `<tr>
+            <td><input type="checkbox" class="bulk-check-diya" data-id="${escH(String(d.id || d.timestamp || idx))}" onchange="updateBulkBar('diya')" /></td>
             <td><strong>${escH(d.name)}</strong></td>
             <td title="${escH(d.prayer)}">${escH(prayer)}</td>
             <td>${escH(d.lit_by || '—')}</td>
@@ -2174,15 +2271,16 @@ function renderDiyaTableFiltered(diyas) {
     if (!tbody) return;
 
     if (total === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No diyas found for this date.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No diyas found for this date.</td></tr>';
         return;
     }
 
-    tbody.innerHTML = diyas.map(d => {
+    tbody.innerHTML = diyas.map((d, idx) => {
         const prayer = (d.prayer || '').length > 60 ? d.prayer.substring(0, 60) + '...' : (d.prayer || '—');
         const date = d.lit_at ? new Date(d.lit_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
         const statusClass = d.status === 'approved' ? 'badge-approved' : d.status === 'pending' ? 'badge-pending' : 'badge-rejected';
         return `<tr>
+            <td><input type="checkbox" class="bulk-check-diya" data-id="${escH(String(d.id || d.timestamp || idx))}" onchange="updateBulkBar('diya')" /></td>
             <td><strong>${escH(d.name)}</strong></td>
             <td title="${escH(d.prayer)}">${escH(prayer)}</td>
             <td>${escH(d.lit_by || '—')}</td>
@@ -2324,14 +2422,15 @@ function renderStoriesTable() {
     if (!tbody) return;
 
     if (total === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No stories yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ad-text-muted);">No stories yet.</td></tr>';
         return;
     }
 
-    tbody.innerHTML = storiesCache.map(s => {
+    tbody.innerHTML = storiesCache.map((s, idx) => {
         const date = s.submitted_at ? new Date(s.submitted_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '—';
         const statusClass = s.status === 'approved' ? 'badge-approved' : s.status === 'pending' ? 'badge-pending' : 'badge-rejected';
         return `<tr>
+            <td><input type="checkbox" class="bulk-check-memories" data-id="${escH(String(s.id || s.timestamp || idx))}" onchange="updateBulkBar('memories')" /></td>
             <td><strong>${escH(s.title || '—')}</strong></td>
             <td>${escH(s.family_name || s.patient_name || '—')}</td>
             <td>${escH(s.tag || '—')}</td>

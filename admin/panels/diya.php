@@ -57,6 +57,11 @@
     </div>
 
     <!-- Diya Table -->
+    <div id="diya-bulk-bar" style="display:none;background:var(--bg-section);border:1px solid var(--border);border-radius:8px;padding:10px 16px;margin-bottom:12px;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span id="diya-bulk-count" style="font-weight:600;color:var(--text);">0 selected</span>
+        <button class="action-btn action-btn-edit" onclick="bulkModerate('diya','approved')">✅ Approve Selected</button>
+        <button class="action-btn action-btn-reject" onclick="bulkModerate('diya','deleted')" style="margin-left:auto;">🗑 Delete Selected</button>
+    </div>
     <div class="admin-table-wrap" style="margin-top:24px;">
         <div class="table-header">
             <div class="table-title">All Diyas</div>
@@ -65,6 +70,7 @@
         <table id="diya-table">
             <thead>
                 <tr>
+                    <th style="width:32px;"><input type="checkbox" id="diya-select-all" onchange="toggleSelectAll('diya',this.checked)" /></th>
                     <th>Name</th>
                     <th>Prayer</th>
                     <th>Lit By</th>
@@ -75,7 +81,7 @@
             </thead>
             <tbody id="diya-tbody">
                 <tr>
-                    <td colspan="6" style="text-align:center;color:var(--ad-text-muted);padding:28px;">Loading diyas…</td>
+                    <td colspan="7" style="text-align:center;color:var(--ad-text-muted);padding:28px;">Loading diyas…</td>
                 </tr>
             </tbody>
         </table>

@@ -106,6 +106,12 @@
             </div>
         </div>
 
+        <div id="memories-bulk-bar" style="display:none;background:var(--bg-section);border:1px solid var(--border);border-radius:8px;padding:10px 16px;margin-bottom:12px;align-items:center;gap:12px;flex-wrap:wrap;">
+            <span id="memories-bulk-count" style="font-weight:600;color:var(--text);">0 selected</span>
+            <button class="action-btn action-btn-edit" onclick="bulkModerate('memories','approved')">✅ Approve Selected</button>
+            <button class="action-btn action-btn-reject" onclick="bulkModerate('memories','rejected')">❌ Reject Selected</button>
+            <button class="action-btn action-btn-reject" onclick="bulkModerate('memories','deleted')" style="margin-left:auto;">🗑 Delete Selected</button>
+        </div>
         <div class="admin-table-wrap" style="margin-top:24px;">
             <div class="table-header">
                 <div class="table-title">All Healing Stories</div>
@@ -114,6 +120,7 @@
             <table id="stories-table">
                 <thead>
                     <tr>
+                        <th style="width:32px;"><input type="checkbox" id="memories-select-all" onchange="toggleSelectAll('memories',this.checked)" /></th>
                         <th>Title</th>
                         <th>Family</th>
                         <th>Tag</th>
@@ -124,7 +131,7 @@
                 </thead>
                 <tbody id="stories-tbody">
                     <tr>
-                        <td colspan="6" style="text-align:center;color:var(--ad-text-muted);padding:28px;">Loading stories…</td>
+                        <td colspan="7" style="text-align:center;color:var(--ad-text-muted);padding:28px;">Loading stories…</td>
                     </tr>
                 </tbody>
             </table>
