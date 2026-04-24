@@ -999,13 +999,17 @@ button {
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, .12);
     box-shadow: 0 40px 100px rgba(0, 0, 0, .55), 0 0 0 1px rgba(0, 180, 216, .1);
+    aspect-ratio: 6 / 7;
+    max-width: 420px;
 }
 
 .hero-image-wrapper img {
     width: 100%;
+    height: auto;
     max-width: 420px;
     border-radius: var(--radius-xl);
     display: block;
+    object-fit: contain;
 }
 
 /* Hero floating badges */
@@ -4949,6 +4953,8 @@ body.page-fade-out {
     .hero-image-wrapper img {
         max-width: 100% !important;
         width: 100%;
+        height: auto !important;
+        object-fit: contain !important;
     }
 
     .hero-float-badge {
@@ -5276,6 +5282,8 @@ body.page-fade-out {
 .hero-doctor-img {
     max-width: 420px;
     border-radius: 30px;
+    height: auto;
+    object-fit: contain;
 }
 
 .hero-float-top {
