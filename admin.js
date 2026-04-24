@@ -1664,7 +1664,9 @@ async function loadSubscribers() {
         const r = await fetch('./api/subscribers.php', {
             headers: { 'X-Admin-Token': getSessionToken() }
         });
+        if (!r.ok) { console.error('Subscribers fetch failed:', r.status); return; }
         const d = await r.json();
+        if (!d.success) { console.error('Subscribers error:', d.error); return; }
         _allSubscribers = d.data || [];
         renderSubscribers(_allSubscribers);
         const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
