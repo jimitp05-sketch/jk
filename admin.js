@@ -79,8 +79,8 @@ async function bulkModerate(type, newStatus) {
             toast(`✅ ${ids.length} item(s) ${newStatus === 'deleted' ? 'deleted' : newStatus}`, 'success');
             clearBulkSelection(type);
             if (type === 'reviews') renderReviews();
-            if (type === 'diya') renderDiyas();
-            if (type === 'memories') renderMemories();
+            if (type === 'diya') adminLoadDiyas();
+            if (type === 'memories') adminLoadStories();
         } else {
             toast('Error: ' + (result.error || 'Unknown'), 'error');
         }
