@@ -334,11 +334,6 @@ button {
     animation: fadeSlideIn 0.8s var(--ease-out) 0.85s both, floatBadge 7s ease-in-out 2s infinite;
 }
 
-/* Cursor glows — disabled on light theme */
-#cursor-glow,
-#secondary-glow {
-    display: none;
-}
 
 /* ── SHIMMER GLASS CARD ─────────────────────────────────── */
 .glass-card {
@@ -4695,10 +4690,6 @@ body.page-fade-out {
     color: var(--text-body);
 }
 
-[data-theme="dark"] .social-proof-ticker {
-    background: var(--bg-section);
-    border-color: var(--border-light);
-}
 
 [data-theme="dark"] .booking-hero {
     background: var(--grad-hero);
@@ -5150,72 +5141,6 @@ body.page-fade-out {
    CONVERSION UPGRADE — Emergency Bar, Trust Strip, CTAs, Mobile
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── EMERGENCY BAR ─────────────────────────────────────────── */
-.emergency-bar {
-    background: linear-gradient(90deg, #b91c1c 0%, #dc2626 50%, #b91c1c 100%);
-    color: #fff;
-    padding: 8px 0;
-    z-index: 1100;
-    position: relative;
-    font-size: 0.82rem;
-    animation: emergencyBarPulse 3s ease-in-out infinite;
-}
-
-@keyframes emergencyBarPulse {
-
-    0%,
-    100% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-}
-
-.emergency-bar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.emergency-bar-text {
-    font-weight: 600;
-    letter-spacing: 0.3px;
-}
-
-.emergency-bar-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.emergency-bar-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 5px 14px;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: var(--radius-full);
-    color: #fff;
-    font-weight: 700;
-    font-size: 0.78rem;
-    text-decoration: none;
-    transition: var(--t-fast);
-    white-space: nowrap;
-}
-
-.emergency-bar-btn:hover {
-    background: rgba(255, 255, 255, 0.35);
-    transform: translateY(-1px);
-}
-
-.emergency-bar-wa {
-    background: rgba(37, 211, 102, 0.3);
-    border-color: rgba(37, 211, 102, 0.5);
-}
 
 /* ── NAV PHONE BUTTON (mobile) ─────────────────────────────── */
 .nav-phone-btn {
@@ -5370,49 +5295,6 @@ body.page-fade-out {
 }
 
 /* ── SOCIAL PROOF STRIP ────────────────────────────────────── */
-.social-proof-strip {
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    padding: 14px 0;
-    position: relative;
-    z-index: 2;
-    background: rgba(0, 0, 0, 0.15);
-}
-
-.social-proof-inner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    flex-wrap: wrap;
-}
-
-.social-proof-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.65);
-}
-
-.social-proof-item strong {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.social-proof-stars {
-    color: #fbbf24;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-}
-
-.social-proof-icon {
-    font-size: 1rem;
-}
-
-.social-proof-divider {
-    width: 1px;
-    height: 16px;
-    background: rgba(255, 255, 255, 0.1);
-}
 
 /* ── SECTION CTA (after each section) ──────────────────────── */
 .section-cta {
@@ -5604,17 +5486,6 @@ body.page-fade-out {
         font-size: 0.92rem;
     }
 
-    .social-proof-divider {
-        display: none;
-    }
-
-    .social-proof-inner {
-        gap: 10px;
-    }
-
-    .social-proof-item {
-        font-size: 0.72rem;
-    }
 
     .hero-doctor-img {
         max-width: 280px;
@@ -6383,31 +6254,6 @@ body.page-fade-out {
     line-height: 1.7 !important;
 }
 
-/* === EMERGENCY BAR === */
-.hero-emergency-bar {
-    background: rgba(232, 69, 69, 0.12);
-    border-bottom: 1px solid rgba(232, 69, 69, 0.25);
-    padding: 8px 0;
-    text-align: center;
-    position: relative;
-    z-index: 10;
-}
-
-.emergency-bar-link {
-    color: #E84545;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-decoration: none;
-    letter-spacing: 0.5px;
-}
-
-.emergency-bar-link:hover {
-    text-decoration: underline;
-}
-
-.emergency-bar-link strong {
-    color: #fff;
-}
 
 /* === NAV PHONE LINK === */
 .nav-phone-link {
@@ -6471,11 +6317,6 @@ body.page-fade-out {
     animation: fadeSlideUp 0.8s var(--ease-out) 0.7s both;
 }
 
-/* emergencyBarPulse defined at line 5122 — duplicate removed */
-
-.hero-emergency-bar {
-    animation: emergencyBarPulse 3s ease-in-out infinite;
-}
 
 /* === CREDENTIAL PILLS STAGGER === */
 .credential-pill:nth-child(1) {
@@ -6822,32 +6663,6 @@ body {
 }
 
 /* === SOCIAL PROOF TICKER === */
-.social-proof-ticker {
-    position: relative;
-    height: 28px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.social-proof-ticker .social-proof-item {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    pointer-events: none;
-    white-space: nowrap;
-}
-
-.social-proof-ticker .social-proof-item.active {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-}
 
 /* === DARK MODE REFINEMENTS === */
 [data-theme="dark"] .glass-card {
@@ -6874,14 +6689,6 @@ body {
 
 /* Hero stays dark — uses var(--grad-hero) from :root tokens */
 
-/* === PERFORMANCE: Disable cursor glow on mobile === */
-@media (max-width: 768px) {
-
-    #cursor-glow,
-    #secondary-glow {
-        display: none !important;
-    }
-}
 
 /* ═══════════════════════════════════════════════════════
    PULSE / REVIEWS PAGE — Unique selectors (migrated from pulse.css)

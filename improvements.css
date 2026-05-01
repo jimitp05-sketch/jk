@@ -374,11 +374,8 @@ textarea:focus-visible {
     .hero-ctas,
     .section-cta,
     .final-cta-section,
-    #cursor-glow,
-    #secondary-glow,
     .hero-float-badge,
     .scroll-hook,
-    .social-proof-strip,
     .trust-strip {
         display: none !important;
     }
@@ -449,16 +446,6 @@ textarea:focus-visible {
     letter-spacing: 0.03em;
 }
 
-/* ── HERO EMERGENCY BAR ANIMATION POLISH ───────────────────── */
-.hero-emergency-bar .emergency-bar-link {
-    background-size: 200% 100%;
-    animation: emergencyBarShift 4s ease-in-out infinite;
-}
-
-@keyframes emergencyBarShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
 
 /* ── CALENDAR KEYBOARD ACCESSIBILITY ─────────────────────── */
 .cal-day[data-date] {
@@ -587,11 +574,6 @@ textarea:focus-visible {
     height: 18px;
 }
 
-/* Social proof ticker icons */
-.social-proof-icon .icon svg {
-    width: 18px;
-    height: 18px;
-}
 
 /* Stat counter shimmer on completion */
 .stat-number[data-counted] {
@@ -739,9 +721,6 @@ textarea:focus-visible {
     .scroll-hook.visible p::after {
         animation: none;
         transform: scaleX(1);
-    }
-    .hero-emergency-bar {
-        animation: none;
     }
     .insight-card:hover .insight-card-image {
         transform: none;
