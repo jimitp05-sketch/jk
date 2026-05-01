@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/auth.php';
 
-$VALID_TYPES = ['quiz_questions', 'knowledge_articles', 'research_papers', 'myth_busters', 'peer_recognitions', 'photo_wall', 'faq_items'];
+$VALID_TYPES = ['quiz_questions', 'knowledge_articles', 'research_papers', 'myth_busters', 'peer_recognitions', 'photo_wall', 'faq_items', 'social_settings'];
 
 // ── DATABASE HELPERS ─────────────────────────────────────────────────────────
 
@@ -48,7 +48,8 @@ function writeContentToDB(string $type, array $data): bool {
         'knowledge_articles' => 'knowledge',
         'peer_recognitions'  => 'reviews',
         'photo_wall'         => 'gallery',
-        'faq_items'          => 'faq'
+        'faq_items'          => 'faq',
+        'social_settings'    => 'settings'
     ];
     $contentType = $typeMap[$type] ?? 'other';
     
@@ -104,12 +105,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!in_array($type, $VALID_TYPES, true)) {
         respond(['success' => false, 'data' => null, 'error' => 'Invalid type'], 400);
     }
-    if (!is_array($items)) {
-        respond(['success' => false, 'data' => null, 'error' => 'items must be an array'], 400);
+    if ($items === null) {
+        respond(['success' => false, 'data' => null, 'error' => 'items is required'], 400);
     }
-    
-    if (writeContentToDB($type, $items)) {
-        respond(['success' => true, 'data' => ['type' => $type, 'count' => count($items)], 'error' => null]);
+
+    $dataToWrite = is_array($items) ? $items : [$items];
+    if (writeContentToDB($type, $type === 'social_settings' ? $items : $dataToWrite)) {
+        respond(['success' => true, 'data' => ['type' => $type, 'count' => is_array($items) ? count($items) : 1], 'error' => null]);
     } else {
         respond(['success' => false, 'data' => null, 'error' => 'Failed to write content. Check permissions.'], 500);
     }

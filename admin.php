@@ -14,7 +14,8 @@
 
     <!-- === LOGIN === -->
     <div class="login-screen" id="login-screen">
-        <div class="login-card">
+        <!-- Sign In Form -->
+        <div class="login-card" id="login-card">
             <div class="login-logo">Dr. Jay <span>Kothari</span></div>
             <div class="login-label">Admin Panel · Restricted Access</div>
             <div class="login-field">
@@ -27,6 +28,48 @@
             </div>
             <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In →</button>
             <div class="login-error" id="login-error"></div>
+            <div class="login-forgot">
+                <a href="#" onclick="showForgotPassword(); return false;">Forgot password?</a>
+            </div>
+        </div>
+
+        <!-- Forgot Password Form -->
+        <div class="login-card" id="forgot-card" style="display:none;">
+            <div class="login-logo">Dr. Jay <span>Kothari</span></div>
+            <div class="login-label">Reset Your Password</div>
+            <p style="color:var(--ad-text-muted);font-size:0.85rem;margin-bottom:16px;line-height:1.5;">
+                Enter the email address associated with the admin account. If it matches, we'll send a reset link.
+            </p>
+            <div class="login-field">
+                <label for="forgot-email">Email Address</label>
+                <input type="email" id="forgot-email" placeholder="admin@example.com" autocomplete="email" />
+            </div>
+            <button class="login-btn" id="forgot-btn" onclick="doForgotPassword()">Send Reset Link →</button>
+            <div class="login-error" id="forgot-error"></div>
+            <div class="login-success" id="forgot-success" style="display:none;"></div>
+            <div class="login-forgot">
+                <a href="#" onclick="showLoginForm(); return false;">← Back to Sign In</a>
+            </div>
+        </div>
+
+        <!-- Reset Password Form (shown when token is in URL) -->
+        <div class="login-card" id="reset-card" style="display:none;">
+            <div class="login-logo">Dr. Jay <span>Kothari</span></div>
+            <div class="login-label">Set New Password</div>
+            <div class="login-field">
+                <label for="reset-new-pass">New Password</label>
+                <input type="password" id="reset-new-pass" placeholder="Minimum 12 characters" autocomplete="new-password" />
+            </div>
+            <div class="login-field">
+                <label for="reset-confirm-pass">Confirm Password</label>
+                <input type="password" id="reset-confirm-pass" placeholder="Re-enter password" autocomplete="new-password" />
+            </div>
+            <button class="login-btn" id="reset-btn" onclick="doResetPassword()">Reset Password →</button>
+            <div class="login-error" id="reset-error"></div>
+            <div class="login-success" id="reset-success" style="display:none;"></div>
+            <div class="login-forgot">
+                <a href="admin.php">← Back to Sign In</a>
+            </div>
         </div>
     </div>
 
@@ -94,6 +137,7 @@
                 <div class="admin-nav-group">
                     <div class="admin-nav-label">Growth</div>
                     <div class="admin-nav-link" data-panel="subscribers" onclick="switchPanel('subscribers')"><span class="nav-icon">📧</span>Subscribers</div>
+                    <div class="admin-nav-link" data-panel="social" onclick="switchPanel('social')"><span class="nav-icon">🔗</span>Social Media</div>
                 </div>
                 <div class="admin-nav-group">
                     <div class="admin-nav-label">Site Controls</div>
@@ -119,7 +163,7 @@
                     'dashboard', 'calendar', 'requests', 'knowledge', 'editor',
                     'reviews', 'photos', 'images', 'settings', 'myths',
                     'quizeditor', 'research', 'hero', 'faq', 'export', 'api_health',
-                    'diya', 'memories', 'subscribers'
+                    'diya', 'memories', 'subscribers', 'social'
                 ];
                 foreach ($panels as $panel) {
                     $file = __DIR__ . "/admin/panels/{$panel}.php";

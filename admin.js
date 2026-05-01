@@ -159,6 +159,133 @@ function doLogout() {
     document.getElementById('admin-pass').value = '';
 }
 
+// ============================================================
+// FORGOT PASSWORD FLOW
+// ============================================================
+
+function showForgotPassword() {
+    document.getElementById('login-card').style.display = 'none';
+    document.getElementById('forgot-card').style.display = 'block';
+    if (document.getElementById('reset-card')) document.getElementById('reset-card').style.display = 'none';
+    document.getElementById('forgot-email').value = '';
+    document.getElementById('forgot-error').style.display = 'none';
+    document.getElementById('forgot-success').style.display = 'none';
+}
+
+function showLoginForm() {
+    document.getElementById('login-card').style.display = 'block';
+    document.getElementById('forgot-card').style.display = 'none';
+    if (document.getElementById('reset-card')) document.getElementById('reset-card').style.display = 'none';
+}
+
+async function doForgotPassword() {
+    const btn = document.getElementById('forgot-btn');
+    const err = document.getElementById('forgot-error');
+    const suc = document.getElementById('forgot-success');
+    const email = document.getElementById('forgot-email').value.trim();
+
+    err.style.display = 'none';
+    suc.style.display = 'none';
+
+    if (!email) { err.textContent = 'Please enter your email address.'; err.style.display = 'block'; return; }
+
+    btn.textContent = 'Sending...'; btn.disabled = true;
+
+    try {
+        const r = await fetch('./api/forgot_password.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'request_reset', email })
+        });
+        const d = await r.json();
+        if (d.success) {
+            suc.textContent = d.message || 'If that email is associated with an admin account, a reset link has been sent.';
+            suc.style.display = 'block';
+            btn.style.display = 'none';
+        } else {
+            err.textContent = d.error || 'Something went wrong. Try again.';
+            err.style.display = 'block';
+        }
+    } catch (e) {
+        err.textContent = 'Connection error. Please try again.';
+        err.style.display = 'block';
+    }
+    btn.textContent = 'Send Reset Link →'; btn.disabled = false;
+}
+
+async function doResetPassword() {
+    const btn = document.getElementById('reset-btn');
+    const err = document.getElementById('reset-error');
+    const suc = document.getElementById('reset-success');
+    const newPass = document.getElementById('reset-new-pass').value;
+    const confirmPass = document.getElementById('reset-confirm-pass').value;
+
+    err.style.display = 'none';
+    suc.style.display = 'none';
+
+    if (!newPass || !confirmPass) { err.textContent = 'Please fill in both fields.'; err.style.display = 'block'; return; }
+    if (newPass !== confirmPass) { err.textContent = 'Passwords do not match.'; err.style.display = 'block'; return; }
+    if (newPass.length < 12) { err.textContent = 'Password must be at least 12 characters.'; err.style.display = 'block'; return; }
+
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('reset_token');
+    if (!token) { err.textContent = 'Invalid reset link.'; err.style.display = 'block'; return; }
+
+    btn.textContent = 'Resetting...'; btn.disabled = true;
+
+    try {
+        const r = await fetch('./api/forgot_password.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'reset_password', token, new_password: newPass })
+        });
+        const d = await r.json();
+        if (d.success) {
+            suc.textContent = d.message || 'Password has been reset. You can now sign in.';
+            suc.style.display = 'block';
+            btn.style.display = 'none';
+            document.getElementById('reset-new-pass').value = '';
+            document.getElementById('reset-confirm-pass').value = '';
+            setTimeout(() => { window.location.href = 'admin.php'; }, 3000);
+        } else {
+            err.textContent = d.error || 'Reset failed. Try requesting a new link.';
+            err.style.display = 'block';
+        }
+    } catch (e) {
+        err.textContent = 'Connection error. Please try again.';
+        err.style.display = 'block';
+    }
+    btn.textContent = 'Reset Password →'; btn.disabled = false;
+}
+
+// Check for reset token in URL on page load
+(function checkResetToken() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('reset_token');
+    if (!token) return;
+
+    // Show reset form instead of login
+    const loginCard = document.getElementById('login-card');
+    const resetCard = document.getElementById('reset-card');
+    if (loginCard) loginCard.style.display = 'none';
+    if (resetCard) resetCard.style.display = 'block';
+
+    // Validate token
+    fetch('./api/forgot_password.php?action=validate_token&token=' + encodeURIComponent(token))
+        .then(r => r.json())
+        .then(d => {
+            if (!d.valid) {
+                const err = document.getElementById('reset-error');
+                err.textContent = d.error || 'This reset link has expired or already been used.';
+                err.style.display = 'block';
+                document.getElementById('reset-btn').disabled = true;
+                document.getElementById('reset-new-pass').disabled = true;
+                document.getElementById('reset-confirm-pass').disabled = true;
+            }
+        })
+        .catch(() => {});
+})();
+
 // Admin credential change
 async function changeAdminCredentials() {
     const currentPass = document.getElementById('cred-current-pass')?.value.trim();
@@ -212,6 +339,7 @@ async function loadCurrentSettings() {
         set('st-icu-phone', s.icu_phone || '');
         set('st-wa-message', s.wa_message || '');
         set('st-site-name', s.site_name || '');
+        set('st-admin-email', s.admin_email || '');
 
     } catch (err) { console.error('Failed to load settings'); }
 }
@@ -225,6 +353,7 @@ async function saveSettings() {
         wa_message: g('st-wa-message'),
         icu_phone: g('st-icu-phone'),
         site_name: g('st-site-name'),
+        admin_email: g('st-admin-email'),
     };
     // Password changes now handled via changeAdminCredentials()
 
@@ -1725,6 +1854,147 @@ function exportSubscribersCSV() {
 }
 
 // ============================================================
+// SOCIAL MEDIA SETTINGS
+// ============================================================
+
+function addPinnedPostRow() {
+    const list = document.getElementById('pinned-posts-list');
+    if (!list) return;
+    const count = list.querySelectorAll('.pinned-post-row').length;
+    if (count >= 6) { toast('Maximum 6 pinned posts allowed', 'error'); return; }
+    const row = document.createElement('div');
+    row.className = 'pinned-post-row';
+    row.dataset.index = count;
+    row.innerHTML = `
+        <div class="editor-grid" style="align-items:end;">
+            <div class="editor-field" style="flex:2;">
+                <label>Post URL</label>
+                <input type="url" class="pinned-post-url" placeholder="https://www.linkedin.com/posts/..." />
+            </div>
+            <div class="editor-field" style="flex:1;">
+                <label>Platform</label>
+                <select class="pinned-post-platform">
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="twitter">X / Twitter</option>
+                    <option value="youtube">YouTube</option>
+                </select>
+            </div>
+            <div class="editor-field" style="flex:1.5;">
+                <label>Caption (optional)</label>
+                <input type="text" class="pinned-post-caption" placeholder="Brief description..." />
+            </div>
+            <button class="btn-save-draft" onclick="this.closest('.pinned-post-row').remove()" style="padding:8px 12px;margin-bottom:4px;">✕</button>
+        </div>`;
+    list.appendChild(row);
+}
+
+async function saveSocialSettings() {
+    const token = getSessionToken();
+    const g = id => document.getElementById(id)?.value || '';
+
+    const pinnedPosts = [];
+    document.querySelectorAll('.pinned-post-row').forEach(row => {
+        const url = row.querySelector('.pinned-post-url')?.value.trim();
+        if (!url) return;
+        pinnedPosts.push({
+            url,
+            platform: row.querySelector('.pinned-post-platform')?.value || 'linkedin',
+            caption: row.querySelector('.pinned-post-caption')?.value.trim() || ''
+        });
+    });
+
+    const body = {
+        type: 'social_settings',
+        items: {
+            linkedin: g('social-linkedin'),
+            facebook: g('social-facebook'),
+            instagram: g('social-instagram'),
+            twitter: g('social-twitter'),
+            youtube: g('social-youtube'),
+            google: g('social-google'),
+            fb_feed_url: g('social-fb-feed-url'),
+            fb_feed_on: document.getElementById('social-fb-feed-on')?.checked || false,
+            pinned_posts: pinnedPosts
+        },
+        session_token: token
+    };
+
+    try {
+        const res = await fetch('./api/content.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': token },
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (data.success) {
+            toast('Social media settings saved!', 'success');
+        } else {
+            toast('Save failed: ' + (data.error || 'Unknown'), 'error');
+        }
+    } catch (e) {
+        toast('Connection error: ' + e.message, 'error');
+    }
+}
+
+async function loadSocialSettings() {
+    try {
+        const r = await fetch('./api/content.php?type=social_settings');
+        const d = await r.json();
+        const s = d.data || d || {};
+
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+        set('social-linkedin', s.linkedin);
+        set('social-facebook', s.facebook);
+        set('social-instagram', s.instagram);
+        set('social-twitter', s.twitter);
+        set('social-youtube', s.youtube);
+        set('social-google', s.google);
+        set('social-fb-feed-url', s.fb_feed_url);
+
+        const fbCheck = document.getElementById('social-fb-feed-on');
+        if (fbCheck) fbCheck.checked = !!s.fb_feed_on;
+
+        // Rebuild pinned posts
+        const list = document.getElementById('pinned-posts-list');
+        if (list && Array.isArray(s.pinned_posts) && s.pinned_posts.length > 0) {
+            list.innerHTML = '';
+            s.pinned_posts.forEach((post, i) => {
+                const row = document.createElement('div');
+                row.className = 'pinned-post-row';
+                row.dataset.index = i;
+                row.innerHTML = `
+                    <div class="editor-grid" style="align-items:end;">
+                        <div class="editor-field" style="flex:2;">
+                            <label>Post URL</label>
+                            <input type="url" class="pinned-post-url" value="${escH(post.url)}" />
+                        </div>
+                        <div class="editor-field" style="flex:1;">
+                            <label>Platform</label>
+                            <select class="pinned-post-platform">
+                                <option value="linkedin" ${post.platform === 'linkedin' ? 'selected' : ''}>LinkedIn</option>
+                                <option value="facebook" ${post.platform === 'facebook' ? 'selected' : ''}>Facebook</option>
+                                <option value="instagram" ${post.platform === 'instagram' ? 'selected' : ''}>Instagram</option>
+                                <option value="twitter" ${post.platform === 'twitter' ? 'selected' : ''}>X / Twitter</option>
+                                <option value="youtube" ${post.platform === 'youtube' ? 'selected' : ''}>YouTube</option>
+                            </select>
+                        </div>
+                        <div class="editor-field" style="flex:1.5;">
+                            <label>Caption</label>
+                            <input type="text" class="pinned-post-caption" value="${escH(post.caption)}" />
+                        </div>
+                        ${i > 0 ? '<button class="btn-save-draft" onclick="this.closest(\'.pinned-post-row\').remove()" style="padding:8px 12px;margin-bottom:4px;">✕</button>' : ''}
+                    </div>`;
+                list.appendChild(row);
+            });
+        }
+    } catch (e) {
+        console.error('Failed to load social settings:', e);
+    }
+}
+
+// ============================================================
 // INIT
 // ============================================================
 function loadAll() {
@@ -1734,6 +2004,7 @@ function loadAll() {
     updateBadges();
     checkApiStatus();
     loadHeroContent();
+    loadSocialSettings();
 }
 
 // ============================================================
@@ -1763,6 +2034,7 @@ switchPanel = function (name) {
     if (name === 'memories') { adminLoadStories(); adminLoadNotes(); adminLoadMemoryPhotos(); }
     if (name === 'faq') renderFaqEditor();
     if (name === 'subscribers') loadSubscribers();
+    if (name === 'social') loadSocialSettings();
 };
 
 // ============================================================

@@ -34,6 +34,14 @@
             </p>
         </div>
         <div style="margin: 24px 0 12px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+            <h3 style="margin-bottom:4px;">📧 Admin Recovery Email</h3>
+            <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px;">This email is used for password reset requests. Keep it up to date.</p>
+            <div class="editor-field">
+                <label>Admin Email Address</label>
+                <input type="email" id="st-admin-email" placeholder="admin@example.com" autocomplete="email" />
+            </div>
+        </div>
+        <div style="margin: 24px 0 12px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
             <h3 style="margin-bottom:4px;">🔐 Admin Login Credentials</h3>
             <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:16px;">Change your username or password. You must enter your current password to verify your identity.</p>
             <div class="editor-grid">
@@ -48,7 +56,7 @@
             </div>
             <div class="editor-grid" style="margin-top:8px;">
                 <div class="editor-field">
-                    <label>New Password <span style="font-weight:400;color:var(--text-muted);">(min 6 chars, leave blank to keep same)</span></label>
+                    <label>New Password <span style="font-weight:400;color:var(--text-muted);">(min 12 chars, leave blank to keep same)</span></label>
                     <input type="password" id="cred-new-pass" placeholder="New password" autocomplete="new-password" />
                 </div>
                 <div class="editor-field">

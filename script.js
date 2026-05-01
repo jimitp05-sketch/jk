@@ -216,6 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── 12. SECTION MOUSE-FOLLOW GRADIENT ────────────
     if (!prefersReduced) {
         document.querySelectorAll('.section').forEach(sec => {
+            if (sec.classList.contains('final-cta-section') || sec.classList.contains('hero')) return;
             sec.addEventListener('mousemove', e => {
                 const r = sec.getBoundingClientRect();
                 const x = ((e.clientX - r.left) / r.width * 100).toFixed(1);
@@ -346,15 +347,15 @@ document.addEventListener('DOMContentLoaded', () => {
         fab.innerHTML = `
       <div class="sd-actions">
         <a href="tel:${ICU_PHONE}" class="sd-btn sd-emergency" aria-label="ICU Emergency">
-          <span class="sd-icon">🚨</span>
+          <span class="sd-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
           <span class="sd-label">ICU Emergency</span>
         </a>
         <a href="https://wa.me/${WA_NUM}?text=${WA_MSG}" class="sd-btn sd-whatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-          <span class="sd-icon">💬</span>
+          <span class="sd-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
           <span class="sd-label">WhatsApp Chat</span>
         </a>
         <a href="${OPD_LINK}" class="sd-btn sd-book" aria-label="Book OPD">
-          <span class="sd-icon">📅</span>
+          <span class="sd-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
           <span class="sd-label">Book OPD</span>
         </a>
       </div>
@@ -407,12 +408,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = document.createElement('button');
         btn.id = 'theme-toggle'; btn.className = 'theme-toggle-btn';
         btn.setAttribute('aria-label', 'Toggle dark mode');
-        btn.innerHTML = saved === 'dark' ? '☀️' : '🌙';
+        const sunIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>';
+        const moonIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+        btn.innerHTML = saved === 'dark' ? sunIcon : moonIcon;
         btn.addEventListener('click', () => {
             const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('apollo_theme', next);
-            btn.innerHTML = next === 'dark' ? '☀️' : '🌙';
+            btn.innerHTML = next === 'dark' ? sunIcon : moonIcon;
         });
         const toggle = nav.querySelector('.nav-toggle');
         nav.insertBefore(btn, toggle || null);

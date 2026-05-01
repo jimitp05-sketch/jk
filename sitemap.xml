@@ -34,6 +34,18 @@
     <loc>https://foxwisdom.com/booking.html</loc>
     <priority>0.95</priority>
     <changefreq>monthly</changefreq>
-    <lastmod>2026-04-07</lastmod>
+    <lastmod>2026-04-28</lastmod>
+  </url>
+  <url>
+    <loc>https://foxwisdom.com/memories.html</loc>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+    <lastmod>2026-04-28</lastmod>
+  </url>
+  <url>
+    <loc>https://foxwisdom.com/diya.html</loc>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+    <lastmod>2026-04-28</lastmod>
   </url>
 </urlset>

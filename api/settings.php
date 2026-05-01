@@ -80,7 +80,7 @@ function readSettings(): array {
     $saved = json_decode($row['data'], true) ?: [];
 
     // Migration: if stored password is NOT hashed, hash it now & save back to DB
-    if (isset($saved['admin_pass']) && !str_starts_with($saved['admin_pass'], '$2y$')) {
+    if (isset($saved['admin_pass']) && !isHashedPassword($saved['admin_pass'])) {
         $saved['admin_pass'] = password_hash($saved['admin_pass'], PASSWORD_DEFAULT);
         writeSettings($saved);
     }
@@ -138,6 +138,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     foreach ($public as $k) {
         $output[$k] = $settings[$k] ?? '';
     }
+
+    // Include admin_email only for authenticated requests
+    $token = extractAuthToken();
+    if (validateSessionToken($token)) {
+        $output['admin_email'] = $settings['admin_email'] ?? '';
+    }
+
     echo json_encode($output);
     exit;
 }
@@ -229,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'hero_stat3_val', 'hero_stat3_lbl',
         'stat1_num', 'stat1_lbl', 'stat2_num', 'stat2_lbl',
         'stat3_num', 'stat3_lbl', 'stat4_num', 'stat4_lbl',
-        'admin_user'
+        'admin_user', 'admin_email'
     ];
     foreach ($allowed as $key) {
         if (isset($input[$key])) {

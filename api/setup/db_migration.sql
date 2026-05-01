@@ -70,7 +70,18 @@ CREATE TABLE IF NOT EXISTS rate_limits (
     INDEX idx_prefix_ip_hit (prefix_ip, hit_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 8. CMS content table (migrate from JSON files)
+-- 8. Password reset tokens (forgot password flow)
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    token_hash CHAR(64) NOT NULL,
+    admin_email VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    used_at TIMESTAMP NULL DEFAULT NULL,
+    INDEX idx_token_hash (token_hash),
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 9. CMS content table (migrate from JSON files)
 CREATE TABLE IF NOT EXISTS content (
     id INT AUTO_INCREMENT PRIMARY KEY,
     content_type VARCHAR(50) NOT NULL,

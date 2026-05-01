@@ -7,6 +7,11 @@
     <title>Reviews & Recognition | Dr. Jay Kothari</title>
     <meta name="description"
         content="Clinical recognitions, professional mentions, and the community voice around Dr. Jay Kothari's critical care practice at Apollo Hospitals, Ahmedabad." />
+    <meta property="og:title" content="The Pulse — Reviews & Recognition | Dr. Jay Kothari" />
+    <meta property="og:description" content="Clinical recognitions and community voice around Dr. Jay Kothari's critical care practice." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://foxwisdom.com/reviews.html" />
+    <meta property="og:image" content="https://foxwisdom.com/img-hero-doctor.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style"
@@ -308,6 +313,44 @@
             </div>
             <p class="nmc-note" style="margin-top:24px;text-align:center;">These acknowledgements reflect institutional
                 collaboration and educational contributions per NMC guidelines.</p>
+        </div>
+    </section>
+
+    <!-- SOCIAL MEDIA PROFILES -->
+    <section class="section" id="social-profiles" style="display:none;">
+        <div class="container">
+            <div class="section-header center reveal">
+                <span class="section-label">Follow Dr. Kothari</span>
+                <h2 class="section-title" style="color:var(--text-primary);">Connect on Social Media</h2>
+                <p class="section-subtitle" style="margin:0 auto;">Stay updated with the latest insights, case discussions, and medical education from Dr. Kothari's practice.</p>
+            </div>
+            <div class="social-profiles-grid" id="social-profiles-grid" style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:32px;">
+            </div>
+        </div>
+    </section>
+
+    <!-- PINNED SOCIAL POSTS -->
+    <section class="section" id="pinned-posts-section" style="display:none;background:var(--bg-section);">
+        <div class="container">
+            <div class="section-header center reveal">
+                <span class="section-label">Latest Posts</span>
+                <h2 class="section-title" style="color:var(--text-primary);">From the Doctor's Desk</h2>
+                <p class="section-subtitle" style="margin:0 auto;">Featured posts and updates across platforms.</p>
+            </div>
+            <div class="pinned-posts-grid" id="pinned-posts-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;margin-top:32px;">
+            </div>
+        </div>
+    </section>
+
+    <!-- FACEBOOK PAGE FEED (Option B embed) -->
+    <section class="section" id="fb-feed-section" style="display:none;">
+        <div class="container">
+            <div class="section-header center reveal">
+                <span class="section-label">Live Feed</span>
+                <h2 class="section-title" style="color:var(--text-primary);">Facebook Updates</h2>
+            </div>
+            <div id="fb-feed-container" style="display:flex;justify-content:center;margin-top:24px;">
+            </div>
         </div>
     </section>
     </main>
@@ -733,6 +776,100 @@
             localStorage.setItem('apollo_pending_photos', JSON.stringify(pending));
             document.getElementById('photo-submit-form').style.display = 'none';
             document.getElementById('photo-submit-success').style.display = 'block';
+        }
+
+        // ============================================================
+        // SOCIAL MEDIA INTEGRATION (Option A + B)
+        // ============================================================
+        (function loadSocialProfiles() {
+            fetch('./api/content.php?type=social_settings')
+                .then(r => r.json())
+                .then(data => {
+                    const s = data.data || {};
+                    renderSocialProfiles(s);
+                    renderPinnedPosts(s.pinned_posts || []);
+                    renderFbFeed(s);
+                })
+                .catch(() => {});
+        })();
+
+        function renderSocialProfiles(s) {
+            const platforms = [
+                { key: 'linkedin', label: 'LinkedIn', icon: '🔵', color: '#0077B5' },
+                { key: 'facebook', label: 'Facebook', icon: '📘', color: '#1877F2' },
+                { key: 'instagram', label: 'Instagram', icon: '📸', color: '#E4405F' },
+                { key: 'twitter', label: 'X / Twitter', icon: '𝕏', color: '#000' },
+                { key: 'youtube', label: 'YouTube', icon: '▶️', color: '#FF0000' },
+                { key: 'google', label: 'Google', icon: '🌐', color: '#4285F4' }
+            ];
+
+            const active = platforms.filter(p => s[p.key]);
+            if (!active.length) return;
+
+            const section = document.getElementById('social-profiles');
+            const grid = document.getElementById('social-profiles-grid');
+            section.style.display = '';
+
+            grid.innerHTML = active.map(p => `
+                <a href="${escH(s[p.key])}" target="_blank" rel="noopener" class="social-profile-card glass-card reveal"
+                   style="display:flex;align-items:center;gap:14px;padding:20px 28px;text-decoration:none;min-width:220px;border-left:4px solid ${p.color};">
+                    <span style="font-size:1.8rem;">${p.icon}</span>
+                    <div>
+                        <div style="font-weight:700;color:var(--text-primary);font-size:1rem;">${p.label}</div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);">Follow Dr. Kothari →</div>
+                    </div>
+                </a>
+            `).join('');
+
+            if (window.revealNew) window.revealNew();
+        }
+
+        function renderPinnedPosts(posts) {
+            if (!posts || !posts.length) return;
+
+            const section = document.getElementById('pinned-posts-section');
+            const grid = document.getElementById('pinned-posts-grid');
+            section.style.display = '';
+
+            const platformMeta = {
+                linkedin: { icon: '🔵', label: 'LinkedIn', color: '#0077B5' },
+                facebook: { icon: '📘', label: 'Facebook', color: '#1877F2' },
+                instagram: { icon: '📸', label: 'Instagram', color: '#E4405F' },
+                twitter: { icon: '𝕏', label: 'X / Twitter', color: '#000' },
+                youtube: { icon: '▶️', label: 'YouTube', color: '#FF0000' }
+            };
+
+            grid.innerHTML = posts.map(post => {
+                const meta = platformMeta[post.platform] || { icon: '🔗', label: 'Link', color: '#666' };
+                return `
+                    <a href="${escH(post.url)}" target="_blank" rel="noopener" class="glass-card reveal"
+                       style="display:block;padding:24px;text-decoration:none;border-top:3px solid ${meta.color};transition:transform 0.2s;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                            <span style="font-size:1.4rem;">${meta.icon}</span>
+                            <span style="font-weight:600;color:var(--text-primary);font-size:0.9rem;">${meta.label}</span>
+                        </div>
+                        ${post.caption ? `<p style="color:var(--text-body);font-size:0.88rem;line-height:1.6;margin:0;">${escH(post.caption)}</p>` : `<p style="color:var(--text-muted);font-size:0.82rem;margin:0;">View post on ${meta.label} →</p>`}
+                    </a>`;
+            }).join('');
+
+            if (window.revealNew) window.revealNew();
+        }
+
+        function renderFbFeed(s) {
+            if (!s.fb_feed_on || !s.fb_feed_url) return;
+
+            const section = document.getElementById('fb-feed-section');
+            const container = document.getElementById('fb-feed-container');
+            section.style.display = '';
+
+            const pageUrl = encodeURIComponent(s.fb_feed_url);
+            container.innerHTML = `
+                <iframe src="https://www.facebook.com/plugins/page.php?href=${pageUrl}&tabs=timeline&width=500&height=600&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false"
+                    width="500" height="600" style="border:none;overflow:hidden;max-width:100%;border-radius:12px;"
+                    scrolling="no" frameborder="0" allowfullscreen="true"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    loading="lazy">
+                </iframe>`;
         }
     </script>
 </body>
