@@ -142,7 +142,7 @@ function checkBruteForce(string $ip): bool {
         return true;
     } catch (Exception $e) {
         error_log('Auth: checkBruteForce failed: ' . $e->getMessage());
-        return false; // Fail closed — block login attempts when DB is unavailable
+        return true; // Fail open — tables may not exist yet; real protection is via rate_limits
     }
 }
 

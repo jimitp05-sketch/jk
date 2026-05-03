@@ -72,23 +72,29 @@ function readSettings(): array {
         'admin_pass'  => password_hash('admin', PASSWORD_DEFAULT) // TODO: change via Settings panel
     ];
 
-    $pdo = getPDO();
-    $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'site_settings' LIMIT 1");
-    $stmt->execute();
-    $row = $stmt->fetch();
+    try {
+        $pdo = getPDO();
+        $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'site_settings' LIMIT 1");
+        $stmt->execute();
+        $row = $stmt->fetch();
 
-    if (!$row) return $defaults;
+        if (!$row) return $defaults;
 
-    $saved = json_decode($row['data'], true) ?: [];
+        $saved = json_decode($row['data'], true) ?: [];
 
-    // Migration: if stored password is NOT hashed, hash it now & save back to DB
-    if (isset($saved['admin_pass']) && !isHashedPassword($saved['admin_pass'])) {
-        $saved['admin_pass'] = password_hash($saved['admin_pass'], PASSWORD_DEFAULT);
-        writeSettings($saved);
+        // Migration: if stored password is NOT hashed, hash it now & save back to DB
+        if (isset($saved['admin_pass']) && !isHashedPassword($saved['admin_pass'])) {
+            $saved['admin_pass'] = password_hash($saved['admin_pass'], PASSWORD_DEFAULT);
+            writeSettings($saved);
+        }
+
+        return array_merge($defaults, $saved);
+    } catch (Exception $e) {
+        error_log('settings.php: readSettings() DB error: ' . $e->getMessage());
+        return $defaults; // Return defaults if DB/table unavailable
     }
-
-    return array_merge($defaults, $saved);
 }
+
 
 function writeSettings(array $data): bool {
     $pdo = getPDO();
