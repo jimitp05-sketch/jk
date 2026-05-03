@@ -340,6 +340,8 @@ async function loadCurrentSettings() {
         set('st-wa-message', s.wa_message || '');
         set('st-site-name', s.site_name || '');
         set('st-admin-email', s.admin_email || '');
+        set('st-ga4-id', s.ga4_id || '');
+        set('st-gtm-id', s.gtm_id || '');
 
     } catch (err) { console.error('Failed to load settings'); }
 }
@@ -354,6 +356,8 @@ async function saveSettings() {
         icu_phone: g('st-icu-phone'),
         site_name: g('st-site-name'),
         admin_email: g('st-admin-email'),
+        ga4_id: g('st-ga4-id'),
+        gtm_id: g('st-gtm-id'),
     };
     // Password changes now handled via changeAdminCredentials()
 

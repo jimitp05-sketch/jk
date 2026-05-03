@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 64" width="360" height="64">
+  <defs>
+    <linearGradient id="tealGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#48CAE4"></stop>
+      <stop offset="100%" stop-color="#00B4D8"></stop>
+    </linearGradient>
+  </defs>
+  <text x="0" y="44" font-family="&#39;Manrope&#39;, system-ui, sans-serif" font-size="32" font-weight="800" letter-spacing="-1" fill="#080C1A">Dr. Jay </text>
+  <text x="125" y="44" font-family="&#39;Manrope&#39;, system-ui, sans-serif" font-size="32" font-weight="800" letter-spacing="-1" fill="url(#tealGrad)">Kothari</text>
+</svg>

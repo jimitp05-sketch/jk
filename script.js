@@ -314,6 +314,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (s.ticker_on && s.ticker_text) {
             renderTicker(escapeHTML(s.ticker_text));
         }
+
+        // 6. Inject GA4
+        if (s.ga4_id && /^G-[A-Z0-9]+$/.test(s.ga4_id) && !document.getElementById('ga4-script')) {
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function(){window.dataLayer.push(arguments);};
+            window.gtag('js', new Date());
+            window.gtag('config', s.ga4_id);
+            const ga4 = document.createElement('script');
+            ga4.id = 'ga4-script';
+            ga4.async = true;
+            ga4.src = 'https://www.googletagmanager.com/gtag/js?id=' + s.ga4_id;
+            document.head.appendChild(ga4);
+        }
+
+        // 7. Inject GTM
+        if (s.gtm_id && /^GTM-[A-Z0-9]+$/.test(s.gtm_id) && !document.getElementById('gtm-script')) {
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.id='gtm-script';j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer',s.gtm_id);
+        }
     }
 
     function renderTicker(text) {

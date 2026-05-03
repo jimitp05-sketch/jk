@@ -1,0 +1,39 @@
+/* preview/_card.css — shared frame for all DS cards */
+@import url("../colors_and_type.css");
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%;
+  background: var(--bg-primary);
+  font-family: var(--font-b);
+  color: var(--text-body);
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  padding: 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.grid { display: grid; gap: 10px; }
+.swatch {
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: flex-end;
+  padding: 8px;
+  font-family: var(--font-b);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-sm);
+}
+.swatch.dark-text { color: var(--text-h); }
+.tok-label { font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
+.hex { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; opacity: 0.85; }
+.specimen-row { display: flex; align-items: baseline; gap: 18px; padding: 8px 0; border-bottom: 1px dashed var(--border-light); }
+.specimen-row:last-child { border-bottom: none; }
+.specimen-meta { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; color: var(--text-muted); white-space: nowrap; min-width: 110px; }

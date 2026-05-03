@@ -1,0 +1,328 @@
+/* ================================================
+   PREMIUM UX ENHANCEMENTS v1.0
+   Features: Expertise Tooltips, WhatsApp FAB,
+   Timeline Scroll, Hero Parallax, Counter Glow
+   ================================================ */
+
+/* ── 1. EXPERTISE HOVER TOOLTIPS ─────────────────── */
+.expertise-card {
+    position: relative;
+}
+
+.expertise-tooltip {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: var(--bg-dark, #0A1628);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-family: var(--font-b, 'Manrope', sans-serif);
+    line-height: 1.5;
+    max-width: 320px;
+    white-space: normal;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 50;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(0, 180, 216, 0.2);
+}
+
+.expertise-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--bg-dark, #0A1628);
+}
+
+.expertise-card:hover .expertise-tooltip,
+.expertise-card:focus-within .expertise-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.expertise-tooltip .tooltip-label {
+    display: block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--teal, #00B4D8);
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .expertise-tooltip {
+        display: none;
+    }
+}
+
+/* ── 2. WHATSAPP FLOATING BUTTON ─────────────────── */
+.whatsapp-float {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+}
+
+.whatsapp-float.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.whatsapp-float-label {
+    background: #fff;
+    color: #1a1a1a;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: var(--font-b, 'Manrope', sans-serif);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
+}
+
+.whatsapp-float:hover .whatsapp-float-label {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.whatsapp-float-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #25D366;
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 4px 18px rgba(37, 211, 102, 0.4);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.whatsapp-float-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 28px rgba(37, 211, 102, 0.55);
+}
+
+.whatsapp-float-btn svg {
+    width: 28px;
+    height: 28px;
+    fill: #fff;
+}
+
+@keyframes whatsappPulse {
+    0%, 100% { box-shadow: 0 4px 18px rgba(37, 211, 102, 0.4); }
+    50% { box-shadow: 0 4px 18px rgba(37, 211, 102, 0.4), 0 0 0 12px rgba(37, 211, 102, 0.1); }
+}
+
+.whatsapp-float-btn {
+    animation: whatsappPulse 2.5s ease-in-out infinite;
+}
+
+.whatsapp-float-btn:hover {
+    animation: none;
+}
+
+@media (max-width: 768px) {
+    .whatsapp-float {
+        bottom: 80px;
+        right: 16px;
+    }
+    .whatsapp-float-label {
+        display: none;
+    }
+    .whatsapp-float-btn {
+        width: 50px;
+        height: 50px;
+    }
+    .whatsapp-float-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .whatsapp-float-btn {
+        animation: none;
+    }
+}
+
+/* ── 3. ENHANCED TIMELINE SCROLL ANIMATION ──────── */
+.timeline-item {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.timeline-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.timeline-item:nth-child(even) {
+    transform: translateX(40px);
+}
+
+.timeline-item:nth-child(even).visible {
+    transform: translateX(0);
+}
+
+.timeline-item .timeline-dot {
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s,
+                box-shadow 0.5s ease 0.2s;
+    transform: scale(0);
+}
+
+.timeline-item.visible .timeline-dot {
+    transform: scale(1);
+}
+
+.timeline-item.visible .timeline-dot.active {
+    box-shadow: 0 0 0 6px rgba(0, 180, 216, 0.2),
+                0 0 20px rgba(0, 180, 216, 0.3);
+}
+
+.timeline-item .timeline-year {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease 0.3s, transform 0.4s ease 0.3s;
+}
+
+.timeline-item.visible .timeline-year {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.timeline-item .timeline-title,
+.timeline-item .timeline-institution {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease 0.45s, transform 0.4s ease 0.45s;
+}
+
+.timeline-item.visible .timeline-title,
+.timeline-item.visible .timeline-institution {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.timeline-item .timeline-desc {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease 0.55s, transform 0.4s ease 0.55s;
+}
+
+.timeline-item.visible .timeline-desc {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .timeline-item,
+    .timeline-item:nth-child(even) {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+    .timeline-item .timeline-dot {
+        transform: scale(1);
+        transition: none;
+    }
+    .timeline-item .timeline-year,
+    .timeline-item .timeline-title,
+    .timeline-item .timeline-institution,
+    .timeline-item .timeline-desc {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* ── 4. HERO PARALLAX DEPTH ──────────────────────── */
+.hero {
+    overflow: hidden;
+}
+
+.hero-image-wrapper {
+    transition: transform 0.1s linear;
+    will-change: transform;
+}
+
+.hero-content {
+    transition: transform 0.1s linear;
+    will-change: transform;
+}
+
+.hero-glow-orb {
+    transition: transform 0.15s linear;
+    will-change: transform;
+}
+
+/* ── 5. COUNTER GLOW EFFECT ──────────────────────── */
+@keyframes counterGlow {
+    0% { text-shadow: none; }
+    50% { text-shadow: 0 0 20px rgba(0, 180, 216, 0.4), 0 0 40px rgba(0, 180, 216, 0.15); }
+    100% { text-shadow: none; }
+}
+
+.stat-number.counting {
+    animation: counterGlow 1.6s ease-out;
+}
+
+/* ── 6. SCROLL PROGRESS BAR ENHANCEMENT ──────────── */
+#scroll-progress {
+    background: linear-gradient(90deg, #00B4D8, #48CAE4, #00B4D8) !important;
+    background-size: 200% 100% !important;
+    animation: progressShimmer 3s linear infinite !important;
+}
+
+@keyframes progressShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ── 7. TRUST STRIP GLOW LINES ───────────────────── */
+.trust-strip {
+    position: relative;
+}
+
+.trust-strip::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.3), transparent);
+}
+
+.trust-strip::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.15), transparent);
+}

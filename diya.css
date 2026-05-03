@@ -1761,3 +1761,36 @@
             line-height: 1.6;
             text-align: center;
         }
+
+        /* ── AMBIENT GLOW ANIMATION ────────────────────── */
+        @keyframes ambientGlow {
+            0%, 100% {
+                box-shadow: 0 0 8px rgba(212, 168, 75, 0.15),
+                            0 0 20px rgba(255, 140, 0, 0.08);
+            }
+            50% {
+                box-shadow: 0 0 14px rgba(212, 168, 75, 0.30),
+                            0 0 35px rgba(255, 140, 0, 0.15),
+                            0 0 50px rgba(255, 100, 0, 0.06);
+            }
+        }
+
+        .mini-diya-wrapper {
+            animation: ambientGlow 3s ease-in-out infinite;
+            animation-delay: calc(var(--diya-index, 0) * 0.15s);
+        }
+
+        .mini-diya-wrapper:nth-child(even) {
+            animation-duration: 3.5s;
+        }
+
+        .mini-diya-wrapper:nth-child(3n) {
+            animation-duration: 4s;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .mini-diya-wrapper {
+                animation: none;
+                box-shadow: 0 0 8px rgba(212, 168, 75, 0.15);
+            }
+        }

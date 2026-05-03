@@ -66,6 +66,8 @@ function readSettings(): array {
         'hero_stat3_val' => '10',
         'hero_stat3_lbl' => 'ECMO Docs in Gujarat',
         'hero_img'    => 'img-hero-doctor.png',
+        'ga4_id'      => '',
+        'gtm_id'      => '',
         'admin_user'  => 'admin',
         'admin_pass'  => password_hash('apollo2024', PASSWORD_DEFAULT) // Default hashed
     ];
@@ -133,6 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'stat1_num', 'stat1_lbl', 'stat2_num', 'stat2_lbl',
         'stat3_num', 'stat3_lbl', 'stat4_num', 'stat4_lbl',
         'wa_number', 'wa_message', 'icu_phone', 'site_name',
+        'ga4_id', 'gtm_id',
     ];
     $output = [];
     foreach ($public as $k) {
@@ -236,6 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'hero_stat3_val', 'hero_stat3_lbl',
         'stat1_num', 'stat1_lbl', 'stat2_num', 'stat2_lbl',
         'stat3_num', 'stat3_lbl', 'stat4_num', 'stat4_lbl',
+        'ga4_id', 'gtm_id',
         'admin_user', 'admin_email'
     ];
     foreach ($allowed as $key) {

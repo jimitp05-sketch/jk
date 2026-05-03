@@ -34,6 +34,27 @@
             </p>
         </div>
         <div style="margin: 24px 0 12px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+            <h3 style="margin-bottom:4px;">📊 Analytics &amp; Tracking</h3>
+            <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px;">Configure Google Analytics 4 and Google Tag Manager. Leave blank to disable tracking.</p>
+            <div class="editor-grid">
+                <div class="editor-field">
+                    <label>Google Analytics 4 Measurement ID</label>
+                    <input type="text" id="st-ga4-id" placeholder="G-XXXXXXXXXX" />
+                    <span style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;display:block;">Found in GA4 → Admin → Data Streams → Measurement ID</span>
+                </div>
+                <div class="editor-field">
+                    <label>Google Tag Manager Container ID</label>
+                    <input type="text" id="st-gtm-id" placeholder="GTM-XXXXXXX" />
+                    <span style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;display:block;">Found in GTM → Admin → Container Settings → Container ID</span>
+                </div>
+            </div>
+            <div style="margin-top:12px; padding:10px 14px; background:rgba(34,211,238,0.06); border-radius:8px; border:1px solid rgba(34,211,238,0.12);">
+                <p style="font-size:0.78rem; color:var(--ad-text-muted); margin:0;">
+                    <strong>Auto-tracked events:</strong> WhatsApp clicks, phone calls, OPD bookings, guide downloads, and scroll depth (25/50/75/100%). These fire automatically once a valid GA4 or GTM ID is set.
+                </p>
+            </div>
+        </div>
+        <div style="margin: 24px 0 12px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
             <h3 style="margin-bottom:4px;">📧 Admin Recovery Email</h3>
             <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px;">This email is used for password reset requests. Keep it up to date.</p>
             <div class="editor-field">
