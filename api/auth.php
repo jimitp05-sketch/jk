@@ -54,7 +54,10 @@ function getAdminCredentials(): array {
 }
 
 function isHashedPassword(string $pass): bool {
-    return str_starts_with($pass, '$2y$') || str_starts_with($pass, '$argon2id$') || str_starts_with($pass, '$2a$');
+    // Use substr() instead of str_starts_with() for PHP 7 compatibility
+    return substr($pass, 0, 4) === '$2y$'
+        || substr($pass, 0, 9) === '$argon2id'
+        || substr($pass, 0, 4) === '$2a$';
 }
 
 // ── PASSWORD VERIFICATION ───────────────────────────────────────────────
