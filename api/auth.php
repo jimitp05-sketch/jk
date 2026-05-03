@@ -310,7 +310,9 @@ function checkRateLimit(string $ip, int $max = 10, int $window = 60, string $pre
         $pdo->prepare("INSERT INTO rate_limits (prefix_ip) VALUES (?)")->execute([$key]);
         return true;
     } catch (Exception $e) {
-        error_log('Auth: checkRateLimit failed: ' . $e->getMessage());
-        return false; // Fail closed — reject requests when DB is unavailable
+        // Fail open — brute-force is still caught by checkBruteForce() via login_attempts table.
+        // Blocking all logins when rate_limits table is unavailable causes HTTP 429 for everyone.
+        error_log('Auth: checkRateLimit failed (allowing through): ' . $e->getMessage());
+        return true;
     }
 }
