@@ -1,5 +1,5 @@
 <!-- DIYA MANAGEMENT PANEL -->
-<div class="admin-panel" id="panel-diya" style="display:none;">
+<div class="admin-panel" id="panel-diya">
     <div class="panel-header">
         <div>
             <h1>🪔 Diya Prayer Wall</h1>

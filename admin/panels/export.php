@@ -17,6 +17,9 @@
                 JSON</button>
             <button class="btn-publish" onclick="exportSection('knowledge_articles')">Knowledge
                 JSON</button>
+            <button class="btn-publish" onclick="exportSection('faq_items')">FAQ JSON</button>
+            <button class="btn-publish" onclick="exportSection('peer_recognitions')">Reviews JSON</button>
+            <button class="btn-publish" onclick="exportSection('social_settings')">Social JSON</button>
             <button class="btn-save-draft" onclick="exportAll()">⬇️ Export ALL</button>
         </div>
     </div>
@@ -30,6 +33,9 @@
                 <option value="quiz_questions">Quiz Questions</option>
                 <option value="research_papers">Research Papers</option>
                 <option value="knowledge_articles">Knowledge Articles</option>
+                <option value="faq_items">FAQ Items</option>
+                <option value="peer_recognitions">Reviews / Recognitions</option>
+                <option value="social_settings">Social Media Settings</option>
             </select>
         </div>
         <div class="editor-field"><label>Select JSON File</label><input type="file" id="import-file"

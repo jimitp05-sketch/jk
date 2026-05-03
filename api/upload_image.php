@@ -49,7 +49,8 @@ $mapping = [
     'hero'      => 'img-hero-doctor.png',
     'ecmo'      => 'img-ecmo.png',
     'team'      => 'img-team.png',
-    'knowledge' => 'img-knowledge.png'
+    'knowledge' => 'img-knowledge.png',
+    'icu'       => 'img-icu-ward.png'
 ];
 
 if (!isset($mapping[$type])) {

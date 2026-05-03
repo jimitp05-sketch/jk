@@ -1,5 +1,5 @@
 <!-- MEMORIES MANAGEMENT PANEL -->
-<div class="admin-panel" id="panel-memories" style="display:none;">
+<div class="admin-panel" id="panel-memories">
 
 <style>
 .admin-subtabs { display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }

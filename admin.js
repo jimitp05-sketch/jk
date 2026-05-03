@@ -3179,6 +3179,51 @@ function clearFaqForm() {
     }, 60000);
 })();
 
+// ── SITE IMAGE UPLOAD ──
+function previewImage(input, previewId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById(previewId);
+            if (img) img.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+async function uploadSiteImage(type, inputId) {
+    const input = document.getElementById(inputId);
+    if (!input || !input.files || !input.files[0]) {
+        toast('Please select an image first.', 'error');
+        return;
+    }
+    const file = input.files[0];
+    if (file.size > 10 * 1024 * 1024) {
+        toast('Image too large. Maximum 10MB.', 'error');
+        return;
+    }
+    const fd = new FormData();
+    fd.append('image', file);
+    fd.append('type', type);
+    fd.append('session_token', getSessionToken());
+    try {
+        const res = await fetch('./api/upload_image.php', {
+            method: 'POST',
+            headers: { 'X-Admin-Token': getSessionToken() },
+            body: fd
+        });
+        const data = await res.json();
+        if (data.success) {
+            toast(data.message || 'Image updated!', 'success');
+            input.value = '';
+        } else {
+            toast('Upload failed: ' + (data.error || 'Unknown error'), 'error');
+        }
+    } catch (e) {
+        toast('Upload error: ' + e.message, 'error');
+    }
+}
+
 // ── ADMIN MOBILE NAV ──
 (function() {
     const hamburger = document.createElement('button');

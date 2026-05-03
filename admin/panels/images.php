@@ -73,5 +73,20 @@
             <button class="btn-publish"
                 onclick="uploadSiteImage('knowledge', 'upload-knowledge')">Upload & Replace</button>
         </div>
+
+        <div class="editor-card">
+            <h3>🏥 ICU Ward</h3>
+            <div class="photo-review-img" style="height: 200px; margin-bottom: 12px;">
+                <img src="img-icu-ward.png" id="prev-img-icu"
+                    style="max-height: 100%; object-fit: contain;" />
+            </div>
+            <div class="editor-field">
+                <label>Replace Image</label>
+                <input type="file" id="upload-icu" accept="image/*"
+                    onchange="previewImage(this, 'prev-img-icu')" />
+            </div>
+            <button class="btn-publish" onclick="uploadSiteImage('icu', 'upload-icu')">Upload &
+                Replace</button>
+        </div>
     </div>
 </div>
