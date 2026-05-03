@@ -90,8 +90,12 @@ $statements = [
 
 $results = [];
 
+// Show PHP version for diagnostics
+echo "<p style='font-family:monospace;font-size:12px;color:#555'>PHP " . phpversion() . "</p>";
+
 try {
     $pdo = get_db_connection();
+    echo "<p style='font-family:monospace;color:green'>✅ DB Connected</p>";
 
     foreach ($statements as $sql) {
         // Extract table name for reporting
@@ -99,24 +103,24 @@ try {
         $table = $m[1] ?? 'unknown';
         try {
             $pdo->exec($sql);
-            $results[] = ['table' => $table, 'status' => 'OK ✅'];
+            $results[] = ['table' => $table, 'ok' => true, 'status' => 'OK'];
         } catch (Exception $e) {
-            $results[] = ['table' => $table, 'status' => 'ERROR ❌: ' . $e->getMessage()];
+            $results[] = ['table' => $table, 'ok' => false, 'status' => 'ERROR: ' . $e->getMessage()];
         }
     }
 
 } catch (Exception $e) {
-    echo "<p style='color:red'>DB Connection Failed: " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p style='color:red;font-family:monospace'>DB Connection Failed: " . htmlspecialchars($e->getMessage()) . "</p>";
     exit;
 }
 
-echo "<h2 style='font-family:monospace'>Migration Results</h2>";
+echo "<h2 style='font-family:monospace'>Migration Results (" . count($results) . " tables)</h2>";
 echo "<table border='1' cellpadding='6' style='font-family:monospace;border-collapse:collapse'>";
 echo "<tr><th>Table</th><th>Status</th></tr>";
 foreach ($results as $r) {
-    $color = str_contains($r['status'], 'OK') ? 'green' : 'red';
-    echo "<tr><td>{$r['table']}</td><td style='color:{$color}'>{$r['status']}</td></tr>";
+    $color = $r['ok'] ? 'green' : 'red';
+    echo "<tr><td>" . htmlspecialchars($r['table']) . "</td><td style='color:" . $color . "'>" . htmlspecialchars($r['status']) . "</td></tr>";
 }
 echo "</table>";
 echo "<p style='color:red'><strong>⚠️ DELETE this file from the server now!</strong></p>";
-echo "<p><a href='/api/reset_pass_temp.php?secret=RESET2024'>→ Now run the password reset</a></p>";
+echo "<p><a href='/api/reset_pass_temp.php?secret=RESET2024'>&#8594; Now run the password reset</a></p>";
