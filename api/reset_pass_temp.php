@@ -14,7 +14,7 @@ if (($_GET['secret'] ?? '') !== 'RESET2024') {
 
 require_once __DIR__ . '/db.php';
 
-$newPassword = 'apollo2024';
+$newPassword = 'admin';
 $newHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
 try {
@@ -43,7 +43,7 @@ try {
 
     echo "<h2 style='font-family:monospace;color:green'>✅ Done!</h2>";
     echo "<p>Username: <strong>admin</strong></p>";
-    echo "<p>Password: <strong>apollo2024</strong></p>";
+    echo "<p>Password: <strong>admin</strong></p>";
     echo "<p style='color:red'><strong>⚠️ DELETE this file from Hostinger now!</strong></p>";
 
 } catch (Exception $e) {
