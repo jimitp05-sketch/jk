@@ -69,7 +69,7 @@ function readSettings(): array {
         'ga4_id'      => '',
         'gtm_id'      => '',
         'admin_user'  => 'admin',
-        'admin_pass'  => password_hash('apollo2024', PASSWORD_DEFAULT) // Default hashed
+        'admin_pass'  => password_hash('admin', PASSWORD_DEFAULT) // TODO: change via Settings panel
     ];
 
     $pdo = getPDO();
