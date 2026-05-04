@@ -1049,6 +1049,36 @@ async function deleteArticle(id) {
     } catch (err) { toast('Error deleting: ' + err.message, 'error'); }
 }
 
+async function hideBuiltInArticle(id) {
+    if (!confirm('Hide this built-in article from the website? You can restore it by editing and publishing again.')) return;
+    const token = getSessionToken();
+    if (!token) return;
+    const builtIn = BUILT_IN_ARTICLES.find(b => b.id === id);
+    if (!builtIn) return;
+    const hiddenArticle = {
+        id: 'art-hidden-' + id,
+        overridesId: id,
+        title: builtIn.title,
+        pillar: builtIn.pillar,
+        subtitle: '',
+        status: 'hidden',
+        structured: { sections: [] },
+        author: 'Dr. Jay Kothari'
+    };
+    const existing = currentArticles.filter(a => a.id !== hiddenArticle.id);
+    const updatedList = [...existing, hiddenArticle];
+    try {
+        const res = await fetch('./api/content.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_token: token, type: 'knowledge_articles', items: updatedList })
+        });
+        const result = await res.json();
+        if (result.success) { toast('Article hidden from website.', 'success'); renderKnowledge(); }
+        else toast('Failed: ' + (result.error || 'Unknown error'), 'error');
+    } catch (err) { toast('Error: ' + err.message, 'error'); }
+}
+
 function clearEditor() {
     ['editor-id', 'editor-title', 'editor-subtitle', 'editor-body', 'editor-overrides-id'].forEach(f => document.getElementById(f).value = '');
     document.getElementById('editor-author').value = 'Dr. Jay Kothari';
