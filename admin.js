@@ -564,6 +564,57 @@ function adminCalNav(dir) {
     renderAdminCal();
 }
 
+let blockedDates = [];
+
+async function loadBlockedDates() {
+    try {
+        const res = await fetch('./api/content.php?type=blocked_dates');
+        const d = await res.json();
+        blockedDates = d.data || [];
+        renderBlockedDates();
+    } catch(e) { blockedDates = []; }
+}
+
+function renderBlockedDates() {
+    const el = document.getElementById('blocked-dates-list');
+    if (!el) return;
+    if (!blockedDates.length) { el.innerHTML = '<p style="color:var(--ad-text-muted);font-size:0.84rem;">No dates blocked.</p>'; return; }
+    el.innerHTML = blockedDates.map(b => `
+        <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--ad-border);">
+            <span style="font-weight:600;">${escH(b.date)}</span>
+            ${b.reason ? `<span style="color:var(--ad-text-muted);font-size:0.84rem;">${escH(b.reason)}</span>` : ''}
+            <button class="action-btn action-btn-delete" onclick="removeBlockedDate('${escH(b.date)}')" style="margin-left:auto;">Unblock</button>
+        </div>`).join('');
+}
+
+async function addBlockedDate() {
+    const date = document.getElementById('block-date-input')?.value;
+    const reason = document.getElementById('block-date-reason')?.value?.trim() || '';
+    if (!date) { toast('Select a date to block.', 'error'); return; }
+    if (blockedDates.find(b => b.date === date)) { toast('Date already blocked.', 'info'); return; }
+    blockedDates.push({ date, reason });
+    await saveBlockedDates();
+    document.getElementById('block-date-input').value = '';
+    document.getElementById('block-date-reason').value = '';
+    toast('Date blocked: ' + date, 'success');
+}
+
+async function removeBlockedDate(date) {
+    blockedDates = blockedDates.filter(b => b.date !== date);
+    await saveBlockedDates();
+    toast('Date unblocked: ' + date, 'success');
+}
+
+async function saveBlockedDates() {
+    const token = getSessionToken();
+    await fetch('./api/content.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({session_token: token, type:'blocked_dates', items: blockedDates})
+    });
+    renderBlockedDates();
+}
+
 async function renderAdminCal() {
     const year = adminCalDate.getFullYear();
     const month = adminCalDate.getMonth();
@@ -672,7 +723,7 @@ async function renderKnowledge() {
     }
 
     tbody.innerHTML = currentArticles.map(a => `<tr>
-                <td style="max-width:280px;"><strong style="font-size:0.88rem;">${a.title}</strong>${a._builtIn ? ' <span style="font-size:0.7rem;color:var(--text-muted);font-weight:400;">(built-in)</span>' : ''}</td>
+                <td style="max-width:280px;"><strong style="font-size:0.88rem;">${a.title}</strong>${a._builtIn ? ' <span style="font-size:0.7rem;color:var(--text-muted);font-weight:400;">(built-in)</span>' : ''}${a.publish_date && new Date(a.publish_date) > new Date() ? ` <span style="background:#fef3c7;color:#92400e;font-size:0.7rem;padding:2px 6px;border-radius:4px;font-weight:600;">SCHEDULED</span>` : ''}</td>
                 <td><span style="font-size:0.8rem;color:var(--accent-secondary);">${a.pillar || '-'}</span></td>
                 <td><span class="status-badge badge-${a.status || 'published'}">${a.status || 'published'}</span></td>
                 <td><div class="action-btns">
@@ -807,7 +858,8 @@ async function saveArticle() {
     const body = buildArticleHTML(structured);
     const meta_title = document.getElementById('editor-meta-title')?.value?.trim() || '';
     const meta_description = document.getElementById('editor-meta-description')?.value?.trim() || '';
-    const newArt = { id, title, pillar, subtitle, body, author, status, overridesId, structured, meta_title, meta_description, savedAt: new Date().toISOString() };
+    const publish_date = document.getElementById('editor-publish-date')?.value || '';
+    const newArt = { id, title, pillar, subtitle, body, author, status, overridesId, structured, meta_title, meta_description, publish_date, savedAt: new Date().toISOString() };
 
     let updatedList = [...currentArticles];
     const idx = updatedList.findIndex(a => a.id === id);
@@ -822,6 +874,7 @@ async function saveArticle() {
         const result = await res.json();
         if (result.success) {
             toast('[OK] Article saved successfully!', 'success');
+            logAuditAction('Knowledge', 'Article Saved', document.getElementById('editor-title')?.value || '');
             clearEditor();
             renderKnowledge();
             switchPanel('knowledge');
@@ -845,6 +898,8 @@ function editArticle(id) {
     const metaDescEl = document.getElementById('editor-meta-description');
     if (metaTitleEl) metaTitleEl.value = article.meta_title || '';
     if (metaDescEl) metaDescEl.value = article.meta_description || '';
+    const pubDateEl = document.getElementById('editor-publish-date');
+    if (pubDateEl) pubDateEl.value = article.publish_date || '';
     if (article.structured && article.structured.sections && article.structured.sections.length) {
         loadStructured(article.structured);
     } else {
@@ -1032,6 +1087,8 @@ function editBuiltInArticle(id) {
     const metaDescEl = document.getElementById('editor-meta-description');
     if (metaTitleEl) metaTitleEl.value = content.meta_title || a.meta_title || '';
     if (metaDescEl) metaDescEl.value = content.meta_description || a.meta_description || '';
+    const pubDateEl = document.getElementById('editor-publish-date');
+    if (pubDateEl) pubDateEl.value = content.publish_date || a.publish_date || '';
     if (content.structured) {
         loadStructured(content.structured);
     } else {
@@ -1095,6 +1152,7 @@ function clearEditor() {
     document.getElementById('editor-status').value = 'published';
     const mt = document.getElementById('editor-meta-title'); if(mt) mt.value = '';
     const md = document.getElementById('editor-meta-description'); if(md) md.value = '';
+    const pd = document.getElementById('editor-publish-date'); if(pd) pd.value = '';
     clearSectionsOnly();
     addSection();
 }
@@ -1834,6 +1892,34 @@ async function loadSEOHealthSummary() {
 // ============================================================
 let _allSubscribers = [];
 
+async function sendNewsletter() {
+    const subject = document.getElementById('nl-subject')?.value?.trim();
+    const body = document.getElementById('nl-body')?.value?.trim();
+    const preview = document.getElementById('nl-preview')?.value?.trim() || '';
+    const statusEl = document.getElementById('nl-status');
+    if (!subject || !body) { toast('Please enter subject and message body.', 'error'); return; }
+    if (!confirm(`Send newsletter to all subscribers?\nSubject: ${subject}`)) return;
+    if (statusEl) statusEl.textContent = 'Sending...';
+    try {
+        const res = await fetch('./api/subscribers.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': getSessionToken() },
+            body: JSON.stringify({ action: 'send_newsletter', subject, body, preview, session_token: getSessionToken() })
+        });
+        const d = await res.json();
+        if (d.success) {
+            toast(`Newsletter sent to ${d.sent || 'all'} subscribers!`, 'success');
+            if (statusEl) statusEl.textContent = `Sent to ${d.sent || 0} subscribers.`;
+        } else {
+            toast('Send failed: ' + (d.error || 'Unknown error'), 'error');
+            if (statusEl) statusEl.textContent = '';
+        }
+    } catch (e) {
+        toast('Error: ' + e.message, 'error');
+        if (statusEl) statusEl.textContent = '';
+    }
+}
+
 async function loadSubscribers() {
     try {
         const r = await fetch('./api/subscribers.php', {
@@ -2065,7 +2151,7 @@ switchPanel = function (name) {
     panel.classList.add('active');
     document.querySelector(`[data-panel="${name}"]`)?.classList.add('active');
     if (name === 'requests') renderRequests();
-    if (name === 'calendar') renderAdminCal();
+    if (name === 'calendar') { renderAdminCal(); loadBlockedDates(); }
     if (name === 'knowledge') renderKnowledge();
     if (name === 'settings') loadCurrentSettings();
     if (name === 'reviews') renderReviews();
@@ -2081,6 +2167,7 @@ switchPanel = function (name) {
     if (name === 'faq') renderFaqEditor();
     if (name === 'subscribers') loadSubscribers();
     if (name === 'social') loadSocialSettings();
+    if (name === 'audit') loadAuditLog();
 };
 
 // ============================================================
@@ -2232,7 +2319,7 @@ async function saveHeroContent() {
     try {
         const r = await fetch('./api/settings.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
         const d = await r.json();
-        if (d.success) toast('Hero content saved!', 'success');
+        if (d.success) { toast('Hero content saved!', 'success'); logAuditAction('Settings', 'Hero Content Updated', ''); }
         else toast('Save failed: ' + (d.error || 'Unknown error'), 'error');
     } catch (e) { toast('Connection error: ' + e.message, 'error'); }
 }
@@ -2334,7 +2421,7 @@ saveMythCard = async function () {
     try {
         const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_token: token, type: 'myth_busters', items: updatedList }) });
         const d = await res.json();
-        if (d.success) { toast('Myth card saved!', 'success'); clearMythForm(); renderMyths(); }
+        if (d.success) { toast('Myth card saved!', 'success'); logAuditAction('Myths', 'Myth Saved', ''); clearMythForm(); renderMyths(); }
         else toast('Save failed: ' + (d.error || '?'), 'error');
     } catch (e) { toast('Connection error', 'error'); }
 };
@@ -2357,7 +2444,7 @@ saveQuizQuestion = async function () {
     try {
         const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_token: token, type: 'quiz_questions', items: updatedBank }) });
         const d = await res.json();
-        if (d.success) { toast('Question saved!', 'success'); clearQuizForm(); renderQuizEditor(); }
+        if (d.success) { toast('Question saved!', 'success'); logAuditAction('Quiz', 'Question Saved', ''); clearQuizForm(); renderQuizEditor(); }
         else toast('Save failed: ' + (d.error || '?'), 'error');
     } catch (e) { toast('Connection error', 'error'); }
 };
@@ -2377,7 +2464,7 @@ saveResearchPaper = async function () {
     try {
         const res = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_token: token, type: 'research_papers', items: updatedList }) });
         const d = await res.json();
-        if (d.success) { toast('Research paper saved!', 'success'); clearResearchForm(); renderResearch(); }
+        if (d.success) { toast('Research paper saved!', 'success'); logAuditAction('Research', 'Paper Saved', document.getElementById('research-title')?.value || ''); clearResearchForm(); renderResearch(); }
         else toast('Save failed: ' + (d.error || '?'), 'error');
     } catch (e) { toast('Connection error', 'error'); }
 };
@@ -3173,6 +3260,7 @@ async function saveFaqItem() {
         });
         if ((await res.json()).success) {
             toast('FAQ saved!', 'success');
+            logAuditAction('FAQ', 'FAQ Saved', '');
             clearFaqForm();
             renderFaqEditor();
         }
@@ -3264,6 +3352,62 @@ async function uploadSiteImage(type, inputId) {
     } catch (e) {
         toast('Upload error: ' + e.message, 'error');
     }
+}
+
+// ── AUDIT TRAIL ──
+let _auditEntries = [];
+
+async function loadAuditLog() {
+    const token = getSessionToken();
+    try {
+        const res = await fetch('./api/audit.php', { headers: {'X-Admin-Token': token} });
+        const d = await res.json();
+        _auditEntries = d.entries || [];
+        renderAuditLog(_auditEntries);
+    } catch(e) {
+        const el = document.getElementById('audit-table-wrap');
+        if (el) el.innerHTML = '<p style="color:var(--ad-text-muted);">Could not load audit log.</p>';
+    }
+}
+
+function filterAuditLog() {
+    const filter = document.getElementById('audit-filter')?.value || '';
+    const filtered = filter ? _auditEntries.filter(e => e.section === filter) : _auditEntries;
+    renderAuditLog(filtered);
+}
+
+function renderAuditLog(entries) {
+    const el = document.getElementById('audit-table-wrap');
+    if (!el) return;
+    if (!entries.length) {
+        el.innerHTML = '<p style="color:var(--ad-text-muted);font-size:0.9rem;">No audit entries yet.</p>';
+        return;
+    }
+    el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:0.84rem;">
+        <thead><tr style="border-bottom:2px solid var(--ad-border);">
+            <th style="text-align:left;padding:8px 12px;color:var(--ad-text-muted);">Time</th>
+            <th style="text-align:left;padding:8px 12px;color:var(--ad-text-muted);">Section</th>
+            <th style="text-align:left;padding:8px 12px;color:var(--ad-text-muted);">Action</th>
+            <th style="text-align:left;padding:8px 12px;color:var(--ad-text-muted);">Detail</th>
+        </tr></thead>
+        <tbody>${entries.map(e => `<tr style="border-bottom:1px solid var(--ad-border);">
+            <td style="padding:8px 12px;color:var(--ad-text-muted);white-space:nowrap;">${escH(e.timestamp)}</td>
+            <td style="padding:8px 12px;"><span style="background:var(--ad-surface-2);padding:2px 8px;border-radius:4px;font-size:0.78rem;">${escH(e.section)}</span></td>
+            <td style="padding:8px 12px;font-weight:600;">${escH(e.action)}</td>
+            <td style="padding:8px 12px;color:var(--ad-text-muted);">${escH(e.detail)}</td>
+        </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+async function logAuditAction(section, action, detail = '') {
+    const token = getSessionToken();
+    try {
+        await fetch('./api/audit.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json','X-Admin-Token':token},
+            body: JSON.stringify({section, action, detail, session_token: token})
+        });
+    } catch(e) { /* silent fail */ }
 }
 
 // ── ADMIN MOBILE NAV ──

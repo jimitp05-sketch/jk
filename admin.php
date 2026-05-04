@@ -151,6 +151,7 @@
                             class="nav-icon">⚙️</span>Settings &amp; Credentials</div>
                     <div class="admin-nav-link" data-panel="export" onclick="switchPanel('export')"><span
                             class="nav-icon">📦</span>Export / Import</div>
+                    <div class="admin-nav-link" data-panel="audit" onclick="switchPanel('audit')"><span class="nav-icon">📋</span>Audit Trail</div>
                     <div class="admin-nav-link" data-panel="apihealth" onclick="switchPanel('apihealth')"><span
                             class="nav-icon">📶</span>API Diagnostics</div>
                 </div>
@@ -163,7 +164,7 @@
                     'dashboard', 'calendar', 'requests', 'knowledge', 'editor',
                     'reviews', 'photos', 'images', 'settings', 'myths',
                     'quizeditor', 'research', 'hero', 'faq', 'export', 'api_health',
-                    'diya', 'memories', 'subscribers', 'social'
+                    'diya', 'memories', 'subscribers', 'social', 'audit'
                 ];
                 foreach ($panels as $panel) {
                     $file = __DIR__ . "/admin/panels/{$panel}.php";

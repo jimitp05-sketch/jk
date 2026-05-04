@@ -562,6 +562,8 @@
                 seen.forEach((a, targetId) => {
                     // Skip hidden articles
                     if (a.status === 'hidden' || a.status === 'draft') return;
+                    // Skip articles scheduled for future dates
+                    if (a.publish_date && new Date(a.publish_date) > new Date()) return;
                     // Build content from structured sections if body is missing/undefined
                     let content = (a.body && a.body !== 'undefined') ? a.body : '';
                     if (!content && a.structured) {

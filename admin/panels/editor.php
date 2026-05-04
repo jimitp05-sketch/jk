@@ -90,6 +90,11 @@
                 </select>
             </div>
         </div>
+        <div class="editor-field">
+            <label>Publish Date <span style="color:var(--ad-text-muted);font-weight:400;">(leave blank to publish immediately)</span></label>
+            <input type="datetime-local" id="editor-publish-date" />
+            <p style="font-size:0.78rem;color:var(--ad-text-muted);margin-top:4px;">If set to a future date, article will only appear on the website after this date/time.</p>
+        </div>
         <div class="editor-row-2" style="margin-top:16px;">
             <div class="editor-field">
                 <label>SEO Meta Title <span style="color:var(--ad-text-muted);font-weight:400;">(optional — overrides page title in search)</span></label>

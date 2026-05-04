@@ -241,6 +241,15 @@
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        let blockedBookingDates = [];
+        async function loadBlockedBookingDates() {
+          try {
+            const res = await fetch('api/content.php?type=blocked_dates');
+            const d = await res.json();
+            blockedBookingDates = (d.data || []).map(b => b.date);
+          } catch(e) { blockedBookingDates = []; }
+        }
+
         let cachedBookedSlots = {};
         async function fetchBookedSlots(yearMonth) {
             try {
@@ -283,16 +292,18 @@
                 const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const isSelected = selectedDate && selectedDate === dateKey;
                 const booked = bookedSlots[dateKey] || [];
-                const hasSlots = !isSun && !isPast && booked.length < ALL_SLOTS.length;
+                const isBlocked = blockedBookingDates.includes(dateKey);
+                const hasSlots = !isSun && !isPast && !isBlocked && booked.length < ALL_SLOTS.length;
                 let cls = 'cal-day';
                 if (isSun) cls += ' sunday';
                 else if (isPast) cls += ' past';
+                else if (isBlocked) cls += ' past';
                 else {
                     if (isToday) cls += ' today';
                     if (isSelected) cls += ' selected';
                     if (hasSlots) cls += ' has-slots';
                 }
-                const clickable = !isSun && !isPast;
+                const clickable = !isSun && !isPast && !isBlocked;
                 html += `<div class="${cls}" data-date="${dateKey}" ${clickable ? `onclick="selectDate('${dateKey}')" tabindex="0" role="button" aria-label="${dateKey}${isSelected ? ', selected' : ''}"` : 'aria-hidden="true"'}>${day}</div>`;
             }
             document.getElementById('cal-grid').innerHTML = html;
@@ -423,7 +434,7 @@
             }
         });
 
-        renderCalendar();
+        loadBlockedBookingDates().then(() => renderCalendar());
     </script>
 </body>
 

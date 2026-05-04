@@ -23,4 +23,20 @@
             </div>
         </div>
     </div>
+    <div class="editor-card" style="margin-top:28px;">
+  <h3>🚫 Block / Unblock Dates</h3>
+  <p style="font-size:0.84rem;color:var(--ad-text-muted);margin-bottom:16px;">Block specific dates so patients cannot book on those days.</p>
+  <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+    <div class="editor-field" style="margin:0;">
+      <label>Date to Block</label>
+      <input type="date" id="block-date-input" style="padding:8px 12px;border-radius:8px;border:1px solid var(--ad-border);background:var(--ad-bg);color:var(--ad-text);" />
+    </div>
+    <div class="editor-field" style="margin:0;">
+      <label>Reason (optional)</label>
+      <input type="text" id="block-date-reason" placeholder="e.g. Conference, Holiday" style="padding:8px 12px;border-radius:8px;border:1px solid var(--ad-border);background:var(--ad-bg);color:var(--ad-text);width:200px;" />
+    </div>
+    <button class="btn-publish" onclick="addBlockedDate()" style="margin-bottom:0;">Block Date</button>
+  </div>
+  <div id="blocked-dates-list" style="margin-top:16px;"></div>
+</div>
 </div>

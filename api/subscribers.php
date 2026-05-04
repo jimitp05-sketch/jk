@@ -28,6 +28,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         respond(['success' => true, 'data' => null, 'error' => null]);
     }
 
+    if ($action === 'send_newsletter') {
+        requireAdmin();
+        $subject = trim($input['subject'] ?? '');
+        $body = $input['body'] ?? '';
+        $preview = trim($input['preview'] ?? '');
+
+        if (!$subject || !$body) {
+            echo json_encode(['success' => false, 'error' => 'Subject and body required']);
+            exit;
+        }
+
+        // Get all subscribers
+        $stmt = $pdo->query("SELECT email FROM subscribers ORDER BY created_at DESC");
+        $emails = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        if (empty($emails)) {
+            echo json_encode(['success' => true, 'sent' => 0, 'message' => 'No subscribers to send to']);
+            exit;
+        }
+
+        $sent = 0;
+        $from = 'noreply@foxwisdom.com';
+        $fromName = 'Dr. Jay Kothari';
+        $headers = [
+            'MIME-Version: 1.0',
+            'Content-Type: text/html; charset=UTF-8',
+            "From: {$fromName} <{$from}>",
+            "Reply-To: {$from}",
+            'X-Mailer: PHP/' . phpversion()
+        ];
+        if ($preview) {
+            $headers[] = "X-Preview-Text: {$preview}";
+        }
+        $headerStr = implode("\r\n", $headers);
+
+        $htmlBody = "<!DOCTYPE html><html><body style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;'>"
+            . "<div style='border-bottom:3px solid #0ea5e9;padding-bottom:16px;margin-bottom:24px;'>"
+            . "<h2 style='color:#0a1628;margin:0;'>Dr. Jay Kothari</h2>"
+            . "<p style='color:#6b7280;margin:4px 0 0;font-size:0.85rem;'>Critical Care Specialist · Apollo Hospitals, Ahmedabad</p>"
+            . "</div>"
+            . "<div style='line-height:1.7;color:#374151;'>" . $body . "</div>"
+            . "<div style='margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:0.8rem;color:#9ca3af;'>"
+            . "<p>You received this because you subscribed at foxwisdom.com. "
+            . "<a href='https://foxwisdom.com/unsubscribe?email=' style='color:#6b7280;'>Unsubscribe</a></p>"
+            . "</div></body></html>";
+
+        foreach ($emails as $email) {
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                if (@mail($email, $subject, $htmlBody, $headerStr)) {
+                    $sent++;
+                }
+            }
+        }
+
+        echo json_encode(['success' => true, 'sent' => $sent, 'total' => count($emails)]);
+        exit;
+    }
+
     $email = trim($input['email'] ?? '');
     if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         respond(['success' => false, 'data' => null, 'error' => 'Valid email required'], 400);

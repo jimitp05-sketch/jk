@@ -145,6 +145,33 @@
             <div class="photo-wall-grid" id="photo-wall-grid">
                 <!-- JS-rendered photo items -->
             </div>
+            <div id="review-submit-section" style="background:var(--surface,#f9fafb);border-radius:16px;padding:28px;margin-bottom:28px;">
+  <h3 style="font-size:1.1rem;font-weight:700;margin:0 0 6px;">Leave a Recognition</h3>
+  <p style="color:var(--text-secondary,#6b7280);font-size:0.85rem;margin:0 0 20px;">Share how Dr. Kothari or the Apollo ICU team made a difference.</p>
+  <div id="review-submit-success" style="display:none;background:#d1fae5;border-radius:8px;padding:14px;color:#065f46;font-size:0.9rem;margin-bottom:16px;">
+    Thank you! Your recognition has been submitted and will appear after review.
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+    <div>
+      <label style="display:block;font-size:0.78rem;font-weight:700;color:var(--text-secondary,#6b7280);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Your Name</label>
+      <input id="rv-name" type="text" placeholder="e.g. Dr. Priya Mehta" style="width:100%;padding:10px 14px;border:1px solid var(--border,#e5e7eb);border-radius:8px;font-size:0.9rem;box-sizing:border-box;background:var(--bg,#fff);" />
+    </div>
+    <div>
+      <label style="display:block;font-size:0.78rem;font-weight:700;color:var(--text-secondary,#6b7280);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Platform / Source</label>
+      <select id="rv-platform" style="width:100%;padding:10px 14px;border:1px solid var(--border,#e5e7eb);border-radius:8px;font-size:0.9rem;box-sizing:border-box;background:var(--bg,#fff);">
+        <option value="others">Other / Direct</option>
+        <option value="linkedin">LinkedIn</option>
+        <option value="google">Google</option>
+        <option value="facebook">Facebook</option>
+      </select>
+    </div>
+  </div>
+  <div style="margin-bottom:16px;">
+    <label style="display:block;font-size:0.78rem;font-weight:700;color:var(--text-secondary,#6b7280);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Your Recognition *</label>
+    <textarea id="rv-body" rows="4" placeholder="Share your experience with Dr. Kothari or the Apollo ICU team..." style="width:100%;padding:10px 14px;border:1px solid var(--border,#e5e7eb);border-radius:8px;font-size:0.9rem;box-sizing:border-box;background:var(--bg,#fff);resize:vertical;"></textarea>
+  </div>
+  <button type="button" onclick="submitReview()" style="background:#0ea5e9;color:#fff;border:none;border-radius:8px;padding:12px 24px;font-size:0.9rem;font-weight:600;cursor:pointer;">Submit Recognition</button>
+</div>
             <div class="photo-upload-cta">
                 <div style="font-size:2rem;">📸</div>
                 <strong style="color:var(--text-primary); font-size:1rem;">Share Your Photo</strong>
@@ -870,6 +897,28 @@
                     allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                     loading="lazy">
                 </iframe>`;
+        }
+
+        async function submitReview() {
+          const name = document.getElementById('rv-name')?.value?.trim();
+          const body = document.getElementById('rv-body')?.value?.trim();
+          const platform = document.getElementById('rv-platform')?.value || 'others';
+          if (!body) { alert('Please write your recognition before submitting.'); return; }
+          try {
+            const res = await fetch('./api/content.php', {
+              method: 'POST',
+              headers: {'Content-Type':'application/json'},
+              body: JSON.stringify({action:'submit_review', type:'peer_recognitions', author: name || 'Anonymous', body, platform, status:'pending'})
+            });
+            const d = await res.json();
+            if (d.success !== false) {
+              document.getElementById('review-submit-success').style.display = 'block';
+              document.getElementById('rv-name').value = '';
+              document.getElementById('rv-body').value = '';
+            } else {
+              alert('Submission failed. Please try again.');
+            }
+          } catch(e) { alert('Network error. Please try again.'); }
         }
     </script>
 </body>
