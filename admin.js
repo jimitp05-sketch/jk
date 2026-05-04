@@ -1361,6 +1361,20 @@ async function addPhoto() {
         const file = fileInput.files[0];
         if (file.size > 5 * 1024 * 1024) { toast('Image too large. Max 5MB.', 'error'); return; }
         photoData = await new Promise(resolve => { const r = new FileReader(); r.onload = e => resolve(e.target.result); r.readAsDataURL(file); });
+        // Upload to server for file-based storage (faster than base64 in DB)
+        try {
+            const uploadRes = await fetch('./api/upload_photo.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': token },
+                body: JSON.stringify({ photo_data: photoData, context: 'photo_wall' })
+            });
+            const uploadD = await uploadRes.json();
+            if (uploadD.success && uploadD.url) {
+                photoData = uploadD.url; // Use file URL instead of base64
+                toast(`Image compressed & uploaded (${uploadD.size_kb}KB)`, 'info');
+            }
+            // If upload fails, fall back to base64 (graceful degradation)
+        } catch(uploadErr) { /* fallback to base64 */ }
     } else if (urlVal) {
         photoData = urlVal;
     } else { toast('Please select a photo file or enter a URL.', 'error'); return; }

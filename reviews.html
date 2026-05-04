@@ -538,7 +538,7 @@
           </div>
           <span class="rc-platform-badge badge-${badgeClass}">${platformIcon(r.platform)} ${platformLabel(r.platform)}</span>
         </div>
-        ${safeImage ? `<div class="rc-image-wrap"><img class="rc-image lightbox-trigger" src="${safeImage}" alt="${safeImageCaption}" data-caption="${safeImageCaption}" /></div>` : ''}
+        ${safeImage ? `<div class="rc-image-wrap"><img class="rc-image lightbox-trigger" src="${safeImage}" alt="${safeImageCaption}" data-caption="${safeImageCaption}" loading="lazy" /></div>` : ''}
         <div class="rc-body"><p class="rc-text">${safeText}</p></div>
         <div class="rc-footer">
           <span class="rc-date">📅 ${safeDate}</span>
@@ -583,7 +583,7 @@
             grid.innerHTML = photos.map((p, i) => {
                 if (p.src) {
                     return `<div class="photo-wall-item reveal" onclick="openLightbox('${p.src}','${p.caption}')">
-          <img src="${p.src}" alt="${p.caption}" />
+          <img src="${p.src}" alt="${p.caption}" loading="lazy" />
           <div class="photo-wall-overlay"><span>🔍</span><span>${p.caption}</span></div>
         </div>`;
                 } else {

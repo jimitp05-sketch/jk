@@ -173,8 +173,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ((int)(strlen($b64Data) * 3 / 4) > 5 * 1024 * 1024) {
                 respond(['success' => false, 'error' => 'Image too large. Maximum 5MB.'], 400);
             }
+
+            // Save as compressed file instead of storing raw base64 in DB
+            $photoToStore = $photoData; // default: store base64 (fallback)
+            $uploadDir = __DIR__ . '/../uploads/memories/';
+            if (!is_dir($uploadDir)) { @mkdir($uploadDir, 0755, true); }
+
+            $imgBytes = base64_decode($b64Data);
+            $srcImg = @imagecreatefromstring($imgBytes);
+            if ($srcImg) {
+                $origW = imagesx($srcImg);
+                $origH = imagesy($srcImg);
+                $maxW = 1200;
+                if ($origW > $maxW) {
+                    $ratio = $maxW / $origW;
+                    $newW = $maxW; $newH = (int)round($origH * $ratio);
+                } else { $newW = $origW; $newH = $origH; }
+
+                $dst = imagecreatetruecolor($newW, $newH);
+                imagealphablending($dst, false); imagesavealpha($dst, true);
+                imagecopyresampled($dst, $srcImg, 0, 0, 0, 0, $newW, $newH, $origW, $origH);
+                imagedestroy($srcImg);
+
+                $fname = 'mem_' . bin2hex(random_bytes(8)) . (function_exists('imagewebp') ? '.webp' : '.jpg');
+                $fpath = $uploadDir . $fname;
+                $saved = function_exists('imagewebp') ? @imagewebp($dst, $fpath, 82) : @imagejpeg($dst, $fpath, 82);
+                imagedestroy($dst);
+
+                if ($saved && file_exists($fpath)) {
+                    $host = $_SERVER['HTTP_HOST'] ?? 'foxwisdom.com';
+                    $photoToStore = 'https://' . $host . '/uploads/memories/' . $fname;
+                }
+            }
+
             $pdo->prepare("INSERT INTO memory_photos (id,caption,label,uploaded_by,photo_data,status,submitted_at,ip_hash) VALUES (?,?,?,?,?,'pending',?,?)")
-                ->execute([$id, clean($input['caption']??'',300), clean($input['label']??'',50), clean($input['uploaded_by']??'',100), $photoData, $now, $ipHash]);
+                ->execute([$id, clean($input['caption']??'',300), clean($input['label']??'',50), clean($input['uploaded_by']??'',100), $photoToStore, $now, $ipHash]);
         }
 
         respond(['success' => true, 'message' => 'Submitted successfully! It will appear after admin review.']);

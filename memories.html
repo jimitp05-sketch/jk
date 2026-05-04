@@ -864,8 +864,10 @@
                 card.style.transitionDelay = delay + 's';
 
                 if (photo.photo_data && photo.photo_data.length > 100) {
-                    // Real image
-                    const src = photo.photo_data.startsWith('data:') ? photo.photo_data : 'data:image/jpeg;base64,' + photo.photo_data;
+                    // Real image — supports file URL (https://), data URL, or raw base64
+                    const src = (photo.photo_data.startsWith('http://') || photo.photo_data.startsWith('https://') || photo.photo_data.startsWith('data:'))
+                        ? photo.photo_data
+                        : 'data:image/jpeg;base64,' + photo.photo_data;
                     card.innerHTML = `
                 <img class="photo-img" src="${src}" alt="${escHtml(photo.caption || '')}" loading="lazy" />
                 <span class="photo-badge">${escHtml(photo.label || '')}</span>
