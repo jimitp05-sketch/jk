@@ -2168,6 +2168,8 @@ switchPanel = function (name) {
     if (name === 'subscribers') loadSubscribers();
     if (name === 'social') loadSocialSettings();
     if (name === 'audit') loadAuditLog();
+    if (name === 'pulse-institutes') loadInstitutes();
+    if (name === 'pulse-media') loadMediaMentions();
 };
 
 // ============================================================
@@ -3309,6 +3311,166 @@ function clearFaqForm() {
     }, 60000);
 })();
 
+// ── INSTITUTE RECOGNITIONS ──
+let currentInstitutes = [];
+
+async function loadInstitutes() {
+    try {
+        const res = await fetch('./api/content.php?type=institute_recognitions');
+        const d = await res.json();
+        currentInstitutes = d.data || [];
+        renderInstituteList();
+    } catch(e) { toast('Failed to load recognitions', 'error'); }
+}
+
+function renderInstituteList() {
+    const el = document.getElementById('inst-list');
+    const countEl = document.getElementById('inst-count');
+    if (countEl) countEl.textContent = currentInstitutes.length;
+    if (!el) return;
+    if (!currentInstitutes.length) {
+        el.innerHTML = '<p style="color:var(--ad-text-muted);padding:20px;">No recognitions yet. Add one above.</p>';
+        return;
+    }
+    el.innerHTML = currentInstitutes.map((r, i) => `
+        <div style="border-bottom:1px solid var(--ad-border);padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;">
+            <div>
+                <div style="font-weight:700;font-size:0.9rem;">${escH(r.icon || '')} ${escH(r.name)}</div>
+                <div style="font-size:0.82rem;color:var(--ad-text-muted);margin-top:4px;">${escH((r.body||'').substring(0,100))}...</div>
+                <div style="font-size:0.75rem;color:var(--accent-secondary);margin-top:4px;">${escH(r.source || '')}</div>
+            </div>
+            <div class="action-btns">
+                <button class="action-btn action-btn-edit" onclick="editInstitute(${i})">Edit</button>
+                <button class="action-btn action-btn-delete" onclick="deleteInstitute(${i})">Delete</button>
+            </div>
+        </div>`).join('');
+}
+
+function editInstitute(idx) {
+    const r = currentInstitutes[idx];
+    if (!r) return;
+    document.getElementById('inst-edit-id').value = idx;
+    document.getElementById('inst-name').value = r.name || '';
+    document.getElementById('inst-icon').value = r.icon || '';
+    document.getElementById('inst-body').value = r.body || '';
+    document.getElementById('inst-source').value = r.source || '';
+    document.querySelector('#panel-pulse-institutes .editor-card h3').textContent = 'Edit Recognition';
+    document.getElementById('inst-name').scrollIntoView({behavior:'smooth'});
+}
+
+async function saveInstitute() {
+    const name = document.getElementById('inst-name')?.value?.trim();
+    const body = document.getElementById('inst-body')?.value?.trim();
+    if (!name || !body) { toast('Name and text are required.', 'error'); return; }
+    const editIdx = document.getElementById('inst-edit-id')?.value;
+    const item = { id: editIdx !== '' ? currentInstitutes[parseInt(editIdx)]?.id || Date.now() : Date.now(), name, icon: document.getElementById('inst-icon')?.value?.trim() || '🏥', body, source: document.getElementById('inst-source')?.value?.trim() || '' };
+    if (editIdx !== '') { currentInstitutes[parseInt(editIdx)] = item; } else { currentInstitutes.push(item); }
+    await saveInstitutes();
+    clearInstituteForm();
+    toast('Recognition saved!', 'success');
+}
+
+async function deleteInstitute(idx) {
+    if (!confirm('Delete this recognition?')) return;
+    currentInstitutes.splice(idx, 1);
+    await saveInstitutes();
+    toast('Deleted.', 'success');
+}
+
+async function saveInstitutes() {
+    const token = getSessionToken();
+    await fetch('./api/content.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({session_token:token, type:'institute_recognitions', items:currentInstitutes}) });
+    renderInstituteList();
+}
+
+function clearInstituteForm() {
+    document.getElementById('inst-edit-id').value = '';
+    document.getElementById('inst-name').value = '';
+    document.getElementById('inst-icon').value = '';
+    document.getElementById('inst-body').value = '';
+    document.getElementById('inst-source').value = '';
+    const h = document.querySelector('#panel-pulse-institutes .editor-card h3');
+    if (h) h.textContent = '+ Add / Edit Recognition';
+}
+
+// ── MEDIA MENTIONS ──
+let currentMediaMentions = [];
+
+async function loadMediaMentions() {
+    try {
+        const res = await fetch('./api/content.php?type=media_mentions');
+        const d = await res.json();
+        currentMediaMentions = d.data || [];
+        renderMediaList();
+    } catch(e) { toast('Failed to load media mentions', 'error'); }
+}
+
+function renderMediaList() {
+    const el = document.getElementById('media-list');
+    const countEl = document.getElementById('media-count');
+    if (countEl) countEl.textContent = currentMediaMentions.length;
+    if (!el) return;
+    if (!currentMediaMentions.length) {
+        el.innerHTML = '<p style="color:var(--ad-text-muted);padding:20px;">No media mentions yet. Add one above.</p>';
+        return;
+    }
+    el.innerHTML = currentMediaMentions.map((m, i) => `
+        <div style="border-bottom:1px solid var(--ad-border);padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;">
+            <div>
+                <div style="font-weight:700;font-size:0.9rem;">${escH(m.title)}</div>
+                <div style="font-size:0.8rem;color:var(--accent-secondary);margin-top:2px;">${escH(m.publication)} ${m.date ? '· ' + escH(m.date) : ''}</div>
+                <div style="font-size:0.82rem;color:var(--ad-text-muted);margin-top:4px;">${escH((m.excerpt||'').substring(0,100))}${m.excerpt && m.excerpt.length>100?'...':''}</div>
+                ${m.url ? `<a href="${escH(m.url)}" target="_blank" style="font-size:0.75rem;color:var(--accent);">View Article →</a>` : ''}
+            </div>
+            <div class="action-btns">
+                <button class="action-btn action-btn-edit" onclick="editMediaMention(${i})">Edit</button>
+                <button class="action-btn action-btn-delete" onclick="deleteMediaMention(${i})">Delete</button>
+            </div>
+        </div>`).join('');
+}
+
+function editMediaMention(idx) {
+    const m = currentMediaMentions[idx];
+    if (!m) return;
+    document.getElementById('media-edit-id').value = idx;
+    document.getElementById('media-title').value = m.title || '';
+    document.getElementById('media-pub').value = m.publication || '';
+    document.getElementById('media-date').value = m.date || '';
+    document.getElementById('media-url').value = m.url || '';
+    document.getElementById('media-excerpt').value = m.excerpt || '';
+    document.getElementById('media-title').scrollIntoView({behavior:'smooth'});
+}
+
+async function saveMediaMention() {
+    const title = document.getElementById('media-title')?.value?.trim();
+    const pub = document.getElementById('media-pub')?.value?.trim();
+    if (!title || !pub) { toast('Title and publication are required.', 'error'); return; }
+    const editIdx = document.getElementById('media-edit-id')?.value;
+    const item = { id: editIdx !== '' ? currentMediaMentions[parseInt(editIdx)]?.id || Date.now() : Date.now(), title, publication: pub, date: document.getElementById('media-date')?.value || '', url: document.getElementById('media-url')?.value?.trim() || '', excerpt: document.getElementById('media-excerpt')?.value?.trim() || '' };
+    if (editIdx !== '') { currentMediaMentions[parseInt(editIdx)] = item; } else { currentMediaMentions.push(item); }
+    await saveMediaMentions();
+    clearMediaForm();
+    toast('Media mention saved!', 'success');
+}
+
+async function deleteMediaMention(idx) {
+    if (!confirm('Delete this media mention?')) return;
+    currentMediaMentions.splice(idx, 1);
+    await saveMediaMentions();
+    toast('Deleted.', 'success');
+}
+
+async function saveMediaMentions() {
+    const token = getSessionToken();
+    await fetch('./api/content.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({session_token:token, type:'media_mentions', items:currentMediaMentions}) });
+    renderMediaList();
+}
+
+function clearMediaForm() {
+    document.getElementById('media-edit-id').value = '';
+    ['media-title','media-pub','media-date','media-url','media-excerpt'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+}
+
 // ── SITE IMAGE UPLOAD ──
 function previewImage(input, previewId) {
     if (input.files && input.files[0]) {
@@ -3409,6 +3571,45 @@ async function logAuditAction(section, action, detail = '') {
         });
     } catch(e) { /* silent fail */ }
 }
+
+// ── AUTO-LOGOUT (15 minutes idle) ──
+(function() {
+    const TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
+    const WARN_MS = 13 * 60 * 1000;    // warn at 13 minutes (2 min remaining)
+    let idleTimer, warnTimer, warnShown = false;
+
+    function resetIdle() {
+        clearTimeout(idleTimer);
+        clearTimeout(warnTimer);
+        if (warnShown) {
+            const w = document.getElementById('idle-warn-bar');
+            if (w) w.remove();
+            warnShown = false;
+        }
+        if (!getSessionToken()) return;
+        warnTimer = setTimeout(showIdleWarning, WARN_MS);
+        idleTimer = setTimeout(() => {
+            doLogout();
+            alert('You were logged out after 15 minutes of inactivity.');
+        }, TIMEOUT_MS);
+    }
+
+    function showIdleWarning() {
+        if (document.getElementById('idle-warn-bar')) return;
+        warnShown = true;
+        const bar = document.createElement('div');
+        bar.id = 'idle-warn-bar';
+        bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#b45309;color:#fff;text-align:center;padding:10px 48px;font-size:0.9rem;font-weight:600;';
+        bar.innerHTML = 'You will be logged out in 2 minutes due to inactivity. <button onclick="resetAdminIdle()" style="margin-left:12px;background:#fff;color:#b45309;border:none;border-radius:6px;padding:4px 14px;font-weight:700;cursor:pointer;">Stay Logged In</button>';
+        document.body.prepend(bar);
+    }
+
+    window.resetAdminIdle = resetIdle;
+    ['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(e => {
+        document.addEventListener(e, resetIdle, { passive: true });
+    });
+    resetIdle();
+})();
 
 // ── ADMIN MOBILE NAV ──
 (function() {

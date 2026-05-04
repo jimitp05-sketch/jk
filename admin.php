@@ -117,13 +117,11 @@
                             class="nav-icon">🔬</span>Research Papers</div>
                 </div>
                 <div class="admin-nav-group">
-                    <div class="admin-nav-label">Community</div>
-                    <div class="admin-nav-link" data-panel="reviews" onclick="switchPanel('reviews')"><span
-                            class="nav-icon">⭐</span>Review Approvals <span class="admin-badge"
-                            id="badge-reviews">0</span></div>
-                    <div class="admin-nav-link" data-panel="photos" onclick="switchPanel('photos')"><span
-                            class="nav-icon">🖼️</span>Photo Wall <span class="admin-badge" id="badge-photos">0</span>
-                    </div>
+                    <div class="admin-nav-label">Pulse Page</div>
+                    <div class="admin-nav-link" data-panel="reviews" onclick="switchPanel('reviews')"><span class="nav-icon">⭐</span>Review Approvals <span class="admin-badge" id="badge-reviews">0</span></div>
+                    <div class="admin-nav-link" data-panel="photos" onclick="switchPanel('photos')"><span class="nav-icon">🖼️</span>Photo Wall <span class="admin-badge" id="badge-photos">0</span></div>
+                    <div class="admin-nav-link" data-panel="pulse-institutes" onclick="switchPanel('pulse-institutes')"><span class="nav-icon">🏛️</span>Institute Recognitions</div>
+                    <div class="admin-nav-link" data-panel="pulse-media" onclick="switchPanel('pulse-media')"><span class="nav-icon">📰</span>Media Mentions</div>
                 </div>
                 <div class="admin-nav-group">
                     <div class="admin-nav-label">Memories</div>
@@ -164,7 +162,8 @@
                     'dashboard', 'calendar', 'requests', 'knowledge', 'editor',
                     'reviews', 'photos', 'images', 'settings', 'myths',
                     'quizeditor', 'research', 'hero', 'faq', 'export', 'api_health',
-                    'diya', 'memories', 'subscribers', 'social', 'audit'
+                    'diya', 'memories', 'subscribers', 'social', 'audit',
+                    'pulse_institutes', 'pulse_media'
                 ];
                 foreach ($panels as $panel) {
                     $file = __DIR__ . "/admin/panels/{$panel}.php";
