@@ -1107,6 +1107,8 @@
             cursor: pointer;
             padding: 0.55rem 0.25rem;
             border-radius: 14px;
+            border: none;
+            background: transparent;
             transition: transform var(--t-fast), background var(--t-fast);
         }
         .mini-diya-wrapper:hover,

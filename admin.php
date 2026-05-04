@@ -105,6 +105,7 @@
                 </div>
                 <div class="admin-nav-group">
                     <div class="admin-nav-label">Content</div>
+                    <div class="admin-nav-link" data-panel="expertise" onclick="switchPanel('expertise')"><span class="nav-icon">⚕️</span>Expertise Cards</div>
                     <div class="admin-nav-link" data-panel="knowledge" onclick="switchPanel('knowledge')"><span
                             class="nav-icon">📚</span>Knowledge Hub</div>
                     <div class="admin-nav-link" data-panel="editor" onclick="switchPanel('editor')"><span
@@ -163,7 +164,7 @@
                     'reviews', 'photos', 'images', 'settings', 'myths',
                     'quizeditor', 'research', 'hero', 'faq', 'export', 'api_health',
                     'diya', 'memories', 'subscribers', 'social', 'audit',
-                    'pulse_institutes', 'pulse_media'
+                    'pulse_institutes', 'pulse_media', 'expertise'
                 ];
                 foreach ($panels as $panel) {
                     $file = __DIR__ . "/admin/panels/{$panel}.php";

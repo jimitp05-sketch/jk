@@ -831,6 +831,30 @@
             .catch(function() {});
     })();
     </script>
+    <script>
+(function loadExpertiseCards() {
+  function escH(s) { var d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
+  fetch('./api/content.php?type=expertise_items')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var items = data.data || [];
+      if (!items.length) return; // keep hardcoded defaults
+      var container = document.querySelector('#expertise .expertise-grid, #expertise article:first-of-type')?.parentElement;
+      // Find the articles container within #expertise section
+      var section = document.getElementById('expertise');
+      if (!section) return;
+      var grid = section.querySelector('article')?.parentElement || section.querySelector('.cards-grid, .grid, [class*="grid"]');
+      if (!grid) return;
+      grid.innerHTML = items.map(function(item){
+        return '<article class="glass-card expertise-card">'
+          + '<h3>' + escH(item.title) + '</h3>'
+          + '<p>' + escH(item.desc) + '</p>'
+          + (item.plain ? '<div class="tooltip" style="margin-top:12px;"><span style="font-size:0.78rem;color:var(--accent);cursor:help;">In Plain English</span><span class="tooltip-text">' + escH(item.plain) + '</span></div>' : '')
+          + '</article>';
+      }).join('');
+    }).catch(function(){});
+})();
+</script>
 </body>
 
 </html>

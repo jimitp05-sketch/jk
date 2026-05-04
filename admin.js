@@ -400,6 +400,7 @@ function switchPanel(name) {
     if (name === 'quizeditor') renderQuizEditor();
     if (name === 'research') renderResearch();
     if (name === 'images') { /* Just stay current */ }
+    if (name === 'expertise') loadExpertise();
 
 }
 
@@ -838,6 +839,35 @@ function buildArticleHTML(structured) {
 // ============================================================
 // ARTICLE CRUD
 // ============================================================
+
+function getArticleFaqs() {
+    return Array.from(document.querySelectorAll('.article-faq-item')).map(row => ({
+        q: row.querySelector('.faq-q')?.value?.trim() || '',
+        a: row.querySelector('.faq-a')?.value?.trim() || ''
+    })).filter(f => f.q && f.a);
+}
+
+function loadArticleFaqs(faqs) {
+    const container = document.getElementById('article-faq-list');
+    if (!container) return;
+    container.innerHTML = '';
+    (faqs || []).forEach(f => addArticleFaqRow(f.q, f.a));
+}
+
+function addArticleFaq() { addArticleFaqRow('', ''); }
+
+function addArticleFaqRow(q, a) {
+    const container = document.getElementById('article-faq-list');
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = 'article-faq-item';
+    div.style.cssText = 'border:1px solid var(--ad-border);border-radius:8px;padding:12px;margin-bottom:12px;';
+    div.innerHTML = `<div class="editor-field" style="margin-bottom:8px;"><label style="font-size:0.78rem;">Question</label><input type="text" class="faq-q" value="${escH(q)}" placeholder="e.g. Is ECMO painful?" style="width:100%;padding:8px;border-radius:6px;border:1px solid var(--ad-border);background:var(--ad-bg);color:var(--ad-text);" /></div>
+    <div class="editor-field"><label style="font-size:0.78rem;">Answer</label><textarea class="faq-a" rows="2" placeholder="Clear, plain-language answer..." style="width:100%;padding:8px;border-radius:6px;border:1px solid var(--ad-border);background:var(--ad-bg);color:var(--ad-text);resize:vertical;">${escH(a)}</textarea></div>
+    <button type="button" onclick="this.closest('.article-faq-item').remove()" style="background:var(--ad-red-muted,#dc2626);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:0.78rem;cursor:pointer;margin-top:6px;">Remove</button>`;
+    container.appendChild(div);
+}
+
 async function saveArticle() {
     const token = getSessionToken();
     if (!token) return; // Silent return if no pass
@@ -859,7 +889,7 @@ async function saveArticle() {
     const meta_title = document.getElementById('editor-meta-title')?.value?.trim() || '';
     const meta_description = document.getElementById('editor-meta-description')?.value?.trim() || '';
     const publish_date = document.getElementById('editor-publish-date')?.value || '';
-    const newArt = { id, title, pillar, subtitle, body, author, status, overridesId, structured, meta_title, meta_description, publish_date, savedAt: new Date().toISOString() };
+    const newArt = { id, title, pillar, subtitle, body, author, status, overridesId, structured, meta_title, meta_description, publish_date, faqs: getArticleFaqs(), savedAt: new Date().toISOString() };
 
     let updatedList = [...currentArticles];
     const idx = updatedList.findIndex(a => a.id === id);
@@ -905,6 +935,7 @@ function editArticle(id) {
     } else {
         clearSectionsOnly(); addSection();
     }
+    loadArticleFaqs(article.faqs || []);
     switchPanel('editor');
 }
 
@@ -1094,6 +1125,7 @@ function editBuiltInArticle(id) {
     } else {
         clearSectionsOnly(); addSection();
     }
+    loadArticleFaqs((BUILT_IN_CONTENT[id] || {}).faqs || []);
     switchPanel('editor');
 }
 
@@ -1155,6 +1187,7 @@ function clearEditor() {
     const pd = document.getElementById('editor-publish-date'); if(pd) pd.value = '';
     clearSectionsOnly();
     addSection();
+    loadArticleFaqs([]);
 }
 
 // ============================================================
@@ -1296,31 +1329,49 @@ async function renderPhotos() {
     } catch (e) { console.error('Failed to fetch photos:', e); }
 }
 
+function previewPhotoUpload(input) {
+    const preview = document.getElementById('photo-file-preview');
+    const img = document.getElementById('photo-file-img');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => { if(img) img.src = e.target.result; if(preview) preview.style.display = 'block'; };
+        reader.readAsDataURL(input.files[0]);
+        const urlEl = document.getElementById('photo-url'); if(urlEl) urlEl.value = '';
+    }
+}
+
+function clearPhotoForm() {
+    const fi = document.getElementById('photo-file'); if(fi) fi.value = '';
+    const prev = document.getElementById('photo-file-preview'); if(prev) prev.style.display = 'none';
+    const url = document.getElementById('photo-url'); if(url) url.value = '';
+    const cap = document.getElementById('photo-caption'); if(cap) cap.value = '';
+    const lbl = document.getElementById('photo-label'); if(lbl) lbl.value = 'Clinical';
+}
+
 async function addPhoto() {
-    const url = document.getElementById('photo-url').value.trim();
-    const caption = document.getElementById('photo-caption').value.trim();
-    const label = document.getElementById('photo-label').value.trim() || 'General';
+    const caption = (document.getElementById('photo-caption')?.value || '').trim();
+    const label = document.getElementById('photo-label')?.value || 'General';
     if (!caption) { toast('Caption is required.', 'error'); return; }
     const token = getSessionToken();
     if (!token) return;
+    let photoData = '';
+    const fileInput = document.getElementById('photo-file');
+    const urlVal = (document.getElementById('photo-url')?.value || '').trim();
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        if (file.size > 5 * 1024 * 1024) { toast('Image too large. Max 5MB.', 'error'); return; }
+        photoData = await new Promise(resolve => { const r = new FileReader(); r.onload = e => resolve(e.target.result); r.readAsDataURL(file); });
+    } else if (urlVal) {
+        photoData = urlVal;
+    } else { toast('Please select a photo file or enter a URL.', 'error'); return; }
     try {
         const res = await fetch('./api/content.php?type=photo_wall', { headers: { 'X-Admin-Token': token } });
         const d = await res.json();
         const photos = d.data || [];
-        photos.push({ id: Date.now(), url, caption, label, status: 'approved', added: new Date().toISOString() });
-        const res2 = await fetch('./api/content.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ session_token: token, type: 'photo_wall', items: photos })
-        });
-        if ((await res2.json()).success) {
-            document.getElementById('photo-url').value = '';
-            document.getElementById('photo-caption').value = '';
-            document.getElementById('photo-label').value = '';
-            renderPhotos();
-            toast('Photo added!', 'success');
-        }
-    } catch (e) { toast('Failed to add photo', 'error'); }
+        photos.push({ id: Date.now(), url: photoData, caption, label, status: 'approved', added: new Date().toISOString(), source: 'admin' });
+        const res2 = await fetch('./api/content.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_token: token, type: 'photo_wall', items: photos }) });
+        if ((await res2.json()).success) { clearPhotoForm(); renderPhotos(); toast('Photo added to Photo Wall!', 'success'); }
+    } catch (e) { toast('Failed to add photo: ' + e.message, 'error'); }
 }
 
 async function updatePhotoStatus(index, status) {
@@ -2076,13 +2127,21 @@ async function loadSocialSettings() {
         const d = await r.json();
         const s = d.data || d || {};
 
-        const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-        set('social-linkedin', s.linkedin);
-        set('social-facebook', s.facebook);
-        set('social-instagram', s.instagram);
-        set('social-twitter', s.twitter);
-        set('social-youtube', s.youtube);
-        set('social-google', s.google);
+        const defaults = {
+            linkedin: 'https://foxwisdom.com',
+            facebook: 'https://foxwisdom.com',
+            instagram: 'https://foxwisdom.com',
+            twitter: 'https://foxwisdom.com',
+            youtube: 'https://foxwisdom.com',
+            google: 'https://foxwisdom.com'
+        };
+        const set = (id, val, fallback) => { const el = document.getElementById(id); if (el) el.value = val || fallback || ''; };
+        set('social-linkedin', s.linkedin, defaults.linkedin);
+        set('social-facebook', s.facebook, defaults.facebook);
+        set('social-instagram', s.instagram, defaults.instagram);
+        set('social-twitter', s.twitter, defaults.twitter);
+        set('social-youtube', s.youtube, defaults.youtube);
+        set('social-google', s.google, defaults.google);
         set('social-fb-feed-url', s.fb_feed_url);
 
         const fbCheck = document.getElementById('social-fb-feed-on');
@@ -2980,6 +3039,35 @@ function clearStoryForm() {
 
 // ── GRATITUDE NOTES ──────────────────────────────────────────
 
+function inlineEditMemory(btn, id, currentText) {
+    const row = btn.closest('tr') || btn.closest('.memory-row');
+    const existing = row.querySelector('.inline-edit-area');
+    if (existing) { existing.remove(); return; }
+    const area = document.createElement('div');
+    area.className = 'inline-edit-area';
+    area.style.cssText = 'grid-column:1/-1;padding:12px;background:var(--ad-surface-2);border-radius:8px;margin-top:8px;';
+    area.innerHTML = `<textarea style="width:100%;padding:8px;border-radius:6px;border:1px solid var(--ad-border);background:var(--ad-bg);color:var(--ad-text);font-size:0.85rem;resize:vertical;" rows="4">${currentText}</textarea>
+        <div style="margin-top:8px;display:flex;gap:8px;">
+            <button class="btn-publish" style="padding:6px 14px;font-size:0.82rem;" onclick="saveInlineMemoryEdit(this, '${id}')">Save & Approve</button>
+            <button class="btn-save-draft" style="padding:6px 14px;font-size:0.82rem;" onclick="this.closest('.inline-edit-area').remove()">Cancel</button>
+        </div>`;
+    row.appendChild(area);
+}
+
+async function saveInlineMemoryEdit(btn, id) {
+    const token = getSessionToken();
+    const textarea = btn.closest('.inline-edit-area').querySelector('textarea');
+    const newText = textarea.value.trim();
+    if (!newText) { toast('Text cannot be empty.', 'error'); return; }
+    const type = id.startsWith('gratitude') ? 'gratitude_notes' : id.startsWith('healing') ? 'healing_stories' : 'memory_photos';
+    try {
+        const res = await fetch('./api/memories.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({action:'edit_and_approve', type, id, note: newText, story: newText, session_token: token}) });
+        const d = await res.json();
+        if (d.success) { toast('Saved and approved!', 'success'); adminLoadNotes(); adminLoadStories(); }
+        else { toast('Failed: ' + (d.error||''), 'error'); }
+    } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+
 async function adminLoadNotes() {
     const token = getSessionToken();
     try {
@@ -3023,6 +3111,7 @@ function renderNotesTable() {
             <td>
                 ${n.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('gratitude_notes','approve','${escH(n.id)}')">✓</button>` : ''}
                 ${n.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('gratitude_notes','reject','${escH(n.id)}')">✗</button>` : ''}
+                <button class="action-btn" onclick="inlineEditMemory(this, '${escH(n.id)}', '${escH(n.note||'')}')" style="background:var(--ad-surface-2);color:var(--ad-text);">Edit</button>
                 <button class="action-btn delete" onclick="memoryAction('gratitude_notes','delete','${escH(n.id)}')">✕</button>
             </td>
         </tr>`;
@@ -3469,6 +3558,84 @@ async function saveMediaMentions() {
 function clearMediaForm() {
     document.getElementById('media-edit-id').value = '';
     ['media-title','media-pub','media-date','media-url','media-excerpt'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+}
+
+// ── EXPERTISE CARDS ──
+let currentExpertise = [];
+
+async function loadExpertise() {
+    try {
+        const res = await fetch('./api/content.php?type=expertise_items');
+        const d = await res.json();
+        currentExpertise = d.data || [];
+        renderExpertiseList();
+    } catch(e) { toast('Failed to load expertise cards', 'error'); }
+}
+
+function renderExpertiseList() {
+    const el = document.getElementById('exp-list');
+    const countEl = document.getElementById('exp-count');
+    if (countEl) countEl.textContent = currentExpertise.length;
+    if (!el) return;
+    if (!currentExpertise.length) {
+        el.innerHTML = '<p style="color:var(--ad-text-muted);padding:20px;">No custom cards yet. Add one above, or the homepage shows built-in defaults.</p>';
+        return;
+    }
+    el.innerHTML = currentExpertise.map((e, i) => `
+        <div style="border-bottom:1px solid var(--ad-border);padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;">
+            <div>
+                <div style="font-weight:700;font-size:0.9rem;">${escH(e.title)}</div>
+                ${e.plain ? `<div style="font-size:0.78rem;color:var(--accent-secondary);margin-top:2px;font-style:italic;">"${escH(e.plain)}"</div>` : ''}
+                <div style="font-size:0.82rem;color:var(--ad-text-muted);margin-top:4px;">${escH((e.desc||'').substring(0,120))}...</div>
+            </div>
+            <div class="action-btns">
+                <button class="action-btn action-btn-edit" onclick="editExpertise(${i})">Edit</button>
+                <button class="action-btn action-btn-delete" onclick="deleteExpertise(${i})">Delete</button>
+            </div>
+        </div>`).join('');
+}
+
+function editExpertise(idx) {
+    const e = currentExpertise[idx];
+    if (!e) return;
+    document.getElementById('exp-edit-id').value = idx;
+    document.getElementById('exp-title').value = e.title || '';
+    document.getElementById('exp-plain').value = e.plain || '';
+    document.getElementById('exp-desc').value = e.desc || '';
+    document.getElementById('exp-title').scrollIntoView({behavior:'smooth'});
+}
+
+async function saveExpertise() {
+    const title = document.getElementById('exp-title')?.value?.trim();
+    const desc = document.getElementById('exp-desc')?.value?.trim();
+    if (!title || !desc) { toast('Title and description are required.', 'error'); return; }
+    const editIdx = document.getElementById('exp-edit-id')?.value;
+    const item = {
+        id: editIdx !== '' ? (currentExpertise[parseInt(editIdx)]?.id || Date.now()) : Date.now(),
+        title, plain: document.getElementById('exp-plain')?.value?.trim() || '', desc
+    };
+    if (editIdx !== '') { currentExpertise[parseInt(editIdx)] = item; } else { currentExpertise.push(item); }
+    await saveExpertiseToServer();
+    clearExpertiseForm();
+    toast('Expertise card saved!', 'success');
+}
+
+async function deleteExpertise(idx) {
+    if (!confirm('Delete this expertise card?')) return;
+    currentExpertise.splice(idx, 1);
+    await saveExpertiseToServer();
+    toast('Deleted.', 'success');
+}
+
+async function saveExpertiseToServer() {
+    const token = getSessionToken();
+    await fetch('./api/content.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({session_token: token, type: 'expertise_items', items: currentExpertise}) });
+    renderExpertiseList();
+}
+
+function clearExpertiseForm() {
+    document.getElementById('exp-edit-id').value = '';
+    ['exp-title','exp-plain','exp-desc'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
 }
 
 // ── SITE IMAGE UPLOAD ──

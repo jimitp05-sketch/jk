@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/auth.php';
 
-$VALID_TYPES = ['quiz_questions', 'knowledge_articles', 'research_papers', 'myth_busters', 'peer_recognitions', 'photo_wall', 'faq_items', 'social_settings'];
+$VALID_TYPES = ['quiz_questions', 'knowledge_articles', 'research_papers', 'myth_busters', 'peer_recognitions', 'photo_wall', 'faq_items', 'social_settings', 'expertise_items', 'institute_recognitions', 'media_mentions', 'blocked_dates'];
 
 // ── DATABASE HELPERS ─────────────────────────────────────────────────────────
 

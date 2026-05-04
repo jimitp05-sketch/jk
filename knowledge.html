@@ -216,6 +216,10 @@
                     Recovery &amp; PICS</a>
             </aside>
             <main class="article-content" id="article-content" aria-live="polite"></main>
+            <div id="article-faq-accordion" style="display:none;margin-top:40px;border-top:2px solid var(--border,#e5e7eb);padding-top:24px;">
+                <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h3>
+                <div class="faq-items"></div>
+            </div>
             <aside class="article-sidebar-right">
                 <div class="toc-sticky">
                     <div class="toc-title">On This Page</div>
@@ -674,6 +678,29 @@
       <div style="margin-top:48px; padding-top:28px; border-top:1px solid var(--border-subtle); font-size:0.8rem; color:var(--text-muted); font-style:italic;">
         All content on this Knowledge Hub is written for educational purposes only. It does not constitute medical advice. Please consult Dr. Kothari or another qualified physician for clinical decisions specific to your case.
       </div>`;
+
+            // Show article FAQs if present
+            const faqContainer = document.getElementById('article-faq-accordion');
+            if (faqContainer) {
+                const faqs = a.faqs || [];
+                if (faqs.length) {
+                    faqContainer.style.display = 'block';
+                    faqContainer.querySelector('.faq-items').innerHTML = faqs.map((f,i) => `
+                        <div class="faq-item" style="border-bottom:1px solid var(--border,#e5e7eb);padding:14px 0;">
+                            <button class="faq-question" onclick="this.parentElement.classList.toggle('active');this.setAttribute('aria-expanded',this.parentElement.classList.contains('active'))" aria-expanded="false" style="width:100%;text-align:left;background:none;border:none;font-size:0.95rem;font-weight:600;cursor:pointer;color:var(--text-primary,#111);">${escapeHTML(f.q)}<span style="float:right;transition:transform 0.2s;">+</span></button>
+                            <div class="faq-answer" style="display:none;padding-top:10px;color:var(--text-secondary,#6b7280);font-size:0.9rem;line-height:1.7;">${escapeHTML(f.a)}</div>
+                        </div>`).join('');
+                    // Toggle on click
+                    faqContainer.querySelectorAll('.faq-question').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const ans = this.nextElementSibling;
+                            ans.style.display = ans.style.display === 'none' ? 'block' : 'none';
+                        });
+                    });
+                } else {
+                    faqContainer.style.display = 'none';
+                }
+            }
 
             window.scrollTo(0, 0);
         }

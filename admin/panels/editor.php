@@ -111,5 +111,13 @@
                 onclick="clearEditor()">Clear</button>
         </div>
     </div>
+
+    <!-- Article-specific FAQs -->
+    <div class="editor-card" style="margin-top:20px;">
+        <h3>❓ Article FAQs <span style="font-size:0.78rem;color:var(--ad-text-muted);font-weight:400;">(optional — shown below article on Knowledge Hub)</span></h3>
+        <div id="article-faq-list"></div>
+        <button type="button" class="btn-save-draft" onclick="addArticleFaq()" style="margin-top:12px;">+ Add FAQ</button>
+    </div>
+
     <div id="editor-articles-list" style="margin-top:24px;"></div>
 </div>

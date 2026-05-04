@@ -112,7 +112,7 @@
             <div class="hero-counter-wrapper" aria-live="polite">
                 <div class="hero-counter-dot" aria-hidden="true"></div>
                 <span class="hero-counter-text">
-                    <span class="count-number" id="hero-count">0</span>&nbsp;prayers glowing forever
+                    <span class="count-number" id="hero-count">0</span>&nbsp;Total Lit
                 </span>
             </div>
         </div>
@@ -283,14 +283,8 @@
             <div class="stat-item">
                 <span class="stat-icon" aria-hidden="true">🪔</span>
                 <span class="stat-number" id="stat-prayers">—</span>
-                <span class="stat-label">Prayers Lit</span>
+                <span class="stat-label">Total Diyas Lit</span>
                 <span class="stat-sub">and counting</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-icon" aria-hidden="true">🕯️</span>
-                <span class="stat-number">0</span>
-                <span class="stat-label emotional">Diyas Extinguished</span>
-                <span class="stat-sub">they burn forever</span>
             </div>
             <div class="stat-item">
                 <span class="stat-icon" aria-hidden="true">✨</span>
@@ -820,10 +814,11 @@
             if (data.success) {
                 allDiyasCache = data.data || [];
                 renderDiyaWall(data.data);
-                updateCounter(data.count || 0);
+                const totalCount = allDiyasCache.length || data.count || 0;
+                updateCounter(totalCount);
                 if (!countUpTriggered) {
                     countUpTriggered = true;
-                    animateCountUp(document.getElementById('hero-count'), data.count || 0, 2000);
+                    animateCountUp(document.getElementById('hero-count'), totalCount, 2000);
                 }
             } else {
                 console.warn('Diya API returned error:', data.error);
@@ -876,8 +871,8 @@
                     triggerLitAnimation(data.data);
                 }, 450);
 
-                /* 4. Update counter */
-                updateCounter(data.count || prayerCount + 1);
+                /* 4. Update counter (total diyas) */
+                updateCounter(allDiyasCache.length + 1 || data.count || prayerCount + 1);
 
                 /* 5. Show share card */
                 setTimeout(() => {

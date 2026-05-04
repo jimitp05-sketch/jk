@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Get all subscribers
-        $stmt = $pdo->query("SELECT email FROM subscribers ORDER BY created_at DESC");
+        $stmt = $pdo->query("SELECT email FROM subscribers ORDER BY subscribed_at DESC");
         $emails = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         if (empty($emails)) {
