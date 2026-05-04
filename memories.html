@@ -675,8 +675,15 @@
                 const res = await fetch('./api/memories.php?type=healing_stories');
                 const data = await res.json();
                 if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-                    storiesCount = data.data.length;
-                    renderStories(data.data);
+                    const apiStories = data.data;
+                    // Merge: real approved stories first, then seed stories to fill up to 8
+                    const combined = [...apiStories];
+                    for (const seed of seedStories) {
+                        if (combined.length >= 8) break;
+                        combined.push(seed);
+                    }
+                    storiesCount = apiStories.length + seedStories.length;
+                    renderStories(combined);
                 } else {
                     storiesCount = seedStories.length;
                     renderStories(seedStories);
@@ -759,8 +766,17 @@
                 const res = await fetch('./api/memories.php?type=gratitude_notes');
                 const data = await res.json();
                 if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-                    notesCount = data.data.length;
-                    renderNotes(data.data);
+                    const apiNotes = data.data;
+                    // Show API notes first (latest submissions), then fill up with seed notes
+                    // Cap at 12 total so the wall always looks full
+                    const seedIds = new Set(seedNotes.map(s => s.id));
+                    const combined = [...apiNotes];
+                    for (const seed of seedNotes) {
+                        if (combined.length >= 12) break;
+                        combined.push(seed);
+                    }
+                    notesCount = apiNotes.length + seedNotes.length;
+                    renderNotes(combined);
                 } else {
                     notesCount = seedNotes.length;
                     renderNotes(seedNotes);

@@ -21,9 +21,14 @@ function get_db_connection() {
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
+            // Force utf8mb4 at the connection level — handles Hindi, Gujarati, emoji and all Unicode
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
         ];
-        
+
         $pdo = new PDO($dsn, $config['db_user'], $config['db_pass'], $options);
+        // Extra safety: explicitly set charset after connection
+        $pdo->exec("SET CHARACTER SET utf8mb4");
+        $pdo->exec("SET SESSION collation_connection = 'utf8mb4_unicode_ci'");
         return $pdo;
     } catch (PDOException $e) {
         // Log error and return null or throw depending on context

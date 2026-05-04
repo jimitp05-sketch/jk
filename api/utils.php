@@ -13,11 +13,21 @@ if (!function_exists('respond')) {
 }
 
 if (!function_exists('clean')) {
+    /**
+     * Sanitize input for database storage.
+     * NOTE: Do NOT use htmlspecialchars here — that belongs at output/display time.
+     * This function supports all Unicode: Hindi, Gujarati, Arabic, emoji, etc.
+     */
     function clean(string $val, int $maxLen = 500): string {
+        // Ensure valid UTF-8 — replace invalid sequences rather than erroring
+        $val = mb_convert_encoding($val, 'UTF-8', 'UTF-8');
         $val = trim($val);
+        // Remove HTML/script tags only — preserve all Unicode characters
         $val = strip_tags($val);
-        $val = htmlspecialchars($val, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        if (mb_strlen($val) > $maxLen) $val = mb_substr($val, 0, $maxLen);
+        // Truncate by character count (mb_substr handles multi-byte correctly)
+        if (mb_strlen($val, 'UTF-8') > $maxLen) {
+            $val = mb_substr($val, 0, $maxLen, 'UTF-8');
+        }
         return $val;
     }
 }
