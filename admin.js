@@ -677,7 +677,7 @@ async function renderKnowledge() {
                 <td><span class="status-badge badge-${a.status || 'published'}">${a.status || 'published'}</span></td>
                 <td><div class="action-btns">
                     <button class="action-btn action-btn-edit" onclick="${a._builtIn ? `editBuiltInArticle('${a.id}')` : `editArticle('${a.id}')`}">Edit</button>
-                    ${!a._builtIn ? `<button class="action-btn action-btn-delete" onclick="deleteArticle('${a.id}')">Delete</button>` : ''}
+                    ${!a._builtIn ? `<button class="action-btn action-btn-delete" onclick="deleteArticle('${a.id}')">Delete</button>` : `<button class="action-btn action-btn-delete" onclick="hideBuiltInArticle('${a.id}')" title="Hide this built-in article from website">Hide</button>`}
                     <a href="knowledge.html#${a.overridesId || a.id}" target="_blank" class="action-btn" style="padding:5px 10px;border:1.5px solid var(--ad-border);border-radius:var(--radius-sm);font-size:0.76rem;font-weight:700;color:var(--text-secondary);text-decoration:none;">View â†—</a>
                 </div></td>
             </tr>`).join('');
