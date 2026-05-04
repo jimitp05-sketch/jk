@@ -326,7 +326,7 @@ async function changeAdminCredentials() {
 }
 
 // ============================================================
-// SITE SETTINGS â€” reads/writes via /api/settings.php
+// SITE SETTINGS - reads/writes via /api/settings.php
 // ============================================================
 async function loadCurrentSettings() {
     try {
@@ -369,15 +369,15 @@ async function saveSettings() {
         });
         const data = await res.json();
         if (data.success) {
-            toast('âœ… Settings updated successfully!', 'success');
+            toast('[OK] Settings updated successfully!', 'success');
             // Password changes handled separately via changeAdminCredentials()
             loadCurrentSettings(); // Sync local fields
             loadHeroContent();    // Sync hero panel too
         } else {
-            toast('âŒ Save failed: ' + (data.error || 'Unknown error'), 'error');
+            toast('[!] Save failed: ' + (data.error || 'Unknown error'), 'error');
         }
     } catch (err) {
-        toast('âŒ Connection error: ' + err.message, 'error');
+        toast('[!] Connection error: ' + err.message, 'error');
     }
 }
 
@@ -633,11 +633,11 @@ const BUILT_IN_ARTICLES = [
     { id: 'pics', title: 'Post-ICU Recovery & PICS: Life After the Intensive Care Unit', pillar: 'Post-ICU Recovery & PICS', status: 'published' },
 ];
 
-let currentArticles = []; // Global state â€” populated by renderKnowledge()
+let currentArticles = []; // Global state - populated by renderKnowledge()
 
 async function renderKnowledge() {
     const tbody = document.getElementById('knowledge-table');
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">â³ Loading articles...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">â³ Loading articles...</td></tr>`;
 
     let serverArticles = [];
     try {
@@ -673,7 +673,7 @@ async function renderKnowledge() {
 
     tbody.innerHTML = currentArticles.map(a => `<tr>
                 <td style="max-width:280px;"><strong style="font-size:0.88rem;">${a.title}</strong>${a._builtIn ? ' <span style="font-size:0.7rem;color:var(--text-muted);font-weight:400;">(built-in)</span>' : ''}</td>
-                <td><span style="font-size:0.8rem;color:var(--accent-secondary);">${a.pillar || 'â€”'}</span></td>
+                <td><span style="font-size:0.8rem;color:var(--accent-secondary);">${a.pillar || '-'}</span></td>
                 <td><span class="status-badge badge-${a.status || 'published'}">${a.status || 'published'}</span></td>
                 <td><div class="action-btns">
                     <button class="action-btn action-btn-edit" onclick="${a._builtIn ? `editBuiltInArticle('${a.id}')` : `editArticle('${a.id}')`}">Edit</button>
@@ -696,22 +696,22 @@ function addSection(data) {
     div.innerHTML = `
                 <div class="section-card-header">
                     <span>Section ${idx}</span>
-                    <button type="button" class="action-btn action-btn-delete" style="padding:3px 10px;" onclick="this.closest('.section-card').remove();renumberSections();">âœ• Remove</button>
+                    <button type="button" class="action-btn action-btn-delete" style="padding:3px 10px;" onclick="this.closest('.section-card').remove();renumberSections();">[ERR]• Remove</button>
                 </div>
                 <div class="editor-field">
                     <label>Section Heading</label>
                     <input type="text" class="sec-heading" placeholder="e.g. What Is Sepsis?" />
                 </div>
                 <div class="editor-field">
-                    <label>Section Content <span style="font-weight:400;color:var(--text-muted);">(plain text â€” no HTML needed)</span></label>
+                    <label>Section Content <span style="font-weight:400;color:var(--text-muted);">(plain text - no HTML needed)</span></label>
                     <textarea class="sec-content" rows="4" placeholder="Write the section content here in plain English..."></textarea>
                 </div>
                 <div class="editor-field">
-                    <label>💡 Callout Box <span style="font-weight:400;color:var(--text-muted);">(optional â€” highlighted insight)</span></label>
+                    <label>💡 Callout Box <span style="font-weight:400;color:var(--text-muted);">(optional - highlighted insight)</span></label>
                     <input type="text" class="sec-callout" placeholder="e.g. Key Definition: Sepsis is life-threatening organ dysfunction..." />
                 </div>
                 <div class="editor-field" style="margin-bottom:0;">
-                    <label>⚠️ Warning Note <span style="font-weight:400;color:var(--text-muted);">(optional â€” important caution)</span></label>
+                    <label>⚠️ Warning Note <span style="font-weight:400;color:var(--text-muted);">(optional - important caution)</span></label>
                     <input type="text" class="sec-warning" placeholder="e.g. Do NOT give IV fluids without dynamic assessment..." />
                 </div>`;
     container.appendChild(div);
@@ -779,7 +779,7 @@ function buildArticleHTML(structured) {
             html += paras.map(p => `<p>${p}</p>`).join('');
         }
         if (s.callout) html += `<div class="article-callout"><p>${s.callout}</p></div>`;
-        if (s.warning) html += `<div class="article-warning-box"><div class="warn-title">⚠️ Important</div><p>${s.warning}</p></div>`;
+        if (s.warning) html += `<div class="article-warning-box"><div class="warn-title">⚠️ Important</div><p>${s.warning}</p></div>`;
     });
     return html;
 }
@@ -819,7 +819,7 @@ async function saveArticle() {
         });
         const result = await res.json();
         if (result.success) {
-            toast('âœ… Article saved successfully!', 'success');
+            toast('[OK] Article saved successfully!', 'success');
             clearEditor();
             renderKnowledge();
             switchPanel('knowledge');
@@ -849,24 +849,24 @@ function editArticle(id) {
 
 const BUILT_IN_CONTENT = {
     sepsis: {
-        subtitle: "Sepsis kills 11 million people every year â€” more than all cancers combined. Learn the warning signs, the timeline of deterioration, and why the first hour is everything.",
+        subtitle: "Sepsis kills 11 million people every year - more than all cancers combined. Learn the warning signs, the timeline of deterioration, and why the first hour is everything.",
         structured: {
             stats: [
                 { num: "11M", lbl: "sepsis deaths annually worldwide" },
                 { num: "7%", lbl: "mortality increase per hour of antibiotic delay" },
-                { num: "1hr", lbl: "the critical window â€” the Hour-1 Bundle" }
+                { num: "1hr", lbl: "the critical window - the Hour-1 Bundle" }
             ],
             sections: [
-                { heading: "What Is Sepsis?", content: "Sepsis is not an infection. It is your body's dysregulated, life-threatening response to an infection â€” a cascade of inflammation that, paradoxically, begins to destroy the very organs it is trying to protect. Any infection can trigger sepsis: a urinary tract infection, a chest infection, an abdominal infection, even a dental abscess.", callout: "Key Definition (Sepsis-3, 2016): Sepsis is life-threatening organ dysfunction caused by a dysregulated host response to infection. It is identified clinically by an increase in the SOFA score of â‰¥2 points.", warning: "" },
-                { heading: "Warning Signs Families Must Know", content: "The most dangerous thing about sepsis is how quickly it can progress â€” from apparent wellness to life-threatening collapse in hours. The THINK acronym is useful for families:", callout: "", warning: "T: Temperature â€” very high (>38.5Â°C) or very low (<36Â°C) | H: Heart rate â€” unusually fast, above 90 beats per minute | I: Infection â€” known or suspected | N: Neurological â€” confusion, altered behaviour, or unusual drowsiness | K: Kidney â€” not passing urine, or much less than usual" },
+                { heading: "What Is Sepsis?", content: "Sepsis is not an infection. It is your body's dysregulated, life-threatening response to an infection - a cascade of inflammation that, paradoxically, begins to destroy the very organs it is trying to protect. Any infection can trigger sepsis: a urinary tract infection, a chest infection, an abdominal infection, even a dental abscess.", callout: "Key Definition (Sepsis-3, 2016): Sepsis is life-threatening organ dysfunction caused by a dysregulated host response to infection. It is identified clinically by an increase in the SOFA score of â‰¥2 points.", warning: "" },
+                { heading: "Warning Signs Families Must Know", content: "The most dangerous thing about sepsis is how quickly it can progress - from apparent wellness to life-threatening collapse in hours. The THINK acronym is useful for families:", callout: "", warning: "T: Temperature - very high (>38.5Â°C) or very low (<36Â°C) | H: Heart rate - unusually fast, above 90 beats per minute | I: Infection - known or suspected | N: Neurological - confusion, altered behaviour, or unusual drowsiness | K: Kidney - not passing urine, or much less than usual" },
                 { heading: "The Sepsis-3 Criteria", content: "In 2016, the international Sepsis-3 taskforce redefined how we diagnose sepsis. The Quick SOFA (qSOFA) score is used for rapid bedside screening: Respiratory rate â‰¥ 22/min, Altered mental status, Systolic BP â‰¤ 100 mmHg. A qSOFA score of 2 or more in a patient with suspected infection warrants urgent clinical assessment and escalation.", callout: "", warning: "" },
-                { heading: "The SSC Hour-1 Bundle", content: "The Surviving Sepsis Campaign Hour-1 Bundle is the global standard for sepsis management. At Apollo ICU, this bundle is initiated within 60 minutes of sepsis recognition: measure lactate, obtain blood cultures, administer broad-spectrum antibiotics, begin crystalloid resuscitation (30 mL/kg), apply vasopressors if MAP <65 mmHg â€” Norepinephrine first-line.", callout: "", warning: "" },
-                { heading: "What Happens in the ICU", content: "Once admitted to the ICU with sepsis, the focus shifts to source control, haemodynamic stabilisation, organ support, and daily reassessment of antibiotics. Dr. Kothari's team uses dynamic fluid assessments â€” passive leg raise tests and pulse pressure variation â€” rather than aggressive fixed-volume protocols, to guide resuscitation precisely.", callout: "", warning: "" }
+                { heading: "The SSC Hour-1 Bundle", content: "The Surviving Sepsis Campaign Hour-1 Bundle is the global standard for sepsis management. At Apollo ICU, this bundle is initiated within 60 minutes of sepsis recognition: measure lactate, obtain blood cultures, administer broad-spectrum antibiotics, begin crystalloid resuscitation (30 mL/kg), apply vasopressors if MAP <65 mmHg - Norepinephrine first-line.", callout: "", warning: "" },
+                { heading: "What Happens in the ICU", content: "Once admitted to the ICU with sepsis, the focus shifts to source control, haemodynamic stabilisation, organ support, and daily reassessment of antibiotics. Dr. Kothari's team uses dynamic fluid assessments - passive leg raise tests and pulse pressure variation - rather than aggressive fixed-volume protocols, to guide resuscitation precisely.", callout: "", warning: "" }
             ]
         }
     },
     ecmo: {
-        subtitle: "A plain-language guide to Extracorporeal Membrane Oxygenation â€” who needs it, how it works, and what outcomes families can realistically expect.",
+        subtitle: "A plain-language guide to Extracorporeal Membrane Oxygenation - who needs it, how it works, and what outcomes families can realistically expect.",
         structured: {
             stats: [
                 { num: "50â€“70%", lbl: "VV-ECMO survival in experienced centres" },
@@ -874,16 +874,16 @@ const BUILT_IN_CONTENT = {
                 { num: "1971", lbl: "year of first successful ECMO use (Dr. Bartlett)" }
             ],
             sections: [
-                { heading: "What Is ECMO?", content: "Extracorporeal Membrane Oxygenation is an advanced life support technique that temporarily takes over the function of the heart, the lungs, or both. Blood is pumped out of the patient's body through large cannulas, passed through an artificial membrane oxygenator that adds oxygen and removes carbon dioxide, and then returned to the patient. In essence, ECMO does what the lungs and heart cannot â€” buying critical time for organs to recover.", callout: "Dr. Kothari's Perspective: ECMO is not the last resort people fear it to be. It is a bridge â€” to recovery, to a transplant, or to a decision. When initiated at the right time, in the right patient, by an experienced team, outcomes are genuinely impressive.", warning: "" },
+                { heading: "What Is ECMO?", content: "Extracorporeal Membrane Oxygenation is an advanced life support technique that temporarily takes over the function of the heart, the lungs, or both. Blood is pumped out of the patient's body through large cannulas, passed through an artificial membrane oxygenator that adds oxygen and removes carbon dioxide, and then returned to the patient. In essence, ECMO does what the lungs and heart cannot - buying critical time for organs to recover.", callout: "Dr. Kothari's Perspective: ECMO is not the last resort people fear it to be. It is a bridge - to recovery, to a transplant, or to a decision. When initiated at the right time, in the right patient, by an experienced team, outcomes are genuinely impressive.", warning: "" },
                 { heading: "Types of ECMO", content: "VV-ECMO (Veno-Venous): Supports lung function only. Blood is drawn from a vein, oxygenated, and returned to a vein. Used in severe ARDS and respiratory failure.\n\nVA-ECMO (Veno-Arterial): Supports both heart and lung function. Blood is drawn from a vein and returned to an artery. Used in cardiogenic shock and cardiac arrest.\n\nECCOâ‚‚R: A low-flow variant focused primarily on COâ‚‚ removal in less severe respiratory failure.", callout: "", warning: "" },
-                { heading: "Who Needs ECMO?", content: "ECMO is not for every ICU patient. The ELSO 2021 guidelines recommend considering VV-ECMO when conventional mechanical ventilation fails to maintain life-compatible oxygenation in severe ARDS â€” specifically when PaOâ‚‚/FiOâ‚‚ ratio is below 50â€“80 mmHg despite optimal ventilator settings.", callout: "", warning: "ECMO is NOT appropriate for: Irreversible neurological injury | End-stage multi-organ failure with no reversible aetiology | Uncontrolled bleeding disorders | Advanced malignancy without transplant option" },
-                { heading: "ECMO in Practice at Apollo ICU", content: "Once initiated, ECMO requires 24/7 expert management by a dedicated team. The ICU team monitors circuit pressures, membrane function, oxygenator performance, and anticoagulation levels continuously. Daily weaning assessments are performed â€” testing whether the patient's own lungs or heart can gradually take over the work of the ECMO circuit as function returns.", callout: "", warning: "" },
-                { heading: "What Families Should Know â€” and Ask", content: "If a family member is being considered for ECMO, the most important questions to ask are: What is the reversible cause of organ failure? What is our recovery target? What defined endpoints will guide the decision to continue or discontinue? An experienced ECMO team will always have clear answers to these questions before initiation.", callout: "", warning: "" }
+                { heading: "Who Needs ECMO?", content: "ECMO is not for every ICU patient. The ELSO 2021 guidelines recommend considering VV-ECMO when conventional mechanical ventilation fails to maintain life-compatible oxygenation in severe ARDS - specifically when PaOâ‚‚/FiOâ‚‚ ratio is below 50â€“80 mmHg despite optimal ventilator settings.", callout: "", warning: "ECMO is NOT appropriate for: Irreversible neurological injury | End-stage multi-organ failure with no reversible aetiology | Uncontrolled bleeding disorders | Advanced malignancy without transplant option" },
+                { heading: "ECMO in Practice at Apollo ICU", content: "Once initiated, ECMO requires 24/7 expert management by a dedicated team. The ICU team monitors circuit pressures, membrane function, oxygenator performance, and anticoagulation levels continuously. Daily weaning assessments are performed - testing whether the patient's own lungs or heart can gradually take over the work of the ECMO circuit as function returns.", callout: "", warning: "" },
+                { heading: "What Families Should Know - and Ask", content: "If a family member is being considered for ECMO, the most important questions to ask are: What is the reversible cause of organ failure? What is our recovery target? What defined endpoints will guide the decision to continue or discontinue? An experienced ECMO team will always have clear answers to these questions before initiation.", callout: "", warning: "" }
             ]
         }
     },
     crrt: {
-        subtitle: "Understanding Continuous Renal Replacement Therapy â€” why it differs from conventional dialysis, and when it is used in the ICU.",
+        subtitle: "Understanding Continuous Renal Replacement Therapy - why it differs from conventional dialysis, and when it is used in the ICU.",
         structured: {
             stats: [
                 { num: "50%", lbl: "of ICU patients develop AKI" },
@@ -891,55 +891,55 @@ const BUILT_IN_CONTENT = {
                 { num: "~60%", lbl: "of severe AKI patients recover if they survive the critical illness" }
             ],
             sections: [
-                { heading: "Acute Kidney Injury (AKI) in the ICU", content: "Acute Kidney Injury affects 30â€“50% of all ICU patients and is independently associated with increased mortality. In the context of critical illness â€” whether sepsis, major surgery, cardiogenic shock, or rhabdomyolysis â€” the kidneys are often among the first organs to suffer. When they fail, toxins accumulate, fluid balance deteriorates, and acid-base disorders worsen.", callout: "", warning: "" },
-                { heading: "CRRT vs. Conventional Haemodialysis â€” What's the Difference?", content: "Conventional intermittent haemodialysis (IHD) runs for 4 hours, dialysing large volumes of blood rapidly. This rapid fluid and solute shift is poorly tolerated by haemodynamically unstable ICU patients â€” it can cause dangerous drops in blood pressure. CRRT solves this by running continuously at a much slower rate â€” typically 20â€“25 mL/kg/hour â€” allowing gentle, gradual removal of fluid and toxins that the heart and circulation can tolerate.", callout: "Key Concept: The slower, gentler pace of CRRT is its defining advantage. It removes fluid and waste products at a rate the unstable ICU patient's haemodynamics can accommodate.", warning: "" },
+                { heading: "Acute Kidney Injury (AKI) in the ICU", content: "Acute Kidney Injury affects 30â€“50% of all ICU patients and is independently associated with increased mortality. In the context of critical illness - whether sepsis, major surgery, cardiogenic shock, or rhabdomyolysis - the kidneys are often among the first organs to suffer. When they fail, toxins accumulate, fluid balance deteriorates, and acid-base disorders worsen.", callout: "", warning: "" },
+                { heading: "CRRT vs. Conventional Haemodialysis - What's the Difference?", content: "Conventional intermittent haemodialysis (IHD) runs for 4 hours, dialysing large volumes of blood rapidly. This rapid fluid and solute shift is poorly tolerated by haemodynamically unstable ICU patients - it can cause dangerous drops in blood pressure. CRRT solves this by running continuously at a much slower rate - typically 20â€“25 mL/kg/hour - allowing gentle, gradual removal of fluid and toxins that the heart and circulation can tolerate.", callout: "Key Concept: The slower, gentler pace of CRRT is its defining advantage. It removes fluid and waste products at a rate the unstable ICU patient's haemodynamics can accommodate.", warning: "" },
                 { heading: "When Does the ICU Use CRRT? (KDIGO 2022)", content: "Per KDIGO 2022 AKI Guidelines, the urgent indications for initiating CRRT are: Refractory metabolic acidosis (pH <7.2 not responding to bicarbonate) | Refractory hyperkalaemia (>6 mmol/L not responding to medical management) | Severe uraemic complications (encephalopathy, pericarditis, bleeding) | Fluid overload unresponsive to diuretics causing respiratory compromise | Drug or toxin removal requiring continuous clearance.", callout: "", warning: "" },
-                { heading: "What Families Need to Know About CRRT", content: "CRRT requires close monitoring of the access site (typically a large central venous catheter), anticoagulation to prevent filter clotting, and frequent electrolyte checks. The machine runs continuously, appears technically complex, but causes the patient minimal discomfort. The goal is always supporting kidney function while the underlying critical illness is treated â€” with the hope that the kidneys will recover sufficiently to function independently again.", callout: "", warning: "" }
+                { heading: "What Families Need to Know About CRRT", content: "CRRT requires close monitoring of the access site (typically a large central venous catheter), anticoagulation to prevent filter clotting, and frequent electrolyte checks. The machine runs continuously, appears technically complex, but causes the patient minimal discomfort. The goal is always supporting kidney function while the underlying critical illness is treated - with the hope that the kidneys will recover sufficiently to function independently again.", callout: "", warning: "" }
             ]
         }
     },
     ventilation: {
-        subtitle: "A family-friendly explanation of mechanical ventilation in the ICU â€” settings, complications, and the weaning process.",
+        subtitle: "A family-friendly explanation of mechanical ventilation in the ICU - settings, complications, and the weaning process.",
         structured: {
             stats: [
-                { num: "6 mL", lbl: "per kg ideal body weight â€” the lung-protective tidal volume (ARMA Trial)" },
+                { num: "6 mL", lbl: "per kg ideal body weight - the lung-protective tidal volume (ARMA Trial)" },
                 { num: "22%", lbl: "reduction in ARDS mortality with lower tidal volumes" },
                 { num: "16+hrs", lbl: "prone positioning daily reduces ARDS mortality (PROSEVA Trial)" }
             ],
             sections: [
-                { heading: "Why Is My Family Member on a Ventilator?", content: "Mechanical ventilation is a life-support measure â€” not a sign of hopelessness. When a patient cannot breathe adequately on their own due to severe pneumonia, ARDS, sepsis, drug overdose, or post-operative complications, a ventilator breathes for them while the underlying cause is treated. The goal is always to support the patient through the crisis and safely remove ventilator support as soon as possible.", callout: "", warning: "" },
-                { heading: "How Does a Ventilator Work?", content: "A ventilator delivers a precisely controlled breath â€” a mixture of oxygen and air â€” through a tube placed in the windpipe (endotracheal tube). The key settings include: tidal volume (how much air per breath), respiratory rate (how many breaths per minute), FiOâ‚‚ (fraction of oxygen), and PEEP (Positive End-Expiratory Pressure â€” keeping the air sacs from collapsing).", callout: "", warning: "" },
-                { heading: "Lung-Protective Ventilation", content: "Traditional ventilation used high volumes to keep oxygen levels normal. The landmark ARMA trial (2000) showed this caused ventilator-induced lung injury (VILI). The modern standard is lung-protective ventilation: 6 mL/kg tidal volumes, higher PEEP to keep air sacs open, and limiting plateau pressures. This approach reduced 28-day ARDS mortality by 22%.", callout: "Evidence-Based: Prone positioning (lying face down) for â‰¥16 hours per day reduced 28-day ARDS mortality from 32.8% to 16% in the PROSEVA trial â€” now standard practice in Dr. Kothari's ICU.", warning: "" },
-                { heading: "The Weaning Process â€” Getting Off the Ventilator", content: "Weaning is the careful, systematic process of reducing ventilator support as the patient's breathing improves. Every day, Dr. Kothari's team conducts a Spontaneous Breathing Trial (SBT) â€” reducing ventilator support to minimal levels and monitoring whether the patient can breathe safely on their own. If the SBT is passed and other criteria are met, the tube is removed (extubation).", callout: "", warning: "" },
-                { heading: "What Families Should Understand", content: "Many patients on ventilators are conscious and aware â€” they may be able to hear you, so talk to them gently. Sedation is kept as light as possible â€” heavy sedation increases complications. Progress is measured daily â€” ask the team what today's SBT result was. There will be days of setback â€” weaning is rarely linear. Patience and trust in the process matter.", callout: "", warning: "" }
+                { heading: "Why Is My Family Member on a Ventilator?", content: "Mechanical ventilation is a life-support measure - not a sign of hopelessness. When a patient cannot breathe adequately on their own due to severe pneumonia, ARDS, sepsis, drug overdose, or post-operative complications, a ventilator breathes for them while the underlying cause is treated. The goal is always to support the patient through the crisis and safely remove ventilator support as soon as possible.", callout: "", warning: "" },
+                { heading: "How Does a Ventilator Work?", content: "A ventilator delivers a precisely controlled breath - a mixture of oxygen and air - through a tube placed in the windpipe (endotracheal tube). The key settings include: tidal volume (how much air per breath), respiratory rate (how many breaths per minute), FiOâ‚‚ (fraction of oxygen), and PEEP (Positive End-Expiratory Pressure - keeping the air sacs from collapsing).", callout: "", warning: "" },
+                { heading: "Lung-Protective Ventilation", content: "Traditional ventilation used high volumes to keep oxygen levels normal. The landmark ARMA trial (2000) showed this caused ventilator-induced lung injury (VILI). The modern standard is lung-protective ventilation: 6 mL/kg tidal volumes, higher PEEP to keep air sacs open, and limiting plateau pressures. This approach reduced 28-day ARDS mortality by 22%.", callout: "Evidence-Based: Prone positioning (lying face down) for â‰¥16 hours per day reduced 28-day ARDS mortality from 32.8% to 16% in the PROSEVA trial - now standard practice in Dr. Kothari's ICU.", warning: "" },
+                { heading: "The Weaning Process - Getting Off the Ventilator", content: "Weaning is the careful, systematic process of reducing ventilator support as the patient's breathing improves. Every day, Dr. Kothari's team conducts a Spontaneous Breathing Trial (SBT) - reducing ventilator support to minimal levels and monitoring whether the patient can breathe safely on their own. If the SBT is passed and other criteria are met, the tube is removed (extubation).", callout: "", warning: "" },
+                { heading: "What Families Should Understand", content: "Many patients on ventilators are conscious and aware - they may be able to hear you, so talk to them gently. Sedation is kept as light as possible - heavy sedation increases complications. Progress is measured daily - ask the team what today's SBT result was. There will be days of setback - weaning is rarely linear. Patience and trust in the process matter.", callout: "", warning: "" }
             ]
         }
     },
     mof: {
-        subtitle: "Understanding MODS â€” what causes it, why it is so dangerous, and how critical care specialists orchestrate the complex support required.",
+        subtitle: "Understanding MODS - what causes it, why it is so dangerous, and how critical care specialists orchestrate the complex support required.",
         structured: {
             stats: [
                 { num: ">50%", lbl: "MODS cases precipitated by sepsis" },
-                { num: "3â€“4", lbl: "organ failures â€” mortality approaches 70â€“80%" },
+                { num: "3â€“4", lbl: "organ failures - mortality approaches 70â€“80%" },
                 { num: "SOFA", lbl: "daily scoring to track organ function trajectory" }
             ],
             sections: [
-                { heading: "What Is Multi-Organ Dysfunction Syndrome (MODS)?", content: "MODS is the progressive dysfunction of two or more organ systems in a critically ill patient â€” such that homeostasis cannot be maintained without medical intervention. It is the most common cause of ICU death. When lungs, kidneys, liver, heart, and brain fail in sequence or simultaneously, the intensivist's role becomes that of a conductor â€” orchestrating simultaneous support for each failing system.", callout: "Key Concept: No single organ fails in isolation in MODS. Interventions to support one organ must be carefully chosen to avoid worsening another. This is the art of critical care medicine.", warning: "" },
-                { heading: "Why Does Multi-Organ Failure Happen?", content: "The most common triggers are severe sepsis and septic shock (accounting for >50% of cases), major trauma, large burns, pancreatitis, and cardiogenic shock. The underlying mechanism involves excessive systemic inflammation, microvascular thrombosis, cellular energy failure, and apoptosis â€” a biological perfect storm that progressively impairs organ function despite adequate perfusion.", callout: "", warning: "" },
-                { heading: "The SOFA Score â€” Tracking Organ Failure", content: "The Sequential Organ Failure Assessment (SOFA) score quantifies the degree of dysfunction across six organ systems: respiratory (P/F ratio), coagulation (platelets), liver (bilirubin), cardiovascular (vasopressor requirement), neurological (GCS), and renal (creatinine). A SOFA score of â‰¥2 indicates active organ dysfunction. Daily SOFA trajectory is one of the most important prognostic tools in MODS management.", callout: "", warning: "" },
-                { heading: "How MODS Is Managed at Apollo ICU", content: "Management is fundamentally supportive â€” buying time for organ recovery while treating the precipitating cause. In practice: ECMO or high-flow nasal cannula for respiratory failure, CRRT for renal failure, vasopressors for cardiovascular support, enteral nutrition to protect the gut, heparin for coagulopathy, and strict glycaemic control. There is no single drug that reverses MODS.", callout: "", warning: "" }
+                { heading: "What Is Multi-Organ Dysfunction Syndrome (MODS)?", content: "MODS is the progressive dysfunction of two or more organ systems in a critically ill patient - such that homeostasis cannot be maintained without medical intervention. It is the most common cause of ICU death. When lungs, kidneys, liver, heart, and brain fail in sequence or simultaneously, the intensivist's role becomes that of a conductor - orchestrating simultaneous support for each failing system.", callout: "Key Concept: No single organ fails in isolation in MODS. Interventions to support one organ must be carefully chosen to avoid worsening another. This is the art of critical care medicine.", warning: "" },
+                { heading: "Why Does Multi-Organ Failure Happen?", content: "The most common triggers are severe sepsis and septic shock (accounting for >50% of cases), major trauma, large burns, pancreatitis, and cardiogenic shock. The underlying mechanism involves excessive systemic inflammation, microvascular thrombosis, cellular energy failure, and apoptosis - a biological perfect storm that progressively impairs organ function despite adequate perfusion.", callout: "", warning: "" },
+                { heading: "The SOFA Score - Tracking Organ Failure", content: "The Sequential Organ Failure Assessment (SOFA) score quantifies the degree of dysfunction across six organ systems: respiratory (P/F ratio), coagulation (platelets), liver (bilirubin), cardiovascular (vasopressor requirement), neurological (GCS), and renal (creatinine). A SOFA score of â‰¥2 indicates active organ dysfunction. Daily SOFA trajectory is one of the most important prognostic tools in MODS management.", callout: "", warning: "" },
+                { heading: "How MODS Is Managed at Apollo ICU", content: "Management is fundamentally supportive - buying time for organ recovery while treating the precipitating cause. In practice: ECMO or high-flow nasal cannula for respiratory failure, CRRT for renal failure, vasopressors for cardiovascular support, enteral nutrition to protect the gut, heparin for coagulopathy, and strict glycaemic control. There is no single drug that reverses MODS.", callout: "", warning: "" }
             ]
         }
     },
     "family-guide": {
-        subtitle: "Everything families need to know about the ICU â€” the machines, the monitors, how to communicate, and how to support recovery from outside the room.",
+        subtitle: "Everything families need to know about the ICU - the machines, the monitors, how to communicate, and how to support recovery from outside the room.",
         structured: {
             stats: [],
             sections: [
-                { heading: "Entering the ICU for the First Time", content: "Nothing fully prepares you for seeing a family member in the ICU for the first time. The noise of monitors, the tangle of lines, the hiss of ventilators â€” it is overwhelming. The most important thing to know is that every wire, tube, and machine has a purpose. You are not powerless. Your presence matters, your questions matter, and your support is part of the healing process.", callout: "Remember: Even if your loved one appears sedated, they may be able to hear you. Studies show that familiar voices, gentle touch, and spoken reassurance reduce anxiety and improve ICU outcomes. Talk to them. Tell them what day it is. Tell them you're there.", warning: "" },
-                { heading: "Understanding the Machines Around the Bed", content: "Heart Rate Monitor: Shows how fast the heart is beating â€” normal is 60â€“100 bpm.\n\nBlood Pressure: Either via cuff cycling every few minutes, or an invasive arterial line in the wrist artery for continuous real-time reading.\n\nSpOâ‚‚ (Oxygen Saturation): The probe on the finger measuring how well the blood carries oxygen. Targets are typically 94â€“98%.\n\nVentilator: If intubated â€” breathes for your loved one. You will see a tube in the mouth and the ventilator cycling with each breath.\n\nIV Lines and Infusions: Medications, fluids, and nutrition delivered directly into the bloodstream.", callout: "", warning: "" },
-                { heading: "How to Communicate With the ICU Team", content: "At Apollo ICU, the team aim to provide family briefings daily â€” usually in the morning after rounds. Prepare your questions in advance. The most useful questions to ask: What is the primary diagnosis? Is the patient improving, stable, or deteriorating? What is the next 24-hour plan? What are the things to watch for? Are there decisions being made that need our input?", callout: "", warning: "Things NOT to do in the ICU: Do not bring outside food, flowers, or plants (infection risk) | Do not discuss prognosis negatively near the patient â€” they may hear | Do not adjust or touch any tubes, lines, or equipment | Do not visit if you have fever, cough, or diarrhoea" },
-                { heading: "Supporting Recovery from Outside the Room", content: "Your self-care is not a luxury â€” it is a medical necessity. ICU family members are at significant risk of anxiety, depression, and PTSD. Eat regularly. Sleep in shifts if you must stay at the hospital. Accept help from friends and family. Ask the social work team for support resources. And know that by staying informed, advocating for your loved one, and being present, you are genuinely contributing to their care.", callout: "", warning: "" }
+                { heading: "Entering the ICU for the First Time", content: "Nothing fully prepares you for seeing a family member in the ICU for the first time. The noise of monitors, the tangle of lines, the hiss of ventilators - it is overwhelming. The most important thing to know is that every wire, tube, and machine has a purpose. You are not powerless. Your presence matters, your questions matter, and your support is part of the healing process.", callout: "Remember: Even if your loved one appears sedated, they may be able to hear you. Studies show that familiar voices, gentle touch, and spoken reassurance reduce anxiety and improve ICU outcomes. Talk to them. Tell them what day it is. Tell them you're there.", warning: "" },
+                { heading: "Understanding the Machines Around the Bed", content: "Heart Rate Monitor: Shows how fast the heart is beating - normal is 60â€“100 bpm.\n\nBlood Pressure: Either via cuff cycling every few minutes, or an invasive arterial line in the wrist artery for continuous real-time reading.\n\nSpOâ‚‚ (Oxygen Saturation): The probe on the finger measuring how well the blood carries oxygen. Targets are typically 94â€“98%.\n\nVentilator: If intubated - breathes for your loved one. You will see a tube in the mouth and the ventilator cycling with each breath.\n\nIV Lines and Infusions: Medications, fluids, and nutrition delivered directly into the bloodstream.", callout: "", warning: "" },
+                { heading: "How to Communicate With the ICU Team", content: "At Apollo ICU, the team aim to provide family briefings daily - usually in the morning after rounds. Prepare your questions in advance. The most useful questions to ask: What is the primary diagnosis? Is the patient improving, stable, or deteriorating? What is the next 24-hour plan? What are the things to watch for? Are there decisions being made that need our input?", callout: "", warning: "Things NOT to do in the ICU: Do not bring outside food, flowers, or plants (infection risk) | Do not discuss prognosis negatively near the patient - they may hear | Do not adjust or touch any tubes, lines, or equipment | Do not visit if you have fever, cough, or diarrhoea" },
+                { heading: "Supporting Recovery from Outside the Room", content: "Your self-care is not a luxury - it is a medical necessity. ICU family members are at significant risk of anxiety, depression, and PTSD. Eat regularly. Sleep in shifts if you must stay at the hospital. Accept help from friends and family. Ask the social work team for support resources. And know that by staying informed, advocating for your loved one, and being present, you are genuinely contributing to their care.", callout: "", warning: "" }
             ]
         }
     },
@@ -952,31 +952,31 @@ const BUILT_IN_CONTENT = {
                 { num: "11 days", lbl: "longer hospital stay in patients with ICU delirium" }
             ],
             sections: [
-                { heading: "What Is ICU Delirium?", content: "ICU delirium is an acute brain dysfunction characterised by disturbed attention, impaired thinking, and an altered level of consciousness â€” occurring in 50â€“80% of mechanically ventilated ICU patients. It is not just confusion. Delirium is an independent risk factor for increased mortality, prolonged ventilation, longer ICU and hospital stays, and lasting cognitive impairment after discharge.", callout: "", warning: "" },
-                { heading: "Types of ICU Delirium", content: "Hyperactive: Agitation, pulling at tubes, attempting to get out of bed â€” the most visible type, and often the most frightening for families.\n\nHypoactive: Quiet, withdrawn, flat â€” often missed, but actually the most common and prognostically worse form.\n\nMixed: Fluctuating between both types â€” the most common overall pattern.", callout: "", warning: "" },
-                { heading: "CAM-ICU â€” How We Assess ICU Delirium", content: "The Confusion Assessment Method for the ICU (CAM-ICU) is a validated bedside tool applicable even in intubated patients. It assesses: (1) Acute onset and fluctuating course, (2) Inattention, (3) Altered level of consciousness, (4) Disorganised thinking. A positive CAM-ICU result triggers immediate management review.", callout: "", warning: "" },
-                { heading: "The ABCDEF Bundle â€” Prevention Is the Priority", content: "The ABCDEF bundle (2018) is the comprehensive, evidence-based framework for delirium prevention and management: A â€” Assess pain; B â€” Both Spontaneous Awakening and Breathing Trials; C â€” Choice of sedation (light sedation targets); D â€” Delirium assess/manage (CAM-ICU); E â€” Early Mobility and Exercise; F â€” Family engagement and empowerment. Implementing the full ABCDEF bundle reduces delirium incidence by up to 78% in some studies.", callout: "", warning: "" }
+                { heading: "What Is ICU Delirium?", content: "ICU delirium is an acute brain dysfunction characterised by disturbed attention, impaired thinking, and an altered level of consciousness - occurring in 50â€“80% of mechanically ventilated ICU patients. It is not just confusion. Delirium is an independent risk factor for increased mortality, prolonged ventilation, longer ICU and hospital stays, and lasting cognitive impairment after discharge.", callout: "", warning: "" },
+                { heading: "Types of ICU Delirium", content: "Hyperactive: Agitation, pulling at tubes, attempting to get out of bed - the most visible type, and often the most frightening for families.\n\nHypoactive: Quiet, withdrawn, flat - often missed, but actually the most common and prognostically worse form.\n\nMixed: Fluctuating between both types - the most common overall pattern.", callout: "", warning: "" },
+                { heading: "CAM-ICU - How We Assess ICU Delirium", content: "The Confusion Assessment Method for the ICU (CAM-ICU) is a validated bedside tool applicable even in intubated patients. It assesses: (1) Acute onset and fluctuating course, (2) Inattention, (3) Altered level of consciousness, (4) Disorganised thinking. A positive CAM-ICU result triggers immediate management review.", callout: "", warning: "" },
+                { heading: "The ABCDEF Bundle - Prevention Is the Priority", content: "The ABCDEF bundle (2018) is the comprehensive, evidence-based framework for delirium prevention and management: A - Assess pain; B - Both Spontaneous Awakening and Breathing Trials; C - Choice of sedation (light sedation targets); D - Delirium assess/manage (CAM-ICU); E - Early Mobility and Exercise; F - Family engagement and empowerment. Implementing the full ABCDEF bundle reduces delirium incidence by up to 78% in some studies.", callout: "", warning: "" }
             ]
         }
     },
     nutrition: {
-        subtitle: "Why nutrition is among the most underappreciated life-saving therapies in the ICU â€” optimal timing, routes, and evidence-based targets.",
+        subtitle: "Why nutrition is among the most underappreciated life-saving therapies in the ICU - optimal timing, routes, and evidence-based targets.",
         structured: {
             stats: [
                 { num: "24â€“48h", lbl: "target window for enteral nutrition initiation" },
-                { num: "1.2â€“2g", lbl: "protein per kg body weight per day â€” ICU target" },
-                { num: "25â€“30", lbl: "kcal/kg/day â€” typical ICU caloric target" }
+                { num: "1.2â€“2g", lbl: "protein per kg body weight per day - ICU target" },
+                { num: "25â€“30", lbl: "kcal/kg/day - typical ICU caloric target" }
             ],
             sections: [
-                { heading: "Why Nutrition Is a Life-Saving ICU Therapy", content: "ICU patients undergo a profound metabolic storm â€” hypermetabolism, accelerated protein catabolism, immune dysregulation, and gut barrier dysfunction. Without adequate nutritional support, lean muscle mass is lost at a rate of 1â€“2% per day. This ICU-acquired weakness prolongs ventilation, impairs immunity, delays wound healing, and worsens long-term outcomes. Early, optimal nutrition is not comfort â€” it is therapy.", callout: "Key Insight: An ICU patient who is not eating is not simply not hungry. They are burning through their body reserve at an alarming rate. Every hour of nutritional delay matters.", warning: "" },
-                { heading: "Timing Is Everything: Early Enteral Nutrition", content: "ESPEN 2023 guidelines recommend initiating enteral nutrition within 24â€“48 hours of ICU admission in most patients. If the gut works, use it â€” is the guiding principle. Early enteral nutrition preserves gut mucosal integrity (preventing bacterial translocation), maintains gut-associated immunity, reduces infections and systemic inflammation, and improves clinical outcomes compared to parenteral routes.", callout: "", warning: "" },
-                { heading: "Enteral vs. Parenteral Nutrition", content: "Enteral nutrition (EN) is delivered via a tube in the stomach (NGT) or small intestine (NJT) and is the preferred route when the gut is functional. Parenteral nutrition (PN) â€” delivered intravenously â€” is reserved for patients where EN is contraindicated or insufficient (e.g., gut ileus, short bowel). PN carries higher infection risk and is metabolically more complex to manage. Supplemental PN can be added after 3â€“7 days if EN alone cannot meet targets.", callout: "", warning: "" },
-                { heading: "Caloric and Protein Targets", content: "Optimal caloric target in the early ICU phase (days 1â€“3): 70â€“80% of estimated requirements â€” hypocaloric feeding reduces metabolic complications while still being protective. From Day 3â€“4 onwards: full caloric target of 25â€“30 kcal/kg/day. Protein: 1.2â€“2.0 g/kg/day â€” the higher range for burns, trauma, and ECMO patients. Daily monitoring of blood glucose (target 7.8â€“10 mmol/L) with insulin infusion is mandatory in all ICU patients receiving nutrition.", callout: "", warning: "" }
+                { heading: "Why Nutrition Is a Life-Saving ICU Therapy", content: "ICU patients undergo a profound metabolic storm - hypermetabolism, accelerated protein catabolism, immune dysregulation, and gut barrier dysfunction. Without adequate nutritional support, lean muscle mass is lost at a rate of 1â€“2% per day. This ICU-acquired weakness prolongs ventilation, impairs immunity, delays wound healing, and worsens long-term outcomes. Early, optimal nutrition is not comfort - it is therapy.", callout: "Key Insight: An ICU patient who is not eating is not simply not hungry. They are burning through their body reserve at an alarming rate. Every hour of nutritional delay matters.", warning: "" },
+                { heading: "Timing Is Everything: Early Enteral Nutrition", content: "ESPEN 2023 guidelines recommend initiating enteral nutrition within 24â€“48 hours of ICU admission in most patients. If the gut works, use it - is the guiding principle. Early enteral nutrition preserves gut mucosal integrity (preventing bacterial translocation), maintains gut-associated immunity, reduces infections and systemic inflammation, and improves clinical outcomes compared to parenteral routes.", callout: "", warning: "" },
+                { heading: "Enteral vs. Parenteral Nutrition", content: "Enteral nutrition (EN) is delivered via a tube in the stomach (NGT) or small intestine (NJT) and is the preferred route when the gut is functional. Parenteral nutrition (PN) - delivered intravenously - is reserved for patients where EN is contraindicated or insufficient (e.g., gut ileus, short bowel). PN carries higher infection risk and is metabolically more complex to manage. Supplemental PN can be added after 3â€“7 days if EN alone cannot meet targets.", callout: "", warning: "" },
+                { heading: "Caloric and Protein Targets", content: "Optimal caloric target in the early ICU phase (days 1â€“3): 70â€“80% of estimated requirements - hypocaloric feeding reduces metabolic complications while still being protective. From Day 3â€“4 onwards: full caloric target of 25â€“30 kcal/kg/day. Protein: 1.2â€“2.0 g/kg/day - the higher range for burns, trauma, and ECMO patients. Daily monitoring of blood glucose (target 7.8â€“10 mmol/L) with insulin infusion is mandatory in all ICU patients receiving nutrition.", callout: "", warning: "" }
             ]
         }
     },
     antimicrobial: {
-        subtitle: "Preventing hospital-acquired infections, understanding antibiotic resistance in Indian ICUs, and how stewardship protects patients â€” and the future of medicine.",
+        subtitle: "Preventing hospital-acquired infections, understanding antibiotic resistance in Indian ICUs, and how stewardship protects patients - and the future of medicine.",
         structured: {
             stats: [
                 { num: "30%", lbl: "of ICU patients develop at least one HAI" },
@@ -984,15 +984,15 @@ const BUILT_IN_CONTENT = {
                 { num: "2â€“3Ã—", lbl: "higher mortality risk with HAI" }
             ],
             sections: [
-                { heading: "Hospital-Acquired Infections in the ICU", content: "Hospital-acquired infections (HAIs) are among the most serious threats to ICU patients. The most common include Ventilator-Associated Pneumonia (VAP), Central Line-Associated Bloodstream Infections (CLABSI), and Catheter-Associated Urinary Tract Infections (CAUTI). These infections affect 30% of ICU patients, significantly increase mortality, prolong stay, and drive antibiotic use â€” fuelling resistance.", callout: "", warning: "" },
+                { heading: "Hospital-Acquired Infections in the ICU", content: "Hospital-acquired infections (HAIs) are among the most serious threats to ICU patients. The most common include Ventilator-Associated Pneumonia (VAP), Central Line-Associated Bloodstream Infections (CLABSI), and Catheter-Associated Urinary Tract Infections (CAUTI). These infections affect 30% of ICU patients, significantly increase mortality, prolong stay, and drive antibiotic use - fuelling resistance.", callout: "", warning: "" },
                 { heading: "Prevention: ICU Bundles That Work", content: "Apollo ICU implements evidence-based prevention bundles. VAP bundle includes head-of-bed elevation at 30â€“45Â°, daily sedation holidays, oral care with chlorhexidine, and subglottic suction. CLABSI bundle includes maximum barrier precautions, chlorhexidine skin prep, and daily necessity reviews. Every unnecessary line, tube, and catheter is removed as soon as clinically safe.", callout: "", warning: "" },
-                { heading: "Antimicrobial Stewardship â€” Using Antibiotics Wisely", content: "Antimicrobial stewardship (AMS) is the coordinated programme ensuring antibiotics are used only when needed, for the right duration, and then de-escalated or stopped based on culture results. This is not about being conservative with sick patients â€” it is about being precise. Giving the wrong antibiotic for too long selects for resistant organisms that will be untreatable in the next patient.", callout: "The Stewardship Principle: Start broad when sepsis is suspected. Culture early. De-escalate once organism and sensitivities are known. Stop when the course is complete. This protects the patient, the community, and the future of medicine.", warning: "" },
-                { heading: "AMR and the Indian ICU Context", content: "India has one of the world's highest burdens of carbapenem-resistant Klebsiella, ESBL-producing E. coli, and MRSA. Hospital-acquired infections in Indian ICUs are far more likely to involve multi-drug resistant organisms than in Western centres. This makes stewardship even more critical â€” and makes culture-guided therapy the non-negotiable standard of care at responsible ICUs like Apollo Hospitals, Ahmedabad.", callout: "", warning: "" }
+                { heading: "Antimicrobial Stewardship - Using Antibiotics Wisely", content: "Antimicrobial stewardship (AMS) is the coordinated programme ensuring antibiotics are used only when needed, for the right duration, and then de-escalated or stopped based on culture results. This is not about being conservative with sick patients - it is about being precise. Giving the wrong antibiotic for too long selects for resistant organisms that will be untreatable in the next patient.", callout: "The Stewardship Principle: Start broad when sepsis is suspected. Culture early. De-escalate once organism and sensitivities are known. Stop when the course is complete. This protects the patient, the community, and the future of medicine.", warning: "" },
+                { heading: "AMR and the Indian ICU Context", content: "India has one of the world's highest burdens of carbapenem-resistant Klebsiella, ESBL-producing E. coli, and MRSA. Hospital-acquired infections in Indian ICUs are far more likely to involve multi-drug resistant organisms than in Western centres. This makes stewardship even more critical - and makes culture-guided therapy the non-negotiable standard of care at responsible ICUs like Apollo Hospitals, Ahmedabad.", callout: "", warning: "" }
             ]
         }
     },
     pics: {
-        subtitle: "Post-Intensive Care Syndrome affects up to 50% of ICU survivors â€” the physical, cognitive, and psychological challenges of life after critical illness.",
+        subtitle: "Post-Intensive Care Syndrome affects up to 50% of ICU survivors - the physical, cognitive, and psychological challenges of life after critical illness.",
         structured: {
             stats: [
                 { num: "30â€“50%", lbl: "of ICU survivors develop PICS" },
@@ -1000,10 +1000,10 @@ const BUILT_IN_CONTENT = {
                 { num: "monthsâ€“years", lbl: "duration of PICS symptoms in many patients" }
             ],
             sections: [
-                { heading: "What Is Post-Intensive Care Syndrome (PICS)?", content: "Discharge from the ICU is not the end of the critical illness journey â€” it is the beginning of a new, often underappreciated one. Post-Intensive Care Syndrome (PICS) is the term for new or worsening impairments in physical, cognitive, and mental health status arising after critical illness â€” persisting beyond the acute hospitalisation. SCCM estimates 30â€“50% of ICU survivors are affected.", callout: "PICS also affects families â€” PICS-F (Post-Intensive Care Syndrome â€” Family) refers to the psychological burden borne by caregivers of ICU survivors: anxiety, depression, complicated grief, and PTSD at very high rates.", warning: "" },
-                { heading: "Physical Challenges of PICS", content: "ICU-acquired weakness (ICUAW) is the most common physical manifestation â€” significant muscle atrophy and weakness affecting 25â€“50% of mechanically ventilated patients. It causes difficulty walking, climbing stairs, and performing daily activities for months after discharge. Other physical issues include persistent fatigue, dysphagia (swallowing difficulties post-extubation), sleep disorders, sexual dysfunction, and chronic pain.", callout: "", warning: "" },
-                { heading: "Cognitive and Mental Health Challenges", content: "Cognitive impairment after ICU is strikingly common â€” affecting attention, memory, processing speed, and executive function. Many survivors describe brain fog persisting for months. Depression affects up to 30% of survivors. Anxiety is highly prevalent. And 25% develop clinical PTSD, characterised by intrusive memories, nightmares, hyperarousal, and avoidance of hospital reminders.", callout: "", warning: "" },
-                { heading: "Supporting Long-Term ICU Recovery", content: "Early mobilisation in the ICU (from day 2â€“3 if haemodynamically stable) is the single most evidence-based intervention for preventing ICUAW. Post-ICU rehabilitation should be multidisciplinary: physiotherapy to rebuild strength, neuropsychological support for cognitive and emotional recovery, and ICU follow-up clinics that screen for PTSD and unresolved physical complications. ICU diaries â€” daily logs kept by nurses for the patient â€” have been shown to reduce PTSD rates by up to 35%.", callout: "", warning: "" }
+                { heading: "What Is Post-Intensive Care Syndrome (PICS)?", content: "Discharge from the ICU is not the end of the critical illness journey - it is the beginning of a new, often underappreciated one. Post-Intensive Care Syndrome (PICS) is the term for new or worsening impairments in physical, cognitive, and mental health status arising after critical illness - persisting beyond the acute hospitalisation. SCCM estimates 30â€“50% of ICU survivors are affected.", callout: "PICS also affects families - PICS-F (Post-Intensive Care Syndrome - Family) refers to the psychological burden borne by caregivers of ICU survivors: anxiety, depression, complicated grief, and PTSD at very high rates.", warning: "" },
+                { heading: "Physical Challenges of PICS", content: "ICU-acquired weakness (ICUAW) is the most common physical manifestation - significant muscle atrophy and weakness affecting 25â€“50% of mechanically ventilated patients. It causes difficulty walking, climbing stairs, and performing daily activities for months after discharge. Other physical issues include persistent fatigue, dysphagia (swallowing difficulties post-extubation), sleep disorders, sexual dysfunction, and chronic pain.", callout: "", warning: "" },
+                { heading: "Cognitive and Mental Health Challenges", content: "Cognitive impairment after ICU is strikingly common - affecting attention, memory, processing speed, and executive function. Many survivors describe brain fog persisting for months. Depression affects up to 30% of survivors. Anxiety is highly prevalent. And 25% develop clinical PTSD, characterised by intrusive memories, nightmares, hyperarousal, and avoidance of hospital reminders.", callout: "", warning: "" },
+                { heading: "Supporting Long-Term ICU Recovery", content: "Early mobilisation in the ICU (from day 2â€“3 if haemodynamically stable) is the single most evidence-based intervention for preventing ICUAW. Post-ICU rehabilitation should be multidisciplinary: physiotherapy to rebuild strength, neuropsychological support for cognitive and emotional recovery, and ICU follow-up clinics that screen for PTSD and unresolved physical complications. ICU diaries - daily logs kept by nurses for the patient - have been shown to reduce PTSD rates by up to 35%.", callout: "", warning: "" }
             ]
         }
     }
@@ -1044,7 +1044,7 @@ async function deleteArticle(id) {
             body: JSON.stringify({ session_token: token, type: 'knowledge_articles', items: updatedList })
         });
         const result = await res.json();
-        if (result.success) { toast('ðŸ—‘ï¸ Article deleted.', 'success'); renderKnowledge(); }
+        if (result.success) { toast('ðŸ—‘ Article deleted.', 'success'); renderKnowledge(); }
         else toast('Delete failed: ' + (result.error || 'Unknown error'), 'error');
     } catch (err) { toast('Error deleting: ' + err.message, 'error'); }
 }
@@ -1286,14 +1286,14 @@ async function deletePhoto(index) {
 }
 
 // ============================================================
-// MYTH BUSTER CRUD â€” Server side via ./api/content.php
+// MYTH BUSTER CRUD - Server side via ./api/content.php
 // ============================================================
 const DEFAULT_MYTHS = [
-    { id: 1, statement: '"Patients on ventilators feel nothing."', fact: 'Many ventilated patients are conscious and aware. Studies confirm they can hear voices. Light sedation is now preferred to prevent delirium and ICU-acquired weakness. Talk to your loved one â€” it matters.', source: 'ABCDEF Bundle Â· SCCM 2018' },
-    { id: 2, statement: '"ICU means the patient is going to die."', fact: 'The ICU is a place of intensive monitoring and life-saving intervention â€” not end of life. Survival rates in modern ICUs often exceed 80â€“85% for many diagnoses. The ICU is where the most reversible critical illnesses are treated.', source: 'ANZICS Report 2022' },
-    { id: 3, statement: '"More IV fluids is always better in shock."', fact: 'Fluid overload in the ICU is independently associated with worse outcomes â€” including prolonged ventilation and renal failure. Modern practice targets dynamic fluid responsiveness, not volume.', source: 'ANDROMEDA-SHOCK Â· JAMA 2019' },
+    { id: 1, statement: '"Patients on ventilators feel nothing."', fact: 'Many ventilated patients are conscious and aware. Studies confirm they can hear voices. Light sedation is now preferred to prevent delirium and ICU-acquired weakness. Talk to your loved one - it matters.', source: 'ABCDEF Bundle Â· SCCM 2018' },
+    { id: 2, statement: '"ICU means the patient is going to die."', fact: 'The ICU is a place of intensive monitoring and life-saving intervention - not end of life. Survival rates in modern ICUs often exceed 80â€“85% for many diagnoses. The ICU is where the most reversible critical illnesses are treated.', source: 'ANZICS Report 2022' },
+    { id: 3, statement: '"More IV fluids is always better in shock."', fact: 'Fluid overload in the ICU is independently associated with worse outcomes - including prolonged ventilation and renal failure. Modern practice targets dynamic fluid responsiveness, not volume.', source: 'ANDROMEDA-SHOCK Â· JAMA 2019' },
     { id: 4, statement: '"Antibiotics cure all infections in the ICU."', fact: 'ICU infections are increasingly caused by multidrug-resistant organisms (MRSA, ESBL, Carbapenem-resistant Klebsiella). The right antibiotic, chosen by culture, matters far more than speed alone.', source: 'Surviving Sepsis Campaign 2021' },
-    { id: 5, statement: '"Prone positioning (face-down) is experimental."', fact: 'Prone positioning for â‰¥16 hours/day in severe ARDS is evidence-based standard of care â€” reducing 28-day mortality from 32.8% to 16% in the landmark PROSEVA trial (NEJM 2013).', source: 'PROSEVA Trial Â· NEJM 2013' },
+    { id: 5, statement: '"Prone positioning (face-down) is experimental."', fact: 'Prone positioning for â‰¥16 hours/day in severe ARDS is evidence-based standard of care - reducing 28-day mortality from 32.8% to 16% in the landmark PROSEVA trial (NEJM 2013).', source: 'PROSEVA Trial Â· NEJM 2013' },
     { id: 6, statement: '"ECMO is always the last resort."', fact: 'ECMO initiated earlier, before the patient deteriorates too far, is associated with better outcomes. The ELSO 2021 guidelines recommend ECMO consideration at a P/F ratio below 80 mmHg, not only when all else has failed.', source: 'ELSO Guidelines 2021' },
 ];
 
@@ -1311,9 +1311,9 @@ async function renderMyths() {
         document.getElementById('myth-table-body').innerHTML = currentMyths.map(m => `
                   <div style="border-bottom:1px solid var(--border-subtle);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;">
                     <div>
-                      <div style="font-size:0.84rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;">⚠️ ${escH(m.statement)}</div>
-                      <div style="font-size:0.78rem;color:var(--text-secondary);">âœ… ${escH(m.fact.substring(0, 100))}...</div>
-                      <div style="font-size:0.72rem;color:var(--accent-secondary);margin-top:4px;">â€” ${escH(m.source)}</div>
+                      <div style="font-size:0.84rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;">⚠️ ${escH(m.statement)}</div>
+                      <div style="font-size:0.78rem;color:var(--text-secondary);">[OK] ${escH(m.fact.substring(0, 100))}...</div>
+                      <div style="font-size:0.72rem;color:var(--accent-secondary);margin-top:4px;">- ${escH(m.source)}</div>
                     </div>
                     <div class="action-btns">
                       <button class="action-btn action-btn-edit myth-edit-btn" data-id="${m.id}">Edit</button>
@@ -1340,7 +1340,7 @@ function editMyth(id) {
     document.getElementById('myth-statement').value = m.statement;
     document.getElementById('myth-fact').value = m.fact;
     document.getElementById('myth-source').value = m.source;
-    document.querySelector('#panel-myths .editor-card h3').textContent = 'âœï¸ Edit Myth Card';
+    document.querySelector('#panel-myths .editor-card h3').textContent = ' Edit Myth Card';
     // Scroll to top of panel
     document.getElementById('panel-myths').scrollTop = 0;
 }
@@ -1399,7 +1399,7 @@ function clearMythForm() {
 // QUIZ QUESTION CRUD
 // ============================================================
 // ============================================================
-// QUIZ QUESTION CRUD â€” Server side
+// QUIZ QUESTION CRUD - Server side
 // ============================================================
 let currentQuizBank = [];
 
@@ -1533,7 +1533,7 @@ async function resetQuizToDefault() {
 
 
 // ============================================================
-// RESEARCH PAPERS CRUD â€” Server side
+// RESEARCH PAPERS CRUD - Server side
 // ============================================================
 let currentResearchList = [];
 
@@ -1643,13 +1643,13 @@ function clearResearchForm() {
 }
 
 // ============================================================
-// PEER RECOGNITION CRUD â€” Server side
+// PEER RECOGNITION CRUD - Server side
 // ============================================================
 let currentPeerList = [];
 
 async function renderPeerRecognitions() {
     const tbody = document.getElementById('peer-table-body');
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;">â³ Loading recognitions...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;">â³ Loading recognitions...</td></tr>';
 
     try {
         const res = await fetch('./api/content.php?type=peer_recognitions');
@@ -1689,7 +1689,7 @@ function editPeer(idx) {
     document.getElementById('peer-icon').value = p.icon;
     document.getElementById('peer-source').value = p.source;
     document.getElementById('peer-text').value = p.text;
-    document.getElementById('peer-editor-title').textContent = 'âœï¸ Edit Recognition Block';
+    document.getElementById('peer-editor-title').textContent = ' Edit Recognition Block';
     document.getElementById('panel-peer').scrollTop = 0;
 }
 
@@ -1721,7 +1721,7 @@ async function savePeerRecognition() {
         });
         const result = await res.json();
         if (result.success) {
-            toast('âœ… Recognition block saved!', 'success');
+            toast('[OK] Recognition block saved!', 'success');
             clearPeerForm();
             renderPeerRecognitions();
         } else {
@@ -1746,7 +1746,7 @@ async function deletePeer(idx) {
             body: JSON.stringify({ session_token: token, type: 'peer_recognitions', items: updatedList })
         });
         if ((await res.json()).success) {
-            toast('ðŸ—‘ï¸ Recognition block deleted.', 'success');
+            toast('ðŸ—‘ Recognition block deleted.', 'success');
             renderPeerRecognitions();
         }
     } catch (err) {
@@ -2042,7 +2042,7 @@ function loadAll() {
 }
 
 // ============================================================
-// SWITCH PANEL â€” extended for new panels
+// SWITCH PANEL - extended for new panels
 // ============================================================
 const _origSwitchPanel = switchPanel;
 switchPanel = function (name) {
@@ -2077,7 +2077,7 @@ switchPanel = function (name) {
 function toast(msg, type = 'info', duration = 3500) {
     const tc = document.getElementById('toast-container');
     const t = document.createElement('div');
-    const icons = { success: 'âœ…', error: 'âŒ', info: 'â„¹ï¸' };
+    const icons = { success: '[OK]', error: '[!]', info: '[i]' };
     t.className = `toast toast-${type}`;
     t.textContent = `${icons[type] || ''} ${msg}`;
     tc.appendChild(t);
@@ -2110,11 +2110,11 @@ async function checkApiStatus() {
 // API DIAGNOSTICS PANEL
 // ============================================================
 const ENDPOINTS_TO_CHECK = [
-    { label: 'content.php â€” myth_busters', url: './api/content.php?type=myth_busters' },
-    { label: 'content.php â€” quiz_questions', url: './api/content.php?type=quiz_questions' },
-    { label: 'content.php â€” research_papers', url: './api/content.php?type=research_papers' },
-    { label: 'content.php â€” knowledge_articles', url: './api/content.php?type=knowledge_articles' },
-    { label: 'settings.php â€” GET', url: './api/settings.php' },
+    { label: 'content.php - myth_busters', url: './api/content.php?type=myth_busters' },
+    { label: 'content.php - quiz_questions', url: './api/content.php?type=quiz_questions' },
+    { label: 'content.php - research_papers', url: './api/content.php?type=research_papers' },
+    { label: 'content.php - knowledge_articles', url: './api/content.php?type=knowledge_articles' },
+    { label: 'settings.php - GET', url: './api/settings.php' },
 ];
 
 async function runAllChecks() {
@@ -2136,7 +2136,7 @@ async function runAllChecks() {
                 <div class="admin-stat" style="border-left-color:${r.ok ? 'var(--ad-green)' : 'var(--ad-red)'}">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
                         <span style="font-weight:700;color:var(--ad-text);font-size:0.86rem;">${r.label}</span>
-                        <span class="status-badge badge-${r.ok ? 'approved' : 'rejected'}">${r.ok ? '✓ OK' : 'âœ• FAIL'} Â· ${r.status} Â· ${r.ms}ms</span>
+                        <span class="status-badge badge-${r.ok ? 'approved' : 'rejected'}">${r.ok ? '✓ OK' : '[ERR]• FAIL'} Â· ${r.status} Â· ${r.ms}ms</span>
                     </div>
                     <div style="font-size:0.72rem;color:var(--ad-text-muted);font-family:monospace;background:rgba(0,0,0,0.3);padding:6px 10px;border-radius:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.preview}</div>
                 </div>`).join('');
@@ -2162,7 +2162,7 @@ async function runManualTest() {
 }
 
 // ============================================================
-// HERO & CONTACT â€” load/save
+// HERO & CONTACT - load/save
 // ============================================================
 async function loadHeroContent() {
     const g = id => document.getElementById(id);
@@ -2257,7 +2257,7 @@ async function importContent() {
     const status = document.getElementById('import-status');
     if (!file) { toast('Select a JSON file first', 'error'); return; }
     if (!token) { toast('Not authenticated', 'error'); return; }
-    if (!confirm(`⚠️ This will OVERWRITE all ${type} on the server. Continue?`)) return;
+    if (!confirm(`⚠️ This will OVERWRITE all ${type} on the server. Continue?`)) return;
     try {
         const text = await file.text();
         const items = JSON.parse(text);
@@ -2268,12 +2268,12 @@ async function importContent() {
         });
         const d = await r.json();
         if (d.success) {
-            status.textContent = `âœ… Imported ${d.data?.count ?? items.length} items into ${type}`;
+            status.textContent = `[OK] Imported ${d.data?.count ?? items.length} items into ${type}`;
             status.className = 'status-ok'; status.style.display = 'block';
             toast('Import successful!', 'success');
         } else throw new Error(d.error);
     } catch (e) {
-        status.textContent = 'âŒ ' + e.message; status.className = 'status-error'; status.style.display = 'block';
+        status.textContent = '[!] ' + e.message; status.className = 'status-error'; status.style.display = 'block';
         toast('Import failed: ' + e.message, 'error');
     }
 }
@@ -2376,9 +2376,9 @@ renderMyths = async function () {
         document.getElementById('myth-table-body').innerHTML = currentMyths.map(m => `
                   <div style="border-bottom:1px solid var(--ad-border);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;">
                     <div>
-                      <div style="font-size:0.84rem;font-weight:700;color:var(--ad-text);margin-bottom:4px;">⚠️ ${escH(m.statement)}</div>
-                      <div style="font-size:0.78rem;color:var(--ad-text-muted);">âœ… ${escH(m.fact.substring(0, 100))}...</div>
-                      <div style="font-size:0.72rem;color:var(--ad-indigo);margin-top:4px;">â€” ${escH(m.source)}</div>
+                      <div style="font-size:0.84rem;font-weight:700;color:var(--ad-text);margin-bottom:4px;">⚠️ ${escH(m.statement)}</div>
+                      <div style="font-size:0.78rem;color:var(--ad-text-muted);">[OK] ${escH(m.fact.substring(0, 100))}...</div>
+                      <div style="font-size:0.72rem;color:var(--ad-indigo);margin-top:4px;">- ${escH(m.source)}</div>
                     </div>
                     <div class="action-btns">
                       <button class="action-btn action-btn-edit myth-edit-btn" data-id="${m.id}">Edit</button>
