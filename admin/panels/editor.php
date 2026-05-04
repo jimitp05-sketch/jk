@@ -90,6 +90,16 @@
                 </select>
             </div>
         </div>
+        <div class="editor-row-2" style="margin-top:16px;">
+            <div class="editor-field">
+                <label>SEO Meta Title <span style="color:var(--ad-text-muted);font-weight:400;">(optional — overrides page title in search)</span></label>
+                <input type="text" id="editor-meta-title" placeholder="e.g. ECMO Treatment Gujarat | Dr. Jay Kothari" maxlength="60" />
+            </div>
+            <div class="editor-field">
+                <label>SEO Meta Description <span style="color:var(--ad-text-muted);font-weight:400;">(optional — shown in search results)</span></label>
+                <input type="text" id="editor-meta-description" placeholder="150-160 characters describing this article..." maxlength="160" />
+            </div>
+        </div>
         <div class="editor-actions">
             <button class="btn-publish" onclick="saveArticle()">💾 Save Article to Server</button>
             <button class="action-btn action-btn-reject" style="margin-left:auto;"

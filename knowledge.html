@@ -585,7 +585,7 @@
                         ? a.structured.sections.filter(s => s.heading).map(s => ({ id: s.heading.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''), label: s.heading }))
                         : [];
 
-                    articles[targetId] = { title: a.title || 'Untitled', tag, subtitle, toc, related: [], content };
+                    articles[targetId] = { title: a.title || 'Untitled', tag, subtitle, toc, related: [], content, meta_title: a.meta_title || '', meta_description: a.meta_description || '' };
 
                     // If it's a completely new article (not overriding built-in), track it
                     if (!a.overridesId && !BUILT_IN_IDS.includes(a.id)) {
@@ -631,6 +631,11 @@
             document.getElementById('hub-layout').classList.add('hidden');
             document.getElementById('article-layout').classList.add('active');
             document.getElementById('breadcrumb-current').textContent = a.title.substring(0, 40) + '...';
+
+            // SEO meta updates
+            if (a.meta_title) document.title = a.meta_title;
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc && a.meta_description) metaDesc.setAttribute('content', a.meta_description);
 
             // Sidebar active state
             document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));

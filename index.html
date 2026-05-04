@@ -570,6 +570,17 @@
         <p>Still have questions? Families always do.</p>
     </div>
 
+    <!-- PATIENT VOICES / TESTIMONIALS -->
+    <section style="padding:60px 0;background:var(--surface-secondary,#f9fafb);">
+        <div class="container">
+            <div style="text-align:center;margin-bottom:32px;">
+                <span style="font-size:0.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent,#0ea5e9);">Patient Voices</span>
+                <h2 style="font-size:2rem;font-weight:700;margin:8px 0 0;">What Families Say</h2>
+            </div>
+            <div id="homepage-reviews" style="display:none;gap:20px;flex-wrap:wrap;"></div>
+        </div>
+    </section>
+
     <!-- FAQ -->
     <section class="section" id="faq" style="background:var(--bg-section);">
         <div class="container">
@@ -767,6 +778,26 @@
 
     <script src="script.js" defer></script>
     <script src="premium-ux.js" defer></script>
+    <script>
+(function() {
+  function escH(s) { var d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
+  fetch('./api/content.php?type=peer_recognitions')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var reviews = (data.data || []).filter(function(r){ return r.status === 'approved'; }).slice(0, 3);
+      if (!reviews.length) return;
+      var container = document.getElementById('homepage-reviews');
+      if (!container) return;
+      container.innerHTML = reviews.map(function(r){
+        return '<div style="background:var(--card-bg,#fff);border:1px solid var(--border,#e5e7eb);border-radius:12px;padding:20px;flex:1;min-width:220px;">'
+          + '<p style="font-style:italic;color:var(--text-secondary,#6b7280);margin:0 0 12px;">"' + escH(r.body||r.content||'') + '"</p>'
+          + '<strong style="font-size:0.85rem;">' + escH(r.author||r.name||'Patient Family') + '</strong>'
+          + '</div>';
+      }).join('');
+      container.style.display = 'flex';
+    }).catch(function(){});
+})();
+    </script>
     <script>
     (function() {
         function escH(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }

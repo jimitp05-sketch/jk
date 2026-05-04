@@ -785,7 +785,7 @@
             fetch('./api/content.php?type=social_settings')
                 .then(r => r.json())
                 .then(data => {
-                    const s = data.data || {};
+                    const s = Array.isArray(data.data) ? (data.data[0] || {}) : (data.data || {});
                     renderSocialProfiles(s);
                     renderPinnedPosts(s.pinned_posts || []);
                     renderFbFeed(s);

@@ -315,6 +315,28 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTicker(escapeHTML(s.ticker_text));
         }
 
+        // Announcement banner
+        (function() {
+          const existing = document.getElementById('site-announcement-bar');
+          if (existing) existing.remove();
+          if (!s.announcement_text) return;
+          const colors = { info: '#0369a1', warning: '#b45309', urgent: '#b91c1c' };
+          const bar = document.createElement('div');
+          bar.id = 'site-announcement-bar';
+          bar.style.cssText = `background:${colors[s.announcement_color||'info']};color:#fff;text-align:center;padding:10px 48px 10px 16px;font-size:0.85rem;position:relative;z-index:9999;`;
+          const dismissed = sessionStorage.getItem('announcement_dismissed_' + s.announcement_text);
+          if (dismissed) return;
+          bar.innerHTML = s.announcement_url
+            ? `<a href="${escapeHTML(s.announcement_url)}" style="color:#fff;text-decoration:underline;">${escapeHTML(s.announcement_text)}</a>`
+            : escapeHTML(s.announcement_text);
+          const closeBtn = document.createElement('button');
+          closeBtn.textContent = '×';
+          closeBtn.style.cssText = 'position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;';
+          closeBtn.onclick = () => { sessionStorage.setItem('announcement_dismissed_' + s.announcement_text, '1'); bar.remove(); };
+          bar.appendChild(closeBtn);
+          document.body.insertBefore(bar, document.body.firstChild);
+        })();
+
         // 6. Inject GA4
         if (s.ga4_id && /^G-[A-Z0-9]+$/.test(s.ga4_id) && !document.getElementById('ga4-script')) {
             window.dataLayer = window.dataLayer || [];

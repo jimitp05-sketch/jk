@@ -805,7 +805,9 @@ async function saveArticle() {
     }
 
     const body = buildArticleHTML(structured);
-    const newArt = { id, title, pillar, subtitle, body, author, status, overridesId, structured, savedAt: new Date().toISOString() };
+    const meta_title = document.getElementById('editor-meta-title')?.value?.trim() || '';
+    const meta_description = document.getElementById('editor-meta-description')?.value?.trim() || '';
+    const newArt = { id, title, pillar, subtitle, body, author, status, overridesId, structured, meta_title, meta_description, savedAt: new Date().toISOString() };
 
     let updatedList = [...currentArticles];
     const idx = updatedList.findIndex(a => a.id === id);
@@ -839,6 +841,10 @@ function editArticle(id) {
     document.getElementById('editor-author').value = article.author;
     document.getElementById('editor-status').value = article.status;
     document.getElementById('editor-overrides-id').value = article.overridesId || '';
+    const metaTitleEl = document.getElementById('editor-meta-title');
+    const metaDescEl = document.getElementById('editor-meta-description');
+    if (metaTitleEl) metaTitleEl.value = article.meta_title || '';
+    if (metaDescEl) metaDescEl.value = article.meta_description || '';
     if (article.structured && article.structured.sections && article.structured.sections.length) {
         loadStructured(article.structured);
     } else {
@@ -1022,6 +1028,10 @@ function editBuiltInArticle(id) {
     document.getElementById('editor-author').value = 'Dr. Jay Kothari';
     document.getElementById('editor-status').value = a.status;
     document.getElementById('editor-overrides-id').value = id;
+    const metaTitleEl = document.getElementById('editor-meta-title');
+    const metaDescEl = document.getElementById('editor-meta-description');
+    if (metaTitleEl) metaTitleEl.value = content.meta_title || a.meta_title || '';
+    if (metaDescEl) metaDescEl.value = content.meta_description || a.meta_description || '';
     if (content.structured) {
         loadStructured(content.structured);
     } else {
@@ -1083,6 +1093,8 @@ function clearEditor() {
     ['editor-id', 'editor-title', 'editor-subtitle', 'editor-body', 'editor-overrides-id'].forEach(f => document.getElementById(f).value = '');
     document.getElementById('editor-author').value = 'Dr. Jay Kothari';
     document.getElementById('editor-status').value = 'published';
+    const mt = document.getElementById('editor-meta-title'); if(mt) mt.value = '';
+    const md = document.getElementById('editor-meta-description'); if(md) md.value = '';
     clearSectionsOnly();
     addSection();
 }
@@ -2191,6 +2203,9 @@ async function loadHeroContent() {
         set('hc-stat3-lbl', s.stat3_lbl || '');
         set('hc-stat4-num', s.stat4_num || '');
         set('hc-stat4-lbl', s.stat4_lbl || '');
+        if (s.announcement_text !== undefined) { const el = g('announcement-text'); if(el) el.value = s.announcement_text || ''; }
+        if (s.announcement_url !== undefined) { const el = g('announcement-url'); if(el) el.value = s.announcement_url || ''; }
+        if (s.announcement_color !== undefined) { const el = g('announcement-color'); if(el) el.value = s.announcement_color || 'info'; }
     } catch (e) { console.error('Failed to load hero content:', e); }
 }
 
@@ -2210,6 +2225,9 @@ async function saveHeroContent() {
         stat2_num: g('hc-stat2-num'), stat2_lbl: g('hc-stat2-lbl'),
         stat3_num: g('hc-stat3-num'), stat3_lbl: g('hc-stat3-lbl'),
         stat4_num: g('hc-stat4-num'), stat4_lbl: g('hc-stat4-lbl'),
+        announcement_text: document.getElementById('announcement-text')?.value?.trim() || '',
+        announcement_url: document.getElementById('announcement-url')?.value?.trim() || '',
+        announcement_color: document.getElementById('announcement-color')?.value || 'info',
     };
     try {
         const r = await fetch('./api/settings.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -2538,12 +2556,10 @@ async function adminLoadDiyas() {
 function renderDiyaTable() {
     const total = diyaCache.length;
     const approved = diyaCache.filter(d => d.status === 'approved').length;
-    const pending = diyaCache.filter(d => d.status === 'pending').length;
 
     const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
     el('diya-total', total);
     el('diya-approved', approved);
-    el('diya-pending', pending);
 
     const tbody = document.getElementById('diya-tbody');
     if (!tbody) return;
@@ -2565,7 +2581,6 @@ function renderDiyaTable() {
             <td>${date}</td>
             <td><span class="status-badge ${statusClass}">${d.status}</span></td>
             <td>
-                ${d.status !== 'approved' ? `<button class="action-btn approve" onclick="adminDiyaAction('approve','${escH(d.id)}')">✓</button>` : ''}
                 <button class="action-btn delete" onclick="adminDiyaAction('delete','${escH(d.id)}')">✕</button>
             </td>
         </tr>`;
@@ -2637,12 +2652,10 @@ function adminResetDiyaFilter() {
 function renderDiyaTableFiltered(diyas) {
     const total = diyas.length;
     const approved = diyas.filter(d => d.status === 'approved').length;
-    const pending = diyas.filter(d => d.status === 'pending').length;
 
     const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
     el('diya-total', total);
     el('diya-approved', approved);
-    el('diya-pending', pending);
 
     const tbody = document.getElementById('diya-tbody');
     if (!tbody) return;
@@ -2664,7 +2677,6 @@ function renderDiyaTableFiltered(diyas) {
             <td>${date}</td>
             <td><span class="status-badge ${statusClass}">${d.status}</span></td>
             <td>
-                ${d.status !== 'approved' ? `<button class="action-btn approve" onclick="adminDiyaAction('approve','${escH(d.id)}')">✓</button>` : ''}
                 <button class="action-btn delete" onclick="adminDiyaAction('delete','${escH(d.id)}')">✕</button>
             </td>
         </tr>`;

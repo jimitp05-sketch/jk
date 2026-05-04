@@ -66,6 +66,26 @@
                     placeholder="https://booking.apollohospitals.com/..." /></div>
         </div>
     </div>
+    <div class="editor-card" style="margin-top:24px;">
+        <h3>📢 Site Announcement Banner</h3>
+        <p style="font-size:0.84rem;color:var(--ad-text-muted);margin-bottom:16px;">Shows a dismissible banner at the top of every page. Leave empty to hide.</p>
+        <div class="editor-field">
+            <label>Announcement Text</label>
+            <input type="text" id="announcement-text" placeholder="e.g. Dr. Kothari is away May 10-12. Emergency: call 1860-500-1066" />
+        </div>
+        <div class="editor-field">
+            <label>Link URL (optional)</label>
+            <input type="text" id="announcement-url" placeholder="https://..." />
+        </div>
+        <div class="editor-field">
+            <label>Banner Color</label>
+            <select id="announcement-color">
+                <option value="info">Blue (Info)</option>
+                <option value="warning">Amber (Warning)</option>
+                <option value="urgent">Red (Urgent)</option>
+            </select>
+        </div>
+    </div>
     <div class="editor-actions" style="margin-top:4px;">
         <button class="btn-publish" onclick="saveHeroContent()">💾 Save to Server</button>
         <button class="btn-save-draft" onclick="loadHeroContent()">↺ Reload</button>
