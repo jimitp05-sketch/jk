@@ -123,11 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $clientIP = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
-    // Rate limit
-    if (!checkRateLimit($clientIP, 10, 60, 'content')) {
-        respond(['success' => false, 'data' => null, 'error' => 'Rate limit exceeded'], 429);
-    }
-
     $input = json_decode(file_get_contents('php://input'), true) ?? [];
 
     if (($input['action'] ?? '') === 'submit_review') {
@@ -205,6 +200,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!isAdmin()) {
         respond(['success' => false, 'data' => null, 'error' => 'Unauthorized'], 401);
+    }
+
+    if (!checkRateLimit($clientIP, 120, 60, 'content_admin')) {
+        respond(['success' => false, 'data' => null, 'error' => 'Admin rate limit exceeded'], 429);
     }
     $type = $input['type'] ?? '';
     $items = $input['items'] ?? null;

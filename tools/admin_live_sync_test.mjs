@@ -133,6 +133,18 @@ async function pageContains(cdp, path, marker) {
   return await evalJs(cdp, `document.body.innerText.includes(${JSON.stringify(marker)})`);
 }
 
+async function bookingDateIsBlocked(cdp, dateKey) {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  await cdp.send('Page.navigate', { url: `${BASE_URL}/booking.html?codex=${Date.now()}` });
+  await wait(2500);
+  await evalJs(cdp, `currentDate = new Date(${year}, ${month - 1}, 1); renderCalendar();`, true);
+  await wait(1500);
+  return await evalJs(cdp, `(() => {
+    const el = document.querySelector('[data-date="${dateKey}"]');
+    return !!el && el.classList.contains('past') && !el.hasAttribute('onclick');
+  })()`);
+}
+
 async function withRestoredContent(type, token, mutator, testFn) {
   const original = await getContent(type, token);
   const copy = structuredClone(original);
@@ -215,9 +227,12 @@ async function main() {
           if (!Array.isArray(current)) current = [];
           return [...current, test.make(test.marker)];
         },
-        async () => {
-          const visible = await pageContains(cdp, test.page, test.marker);
-          add(`Admin update visible on live page: ${test.type}`, visible ? 'pass' : 'fail', { page: test.page, marker: test.marker });
+        async updated => {
+          const item = updated[updated.length - 1];
+          const visible = test.type === 'blocked_dates'
+            ? await bookingDateIsBlocked(cdp, item.date)
+            : await pageContains(cdp, test.page, test.marker);
+          add(`Admin update visible on live page: ${test.type}`, visible ? 'pass' : 'fail', { page: test.page, marker: test.marker, date: item.date || null });
         }
       );
     } catch (e) {

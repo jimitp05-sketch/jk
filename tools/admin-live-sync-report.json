@@ -1,9 +1,9 @@
 {
   "baseUrl": "https://foxwisdom.com",
-  "generatedAt": "2026-05-07T07:13:45.873Z",
+  "generatedAt": "2026-05-07T07:38:45.938Z",
   "total": 9,
-  "pass": 7,
-  "fail": 2,
+  "pass": 9,
+  "fail": 0,
   "results": [
     {
       "name": "Admin login for sync testing",
@@ -14,10 +14,11 @@
     },
     {
       "name": "Admin update visible on live page: faq_items",
-      "status": "fail",
+      "status": "pass",
       "detail": {
         "page": "/",
-        "marker": "Codex FAQ live marker 1778137851640"
+        "marker": "Codex FAQ live marker 1778139352045",
+        "date": null
       }
     },
     {
@@ -25,7 +26,8 @@
       "status": "pass",
       "detail": {
         "page": "/",
-        "marker": "Codex Expertise live marker 1778137851640"
+        "marker": "Codex Expertise live marker 1778139352045",
+        "date": null
       }
     },
     {
@@ -33,7 +35,8 @@
       "status": "pass",
       "detail": {
         "page": "/knowledge.html",
-        "marker": "Codex Knowledge live marker 1778137851640"
+        "marker": "Codex Knowledge live marker 1778139352045",
+        "date": null
       }
     },
     {
@@ -41,7 +44,8 @@
       "status": "pass",
       "detail": {
         "page": "/research.html",
-        "marker": "Codex Research live marker 1778137851640"
+        "marker": "Codex Research live marker 1778139352045",
+        "date": null
       }
     },
     {
@@ -49,7 +53,8 @@
       "status": "pass",
       "detail": {
         "page": "/quiz.html",
-        "marker": "Codex Myth live marker 1778137851640"
+        "marker": "Codex Myth live marker 1778139352045",
+        "date": null
       }
     },
     {
@@ -57,7 +62,8 @@
       "status": "pass",
       "detail": {
         "page": "/reviews.html",
-        "marker": "Codex Recognition live marker 1778137851640"
+        "marker": "Codex Recognition live marker 1778139352045",
+        "date": "2026-05-07"
       }
     },
     {
@@ -65,15 +71,17 @@
       "status": "pass",
       "detail": {
         "page": "/reviews.html",
-        "marker": "Codex Photo live marker 1778137851640"
+        "marker": "Codex Photo live marker 1778139352045",
+        "date": null
       }
     },
     {
       "name": "Admin update visible on live page: blocked_dates",
-      "status": "fail",
+      "status": "pass",
       "detail": {
         "page": "/booking.html",
-        "marker": "Codex blocked date 1778137851640"
+        "marker": "Codex blocked date 1778139352045",
+        "date": "2026-12-29"
       }
     }
   ]

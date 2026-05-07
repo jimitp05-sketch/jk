@@ -178,7 +178,16 @@ if ($dateObj < $today) {
     exit;
 }
 
-// Time: HH:MM format
+// Time: accept either frontend labels like "2:20 PM" or canonical HH:MM
+if (preg_match('/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i', $time, $m)) {
+    $hour = (int)$m[1];
+    $minute = $m[2];
+    $ampm = strtoupper($m[3]);
+    if ($ampm === 'PM' && $hour < 12) $hour += 12;
+    if ($ampm === 'AM' && $hour === 12) $hour = 0;
+    $time = sprintf('%02d:%s', $hour, $minute);
+}
+
 if (!preg_match('/^\d{2}:\d{2}$/', $time)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Invalid time format.']);
