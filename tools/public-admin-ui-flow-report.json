@@ -1,0 +1,261 @@
+{
+  "baseUrl": "https://foxwisdom.com",
+  "cdpUrl": "http://127.0.0.1:9223",
+  "generatedAt": "2026-05-07T09:52:04.259Z",
+  "note": "UI-only run: no direct foxwisdom API calls were made by this script. All writes were triggered through website/admin browser UI.",
+  "total": 34,
+  "pass": 34,
+  "warn": 0,
+  "fail": 0,
+  "results": [
+    {
+      "name": "Admin login through visible login form",
+      "status": "pass",
+      "detail": {
+        "ok": true
+      }
+    },
+    {
+      "name": "Public Reviews form submitted from website UI",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Submitted review appears pending in admin panel",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Review Approval 1778147312202"
+      }
+    },
+    {
+      "name": "Admin approved submitted review via approval button",
+      "status": "pass",
+      "detail": {
+        "ok": true,
+        "rowText": "\tAnonymous\nothers\tCodex UI Review Approval 1778147312202\t2026-05-07\tPENDING\t✓ Approve ✕ Reject Delete"
+      }
+    },
+    {
+      "name": "Approved review is visible on public Reviews page",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Review Approval 1778147312202"
+      }
+    },
+    {
+      "name": "Admin deleted test review through admin UI",
+      "status": "pass",
+      "detail": {
+        "ok": true,
+        "rowText": "\tAnonymous\nothers\tCodex UI Review Approval 1778147312202\t2026-05-07\tAPPROVED\tDelete"
+      }
+    },
+    {
+      "name": "Public Photo Wall upload submitted from website UI",
+      "status": "pass",
+      "detail": {
+        "fileSet": true
+      }
+    },
+    {
+      "name": "Submitted Photo Wall item appears pending in admin panel",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Pulse Photo Approval 1778147312202"
+      }
+    },
+    {
+      "name": "Admin approved Photo Wall item via approval button",
+      "status": "pass",
+      "detail": {
+        "ok": true,
+        "rowText": "Codex UI Pulse Photo Approval 1778147312202\nTeam · pending\nApprove\nReject\nDelete"
+      }
+    },
+    {
+      "name": "Approved Photo Wall item is visible on public Reviews page",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Pulse Photo Approval 1778147312202"
+      }
+    },
+    {
+      "name": "Admin deleted test Photo Wall item through admin UI",
+      "status": "pass",
+      "detail": {
+        "ok": true,
+        "rowText": "Codex UI Pulse Photo Approval 1778147312202\nTeam · approved\nDelete"
+      }
+    },
+    {
+      "name": "Public Memories story submitted from website UI",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Memory Story 1778147312202"
+      }
+    },
+    {
+      "name": "Submitted Memories story appears pending in admin panel",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Memory Story 1778147312202"
+      }
+    },
+    {
+      "name": "Admin approved Memories story via approval button",
+      "status": "pass",
+      "detail": {
+        "ok": true,
+        "rowText": "\tCodex UI Memory Story 1778147312202\tCodex Family\tOther\tPENDING\t7 May\t✓ ✗ ✎ ✕"
+      }
+    },
+    {
+      "name": "Approved Memories story is visible on public Memories page",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Memory Story 1778147312202"
+      }
+    },
+    {
+      "name": "Admin deleted test Memories story through admin UI",
+      "status": "pass",
+      "detail": {
+        "panelType": "healing_stories",
+        "ok": true,
+        "rowText": "\tCodex UI Memory Story 1778147312202\tCodex Family\tOther\tAPPROVED\t7 May\t✎ ✕"
+      }
+    },
+    {
+      "name": "Public Memories note submitted from website UI",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Memory Note 1778147312202"
+      }
+    },
+    {
+      "name": "Submitted Memories note appears pending in admin panel",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Memory Note 1778147312202"
+      }
+    },
+    {
+      "name": "Admin approved Memories note via approval button",
+      "status": "pass",
+      "detail": {
+        "ok": true,
+        "rowText": "Codex Family\tCodex UI Memory Note 1778147312202\tFamily\tPENDING\t7 May\t✓ ✗ Edit ✕"
+      }
+    },
+    {
+      "name": "Approved Memories note is visible on public Memories page",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Memory Note 1778147312202"
+      }
+    },
+    {
+      "name": "Admin deleted test Memories note through admin UI",
+      "status": "pass",
+      "detail": {
+        "panelType": "gratitude_notes",
+        "ok": true,
+        "rowText": "Codex Family\tCodex UI Memory Note 1778147312202\tFamily\tAPPROVED\t7 May\tEdit ✕"
+      }
+    },
+    {
+      "name": "Public Memories photo submitted from website UI",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Memory Photo 1778147312202"
+      }
+    },
+    {
+      "name": "Submitted Memories photo appears pending in admin panel",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Memory Photo 1778147312202"
+      }
+    },
+    {
+      "name": "Admin approved Memories photo via approval button",
+      "status": "pass",
+      "detail": {
+        "ok": true,
+        "rowText": "No image\nCodex UI Memory Photo 1778147312202\nOther · Codex Family · PENDING\n✓ Approve\n✗ Reject\n✕ Delete"
+      }
+    },
+    {
+      "name": "Approved Memories photo is visible on public Memories page",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Memory Photo 1778147312202"
+      }
+    },
+    {
+      "name": "Admin deleted test Memories photo through admin UI",
+      "status": "pass",
+      "detail": {
+        "panelType": "memory_photos",
+        "ok": true,
+        "rowText": "No image\nCodex UI Memory Photo 1778147312202\nOther · Codex Family · APPROVED\n✕ Delete"
+      }
+    },
+    {
+      "name": "Public Diya form submitted from website UI",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Diya 1778147312202"
+      }
+    },
+    {
+      "name": "New public Diya appears on Diya wall without approval",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Diya 1778147312202"
+      }
+    },
+    {
+      "name": "New Diya appears in admin Diya panel",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Diya 1778147312202"
+      }
+    },
+    {
+      "name": "Admin deleted test Diya through admin UI",
+      "status": "pass",
+      "detail": {
+        "ok": true,
+        "rowText": "\tCodex UI Diya 1778147312202\tTemporary UI-only diya test.\tCodex UI Tester\t7 May 2026\tAPPROVED\t✕"
+      }
+    },
+    {
+      "name": "Newsletter subscription submitted from homepage UI",
+      "status": "pass",
+      "detail": {
+        "marker": "codex-ui-1778147312202@example.com"
+      }
+    },
+    {
+      "name": "New subscriber appears in admin Subscribers panel",
+      "status": "pass",
+      "detail": {
+        "marker": "codex-ui-1778147312202@example.com"
+      }
+    },
+    {
+      "name": "Admin deleted test subscriber through admin UI",
+      "status": "pass",
+      "detail": {
+        "ok": true,
+        "rowText": "codex-ui-1778147312202@example.com\t—\thomepage\t5/7/2026\tDelete"
+      }
+    },
+    {
+      "name": "Browser runtime errors during UI-only flow",
+      "status": "pass",
+      "detail": {}
+    }
+  ]
+}
