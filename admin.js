@@ -2994,10 +2994,10 @@ function renderStoriesTable() {
             <td><span class="status-badge ${statusClass}">${s.status}</span></td>
             <td>${date}</td>
             <td>
-                ${s.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('healing_stories','approve','${escH(s.id)}')">✓</button>` : ''}
-                ${s.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('healing_stories','reject','${escH(s.id)}')">✗</button>` : ''}
-                <button class="action-btn edit" onclick="editStory('${escH(s.id)}')">✎</button>
-                <button class="action-btn delete" onclick="memoryAction('healing_stories','delete','${escH(s.id)}')">✕</button>
+                ${s.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('healing_stories','approve','${escH(s.id)}')">Approve</button>` : ''}
+                ${s.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('healing_stories','reject','${escH(s.id)}')">Reject</button>` : ''}
+                <button class="action-btn edit" onclick="editStory('${escH(s.id)}')">Edit</button>
+                <button class="action-btn delete" onclick="memoryAction('healing_stories','delete','${escH(s.id)}')">Delete</button>
             </td>
         </tr>`;
     }).join('');
@@ -3129,10 +3129,10 @@ function renderNotesTable() {
             <td><span class="status-badge ${statusClass}">${n.status}</span></td>
             <td>${date}</td>
             <td>
-                ${n.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('gratitude_notes','approve','${escH(n.id)}')">✓</button>` : ''}
-                ${n.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('gratitude_notes','reject','${escH(n.id)}')">✗</button>` : ''}
+                ${n.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('gratitude_notes','approve','${escH(n.id)}')">Approve</button>` : ''}
+                ${n.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('gratitude_notes','reject','${escH(n.id)}')">Reject</button>` : ''}
                 <button class="action-btn" onclick="inlineEditMemory(this, '${escH(n.id)}', '${escH(n.note||'')}')" style="background:var(--ad-surface-2);color:var(--ad-text);">Edit</button>
-                <button class="action-btn delete" onclick="memoryAction('gratitude_notes','delete','${escH(n.id)}')">✕</button>
+                <button class="action-btn delete" onclick="memoryAction('gratitude_notes','delete','${escH(n.id)}')">Delete</button>
             </td>
         </tr>`;
     }).join('');
@@ -3203,17 +3203,17 @@ function renderMemoryPhotosGrid() {
 
     grid.innerHTML = memPhotosCache.map(p => {
         const statusClass = p.status === 'approved' ? 'badge-approved' : p.status === 'pending' ? 'badge-pending' : 'badge-rejected';
-        const imgSrc = (p.photo_data && p.photo_data.startsWith('data:image')) ? p.photo_data : '';
-        const hasImage = imgSrc.startsWith('data:image');
+        const imgSrc = (p.photo_data && /^(data:image|https?:\/\/|uploads\/|\/uploads\/)/i.test(p.photo_data)) ? p.photo_data : '';
+        const hasImage = !!imgSrc;
         return `<div class="mem-photo-card" style="background:var(--ad-surface);border:1px solid var(--ad-border);border-radius:12px;overflow:hidden;margin-bottom:16px;">
-            ${hasImage ? `<img src="${imgSrc}" style="width:100%;height:160px;object-fit:cover;">` : `<div style="width:100%;height:160px;background:var(--ad-surface-hover);display:flex;align-items:center;justify-content:center;color:var(--ad-text-muted);">No image</div>`}
+            ${hasImage ? `<img src="${escH(imgSrc)}" style="width:100%;height:160px;object-fit:cover;" alt="${escH(p.caption || 'Memory photo')}">` : `<div style="width:100%;height:160px;background:var(--ad-surface-hover);display:flex;align-items:center;justify-content:center;color:var(--ad-text-muted);">No preview available</div>`}
             <div style="padding:12px;">
                 <div style="font-weight:600;margin-bottom:4px;">${escH(p.caption || '—')}</div>
                 <div style="font-size:0.78rem;color:var(--ad-text-muted);margin-bottom:8px;">${escH(p.label || '')} · ${escH(p.uploaded_by || 'Unknown')} · <span class="status-badge ${statusClass}">${p.status}</span></div>
                 <div style="display:flex;gap:6px;">
-                    ${p.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('memory_photos','approve','${escH(p.id)}')">✓ Approve</button>` : ''}
-                    ${p.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('memory_photos','reject','${escH(p.id)}')">✗ Reject</button>` : ''}
-                    <button class="action-btn delete" onclick="memoryAction('memory_photos','delete','${escH(p.id)}')">✕ Delete</button>
+                    ${p.status === 'pending' ? `<button class="action-btn approve" onclick="memoryAction('memory_photos','approve','${escH(p.id)}')">Approve</button>` : ''}
+                    ${p.status === 'pending' ? `<button class="action-btn reject" onclick="memoryAction('memory_photos','reject','${escH(p.id)}')">Reject</button>` : ''}
+                    <button class="action-btn delete" onclick="memoryAction('memory_photos','delete','${escH(p.id)}')">Delete</button>
                 </div>
             </div>
         </div>`;

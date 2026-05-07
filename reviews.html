@@ -614,6 +614,68 @@
             }
         }
 
+        async function loadInstituteRecognitions() {
+            try {
+                const response = await fetch('./api/content.php?type=institute_recognitions');
+                if (!response.ok) return;
+                const data = await response.json();
+                const items = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
+                renderInstituteRecognitions(items);
+            } catch (e) {
+                // Keep the section empty if CMS content is unavailable.
+            }
+        }
+
+        function renderInstituteRecognitions(items) {
+            const grid = document.getElementById('peer-recognition-grid');
+            if (!grid) return;
+            if (!items.length) {
+                grid.innerHTML = `<div class="glass-card" style="grid-column:1/-1;text-align:center;padding:28px;color:var(--text-muted);">No institutional recognitions have been published yet.</div>`;
+                return;
+            }
+            grid.innerHTML = items.map(item => `
+                <article class="glass-card reveal" style="padding:24px;">
+                    <div style="font-size:2rem;margin-bottom:12px;">${escH(item.icon || '🏥')}</div>
+                    <h3 style="font-size:1.05rem;margin-bottom:10px;color:var(--text-primary);">${escH(item.name || 'Institution')}</h3>
+                    <p style="color:var(--text-body);line-height:1.7;margin:0 0 12px;">${escH(item.body || '')}</p>
+                    ${item.source ? `<p style="font-size:0.78rem;color:var(--text-muted);margin:0;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">${escH(item.source)}</p>` : ''}
+                </article>
+            `).join('');
+            if (window.revealNew) window.revealNew();
+        }
+
+        async function loadMediaMentions() {
+            try {
+                const response = await fetch('./api/content.php?type=media_mentions');
+                if (!response.ok) return;
+                const data = await response.json();
+                const items = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
+                renderMediaMentions(items);
+            } catch (e) {
+                // Keep media section hidden if CMS content is unavailable.
+            }
+        }
+
+        function renderMediaMentions(items) {
+            const section = document.getElementById('media-mentions');
+            const grid = document.getElementById('media-mentions-grid');
+            if (!section || !grid || !items.length) return;
+            section.style.display = '';
+            grid.innerHTML = items.map(item => {
+                const body = `
+                    <div style="font-size:0.78rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">
+                        ${escH(item.publication || 'Media')}${item.date ? ' · ' + escH(item.date) : ''}
+                    </div>
+                    <h3 style="font-size:1.05rem;margin-bottom:10px;color:var(--text-primary);">${escH(item.title || '')}</h3>
+                    ${item.excerpt ? `<p style="color:var(--text-body);line-height:1.7;margin:0;">${escH(item.excerpt)}</p>` : ''}
+                `;
+                return item.url
+                    ? `<a class="glass-card reveal" href="${escH(item.url)}" target="_blank" rel="noopener" style="display:block;padding:24px;text-decoration:none;">${body}<span class="read-more" style="margin-top:14px;display:inline-block;">Read Article →</span></a>`
+                    : `<article class="glass-card reveal" style="padding:24px;">${body}</article>`;
+            }).join('');
+            if (window.revealNew) window.revealNew();
+        }
+
         // ============================================================
         // LIGHTBOX
         // ============================================================
@@ -723,6 +785,8 @@
         async function init() {
             await loadPhotoWall();
             renderPhotoWall();
+            await loadInstituteRecognitions();
+            await loadMediaMentions();
 
             try {
                 const response = await fetch('./api/content.php?type=peer_recognitions');

@@ -11,7 +11,7 @@
     <div class="panel-header">
         <div>
             <h1>💝 Memories — ICU to Home</h1>
-            <p>Manage healing stories, gratitude notes, and photo memories. User submissions need approval before appearing on the website.</p>
+            <p>Manage healing stories, gratitude notes, and photo memories. User submissions need approval before appearing on the public <a href="memories.html" target="_blank" rel="noopener">Memories page</a>.</p>
         </div>
     </div>
 

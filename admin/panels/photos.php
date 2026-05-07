@@ -2,7 +2,7 @@
 <div class="admin-panel" id="panel-photos">
     <div class="panel-header">
         <h1>🖼️ Photo Wall</h1>
-        <p>Upload and manage photos displayed on the Pulse page Photo Wall. Supports direct file upload or URL.</p>
+        <p>Upload and manage photos displayed on the public <a href="reviews.html#photo-wall" target="_blank" rel="noopener">Pulse Photo Wall</a>. Supports direct file upload or URL.</p>
     </div>
     <div class="editor-card">
         <h3>+ Add Photo</h3>

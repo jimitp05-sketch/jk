@@ -300,6 +300,7 @@
 
                 async function initResearch() {
                     // Capture landmark papers from static HTML before we potentially overwrite it
+                    landmarkPapers = [];
                     const staticCards = document.querySelectorAll('#tab-papers .research-item');
                     staticCards.forEach(card => {
                         landmarkPapers.push({
@@ -396,9 +397,9 @@
                                 ${p.authors ? `<p class="research-authors">${escapeHTML(p.authors)}</p>` : ''}
                             </div>
                             ${p.takeaway ? `<div class="research-takeaway"><strong>Clinical Takeaway:</strong> ${escapeHTML(p.takeaway)}</div>` : ''}
-                            ${p.practice ? `<blockquote class="dr-position"><strong>Dr. Kothari's Practice:</strong> ${escapeHTML(p.practice)}</blockquote>` : ''}
+                                ${(p.practice || p.position) ? `<blockquote class="dr-position"><strong>Dr. Kothari's Practice:</strong> ${escapeHTML(p.practice || p.position)}</blockquote>` : ''}
                             <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
-                                ${p.doi ? `<a href="${escapeHTML(p.doi)}" target="_blank" rel="noopener" class="read-more">View Paper →</a>` : ''}
+                                ${(p.doi || p.url) ? `<a href="${escapeHTML(p.doi || p.url)}" target="_blank" rel="noopener" class="read-more">View Paper →</a>` : ''}
                             </div>
                         </div>
                     `).join('');

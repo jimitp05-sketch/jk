@@ -2,7 +2,7 @@
 <div class="admin-panel" id="panel-research">
     <div class="panel-header">
         <h1>🔬 Research Papers</h1>
-        <p>Add, edit or remove papers shown on the Research page.</p>
+        <p>Add, edit or remove papers shown on the public <a href="research.html" target="_blank" rel="noopener">Research page</a>.</p>
     </div>
     <div class="editor-card">
         <h3>➕ Add / Edit Paper</h3>

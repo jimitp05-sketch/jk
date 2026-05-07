@@ -2,7 +2,7 @@
 <div class="admin-panel" id="panel-reviews">
     <div class="panel-header">
         <h1>Review Approvals</h1>
-        <p>Approve or reject community-submitted reviews.</p>
+        <p>Approve or reject community-submitted reviews. Approved items appear on the public <a href="reviews.html" target="_blank" rel="noopener">Pulse page</a>.</p>
     </div>
 
     <div id="reviews-bulk-bar" style="display:none;background:var(--bg-section);border:1px solid var(--border);border-radius:8px;padding:10px 16px;margin-bottom:12px;align-items:center;gap:12px;flex-wrap:wrap;">

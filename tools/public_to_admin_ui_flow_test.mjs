@@ -267,7 +267,7 @@ async function reviewApprovalFlow(adminCdp, publicCdp, marker) {
   const publicVisible = await pageContains(publicCdp, marker, 12000);
   add('Approved review is visible on public Reviews page', publicVisible ? 'pass' : 'fail', { marker });
   await openAdminPanel(adminCdp, 'reviews');
-  const deleted = await clickRowAction(adminCdp, marker, 'delete|✕|remove');
+  const deleted = await clickRowAction(adminCdp, marker, 'delete|remove');
   add('Admin deleted test review through admin UI', deleted.ok ? 'pass' : 'fail', deleted);
 }
 
@@ -299,7 +299,7 @@ async function pulsePhotoApprovalFlow(adminCdp, publicCdp, marker) {
   const publicVisible = await pageContains(publicCdp, marker, 12000);
   add('Approved Photo Wall item is visible on public Reviews page', publicVisible ? 'pass' : 'fail', { marker });
   await openAdminPanel(adminCdp, 'photos');
-  const deleted = await clickRowAction(adminCdp, marker, 'delete|✕|remove');
+  const deleted = await clickRowAction(adminCdp, marker, 'delete|remove');
   add('Admin deleted test Photo Wall item through admin UI', deleted.ok ? 'pass' : 'fail', deleted);
 }
 
@@ -354,7 +354,7 @@ async function memoryApprovalFlow(adminCdp, publicCdp, type, marker) {
   await openAdminPanel(adminCdp, 'memories');
   if (type === 'note') await clickButtonContaining(adminCdp, 'Gratitude Notes');
   if (type === 'photo') await clickButtonContaining(adminCdp, 'Photo Memories');
-  const deleted = await clickRowAction(adminCdp, marker, 'delete|✕|remove');
+  const deleted = await clickRowAction(adminCdp, marker, 'delete|remove');
   add(`Admin deleted test Memories ${type} through admin UI`, deleted.ok ? 'pass' : 'fail', { panelType, ...deleted });
 }
 
@@ -373,7 +373,7 @@ async function submitDiya(publicCdp, adminCdp, marker) {
   await openAdminPanel(adminCdp, 'diya');
   const adminVisible = await pageContains(adminCdp, marker, 10000);
   add('New Diya appears in admin Diya panel', adminVisible ? 'pass' : 'fail', { marker });
-  const deleted = await clickRowAction(adminCdp, marker, 'delete|✕|remove');
+  const deleted = await clickRowAction(adminCdp, marker, 'delete|remove');
   add('Admin deleted test Diya through admin UI', deleted.ok ? 'pass' : 'fail', deleted);
 }
 
@@ -394,6 +394,46 @@ async function submitSubscriber(publicCdp, adminCdp, marker) {
   add('New subscriber appears in admin Subscribers panel', adminVisible ? 'pass' : 'fail', { marker });
   const deleted = await clickRowAction(adminCdp, marker, 'delete|remove');
   add('Admin deleted test subscriber through admin UI', deleted.ok ? 'pass' : 'fail', deleted);
+}
+
+async function adminContentToPulseFlow(adminCdp, publicCdp, type, marker) {
+  if (type === 'institute') {
+    await openAdminPanel(adminCdp, 'pulse-institutes');
+    await fillFields(adminCdp, {
+      '#inst-edit-id': '',
+      '#inst-name': marker,
+      '#inst-icon': '🏥',
+      '#inst-body': 'Temporary institution recognition created through admin UI.',
+      '#inst-source': 'Codex UI Test',
+    });
+    const saved = await clickButtonContaining(adminCdp, 'Save Recognition');
+    add('Admin saved Institute Recognition through admin UI', saved ? 'pass' : 'fail', { marker });
+    await navigate(publicCdp, '/reviews.html');
+    const visible = await pageContains(publicCdp, marker, 12000);
+    add('Institute Recognition is visible on public Pulse page', visible ? 'pass' : 'fail', { marker });
+    await openAdminPanel(adminCdp, 'pulse-institutes');
+    const deleted = await clickRowAction(adminCdp, marker, 'delete|remove');
+    add('Admin deleted test Institute Recognition through admin UI', deleted.ok ? 'pass' : 'fail', deleted);
+    return;
+  }
+
+  await openAdminPanel(adminCdp, 'pulse-media');
+  await fillFields(adminCdp, {
+    '#media-edit-id': '',
+    '#media-title': marker,
+    '#media-pub': 'Codex Test Publication',
+    '#media-date': '2026-05-07',
+    '#media-url': '',
+    '#media-excerpt': 'Temporary media mention created through admin UI.',
+  });
+  const saved = await clickButtonContaining(adminCdp, 'Save Media Mention');
+  add('Admin saved Media Mention through admin UI', saved ? 'pass' : 'fail', { marker });
+  await navigate(publicCdp, '/reviews.html');
+  const visible = await pageContains(publicCdp, marker, 12000);
+  add('Media Mention is visible on public Pulse page', visible ? 'pass' : 'fail', { marker });
+  await openAdminPanel(adminCdp, 'pulse-media');
+  const deleted = await clickRowAction(adminCdp, marker, 'delete|remove');
+  add('Admin deleted test Media Mention through admin UI', deleted.ok ? 'pass' : 'fail', deleted);
 }
 
 async function main() {
@@ -423,6 +463,8 @@ async function main() {
 
   await submitDiya(publicCdp, adminCdp, `Codex UI Diya ${stamp}`);
   await submitSubscriber(publicCdp, adminCdp, `codex-ui-${stamp}@example.com`);
+  await adminContentToPulseFlow(adminCdp, publicCdp, 'institute', `Codex UI Institute ${stamp}`);
+  await adminContentToPulseFlow(adminCdp, publicCdp, 'media', `Codex UI Media ${stamp}`);
 
   if (pageErrors.length) add('Browser runtime errors during UI-only flow', 'fail', { pageErrors });
   else add('Browser runtime errors during UI-only flow', 'pass');

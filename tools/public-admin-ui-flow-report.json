@@ -1,18 +1,19 @@
 {
   "baseUrl": "https://foxwisdom.com",
   "cdpUrl": "http://127.0.0.1:9223",
-  "generatedAt": "2026-05-07T09:52:04.259Z",
+  "generatedAt": "2026-05-07T10:06:31.150Z",
   "note": "UI-only run: no direct foxwisdom API calls were made by this script. All writes were triggered through website/admin browser UI.",
-  "total": 34,
-  "pass": 34,
+  "total": 37,
+  "pass": 32,
   "warn": 0,
-  "fail": 0,
+  "fail": 5,
   "results": [
     {
       "name": "Admin login through visible login form",
       "status": "pass",
       "detail": {
-        "ok": true
+        "ok": true,
+        "alreadyLoggedIn": true
       }
     },
     {
@@ -24,7 +25,7 @@
       "name": "Submitted review appears pending in admin panel",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Review Approval 1778147312202"
+        "marker": "Codex UI Review Approval 1778148131366"
       }
     },
     {
@@ -32,14 +33,14 @@
       "status": "pass",
       "detail": {
         "ok": true,
-        "rowText": "\tAnonymous\nothers\tCodex UI Review Approval 1778147312202\t2026-05-07\tPENDING\t✓ Approve ✕ Reject Delete"
+        "rowText": "\tAnonymous\nothers\tCodex UI Review Approval 1778148131366\t2026-05-07\tPENDING\t✓ Approve ✕ Reject Delete"
       }
     },
     {
       "name": "Approved review is visible on public Reviews page",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Review Approval 1778147312202"
+        "marker": "Codex UI Review Approval 1778148131366"
       }
     },
     {
@@ -47,7 +48,7 @@
       "status": "pass",
       "detail": {
         "ok": true,
-        "rowText": "\tAnonymous\nothers\tCodex UI Review Approval 1778147312202\t2026-05-07\tAPPROVED\tDelete"
+        "rowText": "\tAnonymous\nothers\tCodex UI Review Approval 1778148131366\t2026-05-07\tAPPROVED\tDelete"
       }
     },
     {
@@ -61,7 +62,7 @@
       "name": "Submitted Photo Wall item appears pending in admin panel",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Pulse Photo Approval 1778147312202"
+        "marker": "Codex UI Pulse Photo Approval 1778148131366"
       }
     },
     {
@@ -69,14 +70,14 @@
       "status": "pass",
       "detail": {
         "ok": true,
-        "rowText": "Codex UI Pulse Photo Approval 1778147312202\nTeam · pending\nApprove\nReject\nDelete"
+        "rowText": "Codex UI Pulse Photo Approval 1778148131366\nTeam · pending\nApprove\nReject\nDelete"
       }
     },
     {
       "name": "Approved Photo Wall item is visible on public Reviews page",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Pulse Photo Approval 1778147312202"
+        "marker": "Codex UI Pulse Photo Approval 1778148131366"
       }
     },
     {
@@ -84,21 +85,21 @@
       "status": "pass",
       "detail": {
         "ok": true,
-        "rowText": "Codex UI Pulse Photo Approval 1778147312202\nTeam · approved\nDelete"
+        "rowText": "Codex UI Pulse Photo Approval 1778148131366\nTeam · approved\nDelete"
       }
     },
     {
       "name": "Public Memories story submitted from website UI",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Memory Story 1778147312202"
+        "marker": "Codex UI Memory Story 1778148131366"
       }
     },
     {
       "name": "Submitted Memories story appears pending in admin panel",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Memory Story 1778147312202"
+        "marker": "Codex UI Memory Story 1778148131366"
       }
     },
     {
@@ -106,14 +107,14 @@
       "status": "pass",
       "detail": {
         "ok": true,
-        "rowText": "\tCodex UI Memory Story 1778147312202\tCodex Family\tOther\tPENDING\t7 May\t✓ ✗ ✎ ✕"
+        "rowText": "\tCodex UI Memory Story 1778148131366\tCodex Family\tOther\tPENDING\t7 May\t✓ ✗ ✎ ✕"
       }
     },
     {
       "name": "Approved Memories story is visible on public Memories page",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Memory Story 1778147312202"
+        "marker": "Codex UI Memory Story 1778148131366"
       }
     },
     {
@@ -122,21 +123,21 @@
       "detail": {
         "panelType": "healing_stories",
         "ok": true,
-        "rowText": "\tCodex UI Memory Story 1778147312202\tCodex Family\tOther\tAPPROVED\t7 May\t✎ ✕"
+        "rowText": "\tCodex UI Memory Story 1778148131366\tCodex Family\tOther\tAPPROVED\t7 May\t✎ ✕"
       }
     },
     {
       "name": "Public Memories note submitted from website UI",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Memory Note 1778147312202"
+        "marker": "Codex UI Memory Note 1778148131366"
       }
     },
     {
       "name": "Submitted Memories note appears pending in admin panel",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Memory Note 1778147312202"
+        "marker": "Codex UI Memory Note 1778148131366"
       }
     },
     {
@@ -144,14 +145,14 @@
       "status": "pass",
       "detail": {
         "ok": true,
-        "rowText": "Codex Family\tCodex UI Memory Note 1778147312202\tFamily\tPENDING\t7 May\t✓ ✗ Edit ✕"
+        "rowText": "Codex Family\tCodex UI Memory Note 1778148131366\tFamily\tPENDING\t7 May\t✓ ✗ Edit ✕"
       }
     },
     {
       "name": "Approved Memories note is visible on public Memories page",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Memory Note 1778147312202"
+        "marker": "Codex UI Memory Note 1778148131366"
       }
     },
     {
@@ -160,66 +161,42 @@
       "detail": {
         "panelType": "gratitude_notes",
         "ok": true,
-        "rowText": "Codex Family\tCodex UI Memory Note 1778147312202\tFamily\tAPPROVED\t7 May\tEdit ✕"
+        "rowText": "Codex Family\tCodex UI Memory Note 1778148131366\tFamily\tAPPROVED\t7 May\tEdit ✕"
       }
     },
     {
       "name": "Public Memories photo submitted from website UI",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Memory Photo 1778147312202"
+        "marker": "Codex UI Memory Photo 1778148131366"
       }
     },
     {
       "name": "Submitted Memories photo appears pending in admin panel",
-      "status": "pass",
+      "status": "fail",
       "detail": {
-        "marker": "Codex UI Memory Photo 1778147312202"
-      }
-    },
-    {
-      "name": "Admin approved Memories photo via approval button",
-      "status": "pass",
-      "detail": {
-        "ok": true,
-        "rowText": "No image\nCodex UI Memory Photo 1778147312202\nOther · Codex Family · PENDING\n✓ Approve\n✗ Reject\n✕ Delete"
-      }
-    },
-    {
-      "name": "Approved Memories photo is visible on public Memories page",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Memory Photo 1778147312202"
-      }
-    },
-    {
-      "name": "Admin deleted test Memories photo through admin UI",
-      "status": "pass",
-      "detail": {
-        "panelType": "memory_photos",
-        "ok": true,
-        "rowText": "No image\nCodex UI Memory Photo 1778147312202\nOther · Codex Family · APPROVED\n✕ Delete"
+        "marker": "Codex UI Memory Photo 1778148131366"
       }
     },
     {
       "name": "Public Diya form submitted from website UI",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Diya 1778147312202"
+        "marker": "Codex UI Diya 1778148131366"
       }
     },
     {
       "name": "New public Diya appears on Diya wall without approval",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Diya 1778147312202"
+        "marker": "Codex UI Diya 1778148131366"
       }
     },
     {
       "name": "New Diya appears in admin Diya panel",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Diya 1778147312202"
+        "marker": "Codex UI Diya 1778148131366"
       }
     },
     {
@@ -227,21 +204,21 @@
       "status": "pass",
       "detail": {
         "ok": true,
-        "rowText": "\tCodex UI Diya 1778147312202\tTemporary UI-only diya test.\tCodex UI Tester\t7 May 2026\tAPPROVED\t✕"
+        "rowText": "\tCodex UI Diya 1778148131366\tTemporary UI-only diya test.\tCodex UI Tester\t7 May 2026\tAPPROVED\t✕"
       }
     },
     {
       "name": "Newsletter subscription submitted from homepage UI",
       "status": "pass",
       "detail": {
-        "marker": "codex-ui-1778147312202@example.com"
+        "marker": "codex-ui-1778148131366@example.com"
       }
     },
     {
       "name": "New subscriber appears in admin Subscribers panel",
       "status": "pass",
       "detail": {
-        "marker": "codex-ui-1778147312202@example.com"
+        "marker": "codex-ui-1778148131366@example.com"
       }
     },
     {
@@ -249,7 +226,51 @@
       "status": "pass",
       "detail": {
         "ok": true,
-        "rowText": "codex-ui-1778147312202@example.com\t—\thomepage\t5/7/2026\tDelete"
+        "rowText": "codex-ui-1778148131366@example.com\t—\thomepage\t5/7/2026\tDelete"
+      }
+    },
+    {
+      "name": "Admin saved Institute Recognition through admin UI",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Institute 1778148131366"
+      }
+    },
+    {
+      "name": "Institute Recognition is visible on public Pulse page",
+      "status": "fail",
+      "detail": {
+        "marker": "Codex UI Institute 1778148131366"
+      }
+    },
+    {
+      "name": "Admin deleted test Institute Recognition through admin UI",
+      "status": "fail",
+      "detail": {
+        "ok": false,
+        "reason": "row-not-found"
+      }
+    },
+    {
+      "name": "Admin saved Media Mention through admin UI",
+      "status": "pass",
+      "detail": {
+        "marker": "Codex UI Media 1778148131366"
+      }
+    },
+    {
+      "name": "Media Mention is visible on public Pulse page",
+      "status": "fail",
+      "detail": {
+        "marker": "Codex UI Media 1778148131366"
+      }
+    },
+    {
+      "name": "Admin deleted test Media Mention through admin UI",
+      "status": "fail",
+      "detail": {
+        "ok": false,
+        "reason": "row-not-found"
       }
     },
     {
