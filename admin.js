@@ -1390,6 +1390,10 @@ async function addPhoto() {
     } catch (e) { toast('Failed to add photo: ' + e.message, 'error'); }
 }
 
+async function addPhotoWithUpload() {
+    return addPhoto();
+}
+
 async function updatePhotoStatus(index, status) {
     const token = getSessionToken();
     try {
