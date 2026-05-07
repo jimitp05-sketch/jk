@@ -1,0 +1,301 @@
+{
+  "baseUrl": "https://foxwisdom.com",
+  "cdpUrl": "http://127.0.0.1:9223",
+  "generatedAt": "2026-05-07T08:08:22.921Z",
+  "total": 43,
+  "pass": 38,
+  "warn": 0,
+  "fail": 5,
+  "results": [
+    {
+      "name": "Visible admin login using admin/admin",
+      "status": "pass",
+      "detail": {
+        "alreadyLoggedIn": true
+      }
+    },
+    {
+      "name": "Clicked admin option: 📊 Dashboard",
+      "status": "pass",
+      "detail": {
+        "panel": "dashboard"
+      }
+    },
+    {
+      "name": "Clicked admin option: 🗓️ Booking Calendar",
+      "status": "pass",
+      "detail": {
+        "panel": "calendar"
+      }
+    },
+    {
+      "name": "Clicked admin option: 📋 Pending Requests",
+      "status": "pass",
+      "detail": {
+        "panel": "requests"
+      }
+    },
+    {
+      "name": "Clicked admin option: ⚕️ Expertise Cards",
+      "status": "pass",
+      "detail": {
+        "panel": "expertise"
+      }
+    },
+    {
+      "name": "Clicked admin option: 📚 Knowledge Hub",
+      "status": "pass",
+      "detail": {
+        "panel": "knowledge"
+      }
+    },
+    {
+      "name": "Clicked admin option: ✏️ New Article",
+      "status": "pass",
+      "detail": {
+        "panel": "editor"
+      }
+    },
+    {
+      "name": "Clicked admin option: 🃏 Myth Buster Cards",
+      "status": "pass",
+      "detail": {
+        "panel": "myths"
+      }
+    },
+    {
+      "name": "Clicked admin option: 🧠 Quiz Questions",
+      "status": "pass",
+      "detail": {
+        "panel": "quizeditor"
+      }
+    },
+    {
+      "name": "Clicked admin option: 🔬 Research Papers",
+      "status": "pass",
+      "detail": {
+        "panel": "research"
+      }
+    },
+    {
+      "name": "Clicked admin option: ⭐ Review Approvals",
+      "status": "pass",
+      "detail": {
+        "panel": "reviews"
+      }
+    },
+    {
+      "name": "Clicked admin option: 🖼️ Photo Wall",
+      "status": "pass",
+      "detail": {
+        "panel": "photos"
+      }
+    },
+    {
+      "name": "Clicked admin option: 🏛️ Institute Recognitions",
+      "status": "pass",
+      "detail": {
+        "panel": "pulse-institutes"
+      }
+    },
+    {
+      "name": "Clicked admin option: 📰 Media Mentions",
+      "status": "pass",
+      "detail": {
+        "panel": "pulse-media"
+      }
+    },
+    {
+      "name": "Clicked admin option: 🪔 Diya Prayer Wall",
+      "status": "pass",
+      "detail": {
+        "panel": "diya"
+      }
+    },
+    {
+      "name": "Clicked admin option: 💝 Memories — ICU to Home",
+      "status": "pass",
+      "detail": {
+        "panel": "memories"
+      }
+    },
+    {
+      "name": "Clicked admin option: 📧 Subscribers",
+      "status": "pass",
+      "detail": {
+        "panel": "subscribers"
+      }
+    },
+    {
+      "name": "Clicked admin option: 🔗 Social Media",
+      "status": "pass",
+      "detail": {
+        "panel": "social"
+      }
+    },
+    {
+      "name": "Clicked admin option: ❓ FAQ Manager",
+      "status": "pass",
+      "detail": {
+        "panel": "faq"
+      }
+    },
+    {
+      "name": "Clicked admin option: 🏠 Hero & Content",
+      "status": "pass",
+      "detail": {
+        "panel": "hero"
+      }
+    },
+    {
+      "name": "Clicked admin option: 🖼️ Site Images",
+      "status": "pass",
+      "detail": {
+        "panel": "images"
+      }
+    },
+    {
+      "name": "Clicked admin option: ⚙️ Settings & Credentials",
+      "status": "pass",
+      "detail": {
+        "panel": "settings"
+      }
+    },
+    {
+      "name": "Clicked admin option: 📦 Export / Import",
+      "status": "pass",
+      "detail": {
+        "panel": "export"
+      }
+    },
+    {
+      "name": "Clicked admin option: 📋 Audit Trail",
+      "status": "pass",
+      "detail": {
+        "panel": "audit"
+      }
+    },
+    {
+      "name": "Clicked admin option: 📶 API Diagnostics",
+      "status": "pass",
+      "detail": {
+        "panel": "apihealth"
+      }
+    },
+    {
+      "name": "Admin panel opens: faq",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin UI save: faq_items",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Public website reflects admin UI update: faq_items",
+      "status": "pass",
+      "detail": {
+        "publicPage": "/",
+        "marker": "Codex Admin UI FAQ 1778141183643"
+      }
+    },
+    {
+      "name": "Restored original data: faq_items",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin panel opens: expertise",
+      "status": "fail",
+      "detail": {
+        "panel": "expertise"
+      }
+    },
+    {
+      "name": "Restored original data: expertise_items",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin panel opens: research",
+      "status": "fail",
+      "detail": {
+        "panel": "research"
+      }
+    },
+    {
+      "name": "Restored original data: research_papers",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin panel opens: myths",
+      "status": "fail",
+      "detail": {
+        "panel": "myths"
+      }
+    },
+    {
+      "name": "Restored original data: myth_busters",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin panel opens: photos",
+      "status": "fail",
+      "detail": {
+        "panel": "photos"
+      }
+    },
+    {
+      "name": "Restored original data: photo_wall",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin panel opens: calendar",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin UI save: blocked_dates",
+      "status": "fail",
+      "detail": {
+        "ok": false,
+        "fieldResults": [
+          {
+            "selector": "#block-date-input",
+            "ok": false
+          },
+          {
+            "selector": "#block-date-reason",
+            "ok": false
+          }
+        ],
+        "clicked": false,
+        "reason": "button-not-found"
+      }
+    },
+    {
+      "name": "Restored original data: blocked_dates",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Cleanup verification: FAQ marker removed from public site",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Browser runtime errors during admin UI test",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Browser failed requests during admin UI test",
+      "status": "pass",
+      "detail": {}
+    }
+  ]
+}
