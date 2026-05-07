@@ -182,6 +182,13 @@ async function clickButtonContaining(cdp, text) {
   return ok;
 }
 
+async function clickButtonContainingAny(cdp, texts) {
+  for (const text of texts) {
+    if (await clickButtonContaining(cdp, text)) return true;
+  }
+  return false;
+}
+
 async function setFileInput(cdp, selector, filePath) {
   const { root } = await cdp.send('DOM.getDocument');
   const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector });
@@ -334,7 +341,10 @@ async function submitMemory(publicCdp, type, marker) {
     await setFileInput(publicCdp, '#p-file', path.join(ROOT, 'img-team.png'));
   }
   const clicked = await clickBySelector(publicCdp, '#submit-btn');
-  add(`Public Memories ${type} submitted from website UI`, clicked ? 'pass' : 'fail', { marker });
+  await wait(2500);
+  const body = await pageText(publicCdp);
+  const blocked = /too many|rate|try again later|could not|something went wrong/i.test(body);
+  add(`Public Memories ${type} submitted from website UI`, clicked && !blocked ? 'pass' : 'fail', { marker, blocked });
   await wait(5500);
 }
 
@@ -411,8 +421,9 @@ async function adminContentToPulseFlow(adminCdp, publicCdp, type, marker) {
     await navigate(publicCdp, '/reviews.html');
     const visible = await pageContains(publicCdp, marker, 12000);
     add('Institute Recognition is visible on public Pulse page', visible ? 'pass' : 'fail', { marker });
-    await openAdminPanel(adminCdp, 'pulse-institutes');
-    const deleted = await clickRowAction(adminCdp, marker, 'delete|remove');
+  await openAdminPanel(adminCdp, 'pulse-institutes');
+  await clickButtonContaining(adminCdp, 'Refresh');
+  const deleted = await clickRowAction(adminCdp, marker, 'delete|remove');
     add('Admin deleted test Institute Recognition through admin UI', deleted.ok ? 'pass' : 'fail', deleted);
     return;
   }
@@ -432,6 +443,7 @@ async function adminContentToPulseFlow(adminCdp, publicCdp, type, marker) {
   const visible = await pageContains(publicCdp, marker, 12000);
   add('Media Mention is visible on public Pulse page', visible ? 'pass' : 'fail', { marker });
   await openAdminPanel(adminCdp, 'pulse-media');
+  await clickButtonContaining(adminCdp, 'Refresh');
   const deleted = await clickRowAction(adminCdp, marker, 'delete|remove');
   add('Admin deleted test Media Mention through admin UI', deleted.ok ? 'pass' : 'fail', deleted);
 }
