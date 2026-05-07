@@ -115,7 +115,7 @@ async function bulkApproveAll(contentKey) {
 }
 
 // HTML escape helper (defined early so it's available everywhere)
-function escH(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function escH(s) { return window.ContentContract ? ContentContract.esc(s) : (() => { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; })(); }
 
 async function doLogin() {
     const btn = document.getElementById('login-btn');
@@ -1684,7 +1684,8 @@ async function renderResearch() {
         const serverData = await res.json();
 
         // Fallback to defaults if server is empty
-        currentResearchList = (serverData && serverData.length) ? serverData : DEFAULT_RESEARCH_SEED;
+        currentResearchList = ((serverData && serverData.length) ? serverData : DEFAULT_RESEARCH_SEED)
+            .map(p => window.ContentContract ? ContentContract.normalizeResearchPaper(p) : p);
 
         document.getElementById('rp-count').textContent = currentResearchList.length + ' papers';
         document.getElementById('rp-table').innerHTML = currentResearchList.map(p => `<tr>
@@ -1693,7 +1694,7 @@ async function renderResearch() {
                   <td>${escH(String(p.year))}</td>
                   <td><span class="status-badge badge-published" style="font-size:0.66rem;">${escH(p.topic)}</span></td>
                   <td><div class="action-btns">
-                    ${p.doi ? `<a href="${escH(p.doi)}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View â†—</a>` : ''}
+                    ${(p.doi || p.url) ? `<a href="${escH(p.doi || p.url)}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View →</a>` : ''}
                     <button class="action-btn action-btn-edit res-edit-btn" data-id="${p.id}">Edit</button>
                     <button class="action-btn action-btn-delete res-del-btn" data-id="${p.id}">Delete</button>
                   </div></td>
@@ -1724,7 +1725,7 @@ function editResearch(id) {
     document.getElementById('rp-topic').value = p.topic;
     document.getElementById('rp-doi').value = p.doi || '';
     document.getElementById('rp-takeaway').value = p.takeaway || '';
-    document.getElementById('rp-practice').value = p.practice || '';
+    document.getElementById('rp-practice').value = p.practice || p.position || '';
     document.getElementById('panel-research').scrollTop = 0;
 }
 
@@ -2580,7 +2581,8 @@ renderResearch = async function () {
         const res = await fetch('./api/content.php?type=research_papers');
         const json = await res.json();
         const serverData = json.data ?? json;
-        currentResearchList = (serverData && serverData.length) ? serverData : DEFAULT_RESEARCH_SEED;
+        currentResearchList = ((serverData && serverData.length) ? serverData : DEFAULT_RESEARCH_SEED)
+            .map(p => window.ContentContract ? ContentContract.normalizeResearchPaper(p) : p);
         document.getElementById('rp-count').textContent = currentResearchList.length + ' papers';
         document.getElementById('rp-table').innerHTML = currentResearchList.map(p => `<tr>
                   <td style="font-weight:700;font-size:0.84rem;">${escH(p.title)}</td>
@@ -2588,7 +2590,7 @@ renderResearch = async function () {
                   <td>${escH(String(p.year))}</td>
                   <td><span class="status-badge badge-published" style="font-size:0.66rem;">${escH(p.topic)}</span></td>
                   <td><div class="action-btns">
-                    ${p.doi ? `<a href="${escH(p.doi)}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View â†—</a>` : ''}
+                    ${(p.doi || p.url) ? `<a href="${escH(p.doi || p.url)}" target="_blank" class="action-btn action-btn-edit" style="text-decoration:none;">View →</a>` : ''}
                     <button class="action-btn action-btn-edit res-edit-btn" data-id="${p.id}">Edit</button>
                     <button class="action-btn action-btn-delete res-del-btn" data-id="${p.id}">Delete</button>
                   </div></td>
@@ -3203,7 +3205,8 @@ function renderMemoryPhotosGrid() {
 
     grid.innerHTML = memPhotosCache.map(p => {
         const statusClass = p.status === 'approved' ? 'badge-approved' : p.status === 'pending' ? 'badge-pending' : 'badge-rejected';
-        const imgSrc = (p.photo_data && /^(data:image|https?:\/\/|uploads\/|\/uploads\/)/i.test(p.photo_data)) ? p.photo_data : '';
+        p = window.ContentContract ? ContentContract.normalizeMemoryPhoto(p) : p;
+        const imgSrc = (p.preview_src && /^(data:image|https?:\/\/|uploads\/|\/uploads\/)/i.test(p.preview_src)) ? p.preview_src : '';
         const hasImage = !!imgSrc;
         return `<div class="mem-photo-card" style="background:var(--ad-surface);border:1px solid var(--ad-border);border-radius:12px;overflow:hidden;margin-bottom:16px;">
             ${hasImage ? `<img src="${escH(imgSrc)}" style="width:100%;height:160px;object-fit:cover;" alt="${escH(p.caption || 'Memory photo')}">` : `<div style="width:100%;height:160px;background:var(--ad-surface-hover);display:flex;align-items:center;justify-content:center;color:var(--ad-text-muted);">No preview available</div>`}

@@ -608,7 +608,7 @@
                 if (!response.ok) return;
                 const data = await response.json();
                 const raw = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
-                const approved = raw.filter(p => !p.status || p.status === 'approved');
+                const approved = raw.map(p => ContentContract.normalizePhotoWallItem(p)).filter(p => !p.status || p.status === 'approved');
                 if (approved.length > 0) photos = approved;
             } catch (e) {
                 // Keep built-in photos when the API is unavailable.
@@ -620,7 +620,7 @@
                 const response = await fetch('./api/content.php?type=institute_recognitions');
                 if (!response.ok) return;
                 const data = await response.json();
-                const items = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
+                const items = (Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : [])).map(item => ContentContract.normalizeInstituteRecognition(item));
                 renderInstituteRecognitions(items);
             } catch (e) {
                 // Keep the section empty if CMS content is unavailable.
@@ -650,7 +650,7 @@
                 const response = await fetch('./api/content.php?type=media_mentions');
                 if (!response.ok) return;
                 const data = await response.json();
-                const items = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
+                const items = (Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : [])).map(item => ContentContract.normalizeMediaMention(item));
                 renderMediaMentions(items);
             } catch (e) {
                 // Keep media section hidden if CMS content is unavailable.

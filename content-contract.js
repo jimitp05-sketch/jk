@@ -43,7 +43,7 @@
         return {
             id: item.id || Date.now(),
             name: text(item.name || item.institution),
-            icon: text(item.icon || '🏥'),
+            icon: text(item.icon),
             body: text(item.body || item.text || item.description),
             source: text(item.source || item.department),
         };
