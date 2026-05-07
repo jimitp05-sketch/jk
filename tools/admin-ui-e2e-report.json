@@ -1,7 +1,7 @@
 {
   "baseUrl": "https://foxwisdom.com",
   "cdpUrl": "http://127.0.0.1:9223",
-  "generatedAt": "2026-05-07T08:26:31.400Z",
+  "generatedAt": "2026-05-07T08:32:11.674Z",
   "total": 52,
   "pass": 49,
   "warn": 0,
@@ -11,7 +11,7 @@
       "name": "Visible admin login using admin/admin",
       "status": "pass",
       "detail": {
-        "alreadyLoggedIn": true
+        "alreadyLoggedIn": false
       }
     },
     {
@@ -197,7 +197,7 @@
       "status": "pass",
       "detail": {
         "publicPage": "/",
-        "marker": "Codex Admin UI FAQ 1778142131628"
+        "marker": "Codex Admin UI FAQ 1778142528959"
       }
     },
     {
@@ -220,7 +220,7 @@
       "status": "pass",
       "detail": {
         "publicPage": "/",
-        "marker": "Codex Admin UI Expertise 1778142131628"
+        "marker": "Codex Admin UI Expertise 1778142528959"
       }
     },
     {
@@ -240,10 +240,10 @@
     },
     {
       "name": "Public website reflects admin UI update: research_papers",
-      "status": "pass",
+      "status": "fail",
       "detail": {
         "publicPage": "/research.html",
-        "marker": "Codex Admin UI Research 1778142131628"
+        "marker": "Codex Admin UI Research 1778142528959"
       }
     },
     {
@@ -266,7 +266,7 @@
       "status": "pass",
       "detail": {
         "publicPage": "/quiz.html",
-        "marker": "Codex Admin UI Myth 1778142131628"
+        "marker": "Codex Admin UI Myth 1778142528959"
       }
     },
     {
@@ -289,7 +289,7 @@
       "status": "fail",
       "detail": {
         "publicPage": "/reviews.html",
-        "marker": "Codex Admin UI Photo 1778142131628"
+        "marker": "Codex Admin UI Photo 1778142528959"
       }
     },
     {
@@ -309,7 +309,7 @@
     },
     {
       "name": "Public booking calendar reflects blocked date",
-      "status": "fail",
+      "status": "pass",
       "detail": {
         "dateKey": "2026-12-30"
       }
