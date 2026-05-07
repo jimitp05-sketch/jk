@@ -233,14 +233,15 @@ async function bookingDateIsBlocked(cdp, dateKey) {
   const [year, month, day] = dateKey.split('-').map(Number);
   await cdp.send('Page.navigate', { url: `${BASE_URL}/booking.html?codex=${Date.now()}` });
   await wait(3000);
-  return await evalJs(cdp, `(() => {
+  return await evalJs(cdp, `(async () => {
     if (typeof currentDate !== 'undefined' && typeof renderCalendar === 'function') {
       currentDate = new Date(${year}, ${month - 1}, 1);
-      renderCalendar();
+      await renderCalendar();
     }
+    await new Promise(resolve => setTimeout(resolve, 500));
     const el = document.querySelector('[data-date="${dateKey}"]');
     return !!el && (el.classList.contains('past') || el.classList.contains('blocked')) && !el.hasAttribute('onclick');
-  })()`);
+  })()`, true);
 }
 
 async function testContentForm({ adminCdp, publicCdp, publicPage, token, panel, type, marker, fields, click }) {
