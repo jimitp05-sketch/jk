@@ -125,38 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $input = json_decode(file_get_contents('php://input'), true) ?? [];
 
-    if (($input['action'] ?? '') === 'submit_review') {
-        if (!checkRateLimit($clientIP, 5, 3600, 'public_review')) {
-            respond(['success' => false, 'data' => null, 'error' => 'Too many submissions. Please try again later.'], 429);
-        }
 
-        $body = clean($input['body'] ?? $input['text'] ?? '', 1200);
-        if ($body === '') {
-            respond(['success' => false, 'data' => null, 'error' => 'Recognition text is required.'], 400);
-        }
-
-        $platform = strtolower(clean($input['platform'] ?? 'others', 30));
-        $allowedPlatforms = ['linkedin', 'facebook', 'instagram', 'twitter', 'google', 'others'];
-        if (!in_array($platform, $allowedPlatforms, true)) $platform = 'others';
-
-        $item = [
-            'id' => 'review_' . bin2hex(random_bytes(8)),
-            'author' => clean($input['author'] ?? $input['name'] ?? 'Anonymous', 100) ?: 'Anonymous',
-            'role' => clean($input['role'] ?? '', 120),
-            'platform' => $platform,
-            'text' => $body,
-            'status' => 'pending',
-            'source' => 'public_submission',
-            'date' => date('Y-m-d'),
-            'created_at' => date('c'),
-            'ip_hash' => hash('sha256', $clientIP . date('Y-m')),
-        ];
-
-        if (appendContentItem('peer_recognitions', $item)) {
-            respond(['success' => true, 'data' => ['id' => $item['id'], 'status' => 'pending'], 'error' => null]);
-        }
-        respond(['success' => false, 'data' => null, 'error' => 'Could not save submission.'], 500);
-    }
 
     if (($input['action'] ?? '') === 'submit_photo') {
         if (!checkRateLimit($clientIP, 5, 3600, 'public_photo')) {
