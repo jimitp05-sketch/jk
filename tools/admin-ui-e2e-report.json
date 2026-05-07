@@ -1,17 +1,17 @@
 {
   "baseUrl": "https://foxwisdom.com",
   "cdpUrl": "http://127.0.0.1:9223",
-  "generatedAt": "2026-05-07T08:32:11.674Z",
-  "total": 52,
-  "pass": 49,
+  "generatedAt": "2026-05-07T09:43:26.325Z",
+  "total": 56,
+  "pass": 52,
   "warn": 0,
-  "fail": 3,
+  "fail": 4,
   "results": [
     {
       "name": "Visible admin login using admin/admin",
       "status": "pass",
       "detail": {
-        "alreadyLoggedIn": false
+        "alreadyLoggedIn": true
       }
     },
     {
@@ -193,11 +193,19 @@
       "detail": {}
     },
     {
+      "name": "Admin UI update persisted in API: faq_items",
+      "status": "pass",
+      "detail": {
+        "count": 4,
+        "marker": "Codex Admin UI FAQ 1778146815745"
+      }
+    },
+    {
       "name": "Public website reflects admin UI update: faq_items",
       "status": "pass",
       "detail": {
         "publicPage": "/",
-        "marker": "Codex Admin UI FAQ 1778142528959"
+        "marker": "Codex Admin UI FAQ 1778146815745"
       }
     },
     {
@@ -216,11 +224,18 @@
       "detail": {}
     },
     {
-      "name": "Public website reflects admin UI update: expertise_items",
+      "name": "Admin UI update persisted in API: expertise_items",
       "status": "pass",
       "detail": {
-        "publicPage": "/",
-        "marker": "Codex Admin UI Expertise 1778142528959"
+        "count": 1,
+        "marker": "Codex Admin UI Expertise 1778146815745"
+      }
+    },
+    {
+      "name": "Admin UI flow: expertise_items",
+      "status": "fail",
+      "detail": {
+        "error": "TypeError: Cannot read properties of null (reading 'scrollHeight')\n    at <anonymous>:1:45"
       }
     },
     {
@@ -239,11 +254,18 @@
       "detail": {}
     },
     {
-      "name": "Public website reflects admin UI update: research_papers",
+      "name": "Admin UI update persisted in API: research_papers",
+      "status": "pass",
+      "detail": {
+        "count": 9,
+        "marker": "Codex Admin UI Research 1778146815745"
+      }
+    },
+    {
+      "name": "Admin UI flow: research_papers",
       "status": "fail",
       "detail": {
-        "publicPage": "/research.html",
-        "marker": "Codex Admin UI Research 1778142528959"
+        "error": "TypeError: Cannot read properties of null (reading 'innerText')\n    at <anonymous>:1:15"
       }
     },
     {
@@ -262,11 +284,19 @@
       "detail": {}
     },
     {
+      "name": "Admin UI update persisted in API: myth_busters",
+      "status": "pass",
+      "detail": {
+        "count": 9,
+        "marker": "Codex Admin UI Myth 1778146815745"
+      }
+    },
+    {
       "name": "Public website reflects admin UI update: myth_busters",
       "status": "pass",
       "detail": {
         "publicPage": "/quiz.html",
-        "marker": "Codex Admin UI Myth 1778142528959"
+        "marker": "Codex Admin UI Myth 1778146815745"
       }
     },
     {
@@ -285,11 +315,11 @@
       "detail": {}
     },
     {
-      "name": "Public website reflects admin UI update: photo_wall",
+      "name": "Admin UI update persisted in API: photo_wall",
       "status": "fail",
       "detail": {
-        "publicPage": "/reviews.html",
-        "marker": "Codex Admin UI Photo 1778142528959"
+        "count": 0,
+        "marker": "Codex Admin UI Photo 1778146815745"
       }
     },
     {
@@ -329,7 +359,13 @@
       "status": "fail",
       "detail": {
         "pageErrors": [
-          "Uncaught"
+          {
+            "text": "Uncaught",
+            "description": "ReferenceError: addPhotoWithUpload is not defined\n    at HTMLButtonElement.onclick (https://foxwisdom.com/admin.php?codex=1778146766109:536:72)\n    at <anonymous>:23:12\n    at new Promise (<anonymous>)\n    at <anonymous>:1:1",
+            "url": "https://foxwisdom.com/admin.php?codex=1778146766109",
+            "lineNumber": 535,
+            "columnNumber": 71
+          }
         ]
       }
     },
