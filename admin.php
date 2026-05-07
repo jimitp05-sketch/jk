@@ -180,6 +180,7 @@
     </div>
 
     <!-- SCRIPTS -->
+    <script src="content-contract.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

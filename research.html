@@ -288,12 +288,10 @@
                 </div>
             </div>
 
+            <script src="content-contract.js"></script>
             <script>
                 // ── XSS ESCAPING ──
-                function escapeHTML(str) {
-                    if (!str) return '';
-                    return str.toString().replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
-                }
+                function escapeHTML(str) { return window.ContentContract ? ContentContract.esc(str) : (str || '').toString().replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
 
                 let allResearchPapers = [];
                 let landmarkPapers = [];
@@ -320,7 +318,7 @@
                         const res = await fetch('./api/content.php?type=research_papers');
                         const json = await res.json();
                         const data = json.data ?? json;
-                        const cmsPapers = Array.isArray(data) ? data : [];
+                        const cmsPapers = (Array.isArray(data) ? data : []).map(p => ContentContract.normalizeResearchPaper(p));
 
                         // Merge: CMS papers first (to show updates), then Landmark papers
                         allResearchPapers = [...cmsPapers, ...landmarkPapers];
