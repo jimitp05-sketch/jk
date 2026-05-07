@@ -75,6 +75,10 @@ class CDP {
       }, 45000);
     });
   }
+
+  close() {
+    try { this.ws.close(); } catch {}
+  }
 }
 
 async function evalJs(cdp, expression, awaitPromise = false) {
@@ -239,23 +243,23 @@ async function bookingDateIsBlocked(cdp, dateKey) {
   })()`);
 }
 
-async function testContentForm({ cdp, publicPage, token, panel, type, marker, fields, click }) {
+async function testContentForm({ adminCdp, publicCdp, publicPage, token, panel, type, marker, fields, click }) {
   await snapshot(type, token);
   try {
-    const opened = await clickPanel(cdp, panel);
+    const opened = await clickPanel(adminCdp, panel);
     if (!opened) {
       add(`Admin panel opens: ${panel}`, 'fail', { panel });
       return;
     }
     add(`Admin panel opens: ${panel}`, 'pass');
-    const savedByUi = await fillAndClick(cdp, fields(marker), click);
+    const savedByUi = await fillAndClick(adminCdp, fields(marker), click);
     if (!savedByUi.clicked || !savedByUi.ok) {
       add(`Admin UI save: ${type}`, 'fail', savedByUi);
       return;
     }
     await wait(6500);
     add(`Admin UI save: ${type}`, 'pass');
-    const visible = await publicContains(cdp, publicPage, marker);
+    const visible = await publicContains(publicCdp, publicPage, marker);
     add(`Public website reflects admin UI update: ${type}`, visible ? 'pass' : 'fail', { publicPage, marker });
   } catch (e) {
     add(`Admin UI flow: ${type}`, 'fail', { error: e.message });
@@ -351,7 +355,8 @@ async function main() {
 
   const suffix = Date.now();
   await testContentForm({
-    cdp: adminCdp,
+    adminCdp,
+    publicCdp,
     publicPage: '/',
     token,
     panel: 'faq',
@@ -367,7 +372,8 @@ async function main() {
   await wait(7500);
 
   await testContentForm({
-    cdp: adminCdp,
+    adminCdp,
+    publicCdp,
     publicPage: '/',
     token,
     panel: 'expertise',
@@ -384,7 +390,8 @@ async function main() {
   await wait(7500);
 
   await testContentForm({
-    cdp: adminCdp,
+    adminCdp,
+    publicCdp,
     publicPage: '/research.html',
     token,
     panel: 'research',
@@ -405,7 +412,8 @@ async function main() {
   await wait(7500);
 
   await testContentForm({
-    cdp: adminCdp,
+    adminCdp,
+    publicCdp,
     publicPage: '/quiz.html',
     token,
     panel: 'myths',
@@ -422,7 +430,8 @@ async function main() {
   await wait(7500);
 
   await testContentForm({
-    cdp: adminCdp,
+    adminCdp,
+    publicCdp,
     publicPage: '/reviews.html',
     token,
     panel: 'photos',
@@ -460,6 +469,8 @@ async function main() {
     results,
   };
   await fs.writeFile(OUT_FILE, JSON.stringify(summary, null, 2), 'utf8');
+  publicCdp.close();
+  adminCdp.close();
   console.log('REPORT', OUT_FILE.pathname);
   if (summary.fail) process.exitCode = 1;
 }

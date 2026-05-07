@@ -1,11 +1,11 @@
 {
   "baseUrl": "https://foxwisdom.com",
   "cdpUrl": "http://127.0.0.1:9223",
-  "generatedAt": "2026-05-07T08:08:22.921Z",
-  "total": 43,
-  "pass": 38,
+  "generatedAt": "2026-05-07T08:26:31.400Z",
+  "total": 52,
+  "pass": 49,
   "warn": 0,
-  "fail": 5,
+  "fail": 3,
   "results": [
     {
       "name": "Visible admin login using admin/admin",
@@ -197,7 +197,7 @@
       "status": "pass",
       "detail": {
         "publicPage": "/",
-        "marker": "Codex Admin UI FAQ 1778141183643"
+        "marker": "Codex Admin UI FAQ 1778142131628"
       }
     },
     {
@@ -207,9 +207,20 @@
     },
     {
       "name": "Admin panel opens: expertise",
-      "status": "fail",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin UI save: expertise_items",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Public website reflects admin UI update: expertise_items",
+      "status": "pass",
       "detail": {
-        "panel": "expertise"
+        "publicPage": "/",
+        "marker": "Codex Admin UI Expertise 1778142131628"
       }
     },
     {
@@ -219,9 +230,20 @@
     },
     {
       "name": "Admin panel opens: research",
-      "status": "fail",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin UI save: research_papers",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Public website reflects admin UI update: research_papers",
+      "status": "pass",
       "detail": {
-        "panel": "research"
+        "publicPage": "/research.html",
+        "marker": "Codex Admin UI Research 1778142131628"
       }
     },
     {
@@ -231,9 +253,20 @@
     },
     {
       "name": "Admin panel opens: myths",
-      "status": "fail",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin UI save: myth_busters",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Public website reflects admin UI update: myth_busters",
+      "status": "pass",
       "detail": {
-        "panel": "myths"
+        "publicPage": "/quiz.html",
+        "marker": "Codex Admin UI Myth 1778142131628"
       }
     },
     {
@@ -243,9 +276,20 @@
     },
     {
       "name": "Admin panel opens: photos",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Admin UI save: photo_wall",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Public website reflects admin UI update: photo_wall",
       "status": "fail",
       "detail": {
-        "panel": "photos"
+        "publicPage": "/reviews.html",
+        "marker": "Codex Admin UI Photo 1778142131628"
       }
     },
     {
@@ -260,21 +304,14 @@
     },
     {
       "name": "Admin UI save: blocked_dates",
+      "status": "pass",
+      "detail": {}
+    },
+    {
+      "name": "Public booking calendar reflects blocked date",
       "status": "fail",
       "detail": {
-        "ok": false,
-        "fieldResults": [
-          {
-            "selector": "#block-date-input",
-            "ok": false
-          },
-          {
-            "selector": "#block-date-reason",
-            "ok": false
-          }
-        ],
-        "clicked": false,
-        "reason": "button-not-found"
+        "dateKey": "2026-12-30"
       }
     },
     {
@@ -289,8 +326,12 @@
     },
     {
       "name": "Browser runtime errors during admin UI test",
-      "status": "pass",
-      "detail": {}
+      "status": "fail",
+      "detail": {
+        "pageErrors": [
+          "Uncaught"
+        ]
+      }
     },
     {
       "name": "Browser failed requests during admin UI test",
