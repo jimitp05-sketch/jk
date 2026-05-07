@@ -26,9 +26,24 @@ $newHash = password_hash($newPassword, PASSWORD_DEFAULT);
 try {
     $pdo = get_db_connection();
 
-    $pdo->exec("DELETE FROM login_attempts");
-    $pdo->exec("DELETE FROM rate_limits");
-    $pdo->exec("DELETE FROM auth_sessions");
+    foreach (['login_attempts', 'rate_limits', 'auth_sessions'] as $table) {
+        try {
+            $pdo->exec("DELETE FROM `$table`");
+        } catch (Exception $e) {
+            error_log("Temp reset: could not clear $table: " . $e->getMessage());
+        }
+    }
+
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS content (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            content_type VARCHAR(50) NOT NULL,
+            content_key VARCHAR(100) NOT NULL,
+            data JSON NOT NULL,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY uk_type_key (content_type, content_key)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ");
 
     $stmt = $pdo->prepare("SELECT data FROM content WHERE content_key = 'site_settings' LIMIT 1");
     $stmt->execute();
