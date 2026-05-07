@@ -61,14 +61,46 @@ function writeContentToDB(string $type, array $data): bool {
     return $stmt->execute([$contentType, $type, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
 }
 
+function appendContentItem(string $type, array $item): bool {
+    $items = readContentFromDB($type);
+    if (!is_array($items)) $items = [];
+    $items[] = $item;
+    return writeContentToDB($type, $items);
+}
+
 // ── HANDLE: GET ─────────────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $type = $_GET['type'] ?? '';
+    $adminView = isAdmin();
     $content = readContentFromDB();
     if ($type && !in_array($type, $VALID_TYPES, true)) {
         respond(['success' => false, 'data' => null, 'error' => 'Invalid type'], 400);
     }
     $payload = $type ? ($content[$type] ?? []) : $content;
+
+    if (!$adminView) {
+        $publicModeratedTypes = ['peer_recognitions', 'photo_wall'];
+        if ($type && in_array($type, $publicModeratedTypes, true) && is_array($payload)) {
+            $payload = array_values(array_filter($payload, fn($item) => ($item['status'] ?? 'approved') === 'approved'));
+        }
+
+        $stripPrivate = function ($item) {
+            if (is_array($item)) unset($item['ip_hash']);
+            return $item;
+        };
+
+        if ($type && is_array($payload)) {
+            $payload = array_map($stripPrivate, $payload);
+        } elseif (!$type && is_array($payload)) {
+            foreach ($payload as $key => $items) {
+                if (in_array($key, $publicModeratedTypes, true) && is_array($items)) {
+                    $items = array_values(array_filter($items, fn($item) => ($item['status'] ?? 'approved') === 'approved'));
+                }
+                if (is_array($items)) $items = array_map($stripPrivate, $items);
+                $payload[$key] = $items;
+            }
+        }
+    }
 
     // Deduplicate knowledge_articles by id
     if ($type === 'knowledge_articles' && is_array($payload)) {
@@ -90,13 +122,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 // ── HANDLE: POST ─────────────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $clientIP = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    
+
     // Rate limit
     if (!checkRateLimit($clientIP, 10, 60, 'content')) {
         respond(['success' => false, 'data' => null, 'error' => 'Rate limit exceeded'], 429);
     }
 
     $input = json_decode(file_get_contents('php://input'), true) ?? [];
+
+    if (($input['action'] ?? '') === 'submit_review') {
+        if (!checkRateLimit($clientIP, 5, 3600, 'public_review')) {
+            respond(['success' => false, 'data' => null, 'error' => 'Too many submissions. Please try again later.'], 429);
+        }
+
+        $body = clean($input['body'] ?? $input['text'] ?? '', 1200);
+        if ($body === '') {
+            respond(['success' => false, 'data' => null, 'error' => 'Recognition text is required.'], 400);
+        }
+
+        $platform = strtolower(clean($input['platform'] ?? 'others', 30));
+        $allowedPlatforms = ['linkedin', 'facebook', 'instagram', 'twitter', 'google', 'others'];
+        if (!in_array($platform, $allowedPlatforms, true)) $platform = 'others';
+
+        $item = [
+            'id' => 'review_' . bin2hex(random_bytes(8)),
+            'author' => clean($input['author'] ?? $input['name'] ?? 'Anonymous', 100) ?: 'Anonymous',
+            'role' => clean($input['role'] ?? '', 120),
+            'platform' => $platform,
+            'text' => $body,
+            'status' => 'pending',
+            'source' => 'public_submission',
+            'date' => date('Y-m-d'),
+            'created_at' => date('c'),
+            'ip_hash' => hash('sha256', $clientIP . date('Y-m')),
+        ];
+
+        if (appendContentItem('peer_recognitions', $item)) {
+            respond(['success' => true, 'data' => ['id' => $item['id'], 'status' => 'pending'], 'error' => null]);
+        }
+        respond(['success' => false, 'data' => null, 'error' => 'Could not save submission.'], 500);
+    }
+
+    if (($input['action'] ?? '') === 'submit_photo') {
+        if (!checkRateLimit($clientIP, 5, 3600, 'public_photo')) {
+            respond(['success' => false, 'data' => null, 'error' => 'Too many submissions. Please try again later.'], 429);
+        }
+
+        $url = trim((string)($input['url'] ?? ''));
+        $parts = parse_url($url);
+        $allowedHosts = ['foxwisdom.com', 'www.foxwisdom.com', 'drjaykothari.in', 'www.drjaykothari.in'];
+        $path = $parts['path'] ?? '';
+        if (!$parts || !in_array(strtolower($parts['scheme'] ?? ''), ['https', 'http'], true)
+            || !in_array(strtolower($parts['host'] ?? ''), $allowedHosts, true)
+            || strpos($path, '/uploads/memories/') !== 0) {
+            respond(['success' => false, 'data' => null, 'error' => 'Invalid uploaded photo URL.'], 400);
+        }
+
+        $caption = clean($input['caption'] ?? '', 300);
+        if ($caption === '') {
+            respond(['success' => false, 'data' => null, 'error' => 'Caption is required.'], 400);
+        }
+
+        $item = [
+            'id' => 'photo_' . bin2hex(random_bytes(8)),
+            'url' => $url,
+            'caption' => $caption,
+            'label' => clean($input['label'] ?? 'General', 50) ?: 'General',
+            'name' => clean($input['name'] ?? '', 100),
+            'story' => clean($input['story'] ?? '', 1000),
+            'date' => clean($input['date'] ?? '', 30),
+            'status' => 'pending',
+            'source' => 'public_submission',
+            'added' => date('c'),
+            'ip_hash' => hash('sha256', $clientIP . date('Y-m')),
+        ];
+
+        if (appendContentItem('photo_wall', $item)) {
+            respond(['success' => true, 'data' => ['id' => $item['id'], 'status' => 'pending'], 'error' => null]);
+        }
+        respond(['success' => false, 'data' => null, 'error' => 'Could not save photo submission.'], 500);
+    }
+
     if (!isAdmin()) {
         respond(['success' => false, 'data' => null, 'error' => 'Unauthorized'], 401);
     }

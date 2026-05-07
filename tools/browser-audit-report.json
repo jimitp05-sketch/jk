@@ -1,0 +1,1721 @@
+{
+  "baseUrl": "https://foxwisdom.com",
+  "generatedAt": "2026-05-07T06:55:17.391Z",
+  "publicPages": [
+    {
+      "path": "/",
+      "title": "Dr. Jay Kothari | Critical Care Specialist | Apollo Hospitals, Ahmedabad",
+      "url": "https://foxwisdom.com/",
+      "height": 13056,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "h1": [
+        "YourFamilyDeservesgod"
+      ],
+      "visibleButtons": [
+        "Skip to main content",
+        "Dr. Jay Kothari",
+        "About",
+        "Expertise",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Book Consultation",
+        "Toggle dark mode",
+        "Book OPD → Mon–Sat, 2PM",
+        "View Expertise →",
+        "WhatsApp for Assessment",
+        "SEPSIS & INFECTION\nThe Silent Killer: Recognising Sepsis Before It's Too Late\n\nSepsis kills 11 million people every year. Learn the warning signs, the timeline of deterioration, and why the first hour is everything.\n\nRead Article →",
+        "ADVANCED LIFE SUPPORT\nECMO Explained: When Modern Medicine Buys Time That Nature Won't\n\nA plain-language guide to Extracorporeal Membrane Oxygenation — who needs it, how it works, and what families should ask.\n\nRead Article →",
+        "FAMILY GUIDE\nYour Loved One Is in the ICU: A Family's Complete Guide\n\nWritten for families — not doctors. What to expect, how to communicate with the ICU team, and how to advocate for your loved one.\n\nRead Article →",
+        "Explore Full Knowledge Hub →",
+        "Test Your ICU IQ →",
+        "TEST QUESTION?\n+",
+        "Is the ICU team available 24 hours?\n+",
+        "Is the ICU team available 24 hours?\n+",
+        "WhatsApp Dr. Kothari's Team",
+        "Call — 1860-500-1066",
+        "WhatsApp Now",
+        "Book OPD Visit",
+        "apollohospitals.com",
+        "1860-500-1066",
+        "Send me the guide →",
+        "About",
+        "Expertise",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Contact",
+        "LinkedIn"
+      ],
+      "forms": [
+        {
+          "id": "",
+          "inputs": [
+            "nl-email"
+          ]
+        }
+      ],
+      "imagesMissingAlt": [],
+      "brokenImages": [],
+      "scrollSamples": [
+        {
+          "y": 0,
+          "height": 13056
+        },
+        {
+          "y": 0,
+          "height": 13056
+        },
+        {
+          "y": 0,
+          "height": 13056
+        },
+        {
+          "y": 0,
+          "height": 13056
+        },
+        {
+          "y": 0,
+          "height": 13056
+        },
+        {
+          "y": 0,
+          "height": 13056
+        },
+        {
+          "y": 0,
+          "height": 13056
+        },
+        {
+          "y": 0,
+          "height": 13056
+        }
+      ],
+      "newPageErrors": [],
+      "newConsoleErrors": [],
+      "newFailedRequests": []
+    },
+    {
+      "path": "/booking.html",
+      "title": "Book a Consultation | Dr. Jay Kothari | Apollo Hospitals",
+      "url": "https://foxwisdom.com/booking.html",
+      "height": 1994,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "h1": [
+        "Book a Consultation"
+      ],
+      "visibleButtons": [
+        "Skip to main content",
+        "Dr. Jay Kothari",
+        "About",
+        "Expertise",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Book Consultation",
+        "Toggle dark mode",
+        "‹",
+        "›",
+        "Select a date & time first",
+        "1860-500-1066",
+        "apollohospitals.com",
+        "Home",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Reviews",
+        "Book",
+        "LinkedIn",
+        "Find Us on Maps",
+        "ICU Emergency",
+        "WhatsApp Chat",
+        "Book OPD",
+        "＋"
+      ],
+      "forms": [
+        {
+          "id": "booking-form",
+          "inputs": [
+            "patient-name",
+            "patient-phone",
+            "patient-email",
+            "visit-reason",
+            "notes"
+          ]
+        }
+      ],
+      "imagesMissingAlt": [],
+      "brokenImages": [],
+      "scrollSamples": [
+        {
+          "y": 0,
+          "height": 1994
+        },
+        {
+          "y": 43,
+          "height": 1994
+        },
+        {
+          "y": 108,
+          "height": 1994
+        },
+        {
+          "y": 0,
+          "height": 1994
+        },
+        {
+          "y": 43,
+          "height": 1994
+        },
+        {
+          "y": 108,
+          "height": 1994
+        }
+      ],
+      "newPageErrors": [],
+      "newConsoleErrors": [],
+      "newFailedRequests": []
+    },
+    {
+      "path": "/knowledge.html",
+      "title": "Critical Care Knowledge Hub | Dr. Jay Kothari",
+      "url": "https://foxwisdom.com/knowledge.html",
+      "height": 2278,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "h1": [
+        "Critical Care Medicine\nKnowledge Hub"
+      ],
+      "visibleButtons": [
+        "Skip to main content",
+        "Dr. Jay Kothari",
+        "About",
+        "Expertise",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Book Consultation",
+        "Toggle dark mode",
+        "🦠\nSepsis & Infection\n\nRecognising the signs of sepsis, understanding how it progresses, and why every hour matters in treatment.\n\nRead Pillar →",
+        "🫀\nECMO & Advanced Life Support\n\nWhat ECMO is, who qualifies, how it buys time for recovery, and what outcomes families can realistically expect.\n\nRead Pillar →",
+        "🧪\nOrgan Failure & CRRT\n\nAcute kidney injury in the ICU, the role of continuous dialysis, and how the body's organs fail together and how medicine responds.\n\nRead Pillar →",
+        "💨\nRespiratory & Ventilation\n\nWhat mechanical ventilation does, how it protects breathing, and the systematic process of safely weaning patients.\n\nRead Pillar →",
+        "🫁\nMulti-Organ Failure\n\nWhen multiple organ systems fail simultaneously — the cascade, the critical window, and the interventions that matter most.\n\nRead Pillar →",
+        "👨‍👩‍👧\nFamily Guide to the ICU\n\nEverything families need to know — what monitors show, how to talk to the team, what to ask, and how to support recovery from outside.\n\nRead Pillar →",
+        "🧠\nICU Delirium & Brain Health\n\nWhy ICU patients become confused or agitated, how delirium is clinically assessed, and long-term cognitive implications.\n\nRead Pillar →",
+        "🍽️\nCritical Care Nutrition\n\nWhy nutrition is a life-saving therapy — optimal timing, enteral vs parenteral routes, and evidence-based caloric targets.\n\nRead Pillar →",
+        "💊\nInfection Control & Antimicrobial Stewardship\n\nPreventing HAIs, understanding antibiotic resistance in Indian ICUs, and how stewardship protects patients and the health system.\n\nRead Pillar →",
+        "🌱\nPost-ICU Recovery & PICS\n\nLife after the ICU — Post-Intensive Care Syndrome, physical and psychological rehabilitation, and how to support long-term recovery.\n\nRead Pillar →",
+        "Home",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Reviews",
+        "Contact",
+        "LinkedIn",
+        "Find Us on Maps",
+        "ICU Emergency",
+        "WhatsApp Chat",
+        "Book OPD",
+        "＋"
+      ],
+      "forms": [],
+      "imagesMissingAlt": [],
+      "brokenImages": [],
+      "scrollSamples": [
+        {
+          "y": 0,
+          "height": 2278
+        },
+        {
+          "y": 68,
+          "height": 2278
+        },
+        {
+          "y": 68,
+          "height": 2278
+        },
+        {
+          "y": 68,
+          "height": 2278
+        },
+        {
+          "y": 68,
+          "height": 2278
+        },
+        {
+          "y": 68,
+          "height": 2278
+        },
+        {
+          "y": 68,
+          "height": 2278
+        }
+      ],
+      "newPageErrors": [],
+      "newConsoleErrors": [],
+      "newFailedRequests": []
+    },
+    {
+      "path": "/research.html",
+      "title": "Research Library | Dr. Jay Kothari | Apollo Hospitals, Ahmedabad",
+      "url": "https://foxwisdom.com/research.html",
+      "height": 3941,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "h1": [
+        "The Research Library"
+      ],
+      "visibleButtons": [
+        "Skip to main content",
+        "Dr. Jay Kothari",
+        "About",
+        "Expertise",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Book Consultation",
+        "Toggle dark mode",
+        "All Topics",
+        "ards",
+        "ecmo",
+        "sepsis",
+        "icu",
+        "Sepsis & Infection",
+        "crrt",
+        "📄 Landmark Papers 16",
+        "👨‍👩‍👧 Family Reading 3",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "View Paper →",
+        "Home",
+        "Knowledge Hub",
+        "Research"
+      ],
+      "forms": [],
+      "imagesMissingAlt": [],
+      "brokenImages": [],
+      "scrollSamples": [
+        {
+          "y": 0,
+          "height": 3941
+        },
+        {
+          "y": 0,
+          "height": 3941
+        },
+        {
+          "y": 0,
+          "height": 3941
+        },
+        {
+          "y": 0,
+          "height": 3941
+        },
+        {
+          "y": 0,
+          "height": 3941
+        },
+        {
+          "y": 0,
+          "height": 3941
+        },
+        {
+          "y": 0,
+          "height": 3941
+        },
+        {
+          "y": 0,
+          "height": 3941
+        }
+      ],
+      "newPageErrors": [],
+      "newConsoleErrors": [],
+      "newFailedRequests": []
+    },
+    {
+      "path": "/quiz.html",
+      "title": "ICU Intel — Test Your Critical Care IQ | Dr. Jay Kothari",
+      "url": "https://foxwisdom.com/quiz.html",
+      "height": 2143,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "h1": [
+        "ICU Intel"
+      ],
+      "visibleButtons": [
+        "Skip to main content",
+        "Dr. Jay Kothari",
+        "About",
+        "Expertise",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Book Consultation",
+        "Toggle dark mode",
+        "🔬 Bust Myths",
+        "🧠 Take the Quiz",
+        "📊 Explore Facts",
+        "🔬 Myth Busters",
+        "🧠 ICU IQ Quiz",
+        "📊 ICU Facts & Stats",
+        "Home",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Reviews",
+        "Contact",
+        "LinkedIn",
+        "Find Us on Maps",
+        "ICU Emergency",
+        "WhatsApp Chat",
+        "Book OPD",
+        "＋"
+      ],
+      "forms": [],
+      "imagesMissingAlt": [],
+      "brokenImages": [],
+      "scrollSamples": [
+        {
+          "y": 0,
+          "height": 2143
+        },
+        {
+          "y": 0,
+          "height": 2143
+        },
+        {
+          "y": 0,
+          "height": 2143
+        },
+        {
+          "y": 0,
+          "height": 2143
+        },
+        {
+          "y": 0,
+          "height": 2143
+        },
+        {
+          "y": 0,
+          "height": 2143
+        }
+      ],
+      "newPageErrors": [],
+      "newConsoleErrors": [],
+      "newFailedRequests": []
+    },
+    {
+      "path": "/reviews.html",
+      "title": "Reviews & Recognition | Dr. Jay Kothari",
+      "url": "https://foxwisdom.com/reviews.html",
+      "height": 5472,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "h1": [
+        "The Pulse"
+      ],
+      "visibleButtons": [
+        "Skip to main content",
+        "Dr. Jay Kothari",
+        "About",
+        "Expertise",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Book Consultation",
+        "Toggle dark mode",
+        "Read Reviews",
+        "📸 Photo Wall",
+        "⭐\nAll\n4",
+        "🔵\nLinkedIn\n0",
+        "📘\nFacebook\n0",
+        "📸\nInstagram\n0",
+        "𝕏\nX / Twitter\n0",
+        "💬\nOthers\n4",
+        "Newest First",
+        "Oldest First",
+        "All",
+        "2025",
+        "2024",
+        "2023",
+        "Submit Recognition",
+        "📤 Share Your Story →",
+        "🔵\nLinkedIn\nFollow Dr. Kothari →",
+        "📘\nFacebook\nFollow Dr. Kothari →",
+        "📸\nInstagram\nFollow Dr. Kothari →",
+        "𝕏\nX / Twitter\nFollow Dr. Kothari →",
+        "▶️\nYouTube\nFollow Dr. Kothari →",
+        "🌐\nGoogle\nFollow Dr. Kothari →",
+        "🔵\nLinkedIn\n\nLatest update from Apollo Hospitals ICU team",
+        "Home",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Reviews"
+      ],
+      "forms": [
+        {
+          "id": "photo-submit-form",
+          "inputs": [
+            "photo-file-input",
+            "ps-name",
+            "ps-caption",
+            "ps-story",
+            "ps-label",
+            "ps-date"
+          ]
+        }
+      ],
+      "imagesMissingAlt": [
+        "",
+        "https://foxwisdom.com/reviews.html"
+      ],
+      "brokenImages": [
+        "",
+        "https://foxwisdom.com/reviews.html"
+      ],
+      "scrollSamples": [
+        {
+          "y": 0,
+          "height": 5472
+        },
+        {
+          "y": 0,
+          "height": 5472
+        },
+        {
+          "y": 0,
+          "height": 5472
+        },
+        {
+          "y": 0,
+          "height": 5472
+        },
+        {
+          "y": 0,
+          "height": 5472
+        },
+        {
+          "y": 0,
+          "height": 5472
+        },
+        {
+          "y": 0,
+          "height": 5472
+        },
+        {
+          "y": 0,
+          "height": 5472
+        }
+      ],
+      "newPageErrors": [],
+      "newConsoleErrors": [],
+      "newFailedRequests": []
+    },
+    {
+      "path": "/memories.html",
+      "title": "ICU to Home — Memories | Dr. Jay Kothari",
+      "url": "https://foxwisdom.com/memories.html",
+      "height": 6813,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "h1": [
+        "ICU to Home"
+      ],
+      "visibleButtons": [
+        "Skip to main content",
+        "Dr. Jay Kothari",
+        "About",
+        "Expertise",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Book Consultation",
+        "🌞\nLight a Diya for someone you love →",
+        "SCROLL",
+        "Read more",
+        "Read more",
+        "Read more",
+        "Read more",
+        "Read more",
+        "Read more",
+        "Share Your Story →",
+        "❤ Leave a Note →",
+        "📷 Share a Photo →",
+        "🌞 Light a Diya →",
+        "Home",
+        "Knowledge",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Book Consultation",
+        "×",
+        "×"
+      ],
+      "forms": [],
+      "imagesMissingAlt": [
+        ""
+      ],
+      "brokenImages": [
+        "",
+        ""
+      ],
+      "scrollSamples": [
+        {
+          "y": 0,
+          "height": 6789
+        },
+        {
+          "y": 0,
+          "height": 6789
+        },
+        {
+          "y": 0,
+          "height": 6789
+        },
+        {
+          "y": 0,
+          "height": 6789
+        },
+        {
+          "y": 0,
+          "height": 6789
+        },
+        {
+          "y": 0,
+          "height": 6789
+        },
+        {
+          "y": 0,
+          "height": 6813
+        },
+        {
+          "y": 0,
+          "height": 6813
+        }
+      ],
+      "newPageErrors": [],
+      "newConsoleErrors": [],
+      "newFailedRequests": []
+    },
+    {
+      "path": "/diya.html",
+      "title": "Light a Diya — Dr. Jay Kothari · Critical Care Medicine",
+      "url": "https://foxwisdom.com/diya.html",
+      "height": 4145,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "h1": [
+        "Light a Diya"
+      ],
+      "visibleButtons": [
+        "Skip to main content",
+        "Dr. Jay Kothari",
+        "About",
+        "Expertise",
+        "Knowledge Hub",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Book Consultation",
+        "LIGHT YOURS\n⌄",
+        "Light a Diya 🪔",
+        "Diya Memories",
+        "Read Healing Stories →",
+        "← Back to Home",
+        "Home",
+        "Knowledge",
+        "Research",
+        "ICU Intel",
+        "Pulse",
+        "Memories",
+        "Light a Diya",
+        "Book Consultation"
+      ],
+      "forms": [
+        {
+          "id": "",
+          "inputs": [
+            "diya-name",
+            "diya-prayer",
+            "diya-litby"
+          ]
+        }
+      ],
+      "imagesMissingAlt": [],
+      "brokenImages": [],
+      "scrollSamples": [
+        {
+          "y": 0,
+          "height": 4145
+        },
+        {
+          "y": 0,
+          "height": 4145
+        },
+        {
+          "y": 0,
+          "height": 4145
+        },
+        {
+          "y": 0,
+          "height": 4145
+        },
+        {
+          "y": 0,
+          "height": 4145
+        },
+        {
+          "y": 0,
+          "height": 4145
+        },
+        {
+          "y": 0,
+          "height": 4145
+        },
+        {
+          "y": 0,
+          "height": 4145
+        }
+      ],
+      "newPageErrors": [],
+      "newConsoleErrors": [],
+      "newFailedRequests": []
+    }
+  ],
+  "admin": {
+    "loginInfo": {
+      "title": "Admin Panel — Dr. Jay Kothari",
+      "inputs": [
+        {
+          "id": "admin-user",
+          "name": "",
+          "type": "text",
+          "placeholder": "admin"
+        },
+        {
+          "id": "admin-pass",
+          "name": "",
+          "type": "password",
+          "placeholder": "••••••••"
+        },
+        {
+          "id": "forgot-email",
+          "name": "",
+          "type": "email",
+          "placeholder": "admin@example.com"
+        },
+        {
+          "id": "reset-new-pass",
+          "name": "",
+          "type": "password",
+          "placeholder": "Minimum 12 characters"
+        },
+        {
+          "id": "reset-confirm-pass",
+          "name": "",
+          "type": "password",
+          "placeholder": "Re-enter password"
+        },
+        {
+          "id": "block-date-input",
+          "name": "",
+          "type": "date",
+          "placeholder": ""
+        },
+        {
+          "id": "block-date-reason",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. Conference, Holiday"
+        },
+        {
+          "id": "editor-id",
+          "name": "",
+          "type": "hidden",
+          "placeholder": ""
+        },
+        {
+          "id": "editor-overrides-id",
+          "name": "",
+          "type": "hidden",
+          "placeholder": ""
+        },
+        {
+          "id": "editor-title",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. Understanding Sepsis: What Families Must Know"
+        },
+        {
+          "id": "editor-subtitle",
+          "name": "",
+          "type": "text",
+          "placeholder": "A short, plain-language description shown in the hub cards…"
+        },
+        {
+          "id": "stat1-num",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. 11M"
+        },
+        {
+          "id": "stat1-lbl",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. deaths annually worldwide"
+        },
+        {
+          "id": "stat2-num",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. 7%"
+        },
+        {
+          "id": "stat2-lbl",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. mortality increase per hour"
+        },
+        {
+          "id": "stat3-num",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. 1hr"
+        },
+        {
+          "id": "stat3-lbl",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. the critical window"
+        },
+        {
+          "id": "editor-author",
+          "name": "",
+          "type": "text",
+          "placeholder": ""
+        },
+        {
+          "id": "editor-publish-date",
+          "name": "",
+          "type": "datetime-local",
+          "placeholder": ""
+        },
+        {
+          "id": "editor-meta-title",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. ECMO Treatment Gujarat | Dr. Jay Kothari"
+        },
+        {
+          "id": "editor-meta-description",
+          "name": "",
+          "type": "text",
+          "placeholder": "150-160 characters describing this article..."
+        },
+        {
+          "id": "reviews-select-all",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": ""
+        },
+        {
+          "id": "photo-file",
+          "name": "",
+          "type": "file",
+          "placeholder": ""
+        },
+        {
+          "id": "photo-url",
+          "name": "",
+          "type": "text",
+          "placeholder": "https://… or img-team.png"
+        },
+        {
+          "id": "photo-caption",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. ICU Team, Apollo Ahmedabad"
+        },
+        {
+          "id": "upload-hero",
+          "name": "",
+          "type": "file",
+          "placeholder": ""
+        },
+        {
+          "id": "upload-ecmo",
+          "name": "",
+          "type": "file",
+          "placeholder": ""
+        },
+        {
+          "id": "upload-team",
+          "name": "",
+          "type": "file",
+          "placeholder": ""
+        },
+        {
+          "id": "upload-knowledge",
+          "name": "",
+          "type": "file",
+          "placeholder": ""
+        },
+        {
+          "id": "upload-icu",
+          "name": "",
+          "type": "file",
+          "placeholder": ""
+        },
+        {
+          "id": "st-wa-number",
+          "name": "",
+          "type": "text",
+          "placeholder": "919999999999"
+        },
+        {
+          "id": "st-icu-phone",
+          "name": "",
+          "type": "text",
+          "placeholder": "18605001066"
+        },
+        {
+          "id": "st-wa-message",
+          "name": "",
+          "type": "text",
+          "placeholder": "Hello, I would like to consult Dr. Jay Kothari"
+        },
+        {
+          "id": "st-site-name",
+          "name": "",
+          "type": "text",
+          "placeholder": "Dr. Jay Kothari"
+        },
+        {
+          "id": "st-ga4-id",
+          "name": "",
+          "type": "text",
+          "placeholder": "G-XXXXXXXXXX"
+        },
+        {
+          "id": "st-gtm-id",
+          "name": "",
+          "type": "text",
+          "placeholder": "GTM-XXXXXXX"
+        },
+        {
+          "id": "st-admin-email",
+          "name": "",
+          "type": "email",
+          "placeholder": "admin@example.com"
+        },
+        {
+          "id": "cred-new-user",
+          "name": "",
+          "type": "text",
+          "placeholder": "admin"
+        },
+        {
+          "id": "cred-current-pass",
+          "name": "",
+          "type": "password",
+          "placeholder": "Enter current password"
+        },
+        {
+          "id": "cred-new-pass",
+          "name": "",
+          "type": "password",
+          "placeholder": "New password"
+        },
+        {
+          "id": "cred-confirm-pass",
+          "name": "",
+          "type": "password",
+          "placeholder": "Re-enter new password"
+        },
+        {
+          "id": "myth-edit-id",
+          "name": "",
+          "type": "hidden",
+          "placeholder": ""
+        },
+        {
+          "id": "myth-source",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. SSC Guidelines 2021"
+        },
+        {
+          "id": "q-edit-id",
+          "name": "",
+          "type": "hidden",
+          "placeholder": ""
+        },
+        {
+          "id": "q-question",
+          "name": "",
+          "type": "text",
+          "placeholder": "What does ECMO stand for?"
+        },
+        {
+          "id": "q-a",
+          "name": "",
+          "type": "text",
+          "placeholder": "Option A"
+        },
+        {
+          "id": "q-b",
+          "name": "",
+          "type": "text",
+          "placeholder": "Option B"
+        },
+        {
+          "id": "q-c",
+          "name": "",
+          "type": "text",
+          "placeholder": "Option C (optional)"
+        },
+        {
+          "id": "q-d",
+          "name": "",
+          "type": "text",
+          "placeholder": "Option D (optional)"
+        },
+        {
+          "id": "rp-edit-id",
+          "name": "",
+          "type": "hidden",
+          "placeholder": ""
+        },
+        {
+          "id": "rp-title",
+          "name": "",
+          "type": "text",
+          "placeholder": "PROSEVA Trial: Prone Positioning in Severe ARDS"
+        },
+        {
+          "id": "rp-journal",
+          "name": "",
+          "type": "text",
+          "placeholder": "New England Journal of Medicine"
+        },
+        {
+          "id": "rp-year",
+          "name": "",
+          "type": "number",
+          "placeholder": "2013"
+        },
+        {
+          "id": "rp-doi",
+          "name": "",
+          "type": "text",
+          "placeholder": "https://doi.org/…"
+        },
+        {
+          "id": "hc-site-name",
+          "name": "",
+          "type": "text",
+          "placeholder": "Dr. Jay Kothari"
+        },
+        {
+          "id": "hc-hero-badge",
+          "name": "",
+          "type": "text",
+          "placeholder": "Gujarat's Leading Critical Care Specialist"
+        },
+        {
+          "id": "hc-hero-title",
+          "name": "",
+          "type": "text",
+          "placeholder": "When Seconds Define Survival."
+        },
+        {
+          "id": "hc-hero-empathy",
+          "name": "",
+          "type": "text",
+          "placeholder": "We know you're scared. You're in the right place."
+        },
+        {
+          "id": "hc-stat1-num",
+          "name": "",
+          "type": "text",
+          "placeholder": "500+"
+        },
+        {
+          "id": "hc-stat1-lbl",
+          "name": "",
+          "type": "text",
+          "placeholder": "Lives Saved"
+        },
+        {
+          "id": "hc-stat2-num",
+          "name": "",
+          "type": "text",
+          "placeholder": "15+"
+        },
+        {
+          "id": "hc-stat2-lbl",
+          "name": "",
+          "type": "text",
+          "placeholder": "Years Experience"
+        },
+        {
+          "id": "hc-stat3-num",
+          "name": "",
+          "type": "text",
+          "placeholder": "24/7"
+        },
+        {
+          "id": "hc-stat3-lbl",
+          "name": "",
+          "type": "text",
+          "placeholder": "ICU Coverage"
+        },
+        {
+          "id": "hc-stat4-num",
+          "name": "",
+          "type": "text",
+          "placeholder": "98%"
+        },
+        {
+          "id": "hc-stat4-lbl",
+          "name": "",
+          "type": "text",
+          "placeholder": "Patient Satisfaction"
+        },
+        {
+          "id": "hc-ticker",
+          "name": "",
+          "type": "text",
+          "placeholder": "🏆 Apollo Hospitals Ahmedabad ICU · Now accepting OPD consultations"
+        },
+        {
+          "id": "hc-ticker-on",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": ""
+        },
+        {
+          "id": "hc-wa-number",
+          "name": "",
+          "type": "text",
+          "placeholder": "919999999999"
+        },
+        {
+          "id": "hc-wa-msg",
+          "name": "",
+          "type": "text",
+          "placeholder": "Hello Dr. Jay Kothari, I would like a consultation"
+        },
+        {
+          "id": "hc-icu-phone",
+          "name": "",
+          "type": "text",
+          "placeholder": "18605001066"
+        },
+        {
+          "id": "hc-opd-link",
+          "name": "",
+          "type": "text",
+          "placeholder": "https://booking.apollohospitals.com/..."
+        },
+        {
+          "id": "announcement-text",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. Dr. Kothari is away May 10-12. Emergency: call 1860-500-1066"
+        },
+        {
+          "id": "announcement-url",
+          "name": "",
+          "type": "text",
+          "placeholder": "https://..."
+        },
+        {
+          "id": "faq-edit-id",
+          "name": "",
+          "type": "hidden",
+          "placeholder": ""
+        },
+        {
+          "id": "faq-question",
+          "name": "",
+          "type": "text",
+          "placeholder": "What does a Critical Care Specialist do?"
+        },
+        {
+          "id": "import-file",
+          "name": "",
+          "type": "file",
+          "placeholder": ""
+        },
+        {
+          "id": "admin-diya-name",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g., For Papa"
+        },
+        {
+          "id": "admin-diya-litby",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g., A loving daughter"
+        },
+        {
+          "id": "admin-diya-date-filter",
+          "name": "",
+          "type": "date",
+          "placeholder": ""
+        },
+        {
+          "id": "diya-select-all",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": ""
+        },
+        {
+          "id": "admin-quote-author",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g., Ancient Proverb"
+        },
+        {
+          "id": "mem-story-patient",
+          "name": "",
+          "type": "text",
+          "placeholder": "Patient name"
+        },
+        {
+          "id": "mem-story-family",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g., Mehta Family"
+        },
+        {
+          "id": "mem-story-duration",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g., 28 Days in ICU"
+        },
+        {
+          "id": "mem-story-title",
+          "name": "",
+          "type": "text",
+          "placeholder": "Story title"
+        },
+        {
+          "id": "mem-story-quote",
+          "name": "",
+          "type": "text",
+          "placeholder": "One powerful line from the story"
+        },
+        {
+          "id": "mem-story-edit-id",
+          "name": "",
+          "type": "hidden",
+          "placeholder": ""
+        },
+        {
+          "id": "memories-select-all",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": ""
+        },
+        {
+          "id": "mem-note-name",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g., Sharma Family"
+        },
+        {
+          "id": "mem-note-relationship",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g., Son, Daughter"
+        },
+        {
+          "id": "mem-photo-by",
+          "name": "",
+          "type": "text",
+          "placeholder": "Name"
+        },
+        {
+          "id": "mem-photo-caption",
+          "name": "",
+          "type": "text",
+          "placeholder": "Photo caption"
+        },
+        {
+          "id": "mem-photo-file",
+          "name": "",
+          "type": "file",
+          "placeholder": ""
+        },
+        {
+          "id": "nl-subject",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. Monthly ICU Insights from Dr. Jay Kothari"
+        },
+        {
+          "id": "nl-preview",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. This month: ECMO updates and new ICU protocols"
+        },
+        {
+          "id": "sub-search",
+          "name": "",
+          "type": "text",
+          "placeholder": "Search email…"
+        },
+        {
+          "id": "social-linkedin",
+          "name": "",
+          "type": "url",
+          "placeholder": "https://www.linkedin.com/in/dr-jay-kothari"
+        },
+        {
+          "id": "social-facebook",
+          "name": "",
+          "type": "url",
+          "placeholder": "https://www.facebook.com/drjaykothari"
+        },
+        {
+          "id": "social-instagram",
+          "name": "",
+          "type": "url",
+          "placeholder": "https://www.instagram.com/drjaykothari"
+        },
+        {
+          "id": "social-twitter",
+          "name": "",
+          "type": "url",
+          "placeholder": "https://x.com/drjaykothari"
+        },
+        {
+          "id": "social-youtube",
+          "name": "",
+          "type": "url",
+          "placeholder": "https://www.youtube.com/@drjaykothari"
+        },
+        {
+          "id": "social-google",
+          "name": "",
+          "type": "url",
+          "placeholder": "https://g.page/..."
+        },
+        {
+          "id": "",
+          "name": "",
+          "type": "url",
+          "placeholder": "https://www.linkedin.com/posts/..."
+        },
+        {
+          "id": "",
+          "name": "",
+          "type": "text",
+          "placeholder": "Brief description..."
+        },
+        {
+          "id": "social-fb-feed-url",
+          "name": "",
+          "type": "url",
+          "placeholder": "https://www.facebook.com/drjaykothari"
+        },
+        {
+          "id": "social-fb-feed-on",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": ""
+        },
+        {
+          "id": "inst-edit-id",
+          "name": "",
+          "type": "hidden",
+          "placeholder": ""
+        },
+        {
+          "id": "inst-name",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. Apollo Hospitals, Ahmedabad"
+        },
+        {
+          "id": "inst-icon",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. 🏥"
+        },
+        {
+          "id": "inst-source",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. Department of Critical Care Medicine, Apollo Hospitals"
+        },
+        {
+          "id": "media-edit-id",
+          "name": "",
+          "type": "hidden",
+          "placeholder": ""
+        },
+        {
+          "id": "media-title",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. Apollo Hospitals pioneers ECMO treatment in Gujarat"
+        },
+        {
+          "id": "media-pub",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. Times of India, Gujarat Samachar"
+        },
+        {
+          "id": "media-date",
+          "name": "",
+          "type": "date",
+          "placeholder": ""
+        },
+        {
+          "id": "media-url",
+          "name": "",
+          "type": "url",
+          "placeholder": "https://..."
+        },
+        {
+          "id": "exp-edit-id",
+          "name": "",
+          "type": "hidden",
+          "placeholder": ""
+        },
+        {
+          "id": "exp-title",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. ECMO — Extracorporeal Membrane Oxygenation"
+        },
+        {
+          "id": "exp-plain",
+          "name": "",
+          "type": "text",
+          "placeholder": "e.g. A machine that takes over for your heart and lungs"
+        }
+      ],
+      "text": "Dr. Jay Kothari\nAdmin Panel · Restricted Access\nUSERNAME\nPASSWORD\nSign In →\nForgot password?"
+    },
+    "loginResult": {
+      "text": "[OK] Welcome back, Dr. Kothari!\nDr. Jay Kothari Admin Panel\nAPI Live\nView Site ↗\nSign Out\nOVERVIEW\n📊\nDashboard\nCONSULTATIONS\n🗓️\nBooking Calendar\n📋\nPending Requests\nCONTENT\n⚕️\nExpertise Cards\n📚\nKnowledge Hub\n✏️\nNew Article\n🃏\nMyth Buster Cards\n🧠\nQuiz Questions\n🔬\nResearch Papers\nPULSE PAGE\n⭐\nReview Approvals\n🖼️\nPhoto Wall\n🏛️\nInstitute Recognitions\n📰\nMedia Mentions\nMEMORIES\n🪔\nDiya Prayer Wall\n💝\nMemories — ICU to Home\nGROWTH\n📧\nSubscribers\n🔗\nSocial Media\nSITE CONTROLS\n❓\nFAQ Manager\n🏠\nHero & Content\n🖼️\nSite Images\n⚙️\nSettings & Credentials\n📦\nExport / Import\n📋\nAudit Trail\n📶\nAPI Diagnostics\nDashboard\n\nLive overview of consultations, content, and community.\n\n0\nTotal Bookings\n0\nPending Requests\n20\nPublished Articles\n0\nPending Approvals\n0\nSubscribers\nQuick Actions\n✅ Approve All Reviews\n📧 View Subscribers\n🔍 SEO Health Check\n📋 View Bookings\nSEO Health Summary\nFull Report →\n📄 Missing meta: 11 📝 Under 500 words: 11 🔑 No keyword: 11\nTop Articles by Views\nView All →\nARTICLE\tPILLAR\tVIEWS\nThe Silent Killer: Recognising Sepsis Before It's Too Late - Updated\tSepsis & Infection\t0\nECMO Explained: When Modern Medicine Buys Time\tECMO & Advanced Life Support\t0\nInfection Control & Antimicrobial Stewardship in the ICU\tInfection Control & AMR\t0\nCritical Care Nutrition: Feeding as a Life-Saving Therapy\tCritical Care Nutrition\t0\nICU Delirium & Brain Health: Why Critical Illness Affects the Mind\tICU Delirium & Brain Health\t0\nRecent Booking Requests\nView All\nPATIENT\tDATE\tTIME\tREASON\tS",
+      "loggedInHints": true,
+      "loginError": ""
+    },
+    "panels": [
+      {
+        "label": "📊 Dashboard",
+        "activePanel": [
+          {
+            "id": "panel-dashboard",
+            "text": "Dashboard\n\nLive overview of consultations, content, and community.\n\n0\nTotal Bookings\n0\nPending Requests\n20\nPublished Articles\n0\nPending Approvals\n0\nSubscribers\nQuick Actions\n✅ Approve All Reviews\n📧 View Subscribers\n🔍 SEO Health Check\n📋 View Bookings\nSEO Health Summary\nFull Report →\n📄 Missing meta: 11 📝 Under 500 words: 11 🔑 No keyword: 11\nTop Articles by Views\nView All →\nARTICLE\tPILLAR\tVIEWS"
+          }
+        ]
+      },
+      {
+        "label": "🗓️ Booking Calendar",
+        "activePanel": [
+          {
+            "id": "panel-calendar",
+            "text": "Booking Calendar\n\nView scheduled OPD consultations by date.\n\nMay 2026\n‹\n›\nSU\nMO\nTU\nWE\nTH\nFR\nSA\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSelect a day to see bookings\nClick a date on the calendar\n🚫 Block / Unblock Dates\n\nBlock specific dates so patients cannot book on those days.\n\nDATE TO BLOCK\nREASON (OPTIONAL)\nBlock Date\n\nNo dates blocked."
+          }
+        ]
+      },
+      {
+        "label": "📋 Pending Requests",
+        "activePanel": [
+          {
+            "id": "panel-requests",
+            "text": "Booking Requests\n\nReview and manage incoming consultation requests.\n\nAll Requests\nPATIENT\tPHONE\tDATE & TIME\tREASON\tSTATUS\tACTIONS\nNo booking requests yet."
+          }
+        ]
+      },
+      {
+        "label": "⚕️ Expertise Cards",
+        "activePanel": [
+          {
+            "id": "panel-expertise",
+            "text": "⚕️ Expertise Cards\n\nManage the clinical specialisation cards shown in the \"Expertise\" section on the homepage. Add, edit, reorder, or remove specialties.\n\n+ Add / Edit Expertise Card\nSPECIALITY TITLE *\nPLAIN ENGLISH LABEL\nDESCRIPTION *\nSave Card\nClear\nAll Expertise Cards (0)\nRefresh"
+          }
+        ]
+      },
+      {
+        "label": "📚 Knowledge Hub",
+        "activePanel": [
+          {
+            "id": "panel-knowledge",
+            "text": "Knowledge Hub\n\nManage published articles and pillars.\n\nAll Articles (20)\n+ New Article\nTITLE\tPILLAR\tSTATUS\tACTIONS\nThe Silent Killer: Recognising Sepsis Before It's Too Late - Updated\tSepsis & Infection\tPUBLISHED\t\nEdit\nDelete\nView â†—\n\nThe Silent Killer: Recognising Sepsis Before It's Too Late (built-in)\tSepsis & Infection\tPUBLISHED\t\nEdit\nHide\nView â†—\n\nECMO Explained: When Modern Medicine Buys Ti"
+          }
+        ]
+      },
+      {
+        "label": "✏️ New Article",
+        "activePanel": [
+          {
+            "id": "panel-editor",
+            "text": "Article Editor\n\nCreate or edit a Knowledge Hub article.\n\nARTICLE TITLE *\nPILLAR / TOPIC *\nSepsis & Infection\nECMO & Advanced Life Support\nOrgan Failure & CRRT\nRespiratory & Ventilation\nMulti-Organ Failure\nFamily Guide to the ICU\nICU Delirium & Brain Health\nCritical Care Nutrition\nInfection Control & Antimicrobial Stewardship\nPost-ICU Recovery & PICS\nOther\nARTICLE SUBTITLE / DESCRIPTION\nARTICLE SEC"
+          }
+        ]
+      },
+      {
+        "label": "🃏 Myth Buster Cards",
+        "activePanel": [
+          {
+            "id": "panel-myths",
+            "text": "🃏 Myth Buster Cards\n\nAdd, edit or remove flip-cards shown in the ICU Intel → Myth Busters tab.\n\n➕ Add / Edit Myth Card\nMYTH STATEMENT (FRONT)\nFACT (BACK)\nSOURCE / CITATION\n💾 Save Card\nClear\nAll Myth Cards\n\n💡 After saving, the Myth Busters tab on quiz.html will use these custom cards instead of the defaults."
+          }
+        ]
+      },
+      {
+        "label": "🧠 Quiz Questions",
+        "activePanel": [
+          {
+            "id": "panel-quizeditor",
+            "text": "🧠 Quiz Questions\n\nManage the 50-question bank. 10 random questions are picked each quiz attempt.\n\n➕ Add / Edit Question\nQUESTION\nOPTION A\nOPTION B\nOPTION C\nOPTION D\nCORRECT ANSWER (0=A, 1=B, 2=C, 3=D)\nA\nB\nC\nD\nEXPLANATION\n💾 Save Question\nClear\n↺ Reset to 50 Defaults\nQuestion Bank\n#\tQUESTION\tCORRECT\tACTIONS"
+          }
+        ]
+      },
+      {
+        "label": "🔬 Research Papers",
+        "activePanel": [
+          {
+            "id": "panel-research",
+            "text": "🔬 Research Papers\n\nAdd, edit or remove papers shown on the Research page.\n\n➕ Add / Edit Paper\nPAPER TITLE\nJOURNAL\nYEAR\nTOPIC TAG\nARDS & Ventilation\nSepsis & Infection\nECMO\nRenal Support\nNutrition & Metabolism\nDelirium & Sedation\nOther\nDOI / URL\nCLINICAL TAKEAWAY\nDR. KOTHARI'S PRACTICE (BEDSIDE CONTEXT)\n💾 Save Paper to Server\nClear\nAll Papers\n8 papers\nTITLE\tJOURNAL\tYEAR\tTOPIC\tACTIONS\nProne Positi"
+          }
+        ]
+      },
+      {
+        "label": "⭐ Review Approvals",
+        "activePanel": [
+          {
+            "id": "panel-reviews",
+            "text": "Review Approvals\n\nApprove or reject community-submitted reviews.\n\nSubmitted Reviews\n\tNAME / PLATFORM\tREVIEW\tSUBMITTED\tSTATUS\tACTIONS\n\tAnonymous\tDr. Kothari is our reference intensivist for the most hemodynamically complex ca…\t\t\tDelete\n\tAnonymous\tFor post-cardiac surgery ICU management and cardiogenic shock, our team consiste…\t\t\tDelete\n\tAnonymous\tDr. Kothari mentors postgraduate residents and DNB C"
+          }
+        ]
+      },
+      {
+        "label": "🖼️ Photo Wall",
+        "activePanel": [
+          {
+            "id": "panel-photos",
+            "text": "🖼️ Photo Wall\n\nUpload and manage photos displayed on the Pulse page Photo Wall. Supports direct file upload or URL.\n\n+ Add Photo\nUPLOAD PHOTO FILE\n— OR — PHOTO URL\nCAPTION *\nCATEGORY LABEL\nClinical\nTeam\nConference\nAcademic\nRounds\nEquipment\nGeneral\nAdd to Photo Wall\nClear\nNo photos yet. Use the form above."
+          }
+        ]
+      },
+      {
+        "label": "🏛️ Institute Recognitions",
+        "activePanel": [
+          {
+            "id": "panel-pulse-institutes",
+            "text": "🏛️ Institute Recognitions\n\nManage the \"Peer & Institutional Recognition\" cards on the Pulse page. Add, edit, or delete recognition cards from medical institutions.\n\n+ Add / Edit Recognition\nINSTITUTION NAME *\nICON (EMOJI)\nRECOGNITION TEXT *\nSOURCE / DEPARTMENT\nSave Recognition\nClear\nAll Recognitions (4)\nRefresh\n🏥 Apollo Hospitals, Ahmedabad\nDr. Kothari is our reference intensivist for the most h"
+          }
+        ]
+      },
+      {
+        "label": "📰 Media Mentions",
+        "activePanel": [
+          {
+            "id": "panel-pulse-media",
+            "text": "📰 Media Mentions\n\nManage press coverage, news articles, and media mentions of Dr. Kothari's work. These appear in a dedicated section on the Pulse page.\n\n+ Add / Edit Media Mention\nHEADLINE / TITLE *\nPUBLICATION NAME *\nDATE PUBLISHED\nARTICLE URL (OPTIONAL)\nEXCERPT / SUMMARY\nSave Media Mention\nClear\nAll Media Mentions (0)\nRefresh"
+          }
+        ]
+      },
+      {
+        "label": "🪔 Diya Prayer Wall",
+        "activePanel": [
+          {
+            "id": "panel-diya",
+            "text": "🪔 Diya Prayer Wall\n\nManage the Light a Diya prayer wall. Diyas are auto-approved. You can delete inappropriate ones.\n\n0\nTotal Diyas\n0\nApproved\n➕ Add Diya Manually\nTHIS DIYA IS FOR\nLIT BY\nPRAYER / WISH\nAdd Diya 🪔\nClear\nFilter by Date:\nApply\nShow All\nAll Diyas\n↻ Refresh\n\tNAME\tPRAYER\tLIT BY\tDATE\tSTATUS\tACTIONS\nLoading diyas…\n💬 Diya Quotes\n\nManage inspirational quotes shown on the Diya Memories cal"
+          }
+        ]
+      },
+      {
+        "label": "💝 Memories — ICU to Home",
+        "activePanel": [
+          {
+            "id": "panel-memories",
+            "text": "💝 Memories — ICU to Home\n\nManage healing stories, gratitude notes, and photo memories. User submissions need approval before appearing on the website.\n\n📖 Healing Stories 1\n💌 Gratitude Notes 0\n📸 Photo Memories 0\n1\nTotal\n1\nPending\n0\nApproved\n➕ Add Healing Story\nPATIENT NAME\nFAMILY NAME\nRELATIONSHIP\nSelect...\nSon\nDaughter\nWife\nHusband\nParent\nSibling\nFriend\nOther\nDURATION\nTAG\nSelect tag...\nICU Rec"
+          }
+        ]
+      },
+      {
+        "label": "📧 Subscribers",
+        "activePanel": [
+          {
+            "id": "panel-subscribers",
+            "text": "Newsletter Subscribers\n\nManage email subscribers who signed up for the ICU Family Guide.\n\n📧 Send Newsletter\n\nCompose and send an email to all subscribers. Use plain text or basic HTML.\n\nSUBJECT LINE\nMESSAGE BODY (HTML ALLOWED)\nPREVIEW TEXT (SHOWN IN EMAIL CLIENT PREVIEW)\n📤 Send to All Subscribers\n—\nTotal Subscribers\n—\nNew This Week\nAll Subscribers\n📥 Export CSV\nEMAIL\tNAME\tSOURCE\tDATE\tACTION\nLoad"
+          }
+        ]
+      },
+      {
+        "label": "🔗 Social Media",
+        "activePanel": [
+          {
+            "id": "panel-social",
+            "text": "🔗 Social Media Profiles\n\nAdd your social media profile URLs. These appear on the Pulse page as linked profile cards, and can be used to embed recent posts.\n\n📱 Social Profile Links\n\nEnter the full URL for each platform. Leave blank to hide that platform.\n\n🔵 LINKEDIN PROFILE / COMPANY PAGE\n📘 FACEBOOK PAGE\n📸 INSTAGRAM PROFILE\n𝕏 X / TWITTER PROFILE\n▶️ YOUTUBE CHANNEL\n🌐 GOOGLE BUSINESS PROFILE\n\ud83d"
+          }
+        ]
+      },
+      {
+        "label": "❓ FAQ Manager",
+        "activePanel": [
+          {
+            "id": "panel-faq",
+            "text": "❓ FAQ Manager\n\nAdd, edit, or remove frequently asked questions shown on the homepage.\n\n0 questions\n➕ Add New FAQ\nQUESTION\nANSWER\n💾 Save FAQ\n↺ Clear\n📋 Current FAQs\n(drag to reorder coming soon)\nLoading..."
+          }
+        ]
+      },
+      {
+        "label": "🏠 Hero & Content",
+        "activePanel": [
+          {
+            "id": "panel-hero",
+            "text": "🏠 Hero & Content Controls\n\nEdit the homepage hero, ticker, speed dial buttons, and live stats.\n\n🦸 Hero Section\nDOCTOR NAME (SITE TITLE)\nHERO BADGE TEXT\nHERO HEADLINE\nHERO TAGLINE\nEMPATHY MESSAGE\n📊 Homepage Stats Band\nSTAT 1 — NUMBER\nSTAT 1 — LABEL\nSTAT 2 — NUMBER\nSTAT 2 — LABEL\nSTAT 3 — NUMBER\nSTAT 3 — LABEL\nSTAT 4 — NUMBER\nSTAT 4 — LABEL\n📢 Announcement Ticker\nTICKER TEXT\nShow ticker on homepa"
+          }
+        ]
+      },
+      {
+        "label": "🖼️ Site Images",
+        "activePanel": [
+          {
+            "id": "panel-images",
+            "text": "🖼️ Site Images\n\nManage the primary images used across the website. Replacing an image here will update it everywhere instantly. Supported formats: JPG, PNG, WebP.\n\n5\nCore Site Images\n🏠 Hero Doctor Image\nREPLACE IMAGE\nUpload & Replace\n🫀 ECMO Machine\nREPLACE IMAGE\nUpload & Replace\n👨‍👩‍👧‍👦 Critical Care Team\nREPLACE IMAGE\nUpload & Replace\n📚 Knowledge Hub\nREPLACE IMAGE\nUpload & Replace\n🏥 ICU "
+          }
+        ]
+      },
+      {
+        "label": "⚙️ Settings & Credentials",
+        "activePanel": [
+          {
+            "id": "panel-settings",
+            "text": "⚙️ Site Settings\n\nUpdate contact numbers, WhatsApp details, and site name. Changes are saved to the server and reflected on the live website immediately.\n\n📲 Contact & WhatsApp\nWHATSAPP NUMBER (WITH COUNTRY CODE, NO +)\nICU EMERGENCY PHONE\nWHATSAPP PRE-FILLED MESSAGE\nSite Name / Doctor Name \n\nLooking for Hero & Content controls? Hero headline, badge, stats, ticker, and speed dial settings have move"
+          }
+        ]
+      },
+      {
+        "label": "📦 Export / Import",
+        "activePanel": [
+          {
+            "id": "panel-export",
+            "text": "📦 Export / Import\n\nDownload CMS content as JSON or upload a backup to restore.\n\n⬇️ Export Content\n\nDownload current server data for any section.\n\nMyths JSON\nQuiz JSON\nResearch JSON\nKnowledge JSON\nFAQ JSON\nReviews JSON\nSocial JSON\n⬇️ Export ALL\n⬆️ Import / Restore\n\nUpload a JSON file to overwrite the selected section.\n\nCONTENT TYPE\nMyth Buster Cards\nQuiz Questions\nResearch Papers\nKnowledge Article"
+          }
+        ]
+      },
+      {
+        "label": "📋 Audit Trail",
+        "activePanel": [
+          {
+            "id": "panel-audit",
+            "text": "📋 Audit Trail\n\nRecent admin actions — what was changed and when.\n\n↻ Refresh\nAll Sections\nKnowledge\nQuiz\nResearch\nMyths\nFAQ\nReviews\nMemories\nDiya\nSettings\nImages\nTIME\tSECTION\tACTION\tDETAIL\n2026-05-04 12:23:17\tSettings\tHero Content Updated\t\n2026-05-04 12:23:16\tSettings\tHero Content Updated\t\n2026-05-04 12:22:40\tSettings\tHero Content Updated\t\n2026-05-04 12:22:40\tSettings\tHero Content Updated\t\n2026-05"
+          }
+        ]
+      },
+      {
+        "label": "📶 API Diagnostics",
+        "activePanel": [
+          {
+            "id": "panel-apihealth",
+            "text": "📶 API Diagnostics\n\nLive endpoint checks for all backend PHP files.\n\nRunning checks...\n🔧 Manual API Tester\nENDPOINT\ncontent.php (GET all)\nmyth_busters\nquiz_questions\nresearch_papers\nknowledge_articles\nsettings.php\nMETHOD\nGET\nPOST\nPOST BODY (JSON)\n▶ Run Test"
+          }
+        ]
+      }
+    ]
+  },
+  "totals": {
+    "pageErrors": 0,
+    "consoleErrors": 1,
+    "failedRequests": 1,
+    "statusErrors": 2
+  },
+  "pageErrors": [],
+  "consoleErrors": [
+    {
+      "type": "error",
+      "text": "Subscribers fetch failed: 500"
+    }
+  ],
+  "failedRequests": [
+    {
+      "url": "23740.424",
+      "errorText": "net::ERR_ABORTED",
+      "canceled": true
+    }
+  ],
+  "statusErrors": [
+    {
+      "url": "https://foxwisdom.com/favicon.ico",
+      "status": 404
+    },
+    {
+      "url": "https://foxwisdom.com/api/subscribers.php",
+      "status": 500
+    }
+  ]
+}

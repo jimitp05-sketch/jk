@@ -1,0 +1,165 @@
+{
+  "baseUrl": "https://foxwisdom.com",
+  "generatedAt": "2026-05-07T06:58:56.884Z",
+  "total": 20,
+  "pass": 9,
+  "warn": 0,
+  "fail": 11,
+  "results": [
+    {
+      "name": "Admin login admin/admin",
+      "status": "pass",
+      "detail": {
+        "status": 200,
+        "user": "admin"
+      }
+    },
+    {
+      "name": "CMS round-trip: faq_items",
+      "status": "pass",
+      "detail": {
+        "before": 3,
+        "after": 4
+      }
+    },
+    {
+      "name": "CMS round-trip: myth_busters",
+      "status": "pass",
+      "detail": {
+        "before": 8,
+        "after": 9
+      }
+    },
+    {
+      "name": "CMS round-trip: quiz_questions",
+      "status": "pass",
+      "detail": {
+        "before": 21,
+        "after": 22
+      }
+    },
+    {
+      "name": "CMS round-trip: research_papers",
+      "status": "pass",
+      "detail": {
+        "before": 8,
+        "after": 9
+      }
+    },
+    {
+      "name": "CMS round-trip: knowledge_articles",
+      "status": "pass",
+      "detail": {
+        "before": 11,
+        "after": 12
+      }
+    },
+    {
+      "name": "CMS round-trip: expertise_items",
+      "status": "fail",
+      "detail": {
+        "error": "POST content expertise_items failed 429: {\"success\":false,\"data\":null,\"error\":\"Rate limit exceeded\"}"
+      }
+    },
+    {
+      "name": "CMS round-trip: institute_recognitions",
+      "status": "fail",
+      "detail": {
+        "error": "POST content institute_recognitions failed 429: {\"success\":false,\"data\":null,\"error\":\"Rate limit exceeded\"}"
+      }
+    },
+    {
+      "name": "CMS round-trip: media_mentions",
+      "status": "fail",
+      "detail": {
+        "error": "POST content media_mentions failed 429: {\"success\":false,\"data\":null,\"error\":\"Rate limit exceeded\"}"
+      }
+    },
+    {
+      "name": "CMS round-trip: blocked_dates",
+      "status": "fail",
+      "detail": {
+        "error": "POST content blocked_dates failed 429: {\"success\":false,\"data\":null,\"error\":\"Rate limit exceeded\"}"
+      }
+    },
+    {
+      "name": "CMS round-trip: social_settings",
+      "status": "fail",
+      "detail": {
+        "error": "POST content social_settings failed 429: {\"success\":false,\"data\":null,\"error\":\"Rate limit exceeded\"}"
+      }
+    },
+    {
+      "name": "Public review submission enters admin pending queue only",
+      "status": "fail",
+      "detail": {
+        "inAdmin": false,
+        "inPublic": false,
+        "status": 429
+      }
+    },
+    {
+      "name": "testPublicReviewModeration",
+      "status": "fail",
+      "detail": {
+        "error": "POST content peer_recognitions failed 429: {\"success\":false,\"data\":null,\"error\":\"Rate limit exceeded\"}"
+      }
+    },
+    {
+      "name": "Public photo upload",
+      "status": "fail",
+      "detail": {
+        "status": 200,
+        "body": "{\"success\":false,\"error\":\"Could not process image\"}"
+      }
+    },
+    {
+      "name": "testPublicPhotoModeration",
+      "status": "fail",
+      "detail": {
+        "error": "POST content photo_wall failed 429: {\"success\":false,\"data\":null,\"error\":\"Rate limit exceeded\"}"
+      }
+    },
+    {
+      "name": "Booking create",
+      "status": "fail",
+      "detail": {
+        "status": 500,
+        "body": ""
+      }
+    },
+    {
+      "name": "Subscribers public subscribe/admin list",
+      "status": "fail",
+      "detail": {
+        "subscribeStatus": 500,
+        "listStatus": 500,
+        "listBody": ""
+      }
+    },
+    {
+      "name": "Diya public light/admin visible/delete cleanup",
+      "status": "pass",
+      "detail": {
+        "lightStatus": 200,
+        "found": true
+      }
+    },
+    {
+      "name": "Memories public story/admin visible/delete cleanup",
+      "status": "pass",
+      "detail": {
+        "submitStatus": 200,
+        "found": true
+      }
+    },
+    {
+      "name": "Settings update/restore",
+      "status": "pass",
+      "detail": {
+        "update": 200,
+        "restore": 200
+      }
+    }
+  ]
+}

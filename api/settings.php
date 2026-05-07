@@ -69,7 +69,7 @@ function readSettings(): array {
         'ga4_id'      => '',
         'gtm_id'      => '',
         'admin_user'  => 'admin',
-        'admin_pass'  => password_hash('admin', PASSWORD_DEFAULT) // TODO: change via Settings panel
+        'admin_pass'  => password_hash('admin', PASSWORD_DEFAULT) // Testing fallback only. Remove before production.
     ];
 
     try {
@@ -83,7 +83,7 @@ function readSettings(): array {
         $saved = json_decode($row['data'], true) ?: [];
 
         // Migration: if stored password is NOT hashed, hash it now & save back to DB
-        if (isset($saved['admin_pass']) && !isHashedPassword($saved['admin_pass'])) {
+        if (!empty($saved['admin_pass']) && !isHashedPassword($saved['admin_pass'])) {
             $saved['admin_pass'] = password_hash($saved['admin_pass'], PASSWORD_DEFAULT);
             writeSettings($saved);
         }

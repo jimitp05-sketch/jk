@@ -467,7 +467,7 @@
         // ============================================================
         // PHOTO WALL DATA
         // ============================================================
-        const photos = [
+        let photos = [
             { src: "img-team.png", caption: "ICU Team, Apollo Ahmedabad", label: "Team" },
             { src: "img-ecmo.png", caption: "ECMO Circuit — Advanced Life Support", label: "Clinical" },
             { src: "img-knowledge.png", caption: "Medical Education Session", label: "Education" },
@@ -581,21 +581,37 @@
         function renderPhotoWall() {
             const grid = document.getElementById("photo-wall-grid");
             grid.innerHTML = photos.map((p, i) => {
-                if (p.src) {
-                    return `<div class="photo-wall-item reveal" onclick="openLightbox('${p.src}','${p.caption}')">
-          <img src="${p.src}" alt="${p.caption}" loading="lazy" />
-          <div class="photo-wall-overlay"><span>🔍</span><span>${p.caption}</span></div>
+                const src = p.src || p.url || '';
+                const caption = p.caption || '';
+                const label = p.label || 'General';
+                if (src) {
+                    return `<div class="photo-wall-item reveal" onclick="openLightbox('${escH(src)}','${escH(caption)}')">
+          <img src="${escH(src)}" alt="${escH(caption)}" loading="lazy" />
+          <div class="photo-wall-overlay"><span>🔍</span><span>${escH(caption)}</span></div>
         </div>`;
                 } else {
                     return `<div class="photo-wall-item reveal">
           <div class="photo-wall-placeholder">
             <span class="ph-icon">📸</span>
-            <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;">${p.label}</span>
-            <span>${p.caption}</span>
+            <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;">${escH(label)}</span>
+            <span>${escH(caption)}</span>
           </div>
         </div>`;
                 }
             }).join('');
+        }
+
+        async function loadPhotoWall() {
+            try {
+                const response = await fetch('./api/content.php?type=photo_wall');
+                if (!response.ok) return;
+                const data = await response.json();
+                const raw = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
+                const approved = raw.filter(p => !p.status || p.status === 'approved');
+                if (approved.length > 0) photos = approved;
+            } catch (e) {
+                // Keep built-in photos when the API is unavailable.
+            }
         }
 
         // ============================================================
@@ -705,6 +721,7 @@
         // INIT — fetch from API, fall back to DEFAULT_REVIEWS
         // ============================================================
         async function init() {
+            await loadPhotoWall();
             renderPhotoWall();
 
             try {
@@ -765,24 +782,58 @@
             };
             reader.readAsDataURL(file);
         }
-        function submitPhotoForm() {
+        async function submitPhotoForm() {
             const name = document.getElementById('ps-name').value.trim();
             const caption = document.getElementById('ps-caption').value.trim();
             if (!name || !caption) { alert('Name and caption are required.'); return; }
             if (!photoBase64) { alert('Please select a photo to upload.'); return; }
-            const pending = JSON.parse(localStorage.getItem('apollo_pending_photos') || '[]');
-            pending.push({
-                id: Date.now(), name, caption,
-                story: document.getElementById('ps-story').value.trim(),
-                label: document.getElementById('ps-label').value,
-                date: document.getElementById('ps-date').value,
-                imageBase64: photoBase64,
-                status: 'pending',
-                submitted: new Date().toISOString()
-            });
-            localStorage.setItem('apollo_pending_photos', JSON.stringify(pending));
-            document.getElementById('photo-submit-form').style.display = 'none';
-            document.getElementById('photo-submit-success').style.display = 'block';
+
+            const submitBtn = document.querySelector('#photo-submit-form button[type="button"]');
+            const originalText = submitBtn ? submitBtn.textContent : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+            }
+
+            try {
+                const uploadRes = await fetch('./api/upload_photo.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ photo_data: photoBase64, context: 'photo_wall' })
+                });
+                const upload = await uploadRes.json();
+                if (!upload.success || !upload.url) {
+                    throw new Error(upload.error || 'Photo upload failed.');
+                }
+
+                const saveRes = await fetch('./api/content.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'submit_photo',
+                        url: upload.url,
+                        name,
+                        caption,
+                        story: document.getElementById('ps-story').value.trim(),
+                        label: document.getElementById('ps-label').value,
+                        date: document.getElementById('ps-date').value
+                    })
+                });
+                const saved = await saveRes.json();
+                if (!saved.success) {
+                    throw new Error(saved.error || 'Photo submission failed.');
+                }
+
+                document.getElementById('photo-submit-form').style.display = 'none';
+                document.getElementById('photo-submit-success').style.display = 'block';
+            } catch (e) {
+                alert(e.message || 'Network error. Please try again.');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            }
         }
 
         // ============================================================

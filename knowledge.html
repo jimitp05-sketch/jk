@@ -260,6 +260,55 @@
             return str.toString().replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
 
+        function sanitizeArticleHTML(html) {
+            const template = document.createElement('template');
+            template.innerHTML = html || '';
+            const allowedTags = new Set(['P', 'H2', 'H3', 'H4', 'UL', 'OL', 'LI', 'STRONG', 'EM', 'B', 'I', 'A', 'DIV', 'SPAN', 'BR', 'BLOCKQUOTE', 'SMALL']);
+            const allowedClasses = new Set(['article-callout', 'article-warning-box', 'warn-title', 'article-stats-row', 'article-stat-card', 'num', 'lbl']);
+
+            function cleanNode(node) {
+                [...node.childNodes].forEach(child => {
+                    if (child.nodeType === Node.ELEMENT_NODE) {
+                        const tag = child.tagName;
+                        if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'IFRAME' || tag === 'OBJECT' || tag === 'EMBED') {
+                            child.remove();
+                            return;
+                        }
+                        if (!allowedTags.has(tag)) {
+                            child.remove();
+                            return;
+                        }
+
+                        [...child.attributes].forEach(attr => {
+                            const name = attr.name.toLowerCase();
+                            const value = attr.value || '';
+                            if (name.startsWith('on') || name === 'style') {
+                                child.removeAttribute(attr.name);
+                                return;
+                            }
+                            if (name === 'href' && tag === 'A') {
+                                const safeHref = /^(https?:|mailto:|tel:|#)/i.test(value);
+                                if (!safeHref) child.removeAttribute(attr.name);
+                                return;
+                            }
+                            if (name === 'id') return;
+                            if (name === 'class') {
+                                const kept = value.split(/\s+/).filter(cls => allowedClasses.has(cls));
+                                if (kept.length) child.setAttribute('class', kept.join(' '));
+                                else child.removeAttribute('class');
+                                return;
+                            }
+                            child.removeAttribute(attr.name);
+                        });
+                    }
+                    cleanNode(child);
+                });
+            }
+
+            cleanNode(template.content);
+            return template.innerHTML;
+        }
+
         const articles = {
             sepsis: {
                 title: "The Silent Killer: Recognising Sepsis Before It's Too Late",
@@ -574,14 +623,14 @@
                         const s = a.structured;
                         if (s.stats && s.stats.length) {
                             content += '<div class="article-stats-row">' +
-                                s.stats.map(st => `<div class="article-stat-card"><div class="num">${st.num}</div><div class="lbl">${st.lbl}</div></div>`).join('') +
+                                s.stats.map(st => `<div class="article-stat-card"><div class="num">${escapeHTML(st.num)}</div><div class="lbl">${escapeHTML(st.lbl)}</div></div>`).join('') +
                                 '</div>';
                         }
                         (s.sections || []).forEach(sec => {
-                            if (sec.heading) content += `<h3>${sec.heading}</h3>`;
-                            if (sec.content) content += sec.content.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
-                            if (sec.callout) content += `<div class="article-callout"><p>${sec.callout}</p></div>`;
-                            if (sec.warning) content += `<div class="article-warning-box"><div class="warn-title">⚠️ Important</div><p>${sec.warning}</p></div>`;
+                            if (sec.heading) content += `<h3>${escapeHTML(sec.heading)}</h3>`;
+                            if (sec.content) content += sec.content.split(/\n\n+/).map(p => `<p>${escapeHTML(p).replace(/\n/g, '<br>')}</p>`).join('');
+                            if (sec.callout) content += `<div class="article-callout"><p>${escapeHTML(sec.callout)}</p></div>`;
+                            if (sec.warning) content += `<div class="article-warning-box"><div class="warn-title">Important</div><p>${escapeHTML(sec.warning)}</p></div>`;
                         });
                     }
 
@@ -591,7 +640,7 @@
                         ? a.structured.sections.filter(s => s.heading).map(s => ({ id: s.heading.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''), label: s.heading }))
                         : [];
 
-                    articles[targetId] = { title: a.title || 'Untitled', tag, subtitle, toc, related: [], content, meta_title: a.meta_title || '', meta_description: a.meta_description || '' };
+                    articles[targetId] = { title: a.title || 'Untitled', tag, subtitle, toc, related: [], content: sanitizeArticleHTML(content), meta_title: a.meta_title || '', meta_description: a.meta_description || '' };
 
                     // If it's a completely new article (not overriding built-in), track it
                     if (!a.overridesId && !BUILT_IN_IDS.includes(a.id)) {
@@ -650,7 +699,7 @@
 
             // Build TOC
             document.getElementById('toc-links').innerHTML = a.toc.map(t =>
-                `<a href="#${t.id}" class="toc-link">${t.label}</a>`
+                `<a href="#${escapeHTML(t.id)}" class="toc-link">${escapeHTML(t.label)}</a>`
             ).join('');
 
             // Build related
@@ -660,7 +709,7 @@
                     const r = articles[rid];
                     if (!r) return '';
                     const icons = { sepsis: '🦠', ecmo: '🫀', crrt: '🧪', ventilation: '💨', mof: '🫁', 'family-guide': '👨‍👩‍👧', delirium: '🧠', nutrition: '🍽️', antimicrobial: '💊', pics: '🌱' };
-                    return `<a href="#" class="related-link" onclick="showArticle('${rid}');return false;"><span class="rlink-icon">${icons[rid] || '📖'}</span><span class="rlink-title">${r.title.substring(0, 55)}...</span></a>`;
+                    return `<a href="#" class="related-link" onclick="showArticle('${escapeHTML(rid)}');return false;"><span class="rlink-icon">${icons[rid] || '📖'}</span><span class="rlink-title">${escapeHTML(r.title.substring(0, 55))}...</span></a>`;
                 }).join('');
 
             // Build article content
@@ -674,7 +723,7 @@
         <span>Apollo Hospitals, Ahmedabad</span><span>·</span>
         <span>Educational Content</span>
       </div>
-      ${a.content}
+      ${sanitizeArticleHTML(a.content)}
       <div style="margin-top:48px; padding-top:28px; border-top:1px solid var(--border-subtle); font-size:0.8rem; color:var(--text-muted); font-style:italic;">
         All content on this Knowledge Hub is written for educational purposes only. It does not constitute medical advice. Please consult Dr. Kothari or another qualified physician for clinical decisions specific to your case.
       </div>`;

@@ -23,7 +23,7 @@ define('AUTH_LOCKOUT_SECONDS', 900); // 15 minutes
 function getAdminCredentials(): array {
     $defaults = [
         'admin_user' => 'admin',
-        'admin_pass' => password_hash('admin', PASSWORD_DEFAULT) // TODO: change via Settings panel
+        'admin_pass' => password_hash('admin', PASSWORD_DEFAULT) // Testing fallback only. Remove before production.
     ];
 
     try {

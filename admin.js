@@ -1317,6 +1317,8 @@ async function renderPhotos() {
             <div class="photo-review-name">${escH(p.caption || 'Untitled')}</div>
             <div class="photo-review-date">${escH(p.label || 'General')} · ${escH(p.status || 'Active')}</div>
             <div class="photo-review-actions" style="margin-top:8px;">
+              ${(p.status === 'pending') ? `<button class="action-btn action-btn-approve" onclick="updatePhotoStatus(${i}, 'approved')">Approve</button>
+              <button class="action-btn action-btn-reject" onclick="updatePhotoStatus(${i}, 'rejected')">Reject</button>` : ''}
               <button class="action-btn action-btn-delete" onclick="deletePhoto(${i})">Delete</button>
             </div>
           </div>
