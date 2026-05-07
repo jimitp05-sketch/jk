@@ -221,12 +221,20 @@ async function fillAndClick(cdp, fields, clickTextOrOnclick) {
 
 async function publicContains(cdp, path, marker, scroll = true) {
   await cdp.send('Page.navigate', { url: `${BASE_URL}${path}${path.includes('?') ? '&' : '?'}codex=${Date.now()}` });
-  await wait(3500);
-  if (scroll) {
-    await evalJs(cdp, `window.scrollTo(0, document.documentElement.scrollHeight)`);
-    await wait(1000);
+  const deadline = Date.now() + 12000;
+  while (Date.now() < deadline) {
+    if (scroll) {
+      await evalJs(cdp, `window.scrollTo(0, document.documentElement.scrollHeight)`);
+    }
+    const found = await evalJs(cdp, `document.body.innerText.includes(${JSON.stringify(marker)})`);
+    if (found) return true;
+    await wait(800);
   }
-  return await evalJs(cdp, `document.body.innerText.includes(${JSON.stringify(marker)})`);
+  return false;
+}
+
+function contentHasMarker(items, marker) {
+  return JSON.stringify(items).includes(marker);
 }
 
 async function bookingDateIsBlocked(cdp, dateKey) {
@@ -260,6 +268,13 @@ async function testContentForm({ adminCdp, publicCdp, publicPage, token, panel, 
     }
     await wait(6500);
     add(`Admin UI save: ${type}`, 'pass');
+    const apiItems = await getContent(type, token);
+    const apiContains = contentHasMarker(apiItems, marker);
+    add(`Admin UI update persisted in API: ${type}`, apiContains ? 'pass' : 'fail', {
+      count: Array.isArray(apiItems) ? apiItems.length : null,
+      marker,
+    });
+    if (!apiContains) return;
     const visible = await publicContains(publicCdp, publicPage, marker);
     add(`Public website reflects admin UI update: ${type}`, visible ? 'pass' : 'fail', { publicPage, marker });
   } catch (e) {
@@ -333,7 +348,16 @@ async function main() {
 
   const pageErrors = [];
   const failedRequests = [];
-  adminCdp.on('Runtime.exceptionThrown', e => pageErrors.push(e.exceptionDetails?.text || 'runtime exception'));
+  adminCdp.on('Runtime.exceptionThrown', e => {
+    const d = e.exceptionDetails || {};
+    pageErrors.push({
+      text: d.text || 'runtime exception',
+      description: d.exception?.description || '',
+      url: d.url || '',
+      lineNumber: d.lineNumber ?? null,
+      columnNumber: d.columnNumber ?? null,
+    });
+  });
   adminCdp.on('Network.loadingFailed', e => failedRequests.push(e.errorText || e.blockedReason || 'network failure'));
 
   const login = await loginViaVisibleAdmin(adminCdp);
