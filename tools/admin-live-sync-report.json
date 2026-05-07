@@ -1,0 +1,80 @@
+{
+  "baseUrl": "https://foxwisdom.com",
+  "generatedAt": "2026-05-07T07:13:45.873Z",
+  "total": 9,
+  "pass": 7,
+  "fail": 2,
+  "results": [
+    {
+      "name": "Admin login for sync testing",
+      "status": "pass",
+      "detail": {
+        "user": "admin"
+      }
+    },
+    {
+      "name": "Admin update visible on live page: faq_items",
+      "status": "fail",
+      "detail": {
+        "page": "/",
+        "marker": "Codex FAQ live marker 1778137851640"
+      }
+    },
+    {
+      "name": "Admin update visible on live page: expertise_items",
+      "status": "pass",
+      "detail": {
+        "page": "/",
+        "marker": "Codex Expertise live marker 1778137851640"
+      }
+    },
+    {
+      "name": "Admin update visible on live page: knowledge_articles",
+      "status": "pass",
+      "detail": {
+        "page": "/knowledge.html",
+        "marker": "Codex Knowledge live marker 1778137851640"
+      }
+    },
+    {
+      "name": "Admin update visible on live page: research_papers",
+      "status": "pass",
+      "detail": {
+        "page": "/research.html",
+        "marker": "Codex Research live marker 1778137851640"
+      }
+    },
+    {
+      "name": "Admin update visible on live page: myth_busters",
+      "status": "pass",
+      "detail": {
+        "page": "/quiz.html",
+        "marker": "Codex Myth live marker 1778137851640"
+      }
+    },
+    {
+      "name": "Admin update visible on live page: peer_recognitions",
+      "status": "pass",
+      "detail": {
+        "page": "/reviews.html",
+        "marker": "Codex Recognition live marker 1778137851640"
+      }
+    },
+    {
+      "name": "Admin update visible on live page: photo_wall",
+      "status": "pass",
+      "detail": {
+        "page": "/reviews.html",
+        "marker": "Codex Photo live marker 1778137851640"
+      }
+    },
+    {
+      "name": "Admin update visible on live page: blocked_dates",
+      "status": "fail",
+      "detail": {
+        "page": "/booking.html",
+        "marker": "Codex blocked date 1778137851640"
+      }
+    }
+  ]
+}

@@ -810,12 +810,14 @@
                 if (!container) return;
                 container.innerHTML = faqs.map(function(f, i) {
                     var delay = i < 4 ? ' reveal-delay-' + (i + 1) : '';
+                    var question = f.question || f.q || '';
+                    var answer = f.answer || f.a || '';
                     return '<div class="faq-item reveal' + delay + '">' +
                         '<button class="faq-question" aria-expanded="false">' +
-                        escH(f.question) +
+                        escH(question) +
                         '<span class="faq-icon">+</span></button>' +
                         '<div class="faq-answer"><div class="faq-answer-inner">' +
-                        escH(f.answer) + '</div></div></div>';
+                        escH(answer) + '</div></div></div>';
                 }).join('');
                 container.querySelectorAll('.faq-question').forEach(function(btn) {
                     btn.addEventListener('click', function() {

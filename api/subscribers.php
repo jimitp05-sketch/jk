@@ -10,6 +10,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 $pdo = get_db_connection();
 
+function ensureSubscribersTable(PDO $pdo): void {
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS subscribers (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            name VARCHAR(100) DEFAULT '',
+            source VARCHAR(50) DEFAULT 'homepage',
+            subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_subscribed_at (subscribed_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ");
+}
+
+ensureSubscribersTable($pdo);
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     requireAdmin();
     $stmt = $pdo->query("SELECT id, email, name, source, subscribed_at FROM subscribers ORDER BY subscribed_at DESC");
