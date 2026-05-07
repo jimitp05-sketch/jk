@@ -7,6 +7,7 @@ const PASSWORD = process.argv[3] || 'admin';
 const CDP_URL = process.argv[4] || 'http://127.0.0.1:9223';
 const ROOT = process.cwd();
 const OUT_FILE = new URL('./public-admin-ui-flow-report.json', import.meta.url);
+const MODE = process.argv[5] || 'all';
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const results = [];
@@ -171,7 +172,8 @@ async function clickBySelector(cdp, selector) {
 async function clickButtonContaining(cdp, text) {
   const ok = await evalJs(cdp, `(() => {
     const needle = ${JSON.stringify(text)}.toLowerCase();
-    const el = [...document.querySelectorAll('button,a,[role="button"]')]
+    const root = document.querySelector('.admin-panel.active') || document;
+    const el = [...root.querySelectorAll('button,a,[role="button"]')]
       .find(x => (x.innerText || x.textContent || '').toLowerCase().includes(needle));
     if (!el) return false;
     el.scrollIntoView({ block: 'center' });
@@ -238,7 +240,8 @@ async function clickRowAction(cdp, marker, actionRegex) {
   const result = await evalJs(cdp, `(() => {
     const marker = ${JSON.stringify(marker)};
     const rx = new RegExp(${JSON.stringify(actionRegex)}, 'i');
-    const roots = [...document.querySelectorAll('tr,.photo-review-item,.mem-photo-card')];
+    const root = document.querySelector('.admin-panel.active') || document;
+    const roots = [...root.querySelectorAll('tr,.photo-review-item,.mem-photo-card,#inst-list > div,#media-list > div')];
     const row = roots.find(el => (el.innerText || '').includes(marker));
     if (!row) return { ok: false, reason: 'row-not-found' };
     const btn = [...row.querySelectorAll('button')].find(b => rx.test((b.innerText || b.textContent || '') + ' ' + (b.getAttribute('onclick') || '')));
@@ -458,23 +461,25 @@ async function main() {
   if (!(await loginAdmin(adminCdp))) throw new Error('Admin login failed');
 
   const stamp = Date.now();
-  await submitPublicReview(publicCdp, `Codex UI Review Approval ${stamp}`);
-  await reviewApprovalFlow(adminCdp, publicCdp, `Codex UI Review Approval ${stamp}`);
+  if (MODE === 'all') {
+    await submitPublicReview(publicCdp, `Codex UI Review Approval ${stamp}`);
+    await reviewApprovalFlow(adminCdp, publicCdp, `Codex UI Review Approval ${stamp}`);
 
-  await submitPublicPulsePhoto(publicCdp, `Codex UI Pulse Photo Approval ${stamp}`);
-  await pulsePhotoApprovalFlow(adminCdp, publicCdp, `Codex UI Pulse Photo Approval ${stamp}`);
+    await submitPublicPulsePhoto(publicCdp, `Codex UI Pulse Photo Approval ${stamp}`);
+    await pulsePhotoApprovalFlow(adminCdp, publicCdp, `Codex UI Pulse Photo Approval ${stamp}`);
 
-  await submitMemory(publicCdp, 'story', `Codex UI Memory Story ${stamp}`);
-  await memoryApprovalFlow(adminCdp, publicCdp, 'story', `Codex UI Memory Story ${stamp}`);
+    await submitMemory(publicCdp, 'story', `Codex UI Memory Story ${stamp}`);
+    await memoryApprovalFlow(adminCdp, publicCdp, 'story', `Codex UI Memory Story ${stamp}`);
 
-  await submitMemory(publicCdp, 'note', `Codex UI Memory Note ${stamp}`);
-  await memoryApprovalFlow(adminCdp, publicCdp, 'note', `Codex UI Memory Note ${stamp}`);
+    await submitMemory(publicCdp, 'note', `Codex UI Memory Note ${stamp}`);
+    await memoryApprovalFlow(adminCdp, publicCdp, 'note', `Codex UI Memory Note ${stamp}`);
 
-  await submitMemory(publicCdp, 'photo', `Codex UI Memory Photo ${stamp}`);
-  await memoryApprovalFlow(adminCdp, publicCdp, 'photo', `Codex UI Memory Photo ${stamp}`);
+    await submitMemory(publicCdp, 'photo', `Codex UI Memory Photo ${stamp}`);
+    await memoryApprovalFlow(adminCdp, publicCdp, 'photo', `Codex UI Memory Photo ${stamp}`);
 
-  await submitDiya(publicCdp, adminCdp, `Codex UI Diya ${stamp}`);
-  await submitSubscriber(publicCdp, adminCdp, `codex-ui-${stamp}@example.com`);
+    await submitDiya(publicCdp, adminCdp, `Codex UI Diya ${stamp}`);
+    await submitSubscriber(publicCdp, adminCdp, `codex-ui-${stamp}@example.com`);
+  }
   await adminContentToPulseFlow(adminCdp, publicCdp, 'institute', `Codex UI Institute ${stamp}`);
   await adminContentToPulseFlow(adminCdp, publicCdp, 'media', `Codex UI Media ${stamp}`);
 

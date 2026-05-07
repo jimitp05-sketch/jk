@@ -1,12 +1,12 @@
 {
   "baseUrl": "https://foxwisdom.com",
-  "cdpUrl": "http://127.0.0.1:9223",
-  "generatedAt": "2026-05-07T10:18:53.458Z",
+  "cdpUrl": "http://127.0.0.1:9224",
+  "generatedAt": "2026-05-07T10:39:56.015Z",
   "note": "UI-only run: no direct foxwisdom API calls were made by this script. All writes were triggered through website/admin browser UI.",
-  "total": 31,
-  "pass": 26,
+  "total": 8,
+  "pass": 8,
   "warn": 0,
-  "fail": 5,
+  "fail": 0,
   "results": [
     {
       "name": "Admin login through visible login form",
@@ -17,212 +17,47 @@
       }
     },
     {
-      "name": "Public Reviews form submitted from website UI",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Submitted review appears pending in admin panel",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Review Approval 1778148911413"
-      }
-    },
-    {
-      "name": "Admin approved submitted review via approval button",
-      "status": "pass",
-      "detail": {
-        "ok": true,
-        "rowText": "\tAnonymous\nothers\tCodex UI Review Approval 1778148911413\t2026-05-07\tPENDING\t✓ Approve ✕ Reject Delete"
-      }
-    },
-    {
-      "name": "Approved review is visible on public Reviews page",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Review Approval 1778148911413"
-      }
-    },
-    {
-      "name": "Admin deleted test review through admin UI",
-      "status": "pass",
-      "detail": {
-        "ok": true,
-        "rowText": "\tAnonymous\nothers\tCodex UI Review Approval 1778148911413\t2026-05-07\tAPPROVED\tDelete"
-      }
-    },
-    {
-      "name": "Public Photo Wall upload submitted from website UI",
-      "status": "pass",
-      "detail": {
-        "fileSet": true
-      }
-    },
-    {
-      "name": "Submitted Photo Wall item appears pending in admin panel",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Pulse Photo Approval 1778148911413"
-      }
-    },
-    {
-      "name": "Admin approved Photo Wall item via approval button",
-      "status": "pass",
-      "detail": {
-        "ok": true,
-        "rowText": "Codex UI Pulse Photo Approval 1778148911413\nTeam · pending\nApprove\nReject\nDelete"
-      }
-    },
-    {
-      "name": "Approved Photo Wall item is visible on public Reviews page",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Pulse Photo Approval 1778148911413"
-      }
-    },
-    {
-      "name": "Admin deleted test Photo Wall item through admin UI",
-      "status": "pass",
-      "detail": {
-        "ok": true,
-        "rowText": "Codex UI Pulse Photo Approval 1778148911413\nTeam · approved\nDelete"
-      }
-    },
-    {
-      "name": "Public Memories story submitted from website UI",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Memory Story 1778148911413"
-      }
-    },
-    {
-      "name": "Submitted Memories story appears pending in admin panel",
-      "status": "fail",
-      "detail": {
-        "marker": "Codex UI Memory Story 1778148911413"
-      }
-    },
-    {
-      "name": "Public Memories note submitted from website UI",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Memory Note 1778148911413"
-      }
-    },
-    {
-      "name": "Submitted Memories note appears pending in admin panel",
-      "status": "fail",
-      "detail": {
-        "marker": "Codex UI Memory Note 1778148911413"
-      }
-    },
-    {
-      "name": "Public Memories photo submitted from website UI",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Memory Photo 1778148911413"
-      }
-    },
-    {
-      "name": "Submitted Memories photo appears pending in admin panel",
-      "status": "fail",
-      "detail": {
-        "marker": "Codex UI Memory Photo 1778148911413"
-      }
-    },
-    {
-      "name": "Public Diya form submitted from website UI",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Diya 1778148911413"
-      }
-    },
-    {
-      "name": "New public Diya appears on Diya wall without approval",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Diya 1778148911413"
-      }
-    },
-    {
-      "name": "New Diya appears in admin Diya panel",
-      "status": "pass",
-      "detail": {
-        "marker": "Codex UI Diya 1778148911413"
-      }
-    },
-    {
-      "name": "Admin deleted test Diya through admin UI",
-      "status": "pass",
-      "detail": {
-        "ok": true,
-        "rowText": "\tCodex UI Diya 1778148911413\tTemporary UI-only diya test.\tCodex UI Tester\t7 May 2026\tAPPROVED\t✕"
-      }
-    },
-    {
-      "name": "Newsletter subscription submitted from homepage UI",
-      "status": "pass",
-      "detail": {
-        "marker": "codex-ui-1778148911413@example.com"
-      }
-    },
-    {
-      "name": "New subscriber appears in admin Subscribers panel",
-      "status": "pass",
-      "detail": {
-        "marker": "codex-ui-1778148911413@example.com"
-      }
-    },
-    {
-      "name": "Admin deleted test subscriber through admin UI",
-      "status": "pass",
-      "detail": {
-        "ok": true,
-        "rowText": "codex-ui-1778148911413@example.com\t—\thomepage\t5/7/2026\tDelete"
-      }
-    },
-    {
       "name": "Admin saved Institute Recognition through admin UI",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Institute 1778148911413"
+        "marker": "Codex UI Institute 1778150360030"
       }
     },
     {
       "name": "Institute Recognition is visible on public Pulse page",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Institute 1778148911413"
+        "marker": "Codex UI Institute 1778150360030"
       }
     },
     {
       "name": "Admin deleted test Institute Recognition through admin UI",
-      "status": "fail",
+      "status": "pass",
       "detail": {
-        "ok": false,
-        "reason": "row-not-found"
+        "ok": true,
+        "rowText": "🏥 Codex UI Institute 1778150360030\nTemporary institution recognition created through admin UI....\nCodex UI Test\nEdit\nDelete"
       }
     },
     {
       "name": "Admin saved Media Mention through admin UI",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Media 1778148911413"
+        "marker": "Codex UI Media 1778150360030"
       }
     },
     {
       "name": "Media Mention is visible on public Pulse page",
       "status": "pass",
       "detail": {
-        "marker": "Codex UI Media 1778148911413"
+        "marker": "Codex UI Media 1778150360030"
       }
     },
     {
       "name": "Admin deleted test Media Mention through admin UI",
-      "status": "fail",
+      "status": "pass",
       "detail": {
-        "ok": false,
-        "reason": "row-not-found"
+        "ok": true,
+        "rowText": "Codex UI Media 1778150360030\nCodex Test Publication · 2026-05-07\nTemporary media mention created through admin UI.\nEdit\nDelete"
       }
     },
     {
