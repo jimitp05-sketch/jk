@@ -1,11 +1,11 @@
 {
   "baseUrl": "https://foxwisdom.com",
-  "cdpUrl": "http://127.0.0.1:9223",
-  "generatedAt": "2026-05-07T09:43:26.325Z",
-  "total": 56,
-  "pass": 52,
+  "cdpUrl": "http://127.0.0.1:9222",
+  "generatedAt": "2026-05-27T17:32:25.717Z",
+  "total": 26,
+  "pass": 25,
   "warn": 0,
-  "fail": 4,
+  "fail": 1,
   "results": [
     {
       "name": "Visible admin login using admin/admin",
@@ -183,196 +183,11 @@
       }
     },
     {
-      "name": "Admin panel opens: faq",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI save: faq_items",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI update persisted in API: faq_items",
-      "status": "pass",
-      "detail": {
-        "count": 4,
-        "marker": "Codex Admin UI FAQ 1778146815745"
-      }
-    },
-    {
-      "name": "Public website reflects admin UI update: faq_items",
-      "status": "pass",
-      "detail": {
-        "publicPage": "/",
-        "marker": "Codex Admin UI FAQ 1778146815745"
-      }
-    },
-    {
-      "name": "Restored original data: faq_items",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin panel opens: expertise",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI save: expertise_items",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI update persisted in API: expertise_items",
-      "status": "pass",
-      "detail": {
-        "count": 1,
-        "marker": "Codex Admin UI Expertise 1778146815745"
-      }
-    },
-    {
-      "name": "Admin UI flow: expertise_items",
+      "name": "Fatal admin UI E2E error",
       "status": "fail",
       "detail": {
-        "error": "TypeError: Cannot read properties of null (reading 'scrollHeight')\n    at <anonymous>:1:45"
+        "error": "TypeError: fetch failed\n    at node:internal/deps/undici/undici:16416:13\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async api (file:///C:/Users/jimit/Desktop/Merge%20Gaurd/ai%20apollo/website%202/tools/admin_ui_e2e_test.mjs:110:15)\n    at async getContent (file:///C:/Users/jimit/Desktop/Merge%20Gaurd/ai%20apollo/website%202/tools/admin_ui_e2e_test.mjs:124:16)\n    at async snapshot (file:///C:/Users/jimit/Desktop/Merge%20Gaurd/ai%20apollo/website%202/tools/admin_ui_e2e_test.mjs:142:41)\n    at async testContentForm (file:///C:/Users/jimit/Desktop/Merge%20Gaurd/ai%20apollo/website%202/tools/admin_ui_e2e_test.mjs:256:3)\n    at async main (file:///C:/Users/jimit/Desktop/Merge%20Gaurd/ai%20apollo/website%202/tools/admin_ui_e2e_test.mjs:382:3)"
       }
-    },
-    {
-      "name": "Restored original data: expertise_items",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin panel opens: research",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI save: research_papers",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI update persisted in API: research_papers",
-      "status": "pass",
-      "detail": {
-        "count": 9,
-        "marker": "Codex Admin UI Research 1778146815745"
-      }
-    },
-    {
-      "name": "Admin UI flow: research_papers",
-      "status": "fail",
-      "detail": {
-        "error": "TypeError: Cannot read properties of null (reading 'innerText')\n    at <anonymous>:1:15"
-      }
-    },
-    {
-      "name": "Restored original data: research_papers",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin panel opens: myths",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI save: myth_busters",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI update persisted in API: myth_busters",
-      "status": "pass",
-      "detail": {
-        "count": 9,
-        "marker": "Codex Admin UI Myth 1778146815745"
-      }
-    },
-    {
-      "name": "Public website reflects admin UI update: myth_busters",
-      "status": "pass",
-      "detail": {
-        "publicPage": "/quiz.html",
-        "marker": "Codex Admin UI Myth 1778146815745"
-      }
-    },
-    {
-      "name": "Restored original data: myth_busters",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin panel opens: photos",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI save: photo_wall",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI update persisted in API: photo_wall",
-      "status": "fail",
-      "detail": {
-        "count": 0,
-        "marker": "Codex Admin UI Photo 1778146815745"
-      }
-    },
-    {
-      "name": "Restored original data: photo_wall",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin panel opens: calendar",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Admin UI save: blocked_dates",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Public booking calendar reflects blocked date",
-      "status": "pass",
-      "detail": {
-        "dateKey": "2026-12-30"
-      }
-    },
-    {
-      "name": "Restored original data: blocked_dates",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Cleanup verification: FAQ marker removed from public site",
-      "status": "pass",
-      "detail": {}
-    },
-    {
-      "name": "Browser runtime errors during admin UI test",
-      "status": "fail",
-      "detail": {
-        "pageErrors": [
-          {
-            "text": "Uncaught",
-            "description": "ReferenceError: addPhotoWithUpload is not defined\n    at HTMLButtonElement.onclick (https://foxwisdom.com/admin.php?codex=1778146766109:536:72)\n    at <anonymous>:23:12\n    at new Promise (<anonymous>)\n    at <anonymous>:1:1",
-            "url": "https://foxwisdom.com/admin.php?codex=1778146766109",
-            "lineNumber": 535,
-            "columnNumber": 71
-          }
-        ]
-      }
-    },
-    {
-      "name": "Browser failed requests during admin UI test",
-      "status": "pass",
-      "detail": {}
     }
   ]
 }
