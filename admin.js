@@ -3810,10 +3810,31 @@ async function logAuditAction(section, action, detail = '') {
     document.body.appendChild(hamburger);
 
     const sidebar = document.querySelector('.admin-sidebar');
+    const backdrop = document.createElement('div');
+    backdrop.className = 'admin-sidebar-backdrop';
+    document.body.appendChild(backdrop);
+
+    function closeMobileSidebar() {
+        hamburger.classList.remove('active');
+        sidebar?.classList.remove('mobile-open');
+        backdrop.classList.remove('show');
+        document.body.classList.remove('admin-nav-open');
+    }
+
     if (hamburger && sidebar) {
         hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            sidebar.classList.toggle('mobile-open');
+            const willOpen = !sidebar.classList.contains('mobile-open');
+            hamburger.classList.toggle('active', willOpen);
+            sidebar.classList.toggle('mobile-open', willOpen);
+            backdrop.classList.toggle('show', willOpen);
+            document.body.classList.toggle('admin-nav-open', willOpen);
+        });
+        backdrop.addEventListener('click', closeMobileSidebar);
+        sidebar.addEventListener('click', e => {
+            if (e.target.closest('.admin-nav-link') && window.innerWidth <= 900) closeMobileSidebar();
+        });
+        window.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeMobileSidebar();
         });
     }
 })();
