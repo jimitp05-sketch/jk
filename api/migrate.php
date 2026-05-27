@@ -4,10 +4,12 @@
  * After running successfully, this file can be deleted.
  */
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/config.php';
 
 header('Content-Type: application/json');
+$expectedSecret = env('MIGRATION_SECRET', '');
 $secret = $_GET['secret'] ?? '';
-if (!hash_equals('apollo_migrate_2026', $secret)) {
+if ($expectedSecret === '' || !hash_equals($expectedSecret, $secret)) {
     http_response_code(403);
     die(json_encode(['error' => 'Forbidden']));
 }

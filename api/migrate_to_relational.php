@@ -14,8 +14,11 @@
  * ⚠️ DELETE THIS FILE AFTER SUCCESSFUL MIGRATION
  */
 
+require_once __DIR__ . '/config.php';
+
 if (php_sapi_name() !== 'cli') {
-    if (($_GET['secret'] ?? '') !== 'apollo_rel_migrate_2026') {
+    $expectedSecret = env('RELATIONAL_MIGRATION_SECRET', '');
+    if ($expectedSecret === '' || !hash_equals($expectedSecret, $_GET['secret'] ?? '')) {
         http_response_code(403);
         die('Forbidden');
     }

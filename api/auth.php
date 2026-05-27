@@ -19,12 +19,26 @@ define('AUTH_TOKEN_EXPIRY', 86400); // 24 hours
 define('AUTH_MAX_ATTEMPTS', 5);
 define('AUTH_LOCKOUT_SECONDS', 900); // 15 minutes
 
+function isLocalAuthFallbackAllowed(): bool {
+    $host = strtolower($_SERVER['HTTP_HOST'] ?? '');
+    return env('ALLOW_DEFAULT_ADMIN', '') === '1'
+        || env('ALLOW_DEFAULT_ADMIN', '') === 'true'
+        || php_sapi_name() === 'cli'
+        || strpos($host, 'localhost') !== false
+        || strpos($host, '127.0.0.1') !== false;
+}
+
 // ── READ ADMIN CREDENTIALS FROM DATABASE ────────────────────────────────
 function getAdminCredentials(): array {
-    $defaults = [
-        'admin_user' => 'admin',
-        'admin_pass' => password_hash('admin', PASSWORD_DEFAULT) // Testing fallback only. Remove before production.
-    ];
+    $defaults = isLocalAuthFallbackAllowed()
+        ? [
+            'admin_user' => 'admin',
+            'admin_pass' => password_hash('admin', PASSWORD_DEFAULT)
+        ]
+        : [
+            'admin_user' => '',
+            'admin_pass' => ''
+        ];
 
     try {
         $pdo = get_db_connection();
@@ -32,7 +46,12 @@ function getAdminCredentials(): array {
         $stmt->execute();
         $row = $stmt->fetch();
 
-        if (!$row) return $defaults;
+        if (!$row) {
+            if (!isLocalAuthFallbackAllowed()) {
+                error_log('Auth: site_settings missing; refusing default admin credentials in production context.');
+            }
+            return $defaults;
+        }
 
         $saved = json_decode($row['data'], true) ?: [];
 
@@ -64,6 +83,11 @@ function isHashedPassword(string $pass): bool {
 function verifyAdminPassword(string $provided): bool {
     $creds = getAdminCredentials();
     $hashedPass = $creds['admin_pass'];
+
+    if ($creds['admin_user'] === '' || $hashedPass === '') {
+        error_log('Auth: Admin credentials are not configured.');
+        return false;
+    }
 
     if (isHashedPassword($hashedPass)) {
         return password_verify($provided, $hashedPass);

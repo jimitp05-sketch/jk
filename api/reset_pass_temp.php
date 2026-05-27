@@ -12,8 +12,8 @@
 
 require_once __DIR__ . '/config.php';
 
-$expectedSecret = env('TEMP_RESET_SECRET', 'RESET2024');
-if (!hash_equals($expectedSecret, $_GET['secret'] ?? '')) {
+$expectedSecret = env('TEMP_RESET_SECRET', '');
+if ($expectedSecret === '' || !hash_equals($expectedSecret, $_GET['secret'] ?? '')) {
     http_response_code(403);
     die('Forbidden');
 }

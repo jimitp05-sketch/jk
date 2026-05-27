@@ -213,6 +213,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         respond(['success' => true, 'message' => 'Submitted successfully! It will appear after admin review.']);
     }
 
+    // ── ADMIN: Inline edit pending story/note, then approve ───────────────
+    if ($action === 'edit_and_approve') {
+        if (!isAdmin()) respond(['success' => false, 'error' => 'Unauthorized'], 401);
+        if (!in_array($type, $VALID_TYPES, true)) respond(['success' => false, 'error' => 'Invalid type'], 400);
+
+        $targetId = $input['id'] ?? '';
+        if (empty($targetId)) respond(['success' => false, 'error' => 'Missing item ID'], 400);
+
+        if ($type === 'gratitude_notes') {
+            $note = clean($input['note'] ?? '', 1000);
+            if ($note === '') respond(['success' => false, 'error' => 'Note cannot be empty'], 400);
+            $stmt = $pdo->prepare("UPDATE gratitude_notes SET note = ?, status = 'approved' WHERE id = ?");
+            $stmt->execute([$note, $targetId]);
+        } elseif ($type === 'healing_stories') {
+            $story = clean($input['story'] ?? '', 5000);
+            if ($story === '') respond(['success' => false, 'error' => 'Story cannot be empty'], 400);
+            $stmt = $pdo->prepare("UPDATE healing_stories SET story = ?, status = 'approved' WHERE id = ?");
+            $stmt->execute([$story, $targetId]);
+        } else {
+            respond(['success' => false, 'error' => 'Inline edit is only supported for stories and notes'], 400);
+        }
+
+        if ($stmt->rowCount() === 0) respond(['success' => false, 'error' => 'Item not found'], 404);
+        respond(['success' => true, 'action' => $action, 'id' => $targetId]);
+    }
+
     // ── ADMIN: Approve / Reject / Delete ──────────────────────────────────
     if (in_array($action, ['approve', 'reject', 'delete'])) {
         if (!isAdmin()) respond(['success' => false, 'error' => 'Unauthorized'], 401);

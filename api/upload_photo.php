@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 // Allow both admin token and public submissions (public uses different path)
 $isAdmin = isAdmin();
+$clientIP = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'error' => 'POST only']); exit;
@@ -22,6 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true) ?? [];
 $base64Data = $input['photo_data'] ?? '';
 $context = $input['context'] ?? 'general'; // 'memories', 'photo_wall'
+
+$allowedContexts = ['memories', 'photo_wall'];
+if (!$isAdmin && !in_array($context, $allowedContexts, true)) {
+    echo json_encode(['success' => false, 'error' => 'Invalid upload context']); exit;
+}
+
+if (!$isAdmin && !checkRateLimit($clientIP, 5, 3600, 'public_photo_upload')) {
+    http_response_code(429);
+    echo json_encode(['success' => false, 'error' => 'Too many uploads. Please try again later.']); exit;
+}
 
 if (empty($base64Data)) {
     echo json_encode(['success' => false, 'error' => 'No image data']); exit;
@@ -34,7 +45,10 @@ if (!preg_match('/^data:image\/(jpeg|jpg|png|webp|gif);base64,/i', $base64Data, 
 
 // Decode base64
 $b64 = substr($base64Data, strpos($base64Data, ',') + 1);
-$imageBytes = base64_decode($b64);
+$imageBytes = base64_decode($b64, true);
+if ($imageBytes === false) {
+    echo json_encode(['success' => false, 'error' => 'Invalid image data']); exit;
+}
 
 // Size limit: 8MB raw
 if (strlen($imageBytes) > 8 * 1024 * 1024) {
@@ -55,6 +69,10 @@ if (!$srcImg) {
 
 $origW = imagesx($srcImg);
 $origH = imagesy($srcImg);
+if ($origW < 1 || $origH < 1 || $origW > 6000 || $origH > 6000) {
+    imagedestroy($srcImg);
+    echo json_encode(['success' => false, 'error' => 'Invalid image dimensions']); exit;
+}
 
 // Resize to max 1200px wide (maintain aspect ratio)
 $maxW = 1200;
