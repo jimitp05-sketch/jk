@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Panel — Dr. Jay Kothari</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="styles.css?v=20260528" />
+    <link rel="stylesheet" href="admin.css?v=20260528-admin-usability" />
 </head>
 <body>
 
@@ -180,7 +180,7 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script src="content-contract.js"></script>
-    <script src="admin.js"></script>
+    <script src="content-contract.js?v=20260528"></script>
+    <script src="admin.js?v=20260528-admin-usability"></script>
 </body>
 </html>
